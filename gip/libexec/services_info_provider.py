@@ -4,39 +4,48 @@ import os, sys, re, socket
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getTemplate, getLogger
-import dCacheAdmin
+from gip_storage import connect_admin, getSESpace, getSEVersion, getSETape, \
+    seHasTape
 
-def connect_admin(cp):
-    info = {'Interface':'dCache'}
-    info['AdminHost'] = cp.get("dcache_admin", "hostname")
+def print_se(cp):
     try:
-        info['Username'] = cp.get("dcache_admin", "username")
+        admin = connect_admin(cp)
+        used, available, total = getSESpace(cp, admin, total=True, gb=True)
+        version = getSEVersion
+        status = "Production"
     except:
-        pass
-    try:
-        info['Cipher'] = cp.get("dcache_admin", "cipher")
-    except:
-        pass
-    try:
-        info['Port'] = cp.get("dcache_admin", "port")
-    except:
-        pass
-    try:
-        info['Password'] = cp.get("dcache_admin", "password")
-    except:
-        pass
-    try:
-        info['Protocol'] = cp.get("dcache_admin", "protocol")
-    except:
-        pass
-    return dCacheAdmin.Admin(info)
-
-def print_se(cp, admin):
+        used = 0
+        available = 0
+        total = 0
+        version = "1.8.0"
+        status = "Closed"
     seTemplate = getTemplate("GlueSE", "GlueSEUniqueID")
+    if seHasTape(cp):
+        arch = "tape"
+    else:
+        arch = "multi-disk"
+    nu, nf, nt = getSETape(cp) 
+    siteUniqueID = cp.get("site", "unique_name")
+    bdiiEndpoint = cp.get("bdii", "endpoint") + ("/mds-vo-name=%s," \
+        "mds-vo-name=local,o=grid" % siteUniqueID)
     info = { 'seName'         : cp.get("se", "name"),
              'seUniqueID'     : cp.get("se", "unique_name"),
              'implementation' : 'dcache',
-           } 
+             "version"        : version,
+             "status"         : status,
+             "port"           : 8443,
+             "onlineTotal"    : total,
+             "nearlineTotal"  : nt,
+             "onlineUsed"     : used,
+             "nearlineUsed"   : nu,
+             "architecture"   : arch,
+             "free"           : available,
+             "total"          : total,
+             "bdiiEndpoint"   : bdiiEndpoint,
+             "siteUniqueID"   : siteUniqueID,
+             "arch"           : arch,
+           }
+    print seTemplate % info
 
 def print_access_protocols(cp, admin):
     sename = cp.get("se", "unique_name")
@@ -99,7 +108,7 @@ def print_srm(cp, admin):
                 "uri"         : endpoint,
                 "url"         : endpoint,
                 "acbr"        : acbr,
-                "siteID"      : sitename
+                "siteID"      : sitename,
                 "cpLocalID" : doorname,
                 "seUniqueID" : sename,
                 "protocolType" : "SRM",
@@ -120,6 +129,7 @@ def main():
     try:
         cp = config("$GIP_LOCATION/etc/dcache_storage.conf", \
             "$GIP_LOCATION/etc/dcache_password.conf")
+        print_se(cp)
         admin = connect_admin(cp)
         print_access_protocols(cp, admin)
         print_srm(cp, admin)

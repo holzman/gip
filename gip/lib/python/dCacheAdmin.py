@@ -1,13 +1,28 @@
 #!/usr/bin/env python
 from __future__ import generators
-import sys, os, re, pty, time, resource, ConfigParser
 
+import signal
+import sys
+import os
+import re
+import pty
+import time
+import resource
+import ConfigParser
 
 ssh_extra_args = []
 
+err_msg = """
+Timeout occurred while connecting to the dCache Admin interface.  This may be
+caused by an authentication error (i.e., wrong password) or may be because
+the admin interface is currently down.
+"""
+def handler(signum, frame):
+    raise Exception(err_msg)
+
 class Admin:
 
-  def __init__( self, info ):
+  def __init__(self, info, timeout=5):
     if isinstance(info, ConfigParser.ConfigParser):
         config_file = info.get("dCacheAdmin","config_file")
         if str(config_file) == 'None':
@@ -22,7 +37,10 @@ class Admin:
       raise Exception("Must give an AdminHost to connect to Admin Interface.")
     self.delay = .001
     self.info = info
+    signal.signal(signal.SIGALRM, handler)
+    signal.alarm(timeout)
     self.make_connection( info )
+    signal.alarm(0)
     self.location = None
 
   def fork_ssh( self, args ):

@@ -1,94 +1,23 @@
 #!/usr/bin/env python
 
-import time, re, sys, datetime, optparse, ConfigParser
-import psycopg2,psycopg2.extras
+import time
+import re
+import os
+import sys
+import datetime
+import ConfigParser
 
+sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+from gip_common import config, getTemplate, getLogger
+from gip_storage import execute, connect, connect_admin, voListStorage, \
+    getPath, getSESpace, getSETape
 
-#Postgres bindings helper functions
-
-def execute(p,command):
-    """
-    Given a cursor, execute a command
-    """
-    curs = p.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    curs.execute(command)
-    rows = curs.fetchall()
-    return rows
-
-def connect(cp):
-    """
-    Connect to the SRM database based upon the parameters in the passed
-    config file.
-    """
-    try:
-        database = cp.get("dcache_config", "database")
-        dbuser = cp.get("dcache_config", "dbuser")
-        dbpasswd = cp.get("dcache_config", "dbpasswd")
-        pghost = cp.get("dcache_config", "pghost")
-        pgport = cp.get("dcache_config", "pgport")
-        connectstring = "dbname=%s user=%s password=%s host=%s port=%s" % \
-            (database, dbuser, dbpasswd, pghost, pgport)
-        p=psycopg2.connect(connectstring)
-    except Exception, e:
-        raise
-
-    return p
+log = getLogger("GIP.token_provider")
 
 giga=1000000000L
 kilo=1000L
 
-# The VOInfo template.  Really should be separated out into another
-# file 
-VOinfo=\
-'''dn: GlueVOInfoLocalID=%s:%s,GlueSEUniqueID=%s,mds-vo-name=local,o=grid
-objectClass: GlueSATop
-objectClass: GlueVOInfo
-objectClass: GlueKey
-objectClass: GlueSchemaVersion
-GlueVOInfoLocalID: %s:%s
-GlueVOInfoName: %s:%s
-GlueVOInfoPath: %s
-GlueVOInfoTag: %s
-%s
-GlueChunkKey: GlueSALocalID=%s:%s:%s
-GlueChunkKey: GlueSEUniqueID=%s
-GlueSchemaVersionMajor: 1
-GlueSchemaVersionMinor: 3
-'''
-
-# The SA template.  Again, should be in a separate file.
-SA='''dn: GlueSALocalID=%s:%s:%s,GlueSEUniqueID=%s,mds-vo-name=local,o=grid
-objectClass: GlueSATop
-objectClass: GlueSA
-objectClass: GlueSAPolicy
-objectClass: GlueSAState
-objectClass: GlueSAAccessControlBase
-objectClass: GlueKey
-objectClass: GlueSchemaVersion
-GlueSAPath: %s
-GlueSALocalID: %s:%s:%s
-GlueSAPolicyFileLifeTime: permanent
-GlueSAStateAvailableSpace: %s
-GlueSAStateUsedSpace: %s
-%s
-GlueSARetentionPolicy: %s
-GlueSAAccessLatency: %s
-GlueSAExpirationMode: %s
-GlueSATotalOnlineSize: %s
-GlueSAUsedOnlineSize: %s
-GlueSAFreeOnlineSize: %s
-GlueSAReservedOnlineSize: %s
-GlueSATotalNearlineSize: %s
-GlueSAUsedNearlineSize: %s
-GlueSAFreeNearlineSize: %s
-GlueSAReservedNearlineSize: 0
-GlueChunkKey: GlueSEUniqueID=%s
-GlueSchemaVersionMajor: 1
-GlueSchemaVersionMinor: 3
-'''
-
-# SQL commands I use for the above info.
-
+# SQL commands to get the space token info from the DB
 VOInfo_command = """
 SELECT 
   vogroup,vorole,linkgroupid,description,P.name, L.name
@@ -125,6 +54,9 @@ def print_VOinfo(p, cp):
     command = VOInfo_command % (cp.getint('dcache_config', 'min_lifetime')*1000)
     rows=execute(p,command)
 
+    seUniqueID = cp.get("se", "unique_name")
+    VOInfo = getTemplate("GlueSE", "GlueVOInfoLocalID")
+
     for row in rows:
         if not row[0].startswith('/'):
             row[0] = '/' + row[0]
@@ -156,16 +88,56 @@ def print_VOinfo(p, cp):
         else:
             continue
 
-        host = cp.get("se", "unique_name")
+        info = {"voInfoID" : "%s:%s" % (cvo, description),
+                "seUniqueID" : seUniqueID,
+                "name" : "%s:%s" % (cvo, description),
+                "path" : getPath(cp, vo),
+                "tag" : description,
+                "acbr" : acbr,
+                "saLocalID" : "%s:%s:%s"%(cvo, retentionpolicy, accesslatency),
+               }
+        print VOinfo % info
 
-        if cp.has_option("vo", cvo):
-            path = cp.get("vo", cvo)
-        else:
-            path = cp.get("vo", "default").replace("$VO", cvo)
-
-        print VOinfo%(cvo, description, host, cvo, description, cvo,
-            description, path, description, acbr, cvo, retentionpolicy,
-            accesslatency, host)
+def print_SA_compat(cp):
+    """
+    Print out the SALocal information for backward compatibility with 
+    GLUE 1.2
+    """
+    vos = voListStorage(cp)
+    se_unique_id = cp.get("se", "unique_name")
+    se_name = cp.get("se", "name")
+    saTemplate = getTemplate("GlueSE", "GlueSALocalID")
+    try:
+        used, available = getSESpace(cp)
+    except Exception, e:
+        log.error("Unable to get SE space: %s" % str(e))
+        used = 0
+        available = 0
+    for vo in vos:
+        acbr = "GlueSAAccessControlBaseRule: %s\n" % vo
+        acbr += "GlueSAAccessControlBaseRule: VO:%s" % vo
+        info = {"saLocalID"        : vo,
+                "seUniqueID"       : se_unique_id,
+                "root"             : "/",
+                "path"             : getPath(cp, vo),
+                "filetype"         : "permanent",
+                "saName"           : "%s_default" % vo,
+                "totalOnline"      : 0,
+                "usedOnline"       : 0,
+                "freeOnline"       : 0,
+                "reservedOnline"   : 0,
+                "totalNearline"    : 0,
+                "usedNearline"     : 0,
+                "freeNearline"     : 0,
+                "reservedNearline" : 0,
+                "retention"        : "replica",
+                "accessLatency"    : "online",
+                "expiration"       : "neverExpire",
+                "availableSpace"   : available,
+                "usedSpace"        : available,
+                "acbr"             : acbr,
+               }
+        print saTemplate % info
 
 def print_SA(p, cp):
     """
@@ -175,6 +147,14 @@ def print_SA(p, cp):
 
     command = SA_command % (cp.getint('dcache_config', 'min_lifetime')*1000)
     rows=execute(p, command)
+
+    seUniqueID = cp.get("se", "unique_name")
+
+    try:
+        stateUsed, stateAvailable = getSESpace(cp)
+    except:
+        stateUsed = 0
+        stateAvailable = 0
 
     for row in rows:
         if not row[0].startswith('/'):
@@ -243,34 +223,37 @@ def print_SA(p, cp):
             tn = '0'
             un = '0'
             fn = '0'
+        un, fn, tn = getSETape(cp, vo=vo)
 
         acbr = "GlueSAAccessControlBaseRule: " + vo + "\n" + \
             "GlueSAAccessControlBaseRule: VO:"+vo
 
-        host = cp.get("se", "unique_name")
 
-        if cp.has_option("vo", vo):
-            path = cp.get("vo", vo)
-        else:
-            path = cp.get("vo", "default").replace("$VO", vo)
+        path = getPath(cp, vo)
+        saLocalID = "%s:%s:%s" % (vo, retentionpolicy, accesslatency)
+        info = {"saLocalID"        : saLocalID,
+                "seUniqueID"       : seUniqueID,
+                "root"             : "/",
+                "path"             : path,
+                "filetype"         : "permanent",
+                "saName"           : saLocalID,
+                "totalOnline"      : to,
+                "usedOnline"       : uo,
+                "freeOnline"       : fo,
+                "reservedOnline"   : ro,
+                "totalNearline"    : tn,
+                "usedNearline"     : un,
+                "freeNearline"     : fn,
+                "reservedNearline" : 0,
+                "retention"        : retentionpolicy,
+                "accessLatency"    : accesslatency,
+                "expiration"       : expirationtime,
+                "availableSpace"   : stateAvailable,
+                "usedSpace"        : stateUsed,
+                "acbr"             : acbr,
+               }
 
-        print SA % (vo, retentionpolicy, accesslatency, host, path, vo, \
-            retentionpolicy, accesslatency, str(free), str(used), acbr,
-            retentionpolicy, accesslatency, expirationtime, to, uo, fo, ro,
-            tn, un, fn, host)
-
-def config_file():
-    """
-    Load up the config file.  It's taken from the command line, option -c
-    or --config; default is gip.conf
-    """
-    p = optparse.OptionParser()
-    p.add_option('-c', '--config', dest='config', help='Configuration file.',
-        default='gip.conf')
-    (options, args) = p.parse_args()
-    cp = ConfigParser.ConfigParser()
-    cp.read([i.strip() for i in options.config.split(',')])
-    return cp
+        print SA % info
 
 def main():
     """
@@ -281,11 +264,16 @@ def main():
       - Print the SALocalInfo
     """
     try:
-        cp = config_file()
-        p=connect(cp)
-        print_VOinfo(p, cp)
-        print_SA(p, cp)
-        p.close()
+        cp = config("$GIP_LOCATION/etc/dcache_storage.conf", \
+                    "$GIP_LOCATION/etc/dcache_password.conf")
+        try:
+            p=connect(cp)
+            print_VOinfo(p, cp)
+            print_SA(p, cp)
+            p.close()
+        except Exception, e:
+            print >> sys.stderr, e
+        print_SA_compat(cp)
     except:
         sys.stdout = sys.stderr
         raise

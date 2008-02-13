@@ -4,21 +4,21 @@ objectClass: GlueSE
 objectClass: GlueInformationService
 objectClass: GlueKey
 objectClass: GlueSchemaVersion
-GlueSEUniqueID: 
-GlueSEName:
-GlueSEImplementationName: 
-GlueSEImplementationVersion: 
-GlueSEStatus: 
-GlueSETotalOnlineSize: 
-GlueSETotalNearlineSize: 
-GlueSEUsedOnlineSize: 
-GlueSEUsedNearlineSize: 
-GlueSEPort:
-GlueSESizeTotal:
-GlueSESizeFree:
-GlueSEArchitecture:
-GlueInformationServiceURL: 
-GlueForeignKey: GlueSiteUniqueID=
+GlueSEUniqueID: %(seUniqueID)s
+GlueSEName: %(seName)s
+GlueSEImplementationName: %(implementation)s
+GlueSEImplementationVersion: %(version)s
+GlueSEStatus: %(status)s
+GlueSETotalOnlineSize: %(onlineTotal)s
+GlueSETotalNearlineSize: %(nearlineTotal)s
+GlueSEUsedOnlineSize: %(onlineUsed)s
+GlueSEUsedNearlineSize: %(nearlineUsed)s
+GlueSEPort: %(port)s
+GlueSESizeTotal: %(total)s
+GlueSESizeFree: %(free)s
+GlueSEArchitecture: %(arch)s
+GlueInformationServiceURL: %(bdiiEndpoint)s
+GlueForeignKey: GlueSiteUniqueID=%(siteUniqueID)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 
@@ -53,7 +53,7 @@ GlueChunkKey: GlueSEUniqueID=%(seUniqueID)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 
-dn: GlueSALocalID=,GlueSEUniqueID=,Mds-Vo-name=local,o=grid
+dn: GlueSALocalID=%(saLocalID)s,GlueSEUniqueID=%(seUniqueID)s,Mds-Vo-name=local,o=grid
 objectClass: GlueSATop
 objectClass: GlueSA
 objectClass: GlueSAPolicy
@@ -61,48 +61,49 @@ objectClass: GlueSAState
 objectClass: GlueSAAccessControlBase
 objectClass: GlueKey
 objectClass: GlueSchemaVersion
-GlueSARoot: 
-GlueSAPath:
-GlueSAType:  
-GlueSALocalID:
-GlueSAName: 
-GlueSATotalOnlineSize: 
-GlueSAUsedOnlineSize: 
-GlueSAFreeOnlineSize: 
-GlueSAReservedOnlineSize: 
-GlueSATotalNearlineSize: 
-GlueSAUsedNearlineSize: 
-GlueSAFreeNearlineSize: 
-GlueSAReservedNearlineSize: 
-GlueSARetentionPolicy: 
-GlueSAAccessLatency: 
-GlueSAExpirationMode: 
-GlueSACapability:  
-GlueSAPolicyMaxFileSize: 
-GlueSAPolicyMinFileSize: 
-GlueSAPolicyMaxData: 
-GlueSAPolicyMaxNumFiles: 
-GlueSAPolicyMaxPinDuration: 
-GlueSAPolicyQuota: 
-GlueSAPolicyFileLifeTime: 
-GlueSAStateAvailableSpace: 
-GlueSAStateUsedSpace: 
-GlueSAAccessControlBaseRule:  
-GlueChunkKey: GlueSEUniqueID=
+GlueSARoot: %(root)s
+GlueSAPath: %(path)s
+GlueSAType: %(filetype)s
+GlueSALocalID: %(saLocalID)s
+GlueSAName: %(saName)s
+GlueSATotalOnlineSize: %(totalOnline)s
+GlueSAUsedOnlineSize: %(usedOnline)s
+GlueSAFreeOnlineSize: %(freeOnline)s
+GlueSAReservedOnlineSize: %(reservedOnline)s
+GlueSATotalNearlineSize: %(totalNearline)s
+GlueSAUsedNearlineSize: %(usedNearline)s
+GlueSAFreeNearlineSize: %(freeNearline)s
+GlueSAReservedNearlineSize: %(reservedNearline)s
+GlueSARetentionPolicy: %(retention)s
+GlueSAAccessLatency: %(accessLatency)s
+GlueSAExpirationMode: %(expiration)s
+GlueSACapability: file storage
+GlueSAPolicyMaxFileSize: 0
+GlueSAPolicyMinFileSize: 0
+GlueSAPolicyMaxData: 0
+GlueSAPolicyMaxNumFiles: 0
+GlueSAPolicyMaxPinDuration: 0
+GlueSAPolicyQuota: 0
+GlueSAPolicyFileLifeTime: %(filetype)s
+GlueSAStateAvailableSpace: %(availableSpace)s
+GlueSAStateUsedSpace: %(usedSpace)s
+%(acbr)s
+GlueChunkKey: GlueSEUniqueID=%(seUniqueID)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 
-dn: GlueVOInfoLocalID=,GlueSALocalID=,GlueSEUniqueID=,Mds-Vo-name=local,o=grid
+dn: GlueVOInfoLocalID=%(voInfoID)s,GlueSALocalID=%(saLocalID)s,GlueSEUniqueID=%(seUniqueID)s,Mds-Vo-name=local,o=grid
 objectClass: GlueSATop
 objectClass: GlueVOInfo
 objectClass: GlueKey
 objectClass: GlueSchemaVersion
-GlueChunkKey: GlueSALocalID=
-GlueVOInfoLocalID: 
-GlueVOInfoName: 
-GlueVOInfoPath: 
-GlueVOInfoTag: 
-GlueVOInfoAccessControlBaseRule: 
+GlueChunkKey: GlueSALocalID=%(saLocalID)s
+GlueChunkKey: GlueSEUniqueID=%s
+GlueVOInfoLocalID: %(voInfoID)s
+GlueVOInfoName: %(name)s
+GlueVOInfoPath: %(path)s
+GlueVOInfoTag: %(tag)s
+%(acbr)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 

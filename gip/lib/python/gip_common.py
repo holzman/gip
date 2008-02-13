@@ -8,7 +8,7 @@ from gip_testing import runCommand
 # available.
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
 if py23:
-    import optparse, logging
+    import optparse, logging, logging.config
 
 # Default log level for our FakeLogger object.
 loglevel = "info"
@@ -189,6 +189,13 @@ def FakeLogger():
 
     def exception(msg, *args):
         print >> sys.stderr, msg
+
+if py23:
+    try:
+        logging.config.fileConfig(os.path.expandvars("$GIP_LOCATION/etc/" \
+            "logging.conf"))
+    except:
+        pass
 
 def getLogger(name):
     """

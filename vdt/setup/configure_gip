@@ -1270,7 +1270,6 @@ sub create_se_config_file
             ."GlueServiceURI: httpg://$se_host:8443/srm/managerv$se_version\n"
             ."GlueServiceAccessPointURL: httpg://$se_host:8443/srm/managerv$se_version\n"
             ."GlueServiceStatus: OK\n"
-            ."GlueServiceStatus: OK\n"
             ."GlueServiceStatusInfo: not tested\n"
             ."GlueServiceWSDL: UNDEFINED\n"
             ."GlueServiceSemantics: UNDEFINED\n"

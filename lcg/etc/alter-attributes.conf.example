@@ -1,0 +1,5 @@
+dn: GlueSubClusterUniqueID=grow-test1.its.uiowa.edu, GlueClusterUniqueID=grow-test1.its.uiowa.edu,mds-vo-name=local,o=grid
+GlueHostNetworkAdapterInboundIP: TRUE
+
+
+

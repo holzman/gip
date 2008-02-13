@@ -1,0 +1,75 @@
+dn: GlueCEUniqueID=,mds-vo-name=local,o=grid
+objectClass: GlueCETop
+objectClass: GlueCE
+objectClass: GlueSchemaVersion
+objectClass: GlueCEAccessControlBase
+objectClass: GlueCEInfo
+objectClass: GlueCEPolicy
+objectClass: GlueCEState
+objectClass: GlueInformationService
+objectClass: GlueKey
+GlueCEHostingCluster: 
+GlueCEName: 
+GlueCEImplementationName: 
+GlueCEImplementationVersion: 
+GlueCECapability: 
+GlueCEUniqueID: 
+GlueCEInfoGatekeeperPort: 
+GlueCEInfoHostName: 
+GlueCEInfoLRMSType: 
+GlueCEInfoLRMSVersion: 
+GlueCEInfoTotalCPUs: 
+GlueCEInfoJobManager:
+GlueCEInfoContactString:
+GlueCEInfoApplicationDir:
+GlueCEInfoDataDir:
+GlueCEInfoDefaultSE:
+GlueCEStateEstimatedResponseTime: 
+GlueCEStateFreeCPUs: 
+GlueCEStateRunningJobs: 
+GlueCEStateStatus: 
+GlueCEStateTotalJobs: 
+GlueCEStateWaitingJobs: 
+GlueCEStateWorstResponseTime: 
+GlueCEStateFreeJobSlots:
+GlueCEPolicyMaxCPUTime: 
+GlueCEPolicyMaxObtainableCPUTime: 
+GlueCEPolicyMaxRunningJobs: 
+GlueCEPolicyMaxWaitingJobs: 
+GlueCEPolicyMaxTotalJobs: 
+GlueCEPolicyMaxWallClockTime: 
+GlueCEPolicyMaxObtainableWallClockTime: 
+GlueCEPolicyPriority: 
+GlueCEPolicyAssignedJobSlots:
+GlueCEPolicyMaxSlotsPerJob: 
+GlueCEPolicyPreemption: 
+GlueCEAccessControlBaseRule: 
+GlueForeignKey: GlueClusterUniqueID=
+GlueInformationServiceURL: 
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+
+dn: GlueVOViewLocalID=,GlueCEUniqueID=,mds-vo-name=local,o=grid
+objectClass: GlueCETop
+objectClass: GlueVOView
+objectClass: GlueCEInfo
+objectClass: GlueCEState
+objectClass: GlueCEAccessControlBase
+objectClass: GlueCEPolicy
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueVOViewLocalID:
+GlueCEAccessControlBaseRule:
+GlueCEStateRunningJobs:
+GlueCEStateWaitingJobs:
+GlueCEStateTotalJobs:
+GlueCEStateFreeJobSlots:
+GlueCEStateEstimatedResponseTime:
+GlueCEStateWorstResponseTime:
+GlueCEInfoDefaultSE:
+GlueCEInfoApplicationDir:
+GlueCEInfoDataDir:
+GlueChunkKey: GlueCEUniqueID=
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+

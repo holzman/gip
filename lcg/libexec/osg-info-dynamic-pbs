@@ -1,0 +1,384 @@
+#!/usr/bin/env perl
+use strict;
+
+#!!!!!!!!!!!
+#TODO: This script assumes pbsnodes executable is in same location as qstat.  Need to check whether that true...i don't have access to a pbs instalation right now
+#!!!!!!!!!!!
+
+my @output;    # ldif output that is sent to std out.
+my $ldif_file; # File name for the static ldif file
+my $pbs_path;
+my @ldif_file; # Content of the static ldif file
+my @dn;        # A dn found in the static lidf file.
+my $pbsHost;
+my $queue;
+my $TotalCPU;
+my $FreeCPU;
+my $Version;
+my $state;
+my $num_pro;
+my $site_active=0;
+
+my $dir = `dirname $0`;
+chomp $dir;
+chdir "$dir" or die "Can't cd to $dir: $!\n";
+
+if ($ARGV[0] && $ARGV[1]) {
+    $pbs_path  = $ARGV[0];
+    $ldif_file = $ARGV[1];
+    if($ARGV[2]){
+	$pbsHost=$ARGV[2];
+    }else{
+	$pbsHost="";#`hostname -f`;
+    }
+} else {
+    print "Usage: $0 <pbs path> <ldif file> [pbs host]\n";
+    exit 1
+}
+
+#Gets the content of the static ldif file
+open (LDIF, $ldif_file) || die "Cannot open '$ldif_file': $!,";
+while (<LDIF>) {
+    push @ldif_file, $_;
+}
+close (LDIF);
+
+#Gets the dns.
+for (@ldif_file){
+    if(/dn:\s+GlueCEUniqueID=/){
+	push @dn, "$_";
+    }
+
+}
+
+
+# convert tripel hours:minutes:seconds into seconds
+sub convertHhMmSs {
+
+  return $1 * 3600 + $2 * 60 + $3   if   $_[0] =~ /(\d+):(\d+):(\d+)/;
+
+  return ($_[0] ne "-")  ?  $_[0]  :  0;
+
+}
+
+
+sub read_site_active_info
+{
+    my $conf = "../../MIS-CI/etc/grid-site-state-info";
+
+    if (-e $conf){
+        my $output = `. $conf; echo \$grid_site_state_bit`;
+        my @outList = split /\n/, $output;
+        if(exists $outList[0]){
+            $site_active = $outList[0];
+        }else{
+            $site_active = 0;
+        }
+    }else{
+        $site_active=0;
+    }
+
+}
+
+# Get LRMS version
+if (!defined $pbsHost || $pbsHost eq ""){
+open QSTAT, "$pbs_path/qstat -B -f 2>&1 |" or die "Error running qstat.\n";
+}else{
+open QSTAT, "$pbs_path/qstat -B -f $pbsHost 2>&1 |" or die "Error running qstat.\n";
+}
+
+while(<QSTAT>) {
+    if (/pbs_version\s+=\s+(\S+)/){
+	$Version=$1;
+    }
+}
+close QSTAT;
+
+if (!$Version ){
+ $Version="UNDEFINED";
+}
+# Get Total and Free CPUs
+if (!defined $pbsHost || $pbsHost eq ""){
+open QSTAT, "$pbs_path/pbsnodes -a 2>&1 |" or die "Error running pbsnodes.\\n";
+
+}else{
+open QSTAT, "$pbs_path/pbsnodes -a -s  $pbsHost 2>&1 |" or die "Error running pbsnodes.\\n";
+}
+$TotalCPU=0;
+$FreeCPU=0;
+if($Version =~ /^PBSPro/){
+    while(<QSTAT>) {
+        if (/state = (.*)/){
+        $state=$1;
+        }
+        if(/resources_available.ncpus =/){
+            $num_pro = $_;
+            $num_pro =~s/^[^=]*=//;
+            chomp $num_pro;
+            if(! defined $num_pro){
+                $num_pro=1;
+            }
+            if ($state !~ /down|offline/){
+                $TotalCPU += $num_pro;
+            }
+            if ($state eq "free"){
+                $FreeCPU += $num_pro;
+            }
+        }
+        if(/resources_assigned.ncpus =/){
+            $num_pro = $_;
+            $num_pro =~s/^[^=]*=//;
+            chomp $num_pro;
+            if(! defined $num_pro){
+                $num_pro=0;
+            }
+            if ($state eq "free"){
+                $FreeCPU -= $num_pro;
+            }
+
+        }
+    }
+
+}else{
+    while(<QSTAT>) {
+        if (/state = (.*)/){
+	    $state=$1;
+        }
+        if(/np =/){
+	        $num_pro = $_;
+        	$num_pro =~s/^[^=]*=//;
+        	chomp $num_pro;
+            if(! defined $num_pro){
+                $num_pro=1;
+            }
+	        if ($state !~ /down|offline/){ #Resource NOT down or offline are counted in total 
+	            $TotalCPU += $num_pro;
+	        }
+	        if ($state eq "free"){
+        	    $FreeCPU += $num_pro;
+	        }
+        }
+    # Subtract the number of running jobs.
+        if(/jobs =/){
+         	s/[^,]//g;
+           	if ($state eq "free"){
+           	    $FreeCPU -= 1 + length($_);
+           	}
+        }
+    }
+}
+close QSTAT;
+
+read_site_active_info();
+my %jobs;
+my $tmp;
+my $enabled=0;
+my $started=0;
+my $status="closed";
+$queue="unusedQ";
+#open QSTAT, "$pbs_path/qstat -Q -f  2>&1 |" or die "Error running qstat. (file)\n";
+
+my @qstat_dump=`$pbs_path/qstat -Q -f 2>&1`or die "Error running qstat ---.\n" ;
+my $line_num;
+my $qstat_len=$#qstat_dump;
+for($line_num=0;$line_num<=$qstat_len;$line_num++){
+     if($line_num<$qstat_len){
+            $_=$qstat_dump[$line_num];
+     }else{
+            $_='';
+     }
+
+     if(/^Queue:\s+(\S+)/ || $line_num==$qstat_len){
+         if($site_active==1){
+             $status =($enabled && $started) ? "Production" :
+                                  ($enabled) ? "Queueing" :
+                                  ($started) ? "Draining" : "Closed" ;
+         }else{
+             $status = "Closed"
+         }
+         $jobs{$queue}->{'status'}=$status;
+         $enabled=0;
+         $started=0;
+         $queue=$1;
+     }
+        if(/^\s*total_jobs\s+=\s+(\d+)/){
+            $jobs{$queue}->{'total'}=$1;
+        }
+        if(/^\s*state_count\s+=\s+Transit:(\d+)\s+Queued:(\d+)\s+Held:(\d+)\s+Waiting:(\d+)\s+Running:(\d+)\s+Exiting:(\d+)/){
+            $jobs{$queue}->{'idle'}=$1+$2+$3+$4;
+            $jobs{$queue}->{'running'}=$5+$6;
+        }
+        if ( /^\s+resources_max.cput\s+=\s+(\S+)/ ) {
+           $jobs{$queue}->{'maxTime'}=int(&convertHhMmSs($1)/60);
+        }
+        if ( /^\s+max_queuable\s+=\s+(\S+)/ ) {
+           $jobs{$queue}->{'maxQueuable'}=$1;
+        }
+        if ( /^\s+Priority\s+=\s+(\S+)/ ) {
+           $jobs{$queue}->{'Priority'}=$1;
+        }
+        if ( /^\s+max_running\s+=\s+(\S+)/ ) {
+           $tmp= $1 if ($1);
+           $jobs{$queue}->{'maxRunning'}=int($1);
+        }
+        if ( /^\s+resources_max.walltime\s+=\s+(\S+)/ ) {
+           $jobs{$queue}->{'maxWalltime'}=int(&convertHhMmSs($1)/60);
+        }
+        if ( /^\s+enabled\s+=\s+(True)/ ) {
+           $enabled = 1;
+        }
+        if ( /^\s+started\s+=\s+(True)/ ) {
+           $started = 1;
+        }
+
+    }
+#close QSTAT;
+my $vo;
+for(@dn){
+    push @output, $_;
+    $vo=$_;
+    $vo=~s/,.*//;
+    $vo=~s/^.*-//;
+    chomp $vo;
+
+    push @output, "GlueCEInfoLRMSVersion: $Version\n";
+    push @output, "GlueCEInfoTotalCPUs: $TotalCPU\n";
+    push @output, "GlueCEStateFreeCPUs: $FreeCPU\n";
+
+
+
+    if( exists $jobs{$vo}->{'idle'}){
+        push @output,"GlueCEStateWaitingJobs: $jobs{$vo}->{'idle'}\n";
+    }
+    if( exists $jobs{$vo}->{'running'}){
+        push @output,"GlueCEStateRunningJobs: $jobs{$vo}->{'running'}\n";
+    }
+    if( exists $jobs{$vo}->{'total'}){
+        push @output,"GlueCEStateTotalJobs: $jobs{$vo}->{'total'}\n";
+    }
+    if( exists $jobs{$vo}->{'maxTime'}){
+        push @output, "GlueCEPolicyMaxCPUTime: $jobs{$vo}->{'maxTime'}\n";
+    }
+    if( exists $jobs{$vo}->{'maxQueuable'}){
+        push @output, "GlueCEPolicyMaxTotalJobs: $jobs{$vo}->{'maxQueuable'}\n";
+    }
+    if( exists $jobs{$vo}->{'Priority'}){
+        push @output, "GlueCEPolicyPriority: $jobs{$vo}->{'Priority'}\n";
+    }
+    if( exists $jobs{$vo}->{'maxRunning'}){
+        push @output, "GlueCEPolicyMaxRunningJobs: $jobs{$vo}->{'maxRunning'}\n";
+    }
+    if( exists $jobs{$vo}->{'maxWalltime'}){
+        push @output, "GlueCEPolicyMaxWallClockTime: $jobs{$vo}->{'maxWalltime'}\n";
+    }
+    if( exists $jobs{$vo}->{'status'}){
+        push @output, "GlueCEStateStatus: $jobs{$vo}->{'status'}\n";
+    }else{
+        push @output, "GlueCEStateStatus: Closed\n";
+    }
+    if( exists $jobs{$vo}->{'maxQueuable'} && exists $jobs{$vo}->{'total'}){
+        $tmp = $jobs{$vo}->{'maxQueuable'}-$jobs{$vo}->{'total'};
+        if($tmp <= $FreeCPU && $tmp >= 0){
+             push @output, "GlueCEStateFreeJobSlots: $tmp\n";
+				 $jobs{$vo}{'freejobslots'}=$tmp;
+        }elsif ($tmp <0){
+             push @output, "GlueCEStateFreeJobSlots: 0\n";
+				 $jobs{$vo}{'freejobslots'}=0;
+        } else {
+             push @output, "GlueCEStateFreeJobSlots: $FreeCPU\n";
+				 $jobs{$vo}{'freejobslots'}=$FreeCPU;
+        }
+    }else{
+         push @output, "GlueCEStateFreeJobSlots: $FreeCPU\n";
+		   $jobs{$vo}{'freejobslots'}=$FreeCPU;
+    }
+    push @output, "GlueCEPolicyAssignedJobSlots: $TotalCPU\n";
+
+    push @output, "\n";
+}
+
+
+#Job id              Name             User            Time Use S Queue
+#------------------- ---------------- --------------- -------- - -----
+#13463.grow-prod     STDIN            grow0                  0 R grow
+
+#get VOView information
+
+my ($vo_file,%user_vo_map,$user_id,$user_vo,$user_tmp,);
+$vo_file = "../../monitoring/grid3-user-vo-map.txt"; #copy and paste from condor
+if(-e $vo_file){
+    open(VOFILE,"<$vo_file");
+    while (<VOFILE>){
+        if (m/^\#/ || m/^\s*$/){ #Ignore Comments
+        } else {
+            chomp;
+            ($user_id, $user_vo) = split /\ /;
+            if(defined $user_vo && defined $user_id){
+                ($user_tmp, $user_vo,)= $user_vo =~ /(us)?(\w+)/;
+                $user_vo_map{$user_id} = "$user_vo";
+            }
+        }
+    }
+} else {
+    print "VO list file $vo_file not found\n";
+    $user_vo_map{'osg'} = 'osg';
+}
+
+
+
+my (%voview,$firstlines);
+$firstlines=0;
+open QSTAT, "$pbs_path/qstat 2>&1 |" or die "Error running qstat. (file)\n";
+while(<QSTAT>){
+    if($firstlines<2) { #Skip the header and "----" top lines (top 2 lines)
+        $firstlines++;
+        next;
+    }
+    if(m/(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*(\S+)\s*(\S+)/) { 
+        #(jobid) (name)  (user)  (time)  (status)(queue)
+        my ($jobid,$name,$user,$time,$status,$queue)=($1,$2,$3,$4,$5,$6);
+        my $vo=$user_vo_map{$user}; 
+        if($status=='R') {
+            $voview{$queue}{$vo}{GlueCEStateRunningJobs}++;
+        } else { # if its not running its in some sort of held state
+            $voview{$queue}{$vo}{GlueCEStateWaitingJobs}++;
+        }
+    }
+}
+close QSTAT;
+
+for (@ldif_file){
+    if(/dn:\s+GlueVOViewLocalID=/){
+        push @dn, "$_";
+    }
+
+}
+
+my ($dn,$running,$waiting,$total);
+for(@dn){
+#dn: GlueVOViewLocalID=cdf,GlueCEUniqueID=grow-res1.its.uiowa.edu:2119/jobmanager-pbs-grow,mds-vo-name=local,o=grid
+     push @output, $_;
+     my @curr_line=split /,/;
+     my @vo_array = split /=/,$curr_line[0];
+     my $vo = $vo_array[1];
+     my @queue_array = split /jobmanager-pbs-/, $curr_line[1];
+     my $q = $queue_array[1];
+     
+     $running=$voview{$q}{$vo}{GlueCEStateRunningJobs};
+     $running=0 if not exists $voview{$q}{$vo}{GlueCEStateRunningJobs}; 
+     $waiting=$voview{$q}{$vo}{GlueCEStateWaitingJobs};
+     $waiting=0 if not exists $voview{$q}{$vo}{GlueCEStateWaitingJobs}; 
+     $total=$running+$waiting;
+
+     push @output, "GlueCEStateRunningJobs: $running\n";
+     push @output, "GlueCEStateWaitingJobs: $waiting\n";
+     push @output, "GlueCEStateTotalJobs: $total\n";
+     push @output, "GlueCEStateFreeJobSlots: $jobs{$q}{freejobslots}\n" if exists $jobs{$q}{'freejobslots'};
+     push @output, "GlueCEPolicyAssignedJobSlots: $TotalCPU\n";
+     push @output, "\n";
+
+}
+
+print @output;
+
+exit;

@@ -1,0 +1,37 @@
+dn: GlueSubClusterUniqueID=grow-test2.its.uiowa.edu, GlueClusterUniqueID=grow-test1.its.uiowa.edu,mds-vo-name=local,o=grid
+objectClass: GlueClusterTop
+objectClass: GlueSubCluster
+objectClass: GlueSchemaVersion
+objectClass: GlueHostApplicationSoftware
+objectClass: GlueHostArchitecture
+objectClass: GlueHostBenchmark
+objectClass: GlueHostMainMemory
+objectClass: GlueHostNetworkAdapter
+objectClass: GlueHostOperatingSystem
+objectClass: GlueHostProcessor
+objectClass: GlueInformationService
+objectClass: GlueKey
+GlueChunkKey: GlueClusterUniqueID=grow-test2.its.uiowa.edu
+GlueHostApplicationSoftwareRunTimeEnvironment: OSG-ITB-0.5.2
+GlueHostArchitectureSMPSize: 2
+GlueHostBenchmarkSF00: 380
+GlueHostBenchmarkSI00: 400
+GlueHostMainMemoryRAMSize: 512
+GlueHostMainMemoryVirtualSize: 1024
+GlueHostNetworkAdapterInboundIP: FALSE
+GlueHostNetworkAdapterOutboundIP: TRUE
+GlueHostOperatingSystemName: RedHat Generic
+GlueHostOperatingSystemRelease: RedHat Unknown
+GlueHostOperatingSystemVersion: Unknown
+GlueHostProcessorClockSpeed: 1000
+GlueHostProcessorModel: Intel(R) Pentium(R) D CPU 3.00GHz
+GlueHostProcessorVendor: GenuineIntel
+GlueSubClusterName: grow-test1.its.uiowa.edu
+GlueSubClusterUniqueID: grow-test1.its.uiowa.edu
+GlueSubClusterPhysicalCPUs: 1
+GlueSubClusterLogicalCPUs: 2
+GlueSubClusterTmpDir: /grow/data-local/data
+GlueSubClusterWNTmpDir: /tmp
+GlueInformationServiceURL: ldap://grow-test1.its.uiowa.edu:2135/mds-vo-name=local,o=grid
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3

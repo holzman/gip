@@ -1,0 +1,160 @@
+#!/usr/bin/env perl
+use strict;
+
+my @output;    # ldif output that is sent to stdout.
+my @ldif_file; # Content of the static ldif file
+my @dn;        # A dn found in the static ldif file.
+my @dynamic;
+my @se;
+my @se_dns;
+if ($ARGV[0] && $ARGV[1]) {
+    #Reads the ldif file.
+    open (LDIF, $ARGV[0]) || die "Cannot open '$ARGV[0]': $!,";
+    while (<LDIF>) {
+	push @ldif_file, $_;
+    }
+    close (LDIF);
+} else {
+    print "Usage: $0 <ldif file> <VDT_LOCATION>\n";
+    exit 1
+}
+#Gets a list of SE's that support srm
+#Currently assumes you have GlueSEArchitecture: occuring some time after after dn: GlueSEUniqueID
+my $curr_se;
+my $new_se;
+for (@ldif_file){
+    if(/dn:\s+(GlueSEUniqueID)=/i){
+        $curr_se = $_;
+    }
+    if(/GlueSEArchitecture:\s*srm/i){
+        ($new_se = $curr_se) =~ s/dn: GlueSEUniqueID=([^,]*),.*\n/$1/i;
+        push @se, $new_se;
+        push  @se_dns, $curr_se;
+    }
+}
+#Gets the dns.
+for (@ldif_file){
+    if(/dn:\s+(GlueSARoot|GlueSALocalID)=/i){
+	push @dn, "$_";
+    }
+}
+
+#Converts the size into kilobytes.
+sub convert($){
+    $_= shift;
+
+    my $dp=0; #Number of decimal places.
+    my $decimal; #decimal part;
+
+    #counts the number of decimal places if any.
+    if(/\./){
+	$decimal=$_;
+	$decimal=~s/^.*\.//;
+	$decimal=~s/[a-zA-Z]//;
+	$dp=length $decimal;
+    }
+
+    #substitutes the suffix for the required number of zeros.
+    if(/P/){
+	$_=~s/P/000000000000/;
+    }elsif(/T/){
+	$_=~s/T/000000000/;
+    }elsif(/G/){
+	$_=~s/G/000000/;
+    }elsif(/M/){
+       	$_=~s/M/000/;
+    }elsif(/k/){
+       	$_=~s/k//;
+    }else{
+       	$_=~s/...?//;
+    }
+
+    #Remove excess zeros due to decimal
+    while($dp > 0){
+	$_=~s/0$//;
+	$dp=$dp-1
+    }
+
+    #Remove decimal point
+    $_=~s/\.//;
+
+    return $_;
+}
+
+
+my $user  = getpwuid($>) || $ENV{USER};
+#my $proxy = "/opt/lcg/hostproxy";
+my $ldap_cert = "/etc/grid-security/ldap/ldapcert.pem";
+my $ldap_key = "/etc/grid-security/ldap/ldapkey.pem";
+
+#$proxy .= ".$user" unless -r $proxy;
+
+my $srminfocommand = "$ARGV[1]/srmclient/bin/srm-storage-element-info"
+		   . " -x509_user_cert=$ldap_cert -x509_user_key=$ldap_key -use_proxy=false";
+$ENV{HOME}         = "/tmp";
+
+##HACK##
+my $run;
+my $total;
+my $avail;
+my $used = 0;
+
+for my $curr_se (@se){
+    $run=0;
+    for my $dn (@dn) {
+        (my $host = $dn) =~ s/^.*,GlueSEUniqueID=([^,]*),.*\n/$1/i;
+        if($host ne $curr_se){
+            next;
+        }
+#print  "$srminfocommand https://$host:8443/srm/infoProvider1_0.wsdl\n";
+#print "@dn"; 
+#exit 1;
+        if (! $run){
+	    open STATUS, ". $ARGV[1]/setup.sh; $srminfocommand https://$host:8443/srm/infoProvider1_0.wsdl 2>&1 |"
+	        or die "Cannot run $srminfocommand: $!\n";
+	    while(<STATUS>) {
+	        if(/totalSpace.*\(([0-9]*) KB\)/) {
+		    #print " total is $1\n";
+		    $total=$1;
+	        }
+	        if(/availableSpace.*\(([0-9]*) KB\)/) {
+		    #print " avail is $1\n";
+		    $avail=$1;
+	        }
+	    }
+	    close STATUS or die "Bad $srminfocommand https://$host:8443/srm/infoProvider1_0.wsdl: status $?\n";
+	    $run=1;
+        }
+
+        if(!defined $total) {
+            $total=0;
+        }
+        if(!defined $avail) {
+            $avail=0;
+        }
+        $used = $total - $avail;
+
+        print "\n";
+        print "$dn";
+        print "GlueSAStateAvailableSpace: $avail\n";
+        print "GlueSAStateUsedSpace: $used\n";
+    }
+}
+
+if(!defined $total) {
+    $total=0;
+}
+if(!defined $avail) {
+    $avail=0;
+}
+
+print "\n";
+foreach my $dn (@se_dns){
+    print "\n";
+    print "$dn";
+    print "GlueSESizeFree: $avail\n";
+    print "GlueSESizeTotal: $total\n"
+                                                                                                                                                             
+}
+print "\n";
+exit 0;

@@ -1,0 +1,156 @@
+#!/usr/bin/perl -w
+# 
+# lcg-info-generic-config - Configures generic information provider
+# 
+# Original version by Laurence.Field@cern.ch
+
+use strict;
+use Getopt::Long;
+use FileHandle;
+
+my $config;
+my $template; 
+
+GetOptions("config=s" => \$config,
+	   "template=s" => \$template);
+if ((! $config ) | (! $template )){
+    print "Usage: $0 -c <config> -t <template>\n";
+    exit 2;
+}
+
+my @template;
+my @config;
+my $fh;
+
+$fh = new FileHandle $config
+    or die "Can't open static ldif file: $config\n";
+@config = <$fh>;
+
+$fh = new FileHandle $template
+    or die "Can't open static ldif file: $template\n";
+@template = <$fh>;
+push @template, "\n";
+
+my @entry;          # A entry from the template.
+my $entry_line;     # A line from the entry, which will form the output line.
+my $compare_line;   # Used to check for multi valued attributes.
+my $attrib;         # The attribute from the entry_line.
+my $config_param;   # The configuartion parameter from the configuration line.
+my $node_type;      # The first parameter after the dn.
+my $config_line;    # A line from the configuration file.
+my $config_value;   # The configuartion value from the configuration line.
+my $dn;             # A dn from the configuration file.
+my $dns;            # A string list of dns.
+my @dns;            # Same as $dns but in an array. 
+my $config_dn;      # The dn in the config file.
+my $temp;           # A temporary variable.
+my @output;         # Contents of the output file.
+
+#Start with an empty entry.
+@entry="";
+
+#No dns found at start.
+$config_dn="use";
+
+for(@template){
+    push @entry, $_;
+    
+    #If blank line found, end of entry, so use entry. 
+    if(/^\s+/){
+	
+        #Get the node type from the line with the dn.
+	$node_type=$entry[1];
+	$node_type=~s/=.*//;
+	chomp($node_type);
+	undef @dns;
+        #Parse the config file and look for the node.
+	for(@config){
+	    $config_line=$_;
+	    $dn=$config_line;
+	    $config_line=~s/=.*//;
+	    $config_line=~s/\s+/ /;
+	    chomp($config_line);
+	    if($node_type eq $config_line){
+		push @dns, $dn;
+	    }
+	}
+        #For each node value found, Parse the entry and substitute the config values.
+	for(@dns){
+	    chomp($node_type);
+	    $dn=$_ ;
+            #Go through each line of the entry.
+	    for(@entry){
+		$entry_line=$_;
+		$compare_line=$entry_line;
+		$attrib=$_;
+		$attrib=~s/:.*$//;
+		chomp($attrib);
+
+		#Get node type and value from dn;    		
+		$config_param=$dn;
+		$config_param=~s/dn://;
+		$config_param=~s/\s//g;
+		$config_param=~s/,.*//;
+		$config_value=$config_param;
+		$config_value=~s/^[^=]*=//;
+		$config_param=~s/=.*//;
+
+		if($attrib eq "dn"){
+		    $compare_line=~s/^.*=,/,/;
+		    $entry_line = $dn . $compare_line;
+		    $entry_line=~s/\n//;
+		}elsif($attrib eq $config_param ){
+		    $entry_line="$config_param: $config_value\n";
+		}else{
+
+		    #Go through the config to find a value to substitute.
+		    $config_dn="use";
+		    for(@config){
+			$config_line=$_;
+		
+			# If there is a blank line define $config_dn
+			if (m/^\s$/){
+			    $config_dn="use";
+			}
+			$config_value=$config_line;
+			$config_value=~s/^[^:]*://;
+			$config_value=~s/^\s*//;
+			$config_param=$config_line;
+			$config_param=~s/:.*$//;
+			chomp($config_param);
+			
+			#If the line is the dn, check if it is the dn used.
+			if ( ($dn eq $config_line)  && ($config_param eq "dn")){
+			    $config_dn=$dn;
+			}elsif($config_param eq "dn"){
+			    undef $config_dn;
+			}
+
+		       if(($attrib eq $config_param) && ($config_dn)){
+
+			   #if for multi valued attributes.
+			   if($compare_line eq $entry_line){
+			       $entry_line=~s/:.*$/: $config_value/;
+			   }elsif($entry_line){
+			       $temp=$entry_line;
+			       $entry_line="$config_param: $config_value\n";
+			       $entry_line=$temp . $entry_line;
+			   }
+			   chomp($entry_line);
+		       }
+		    }
+		}		    
+		push @output, $entry_line;
+	    }
+	    push @output, "\n";
+	}
+	
+	#Create a new entry
+	@entry="";
+    }
+}
+
+print @output;
+
+exit;
+

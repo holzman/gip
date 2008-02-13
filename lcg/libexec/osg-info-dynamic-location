@@ -1,0 +1,75 @@
+#!/usr/bin/env perl
+
+use strict;
+
+my @config;    # Contains the configuration for the information provider.
+my $path;
+my @output;    # ldif output that is sent to std out.
+my @dirs;      # The contents of the path  
+my $ldif_file; # File name for the static ldif file
+my @ldif_file; # Content of the static ldif file
+my $file;      # A .list file
+my @exp_loc;  # The same list but with the attibute prefix
+my $dn;        # A dn found in the static ldif file.
+
+
+# Reads the configuration file
+if ($ARGV[0] && $ARGV[1]) {
+    $ldif_file = $ARGV[0];
+    $path = $ARGV[1];
+} else {
+    print "Usage: $0 <ldif file> <path to grid3-locations.txt file>\n";
+    exit 1
+}
+
+#Finds software locations as specified in grid3-locations.txt
+my $loc_file = "$path/grid3-locations.txt";
+if(-e $loc_file){
+    #my $vo_file_content = slurp($vo_file);
+    #my @vo_list = split /\n/, $vo_file_content;
+     open(LOCFILE,"<$loc_file");
+        while (<LOCFILE>){
+        if(m/^\#/){
+        }else{
+            if(not m/^\#/ and m/\w+/){
+                chomp;
+                #my ($user_tmp, $user_vo) = split /\ /;
+	        my @tmp = split /\ /;
+	        #my $env;
+	        #push @exp_loc, "GlueHostApplicationSoftwareLocation: $_\n";
+	        push @exp_loc, "GlueHostApplicationSoftwareRunTimeEnvironment: $tmp[0]\n";
+            }
+        }
+    }
+    close LOCFILE;
+}
+
+
+#Gets the content of the static ldif file
+open (LDIF, $ldif_file) || die "Cannot open '$ARGV[0]': $!,";
+while (<LDIF>) {
+    push @ldif_file, $_;
+}
+close (LDIF);  	
+
+#Produces the output from the static ldif file and the install software.
+for (@ldif_file){
+    if(/dn:\s+GlueSubClusterUniqueID=/){
+	push @output, "$_";
+	$dn=$_;
+    }elsif(/^$/ && $dn){
+	for(@exp_loc){
+	    push @output, $_;
+	}
+	push @output, "\n";
+	undef $dn;
+    }
+    if (/GlueHostApplicationSoftwareRunTimeEnvironment:/ &&  $dn){
+	#push @output, $_;
+    }
+}
+
+# Prints the output.
+print @output;
+
+exit 0;

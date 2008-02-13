@@ -1,0 +1,274 @@
+#!/usr/bin/env perl
+use strict;
+
+my @output;    # ldif output that is sent to std out.
+my $ldif_file; # File name for the static ldif file
+my @ldif_file; # Content of the static ldif file
+my @dn;        # A dn found in the static lidf file.
+my $pbsHost;
+my $queue;
+my $TotalCPU;
+my $FreeCPU;
+my $TotalJobs;
+my $QueuedJobs;
+my $RunningJobs;
+my $UsedTime;
+my $MaxTime;
+my $WallTime;
+my $Version;
+my $MaxRunningJobs;
+my $Started;
+my $Enabled;
+my $state;
+my $num_pro;
+my $Status;
+#my $Path; #Assumes qstat is in path
+my $site_active=0;
+
+my $dir = `dirname $0`;
+chomp $dir;
+chdir "$dir" or die "Can't cd to $dir: $!\n";
+
+if ($ARGV[0]) {
+    $ldif_file=$ARGV[0];
+} else {
+    print "Usage: $0 <ldif file>\n";
+    exit 1
+}
+
+#Gets the content of the static ldif file
+open (LDIF, $ldif_file) || die "Cannot open '$ldif_file': $!,";
+while (<LDIF>) {
+    push @ldif_file, $_;
+}
+close (LDIF);  	
+
+my @localVOViewdn;
+#Gets the dns.
+for (@ldif_file){
+    if(/dn:\s+GlueCEUniqueID=/){
+	push @dn, "$_";
+    }
+    if(/dn:\s+GlueVOViewLocalID=/){
+        push @localVOViewdn, "$_";
+    }
+
+}
+
+ # Get LRMS version
+open QSTAT, "sge_schedd --help 2>&1 |" or die "Error running qstat.\n";
+
+while(<QSTAT>) {
+    if (/SGE\s+(\S+)/){
+        $Version=$1;
+    }
+}
+close QSTAT;
+                                                                                                                                                             
+$Version || die "Can not obtain pbs version from host\n";
+
+
+# convert tripel hours:minutes:seconds into seconds
+sub convertHhMmSs {
+
+  return $1 * 3600 + $2 * 60 + $3   if   $_[0] =~ /(\d+):(\d+):(\d+)/;
+
+  return ($_[0] ne "-")  ?  $_[0]  :  0;
+
+}
+
+# Get Total and Free CPUs
+$TotalCPU=0;
+$FreeCPU=0;
+my $UsedCPU=0;
+my $tmp;
+open QSTAT, "qstat -f -xml 2>&1 |" or die "Error running qstat.\n";
+     
+while(<QSTAT>) {                                                                          
+    if(m/\s*\<slots_total\>/){
+            ($tmp) = $_=~ /\s*\<slots_total\>(\d+)\<\/slots_total\>\s*/;
+	    if(!defined $tmp){
+		$tmp=0;
+	    }
+	     $TotalCPU += $tmp;
+    }
+   if(m/\s*\<slots_used\>/){
+            ($tmp) = $_=~ /\s*\<slots_used\>(\d+)\<\/slots_used\>\s*/;
+            if(!defined $tmp){
+                $tmp=0;
+            }
+             $UsedCPU += $tmp;
+    }
+}
+$FreeCPU=$TotalCPU-$UsedCPU;
+
+close QSTAT;
+
+#$Version || die "Can not obtain pbs version from host\n";
+# User VO inverse mapping
+my $vo_file = "../../monitoring/grid3-user-vo-map.txt";
+my %user_vo_map;
+my $user_tmp;
+my $user_id;
+my $user_vo;
+if(-e $vo_file){
+                                                                                                                                                             
+        open(VOFILE,"<$vo_file");
+        while (<VOFILE>){
+            if(m/^\#/ || m/^\s*$/){ #Ignore Comments
+                                                                                                                                                             
+            }else{
+                chomp;
+                ($user_id, $user_vo) = split /\ /;
+                if(defined $user_vo && defined $user_id){
+                        ($user_tmp, $user_vo,)= $user_vo =~ /(us)?(\w+)/;
+                        $user_vo_map{$user_id} = "$user_vo";
+                }
+             }
+        }
+}else{
+#print "VO list file $vo_file not found\n";
+$user_vo_map{'osg'} = 'osg';
+}
+
+
+                                                                               
+# Get Total and waiting jobs per VO
+
+my $vo;
+my %jobs;
+my $phase=1;
+my $job_status;
+my $number_slots=0;
+open QSTAT, "qstat -xml 2>&1 |" or die "Error running qstat. (file)\n";
+
+while(<QSTAT>){
+    if($phase<=3 && (m/\<JB_owner\>/ || m/\<state\>/ ||  m/\<slot[s]?/)){
+        $phase+=1;
+        if(m/\<JB_owner\>/){
+            ($tmp,$user_id) = $_=~ /\s*\<JB_owner\>(nice\-user\.)?([a-zA-Z]+)\<\/JB_owner\>\s*/;
+        }elsif(m/\<state\>/){
+            ($job_status) = $_ =~ /\s*\<state\>([a-zA-Z])+\<\/state\>\s*/;
+        }elsif(m/\<slots\>/){
+	    ($number_slots) = $_ =~ /\s*\<slot[s]?\>(\d+)\<\/slot[s]?\>\s*/;
+	}
+
+    }
+    if($phase==4){
+        if(exists $user_vo_map{$user_id}){
+                $vo = $user_vo_map{$user_id};
+                ($tmp, $vo) = $vo =~ /(us)?(\w+)/;
+        }else{
+                ($tmp, $vo) = $user_id =~ /(us)?([a-zA-Z]+)\d*/;
+        }
+
+        if(! exists $jobs{$vo}){
+            $jobs{$vo}->{'idle'}=0;
+            $jobs{$vo}->{'running'}=0;
+        }
+
+        if($job_status =~ /R/i){
+            $jobs{$vo}{'running'}+=$number_slots;
+        }else{
+            $jobs{$vo}{'idle'}+=$number_slots;
+       }
+       $phase=1;
+    }
+
+}
+
+close QSTAT;                                                                               
+
+read_site_active_info();
+
+for(@dn){
+    push @output, $_;
+    $vo=$_;
+    $vo=~s/,.*//;
+    $vo=~s/^.*-//;
+    chomp $vo;
+
+    push @output, "GlueCEInfoLRMSVersion: $Version\n";
+    push @output, "GlueCEInfoTotalCPUs: $TotalCPU\n";
+    push @output, "GlueCEStateFreeCPUs: $FreeCPU\n";
+    #It represents the maximum number of jobs taht can be running at a given time
+    #Since we dont know how to estimate it for any VO. It is set as the total number of CPUs
+    push @output, "GlueCEPolicyAssignedJobSlots: $TotalCPU\n"; 
+    push @output, "GlueCEStateFreeJobSlots: $FreeCPU\n"; 
+
+
+    if(! exists $jobs{$vo}->{'idle'}){
+        $jobs{$vo}->{'idle'}=0;
+    }
+    if(! exists $jobs{$vo}->{'running'}){
+        $jobs{$vo}->{'running'}=0;
+    }
+    $TotalJobs=$jobs{$vo}->{'idle'}+$jobs{$vo}->{'running'};
+    $QueuedJobs=$jobs{$vo}->{'idle'};
+    $RunningJobs=$jobs{$vo}->{'running'};
+    $UsedTime=0;
+
+
+    push @output,"GlueCEStateTotalJobs: $TotalJobs\n";
+    push @output,"GlueCEStateWaitingJobs: $QueuedJobs\n";
+    push @output,"GlueCEStateRunningJobs: $RunningJobs\n";
+
+    if($site_active==1){
+        push @output, "GlueCEStateStatus: Production";
+    }else{
+        push @output, "GlueCEStateStatus: Closed";
+    }
+
+    
+    push @output, "\n";
+}
+
+print @output;
+
+my %glueVOViewLocal;
+$glueVOViewLocal{GlueCEStateFreeJobSlots} = $FreeCPU;
+$glueVOViewLocal{GlueCEPolicyAssignedJobSlots} = $TotalCPU;
+foreach my $dns (@localVOViewdn)
+{
+    print "$dns";
+  #  dn: GlueVOViewLocalID=atlas,GlueCEUniqueID=rsgrid3.its.uiowa.edu:2119/jobmanager-condor-atlas,mds-vo-name=local,o=grid
+    ($tmp, $vo) = split('/', $dns);
+    ($vo,$tmp) = split(',',$vo);
+    ($tmp,$tmp,$vo) = split ('-',$vo);
+
+    if(! exists $jobs{$vo}->{'idle'}){
+        $jobs{$vo}->{'idle'}=0;
+    }
+    if(! exists $jobs{$vo}->{'running'}){
+        $jobs{$vo}->{'running'}=0;
+    }
+    $glueVOViewLocal{GlueCEStateRunningJobs} = $jobs{$vo}->{'running'};
+    $glueVOViewLocal{GlueCEStateWaitingJobs} = $jobs{$vo}->{'idle'};
+    $glueVOViewLocal{GlueCEStateTotalJobs} = $jobs{$vo}->{'idle'}+$jobs{$vo}->{'running'};
+    print map { "$_: $glueVOViewLocal{$_}\n" } keys %glueVOViewLocal;
+    print "\n";
+                                                                                                                                                             
+}
+
+
+exit;
+
+sub read_site_active_info
+{
+    my $conf = "../../MIS-CI/etc/grid-site-state-info";
+
+    if (-e $conf){
+        my $output = `. $conf; echo \$grid_site_state_bit`;
+        my @outList = split /\n/, $output;
+        if(exists $outList[0]){
+            $site_active = $outList[0];
+        }else{
+            $site_active = 0;
+        }
+    }else{
+        $site_active=0;
+    }
+
+}
+
+

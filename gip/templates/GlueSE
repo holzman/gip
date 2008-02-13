@@ -1,0 +1,108 @@
+dn: GlueSEUniqueID=%(seUniqueID)s,Mds-Vo-name=local,o=grid
+objectClass: GlueSETop
+objectClass: GlueSE
+objectClass: GlueInformationService
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueSEUniqueID: 
+GlueSEName:
+GlueSEImplementationName: 
+GlueSEImplementationVersion: 
+GlueSEStatus: 
+GlueSETotalOnlineSize: 
+GlueSETotalNearlineSize: 
+GlueSEUsedOnlineSize: 
+GlueSEUsedNearlineSize: 
+GlueSEPort:
+GlueSESizeTotal:
+GlueSESizeFree:
+GlueSEArchitecture:
+GlueInformationServiceURL: 
+GlueForeignKey: GlueSiteUniqueID=
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+
+dn: GlueSEAccessProtocolLocalID=%(accessProtocolID)s,GlueSEUniqueID=%(seUniqueID)s,Mds-Vo-name=local,o=grid
+objectClass: GlueSETop
+objectClass: GlueSEAccessProtocol
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueSEAccessProtocolLocalID: %(accessProtocolID)s
+GlueSEAccessProtocolType: %(protocol)s
+GlueSEAccessProtocolEndpoint: %(endpoint)s
+GlueSEAccessProtocolCapability: %(capability)s
+GlueSEAccessProtocolMaxStreams: %(maxStreams)s
+GlueSEAccessProtocolVersion: %(version)s
+GlueSEAccessProtocolPort: %(port)s
+GlueSEAccessProtocolSupportedSecurity: %(security)s
+GlueChunkKey: GlueSEUniqueID=%(seUniqueID)s
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+
+dn: GlueSEControlProtocolLocalID=%(cpLocalID)s,GlueSEUniqueID=%(seUniqueID)s,Mds-Vo-name=local,o=grid
+objectClass: GlueSETop
+objectClass: GlueSEControlProtocol
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueSEControlProtocolLocalID: %(cpLocalID)s
+GlueSEControlProtocolType: %(protocolType)s
+GlueSEControlProtocolEndpoint: %(endpoint)s
+GlueSEControlProtocolCapability: %(capability)s
+GlueSEControlProtocolVersion: %(version)s
+GlueChunkKey: GlueSEUniqueID=%(seUniqueID)s
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+
+dn: GlueSALocalID=,GlueSEUniqueID=,Mds-Vo-name=local,o=grid
+objectClass: GlueSATop
+objectClass: GlueSA
+objectClass: GlueSAPolicy
+objectClass: GlueSAState
+objectClass: GlueSAAccessControlBase
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueSARoot: 
+GlueSAPath:
+GlueSAType:  
+GlueSALocalID:
+GlueSAName: 
+GlueSATotalOnlineSize: 
+GlueSAUsedOnlineSize: 
+GlueSAFreeOnlineSize: 
+GlueSAReservedOnlineSize: 
+GlueSATotalNearlineSize: 
+GlueSAUsedNearlineSize: 
+GlueSAFreeNearlineSize: 
+GlueSAReservedNearlineSize: 
+GlueSARetentionPolicy: 
+GlueSAAccessLatency: 
+GlueSAExpirationMode: 
+GlueSACapability:  
+GlueSAPolicyMaxFileSize: 
+GlueSAPolicyMinFileSize: 
+GlueSAPolicyMaxData: 
+GlueSAPolicyMaxNumFiles: 
+GlueSAPolicyMaxPinDuration: 
+GlueSAPolicyQuota: 
+GlueSAPolicyFileLifeTime: 
+GlueSAStateAvailableSpace: 
+GlueSAStateUsedSpace: 
+GlueSAAccessControlBaseRule:  
+GlueChunkKey: GlueSEUniqueID=
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+
+dn: GlueVOInfoLocalID=,GlueSALocalID=,GlueSEUniqueID=,Mds-Vo-name=local,o=grid
+objectClass: GlueSATop
+objectClass: GlueVOInfo
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueChunkKey: GlueSALocalID=
+GlueVOInfoLocalID: 
+GlueVOInfoName: 
+GlueVOInfoPath: 
+GlueVOInfoTag: 
+GlueVOInfoAccessControlBaseRule: 
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+

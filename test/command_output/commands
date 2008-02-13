@@ -1,0 +1,6 @@
+#Format:
+#<filename>: <corresponding commandline invocation>
+qstat_Q_f: qstat -Q -f
+qstat_B_f: qstat -B -f
+qstat: qstat
+pbsnodes_a: pbsnodes -a

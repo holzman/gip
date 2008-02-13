@@ -1271,7 +1271,7 @@ sub create_se_config_file
 
 
 
-        my $service_contents="\ndn: GlueServiceUniqueID=httpg://$se_host:8443/srm/managerv$se_version,mds-vo-name=local,o=grid\n"
+        my $service_contents="\ndn: GlueServiceUniqueID=httpg://$se_host:8443/srm/managerv$se_version\n"
             ."GlueServiceUniqueID: httpg://$se_host:8443/srm/managerv$se_version\n"
             ."GlueServiceName: $se_host\n"
             ."GlueServiceType: srm_v$se_version\n"
@@ -1279,7 +1279,6 @@ sub create_se_config_file
             ."GlueServiceEndpoint: httpg://$se_host:8443/srm/managerv$se_version\n"
             ."GlueServiceURI: httpg://$se_host:8443/srm/managerv$se_version\n"
             ."GlueServiceAccessPointURL: httpg://$se_host:8443/srm/managerv$se_version\n"
-            ."GlueServiceStatus: OK\n"
             ."GlueServiceStatus: OK\n"
             ."GlueServiceStatusInfo: not tested\n"
             ."GlueServiceWSDL: UNDEFINED\n"

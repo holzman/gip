@@ -10,9 +10,9 @@ GlueServiceVersion: %(version)s
 GlueServiceEndpoint: %(endpoint)s
 GlueServiceURI: %(uri)s
 GlueServiceAccessPointURL: %(url)s
-GlueServiceStatus: UNKNOWN
-GlueServiceStatusInfo: UNKNOWN
-GlueServiceWSDL: UNDEFINED
+GlueServiceStatus: %(status)s
+GlueServiceStatusInfo: %(statusInfo)s
+GlueServiceWSDL: %(wsdl)s
 GlueServiceSemantics: UNDEFINED
 GlueServiceStartTime: 1970-01-01T00:00:00Z
 GlueServiceOwner: OSG

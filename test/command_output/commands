@@ -4,3 +4,4 @@ qstat_Q_f: qstat -Q -f
 qstat_B_f: qstat -B -f
 qstat: qstat
 pbsnodes_a: pbsnodes -a
+wsrf_query: wsrf-query -a -s https://osg-gw-5.t2.ucsd.edu:9443/wsrf/services/ManagedJobFactoryService --key '{http://www.globus.org/namespaces/2004/10/gram/job}ResourceID' Fork "//*[local-name()='version']"

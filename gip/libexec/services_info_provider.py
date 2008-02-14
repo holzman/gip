@@ -102,17 +102,20 @@ def print_srm(cp, admin):
             hostname = socket.getfqdn(hostname)
         except:
             pass
-        info = {"serviceID"   : endpoint,
-                "serviceName" : endpoint,
-                "serviceType" : "SRM",
-                "uri"         : endpoint,
-                "url"         : endpoint,
-                "acbr"        : acbr,
-                "siteID"      : sitename,
-                "cpLocalID" : doorname,
-                "seUniqueID" : sename,
+        info = {"serviceID"    : endpoint,
+                "serviceName"  : endpoint,
+                "serviceType"  : "SRM",
+                "uri"          : endpoint,
+                "url"          : endpoint,
+                "acbr"         : acbr,
+                "siteID"       : sitename,
+                "cpLocalID"    : doorname,
+                "seUniqueID"   : sename,
                 "protocolType" : "SRM",
-                "capability" : "control",
+                "capability"   : "control",
+                "status"       : "UNKNOWN",
+                "statusInfo"   : "UNKNOWN",
+                "wsdl"         : "UNDEFINED",
                }
 
         info['version'] = "1.1.0"

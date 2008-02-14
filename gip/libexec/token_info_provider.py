@@ -88,10 +88,14 @@ def print_VOinfo(p, cp):
         else:
             continue
 
+        path = getPath(cp, vo)
+        if path == "UNDEFINED":
+            continue
+
         info = {"voInfoID" : "%s:%s" % (cvo, description),
                 "seUniqueID" : seUniqueID,
                 "name" : "%s:%s" % (cvo, description),
-                "path" : getPath(cp, vo),
+                "path" : path,
                 "tag" : description,
                 "acbr" : acbr,
                 "saLocalID" : "%s:%s:%s"%(cvo, retentionpolicy, accesslatency),
@@ -230,6 +234,8 @@ def print_SA(p, cp):
 
 
         path = getPath(cp, vo)
+        if path == "UNDEFINED":
+            continue
         saLocalID = "%s:%s:%s" % (vo, retentionpolicy, accesslatency)
         info = {"saLocalID"        : saLocalID,
                 "seUniqueID"       : seUniqueID,
@@ -265,7 +271,8 @@ def main():
     """
     try:
         cp = config("$GIP_LOCATION/etc/dcache_storage.conf", \
-                    "$GIP_LOCATION/etc/dcache_password.conf")
+                    "$GIP_LOCATION/etc/dcache_password.conf", \
+                    "$GIP_LOCATION/etc/tape_info.conf")
         try:
             p=connect(cp)
             print_VOinfo(p, cp)

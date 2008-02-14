@@ -1,6 +1,11 @@
 
-import os, ConfigParser, sys, re
+import os
+import ConfigParser
+import sys
+import re
+
 from UserDict import UserDict
+
 import gip_testing
 from gip_testing import runCommand
 
@@ -87,21 +92,46 @@ def config_compat(cp):
         override = cp.getboolean("gip", "override")
     except:
         override = False
-    osg = Attributes("$VDT_LOCATION/monitoring/osg-attributes.conf")
+    osg = None
+    try:
+        osg = Attributes("$VDT_LOCATION/monitoring/osg-attributes.conf")
+    except Exception, e:
+        log.error("Unable to open OSG attributes: %s" % str(e))
+        osg = None
 
-    # Write the attributes from the flat attributes file to the
-    # ConfigParser object, which is organized by sections.
-    __write_config(cp, override, osg["OSG_HOSTNAME"], "ce", "name")
-    __write_config(cp, override, osg["OSG_DEFAULT_SE"], "se", "name")
-    __write_config(cp, override, osg["OSG_SITE_NAME"], "site", "name")
-    __write_config(cp, override, osg["OSG_SITE_CITY"], "site", "city")
-    __write_config(cp, override, osg["OSG_SITE_COUNTRY"], "site", "country")
-    __write_config(cp, override, osg["OSG_SITE_LONGITUDE"], "site", "longitude")
-    __write_config(cp, override, osg["OSG_SITE_LATITUDE"], "site", "latitude")
-    __write_config(cp, override, osg["OSG_APP"], "osg_dirs", "app")
-    __write_config(cp, override, osg["OSG_DATA"], "osg_dirs", "data")
-    __write_config(cp, override, osg["OSG_WN_TMP"], "osg_dirs", "wn_tmp")
-    __write_config(cp, override, osg["OSG_JOB_MANAGER"], "ce", "job_manager")
+    if osg != None:
+        # Write the attributes from the flat attributes file to the
+        # ConfigParser object, which is organized by sections.
+        __write_config(cp, override, osg["OSG_HOSTNAME"], "ce", "name")
+        __write_config(cp, override, osg["OSG_DEFAULT_SE"], "se", "name")
+        __write_config(cp, override, osg["OSG_SITE_NAME"], "site", "name")
+        __write_config(cp, override, osg["OSG_SITE_CITY"], "site", "city")
+        __write_config(cp, override, osg["OSG_SITE_COUNTRY"], "site", "country")
+        __write_config(cp, override, osg["OSG_SITE_LONGITUDE"], "site",
+                       "longitude")
+        __write_config(cp, override, osg["OSG_SITE_LATITUDE"], "site",
+                       "latitude")
+        __write_config(cp, override, osg["OSG_APP"], "osg_dirs", "app")
+        __write_config(cp, override, osg["OSG_DATA"], "osg_dirs", "data")
+        __write_config(cp, override, osg["OSG_WN_TMP"], "osg_dirs", "wn_tmp")
+        __write_config(cp, override, osg["OSG_JOB_MANAGER"], "ce", 
+                       "job_manager")
+
+    # Do the same but with the gip stuff.
+    try:
+        gip = Attributes("$VDT_LOCATION/monitoring/gip-attributes.conf")
+    except Exception, e:
+        log.error("Unable to open GIP attributes: %s" % str(e))
+        return
+
+    if gip["OSG_GIP_SIMPLIFIED_SRM"].lower() == "y":
+        #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
+        simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]
+        __write_config(cp, override, simple_path, "vo", "default")
+    for key in gip.keys():
+        if key.startswith("OSG_GIP_VO_DIR"):
+            vo, dir = gip[key].split(',')
+            __write_config(cp, override, dir, "vo", vo)
 
 def __write_config(cp, override, new_val, section, option):
     """
@@ -205,6 +235,8 @@ def getLogger(name):
         return FakeLogger()
     else: 
         return logging.getLogger(name)
+
+log = getLogger("GIP.common")
 
 def addToPath(new_element):
     """

@@ -128,7 +128,8 @@ def print_srm(cp, admin):
 def main():
     try:
         cp = config("$GIP_LOCATION/etc/dcache_storage.conf", \
-            "$GIP_LOCATION/etc/dcache_password.conf")
+            "$GIP_LOCATION/etc/dcache_password.conf", \
+            "$GIP_LOCATION/etc/tape_info.conf")
         print_se(cp)
         admin = connect_admin(cp)
         print_access_protocols(cp, admin)

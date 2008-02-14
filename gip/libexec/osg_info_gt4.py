@@ -52,7 +52,7 @@ def print_gt4(cp):
         if fp.close() != None:
             raise RuntimeError("WSRF query failed against %s" % endpoint)
         working = True
-        status = "Production"
+        status = "OK"
         statusInfo = "Container responded after %.2f seconds." % stopwatch
     except Exception, e:
         log.error("Error during wsrf-query: %s" % str(e))
@@ -61,9 +61,10 @@ def print_gt4(cp):
         stopwatch += time.time()
         if abs(stopwatch - timeout) > 1:
             statusInfo = "Client-side failure: %s" % str(e)
+            status = "Unknown"
         else:
             statusInfo = "Container query timed out after %i seconds." % timeout
-        status = "Closed"
+            status = "Critical"
 
     try:
         dom = parseString(fp)

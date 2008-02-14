@@ -1636,7 +1636,7 @@ sub create_generic_config_file
                              ."provider_dir = $lcg_location/var/gip/provider\n"
                              ."freshness = 300\n"
                              ."cache_ttl = 600\n"
-                             ."response = 5\n"
+                             ."response = 60\n"
                              ."timeout = 150\n";
 
         safe_write($config_file, $contents);

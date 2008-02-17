@@ -116,6 +116,7 @@ def print_srm(cp, admin):
                 "status"       : "UNKNOWN",
                 "statusInfo"   : "UNKNOWN",
                 "wsdl"         : "UNDEFINED",
+                "startTime"    : "1970-01-01T00:00:00Z",
                }
 
         info['version'] = "1.1.0"

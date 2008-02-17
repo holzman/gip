@@ -3,8 +3,10 @@
 import os
 import sys
 import signal
+import socket
+import urlparse
 import time
-from xml.dom.minidom import parse
+from xml.dom.minidom import parseString
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getTemplate, getLogger, runCommand
@@ -17,8 +19,19 @@ except:
 
 log = getLogger("GIP.gt4")
 
-wsrf_cmd = """wsrf-query -a -s %s --key '{http://www.globus.org/namespaces/2004/10/gram/job}ResourceID' Fork "//*[local-name()='version']\""""
+wsrf_cmd = """wsrf-query -a -s %s --key '{http://www.globus.org/namespaces/2004/10/gram/job}ResourceID' Fork "//*[local-name()='ServiceMetaDataInfo']\""""
 
+ns1 = "http://mds.globus.org/metadata/2005/02"
+
+def fixUrl(url):
+    parts = list(urlparse.urlsplit(url))
+    if parts[1].find(":") >= 0:
+        host, port = parts[1].split(":")
+        host = socket.getfqdn(host)
+        parts[1] = "%s:%s" % (host, port)
+    else:
+        parts[1] = socket.getfqdn(parts[1])
+    return urlparse.urlunsplit(parts)
 
 def handler():
     raise Exception("Timeout occurred while waiting for the container's" \
@@ -67,9 +80,13 @@ def print_gt4(cp):
             status = "Critical"
 
     try:
-        dom = parseString(fp)
-        version = str(dom.firstChild.firstChild.data)
+        dom = parseString(info)
+        startTime = str(dom.getElementsByTagNameNS(ns1, "startTime")[0].\
+                        firstChild.data)
+        version = str(dom.getElementsByTagNameNS(ns1, "version")[0].firstChild.\
+                      data)
     except:
+        startTime = "1970-01-01T00:00:00Z"
         version = "UNKNOWN"
 
     acbr = ''
@@ -89,6 +106,7 @@ def print_gt4(cp):
             "statusInfo"  : statusInfo,
             "acbr"        : acbr,
             "siteID"      : siteID,
+            "startTime"   : startTime,
            }
 
     print serviceTemplate % info

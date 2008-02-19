@@ -87,7 +87,8 @@ def print_srm(cp, admin):
     sitename = cp.get("se", "name")
     #vos = [i.strip() for i in cp.get("vo", "vos").split(',')]
     vos = voListStorage(cp)
-    serviceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
+    ServiceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
+    ControlTemplate = getTemplate("GlueSE", "GlueSEControlProtocolLocalID")
     acbr_tmpl = '\nGlueServiceAccessControlRule: %s'
     acbr = ''
     for vo in vos:
@@ -104,30 +105,40 @@ def print_srm(cp, admin):
             hostname = socket.getfqdn(hostname)
         except:
             pass
-        info = {"serviceID"    : endpoint,
-                "serviceName"  : endpoint,
+        info = {
                 "serviceType"  : "SRM",
-                "uri"          : endpoint,
-                "url"          : endpoint,
-                "acbr"         : acbr,
+                "acbr"         : acbr[1:],
                 "siteID"       : sitename,
                 "cpLocalID"    : doorname,
                 "seUniqueID"   : sename,
                 "protocolType" : "SRM",
                 "capability"   : "control",
-                "status"       : "UNKNOWN",
+                "status"       : "Production",
                 "statusInfo"   : "UNKNOWN",
-                "wsdl"         : "UNDEFINED",
+                "wsdl"         : "http://sdm.lbl.gov/srm-wg/srm.v1.1.wsdl",
+                "semantics"    : "http://sdm.lbl.gov/srm-wg/doc/srm.v1.0.pdf",
                 "startTime"    : "1970-01-01T00:00:00Z",
                }
 
         info['version'] = "1.1.0"
-        info['endpoint'] = "httpg://%s:%i/srm/managerv1" % (hostname, int(port))
+        endpoint = "httpg://%s:%i/srm/managerv1" % (hostname, int(port))
+        info['endpoint'] = endpoint
+        info['serviceID'] = endpoint
+        info['uri'] = endpoint
+        info['url'] = endpoint
+        info['serviceName'] = endpoint
         print ControlTemplate % info
         print ServiceTemplate % info
 
-        info['version'] = "2.0.0"
-        info['endpoint'] = "httpg://%s:%i/srm/managerv2" % (hostname, int(port))
+        info['version'] = "2.2.0"
+        endpoint = "httpg://%s:%i/srm/managerv2" % (hostname, int(port))
+        info['endpoint'] = endpoint
+        info['serviceID'] = endpoint
+        info['uri'] = endpoint
+        info['url'] = endpoint
+        info['serviceName'] = endpoint
+        info["wsdl"] = "http://sdm.lbl.gov/srm-wg/srm.v2.2.wsdl"
+        info["semantics"] = "http://sdm.lbl.gov/srm-wg/doc/SRM.v2.2.pdf"
         print ControlTemplate % info
         print ServiceTemplate % info
 

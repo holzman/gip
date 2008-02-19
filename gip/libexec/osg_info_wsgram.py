@@ -9,13 +9,7 @@ import time
 from xml.dom.minidom import parseString
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getTemplate, getLogger, runCommand
-
-try:
-    from gip_common import voList
-except:
-    def voList():
-        return ['cms', 'osg', 'fmri', 'grase', 'gridex', 'ligo', 'ivdgl', 'gadu', 'GLOW', 'cdf', 'nanohub', 'dzero', 'sdss', 'gpn', 'engage', 'atlas']
+from gip_common import config, getTemplate, getLogger, runCommand, voList
 
 log = getLogger("GIP.gt4")
 
@@ -90,7 +84,7 @@ def print_gt4(cp):
         version = "UNKNOWN"
 
     acbr = ''
-    for vo in voList():
+    for vo in voList(cp):
         acbr += "GlueCEAccessControlBaseRule: VO:%s\n" % vo
     acbr = acbr[:-1]
 
@@ -107,6 +101,7 @@ def print_gt4(cp):
             "acbr"        : acbr,
             "siteID"      : siteID,
             "startTime"   : startTime,
+            "semantics"   : "UNKNOWN",
            }
 
     print serviceTemplate % info

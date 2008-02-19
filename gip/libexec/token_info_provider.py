@@ -88,7 +88,7 @@ def print_VOinfo(p, cp):
         else:
             continue
 
-        path = getPath(cp, vo)
+        path = getPath(cp, cvo)
         if path == "UNDEFINED":
             continue
 
@@ -100,7 +100,7 @@ def print_VOinfo(p, cp):
                 "acbr" : acbr,
                 "saLocalID" : "%s:%s:%s"%(cvo, retentionpolicy, accesslatency),
                }
-        print VOinfo % info
+        print VOInfo % info
 
 def print_SA_compat(cp):
     """
@@ -114,6 +114,7 @@ def print_SA_compat(cp):
     try:
         used, available = getSESpace(cp)
     except Exception, e:
+        raise
         log.error("Unable to get SE space: %s" % str(e))
         used = 0
         available = 0
@@ -151,6 +152,7 @@ def print_SA(p, cp):
 
     command = SA_command % (cp.getint('dcache_config', 'min_lifetime')*1000)
     rows=execute(p, command)
+    saTemplate = getTemplate("GlueSE", "GlueSALocalID")
 
     seUniqueID = cp.get("se", "unique_name")
 
@@ -259,7 +261,7 @@ def print_SA(p, cp):
                 "acbr"             : acbr,
                }
 
-        print SA % info
+        print saTemplate % info
 
 def main():
     """
@@ -279,6 +281,7 @@ def main():
             print_SA(p, cp)
             p.close()
         except Exception, e:
+            #raise
             print >> sys.stderr, e
         print_SA_compat(cp)
     except:

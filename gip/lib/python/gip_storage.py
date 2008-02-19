@@ -1,4 +1,9 @@
 
+import string
+import traceback
+import sys
+import re
+
 from gip_common import getLogger
 import dCacheAdmin
 
@@ -37,8 +42,8 @@ def execute(p, command):
     """
     Given a cursor, execute a command
     """
-    psycopg2_extras = __import__("psycopg2.extras")
-    curs = p.cursor(cursor_factory=psycopg2_extras.DictCursor)
+    from psycopg2.extras import DictCursor
+    curs = p.cursor(cursor_factory=DictCursor)
     curs.execute(command)
     rows = curs.fetchall()
     return rows
@@ -178,7 +183,7 @@ def lookupPoolStorageInfo( connection, log ) :
     return listOfPools
 
 
-def getSESpace(cp, admin=None, gb=False, total=True):
+def getSESpace(cp, admin=None, gb=False, total=False):
     if admin == None:
         admin = connect_admin(cp)
     pools = lookupPoolStorageInfo(admin, log)

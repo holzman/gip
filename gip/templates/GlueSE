@@ -98,7 +98,7 @@ objectClass: GlueVOInfo
 objectClass: GlueKey
 objectClass: GlueSchemaVersion
 GlueChunkKey: GlueSALocalID=%(saLocalID)s
-GlueChunkKey: GlueSEUniqueID=%s
+GlueChunkKey: GlueSEUniqueID=%(seUniqueID)s
 GlueVOInfoLocalID: %(voInfoID)s
 GlueVOInfoName: %(name)s
 GlueVOInfoPath: %(path)s

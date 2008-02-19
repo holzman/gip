@@ -8,7 +8,7 @@ import urlparse
 from xml.dom.minidom import parseString
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getTemplate, getLogger, runCommand
+from gip_common import config, getTemplate, getLogger, runCommand, voList
 
 try:
     from gip_common import voList
@@ -74,7 +74,7 @@ def print_gt4(cp):
         uri = fixUrl(uri)
 
         acbr = ''
-        for vo in voList():
+        for vo in voList(cp):
             acbr += "GlueCEAccessControlBaseRule: VO:%s\n" % vo
         acbr = acbr[:-1]
 
@@ -91,6 +91,7 @@ def print_gt4(cp):
                 "acbr"        : acbr,
                 "siteID"      : siteID,
                 "startTime"   : "1970-01-01T00:00:00Z",
+                "semantics"   : "UNKNOWN",
                }
 
         print serviceTemplate % info

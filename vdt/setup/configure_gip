@@ -1257,7 +1257,7 @@ sub create_se_config_file
            $contents=$contents."\ndn: GlueSEControlProtocolLocalID=srm_v2,GlueSEUniqueID=$se_host\n"
                               ."GlueSEControlProtocolType: srm\n"
                               ."GlueSEControlProtocolEndpoint: httpg://$se_host:8443/srm/managerv2\n"
-                              ."GlueSEControlProtocolVersion: 2\n"
+                              ."GlueSEControlProtocolVersion: 2.2.0\n"
                               ."GlueSEControlProtocolCapability: control\n"
                               ."GlueChunkKey: GlueSEUniqueID=$se_host\n\n";
         }
@@ -1265,7 +1265,7 @@ sub create_se_config_file
         $contents=$contents."\ndn: GlueSEControlProtocolLocalID=srm_v1,GlueSEUniqueID=$se_host\n"
                            ."GlueSEControlProtocolType: srm\n"
                            ."GlueSEControlProtocolEndpoint: httpg://$se_host:8443/srm/managerv1\n"
-                           ."GlueSEControlProtocolVersion: 1\n"
+                           ."GlueSEControlProtocolVersion: 1.1.0\n"
                            ."GlueSEControlProtocolCapability: control\n"
                            ."GlueChunkKey: GlueSEUniqueID=$se_host\n\n";
 
@@ -1288,6 +1288,7 @@ sub create_se_config_file
         foreach $vo (@vo_list) {
                                 $service_contents=$service_contents."GlueServiceAccessControlRule: $vo\n";
         }
+        $service_contents=$service_content."GlueForeignKey: GlueSiteUniqueID=$fullhost\n";
         $service_contents=$service_contents."\n";
 
         my $service_config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-service.conf";

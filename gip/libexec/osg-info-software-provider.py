@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
-import re, sys, os
+import os
+import re
+import sys
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getLogger, getTemplate
@@ -11,7 +13,8 @@ def print_Locations(cp):
     app_dir = cp.get("osg_dirs", "app")
     ce_name = cp.get('ce', 'name')
     template = getTemplate("GlueCluster", "GlueLocationLocalID")
-    fp = open("%s/grid3-locations.txt" % app_dir, 'r')
+    path = "%s/grid3-locations.txt" % app_dir
+    fp = open(path, 'r')
     for line in fp:
         line = line.strip()
         info = line.split()

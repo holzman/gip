@@ -5,7 +5,7 @@ import os, sys, re, socket
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getTemplate, getLogger
 from gip_storage import connect_admin, getSESpace, getSEVersion, getSETape, \
-    seHasTape
+    seHasTape, voListStorage
 
 def print_se(cp):
     try:
@@ -70,21 +70,23 @@ def print_access_protocols(cp, admin):
             securityinfo = "none"
         else:
             securityinfo = "none"
-        info = {'accessProtocolId': doorname,
+        info = {'accessProtocolID': doorname,
                 'seUniqueID'      : sename,
                 'protocol'        : protocol,
                 'endpoint'        : endpoint,
                 'capability'      : 'file transfer',
                 'maxStreams'      : 10,
                 'security'        : securityinfo,
-                'port'            : port
+                'port'            : port,
+                'version'         : version,
                }
         print accessTemplate % info
 
 def print_srm(cp, admin):
     sename = cp.get("se", "unique_name")
-    sitename = cp.get("dcache_config", "site_name")
-    vos = [i.strip() for i in cp.get("vo", "vos").split(',')]
+    sitename = cp.get("se", "name")
+    #vos = [i.strip() for i in cp.get("vo", "vos").split(',')]
+    vos = voListStorage(cp)
     serviceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
     acbr_tmpl = '\nGlueServiceAccessControlRule: %s'
     acbr = ''

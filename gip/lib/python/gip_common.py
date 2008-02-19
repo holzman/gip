@@ -296,3 +296,29 @@ def getTemplate(template, name):
         raise ValueError("Unable to find %s in template %s" % (name, template))
     return buffer[:-1]
 
+def voList(cp, vo_map=None):
+    """
+    Return the list of valid VOs for this install.  This data is taken from
+    the vo mapper and the blacklist / whitelist in the "vo" section of the
+    config parser `cp` is applied.
+    """
+    if vo_map == None:
+        vo_map = VoMapper(cp)
+    vos = []
+    for vo in vo_map.voc:
+        vo = vo.lower()
+        if vo not in vos:
+            vos.append(vo)
+    blacklist = [i.strip() for i in cp.get("vo", "vo_blacklist").split(',')]
+    whitelist = [i.strip() for i in cp.get("vo", "vo_whitelist").split(',')]
+    for vo in whitelist:
+        vo = vo.lower()
+        if vo not in vos:
+            vos.append(vo)
+    for vo in blacklist:
+        vo = vo.lower()
+        if vo in vos:
+            vos.remove(vo)
+    return vos
+
+

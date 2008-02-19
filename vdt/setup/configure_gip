@@ -1279,6 +1279,7 @@ sub create_se_config_file
                                 $service_contents=$service_contents."GlueServiceAccessControlRule: $vo\n";
         }
         $service_contents=$service_contents."\n";
+        $service_contents=$service_content."GlueForeignKey: GlueSiteUniqueID=$fullhost\n";
 
         my $service_config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-service.conf";
         safe_write($service_config_file, $service_contents);

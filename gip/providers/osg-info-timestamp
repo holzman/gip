@@ -4,7 +4,7 @@ import sys, time, os
 
 # Make sure the gip_common libraries are in our path
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getTemplate, getLogger
+from gip_common import config, getTemplate, getLogger, printTemplate
 
 # Retrieve our logger in case of failure
 log = getLogger("GIP.timestamp")
@@ -32,7 +32,7 @@ def main():
                }
 
         # Spit out our template, fill it with the appropriate info.
-        print template % info
+        printTemplate(template, info)
 
     except Exception, e:
         # Log error, then report it via stderr.

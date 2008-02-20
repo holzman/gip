@@ -1,4 +1,13 @@
 
+"""
+gip_common - 
+
+A set of general-purpose functions to help GIP plugin/provider authors write
+probes which are consistent and correct.
+
+This module should generally follow PEP 8 coding guidelines.
+"""
+
 import os
 import ConfigParser
 import sys
@@ -19,6 +28,17 @@ if py23:
 loglevel = "info"
 
 def check_gip_location():
+    """
+    This function checks to make sure that GIP_LOCATION is set and exists.
+    If GIP_LOCATION is not set and $VDT_LOCATION/gip exists, then it adds:
+        GIP_LOCATION=$VDT_LOCATION/gip
+    to the process's environment
+
+    It raises ValueErrors if neither situation holds.
+
+    This function is automatically run by the *config* function, so it is
+    generally not necessary for provider authors to use this directly.
+    """
     if "GIP_LOCATION" not in os.environ:
         vdt_loc = os.path.expandvars("$VDT_LOCATION/gip")
         if "VDT_LOCATION" in os.environ:
@@ -52,7 +72,13 @@ def check_testing_environment():
 def config(*args):
     """
     Load up the config file.  It's taken from the command line, option -c
-    or --config; default is gip.conf
+    or --config; default is $GIP_LOCATION/etc/gip.conf
+
+    If python 2.3 is not available, the command line option is not checked.
+
+    If any arguments are supplied to this function, they will be interpreted
+    as filenames for additional config files to read.  If the filename 
+    considers environmental variables, they will be expanded.
     """
     check_gip_location()
     check_testing_environment()
@@ -295,6 +321,20 @@ def getTemplate(template, name):
     if not recording:
         raise ValueError("Unable to find %s in template %s" % (name, template))
     return buffer[:-1]
+
+def printTemplate(template, info):
+    """
+    Print out the LDIF contained in template using the values from the 
+    dictionary `info`.
+    
+    The different entries of the template are matched up to keys in the `info`
+    dictionary; the entries' values are the dictionary values.
+
+    To see what keys `info` needs for your template, read the template as
+    found in
+        $GIP_LOCATION/templates
+    """
+    print template % info
 
 def voList(cp, vo_map=None):
     """

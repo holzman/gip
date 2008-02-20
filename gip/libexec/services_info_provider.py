@@ -7,18 +7,34 @@ from gip_common import config, getTemplate, getLogger
 from gip_storage import connect_admin, getSESpace, getSEVersion, getSETape, \
     seHasTape, voListStorage
 
+log = getLogger("GIP.services_info_provider")
+
 def print_se(cp):
     try:
         admin = connect_admin(cp)
-        used, available, total = getSESpace(cp, admin, total=True, gb=True)
-        version = getSEVersion
         status = "Production"
-    except:
+    except Exception, e:
+        log.error("Error occurred when connecting to the admin interface: %s" % \
+                  str(e))
+        status = "Closed"
+    if status == "Production":
+        try:
+            used, available, total = getSESpace(cp, admin, total=True, gb=True)
+        except Exception, e:
+            log.error("Error occurred when querying the total space: %s" % \
+                      str(e))
+            used, available, total = 0, 0, 0
+        try:
+            version = getSEVersion(cp, admin)
+        except Exception, e:
+            log.error("Error occurred when querying the version number: %s" % \
+                      str(e))
+            version = "UNKNOWN"
+    else:
         used = 0
         available = 0
         total = 0
-        version = "1.8.0"
-        status = "Closed"
+        version = "UNKNOWN"
     seTemplate = getTemplate("GlueSE", "GlueSEUniqueID")
     if seHasTape(cp):
         arch = "tape"
@@ -26,8 +42,9 @@ def print_se(cp):
         arch = "multi-disk"
     nu, nf, nt = getSETape(cp) 
     siteUniqueID = cp.get("site", "unique_name")
+    siteName = cp.get("site", "name")
     bdiiEndpoint = cp.get("bdii", "endpoint") + ("/mds-vo-name=%s," \
-        "mds-vo-name=local,o=grid" % siteUniqueID)
+        "mds-vo-name=local,o=grid" % siteName)
     info = { 'seName'         : cp.get("se", "name"),
              'seUniqueID'     : cp.get("se", "unique_name"),
              'implementation' : 'dcache',

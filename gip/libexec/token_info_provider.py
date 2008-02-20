@@ -33,17 +33,28 @@ WHERE
 
 SA_command = """
 SELECT 
-  vogroup, P.name, L.name, usedspaceinbytes, 
-  sizeinbytes-usedspaceinbytes, sizeinbytes, linkgroupid, creationtime,
-  lifetime
+  LG.name, P.name, L.name, sum(usedspaceinbytes), 
+  sum(sizeinbytes-usedspaceinbytes), sum(sizeinbytes), linkgroupid, 
+  min(creationtime), max(lifetime)
 FROM srmspace
 JOIN srmretentionpolicy P on P.id=srmspace.retentionpolicy 
 JOIN srmaccesslatency L on L.id=srmspace.accesslatency
+JOIN srmlinkgroup LG on LG.id=srmspace.linkgroupid
 WHERE
   state=0 AND
   description<>'null' AND
   vogroup<>'null' AND
   ( (creationtime+lifetime)>%d or lifetime<0 )
+GROUP BY
+  LG.name, P.name, L.name, retentionpolicy, accesslatency, linkgroupid
+"""
+
+SA_VOs_command = """
+SELECT 
+  vogroup, vorole 
+FROM srmlinkgroupvos
+WHERE
+  linkgroupid=%i
 """
 
 def print_VOinfo(p, cp):
@@ -114,7 +125,7 @@ def print_SA_compat(cp):
     try:
         used, available = getSESpace(cp)
     except Exception, e:
-        raise
+        #raise
         log.error("Unable to get SE space: %s" % str(e))
         used = 0
         available = 0
@@ -163,28 +174,30 @@ def print_SA(p, cp):
         stateAvailable = 0
 
     for row in rows:
-        if not row[0].startswith('/'):
-            row[0] = '/' + row[0]
-        vo = row[0][1:].split('/')[0].lower()
+        #if not row[0].startswith('/'):
+        #    row[0] = '/' + row[0]
+        #vo = row[0][1:].split('/')[0].lower()
+        link_group = row[0]
         retentionpolicy = row[1].lower()
         accesslatency = row[2].lower()
         linkgroupid = long(row[6])
 
         # Calculate the expiration time.
-        lifetime = long(row[7])
-        creationtime = long(row[8])
-        if lifetime >= 0:
-            # I apologize for this line.  I create a datetime object from
-            # the creation timestamp + lifetime timestamp, offset by the
-            # timezone.  Then, I use the strftime to convert it to the
-            # proper time format.
-            expirationtime = (datetime.datetime.fromtimestamp((creationtime + \
-                lifetime)/1000) + datetime.timedelta(0, time.timezone)). \
-                strftime('%Y-%m-%dT%H:%M:%SZ')
-            # Who said python can't read like perl?
-        else:
-            # If lifetime is negative, the space reservation won't expire
-            expirationtime = 'neverExpire'
+        #lifetime = long(row[7])
+        #creationtime = long(row[8])
+        #if lifetime >= 0:
+        #    # I apologize for this line.  I create a datetime object from
+        #    # the creation timestamp + lifetime timestamp, offset by the
+        #    # timezone.  Then, I use the strftime to convert it to the
+        #    # proper time format.
+        #    expirationtime = (datetime.datetime.fromtimestamp((creationtime + \
+        #        lifetime)/1000) + datetime.timedelta(0, time.timezone)). \
+        #        strftime('%Y-%m-%dT%H:%M:%SZ')
+        #    # Who said python can't read like perl?
+        #else:
+        #    # If lifetime is negative, the space reservation won't expire
+        #    expirationtime = 'neverExpire'
+        expirationtime = 'neverExpire'
 
         used = str(long(row[3])/kilo)
         free = str(long(row[4])/kilo)
@@ -221,24 +234,48 @@ def print_SA(p, cp):
             to = str((freespace+usedspace)/giga)
 
         # Load up the tape statistics from the config file
-        if cp.has_option("tape_info", vo):
-            un, fn = [i.strip() for i in cp.get("tape_info", vo).split(',')]
-            tn = str(long(un) + long(fn))
-        else:
-            #Or, if it's not there, ignore it!
-            tn = '0'
-            un = '0'
-            fn = '0'
-        un, fn, tn = getSETape(cp, vo=vo)
-
-        acbr = "GlueSAAccessControlBaseRule: " + vo + "\n" + \
-            "GlueSAAccessControlBaseRule: VO:"+vo
+        #if cp.has_option("tape_info", link_group):
+        #    un, fn = [i.strip() for i in cp.get("tape_info", link_group).\
+        #              split(',')]
+        #    tn = str(long(un) + long(fn))
+        #else:
+        #    #Or, if it's not there, ignore it!
+        #    tn = '0'
+        #    un = '0'
+        #    fn = '0'
+        un, fn, tn = getSETape(cp, vo=link_group)
 
 
-        path = getPath(cp, vo)
+        # Do the hard work of determining the acbr:
+        acbr = ''
+        rows3 = execute(p, SA_VOs_command % linkgroupid)
+        access_perms = []
+        for acbrrow in rows3:
+            vog, vor = acbrrow
+            if vog == '*':
+                vos = voListStorage(cp)
+                for vo in vos:
+                    vo_entry = "VO:%s" % vo
+                    if vo not in access_perms:
+                        access_perms.append(vo)
+                    if vo_entry not in access_perms:
+                        access_perms.append(vo_entry)
+            elif vor == '*':
+                vog_entry = "VOMS:%s" % vog
+                if vog_entry not in access_perms:
+                    access_perms.append(vog_entry)
+            else:
+                voms_entry = "VOMS:%s/Role=%s" % (vog, vor)
+                if voms_entry not in access_perms:
+                    access_perms.append(voms_entry)
+        for entry in access_perms:
+            acbr += "GlueSAAccessControlBaseRule: %s\n" % entry
+        acbr = acbr[:-1]
+
+        path = getPath(cp, '')
         if path == "UNDEFINED":
             continue
-        saLocalID = "%s:%s:%s" % (vo, retentionpolicy, accesslatency)
+        saLocalID = "%s:%s:%s" % (link_group, retentionpolicy, accesslatency)
         info = {"saLocalID"        : saLocalID,
                 "seUniqueID"       : seUniqueID,
                 "root"             : "/",
@@ -281,7 +318,7 @@ def main():
             print_SA(p, cp)
             p.close()
         except Exception, e:
-            #raise
+            raise
             print >> sys.stderr, e
         print_SA_compat(cp)
     except:

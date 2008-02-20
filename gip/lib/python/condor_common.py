@@ -1,4 +1,11 @@
 
+"""
+Common function which provide information about the Condor batch system.
+
+This module interacts with condor through the following commands:
+  - condor_q
+  - condor_status
+"""
 from gip_common import runCommand, voList
 
 condor_version = "condor_version"
@@ -8,10 +15,22 @@ condor_prio = "condor_config_val GROUP_PRIO_FACTOR_group_%(group)s"
 condor_status = "condor_status -pool %(central_manager)s"
 
 def condorCommand(command, cp, info={}):
+    """
+    Execute a command in the shell.  Returns a file-like object
+    containing the stdout of the command
+
+    Use this function instead of executing directly (os.popen); this will
+    allow you to hook your providers into the testing framework.
+   """
     cmd = command % info
     return runCommand(cmd)
 
 def getLrmsInfo(cp):
+    """
+    Get information from the LRMS (batch system).
+
+    Returns the version of the condor client on your system.
+    """
     for line in condorCommand(condor_version, cp):
         if line.startswith("$CondorVersion:"):
             return line[15:].strip()

@@ -15,7 +15,7 @@ def pbsOutputFilter(fp):
     lines off at 80 chars and continues the line on the next line.  For
     example:
 
-Server: red
+    Server: red
     server_state = Active
     server_host = red.unl.edu
     scheduling = True
@@ -188,6 +188,15 @@ def getQueueInfo(cp):
     return queueInfo
 
 def parseNodes(cp, version):
+    """
+    Parse the node information from PBS.  Using the output from pbsnodes, 
+    determine:
+    
+       * The number of total CPUs in the system.
+       * The number of free CPUs in the system.
+       * A dictionary mapping PBS queue names to a tuple containing the
+         (totalCPUs, freeCPUs).
+    """
     totalCpu = 0
     freeCpu = 0
     queueCpu = {}

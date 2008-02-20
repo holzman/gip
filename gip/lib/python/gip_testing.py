@@ -1,4 +1,11 @@
 
+"""
+Testing framework for the GIP.
+
+This allows one to replace output from command-line invocations with saved
+outputs from the test/command_output directory.
+"""
+
 import os
 
 replace_command = False

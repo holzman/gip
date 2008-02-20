@@ -1,6 +1,6 @@
 
 """
-gip_common - 
+Common functions for GIP providers and plugins.
 
 A set of general-purpose functions to help GIP plugin/provider authors write
 probes which are consistent and correct.
@@ -179,6 +179,12 @@ def getOsgAttributes():
 class VoMapper:
     """
     This class maps a username to VO.
+
+    After it loads the username -> VO mapping, it can be used as a dictionary.
+
+    The map_location variable holds the location of the user-to-vo map; this
+    defaults to vo.user_vo_map in the config file.  The `parse` method
+    re-parses the file.
     """
 
     def __init__(self, cp):

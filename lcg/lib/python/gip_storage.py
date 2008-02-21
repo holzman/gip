@@ -1,4 +1,9 @@
 
+import string
+import traceback
+import sys
+import re
+
 from gip_common import getLogger
 import dCacheAdmin
 
@@ -37,8 +42,8 @@ def execute(p, command):
     """
     Given a cursor, execute a command
     """
-    psycopg2_extras = __import__("psycopg2.extras")
-    curs = p.cursor(cursor_factory=psycopg2_extras.DictCursor)
+    from psycopg2.extras import DictCursor
+    curs = p.cursor(cursor_factory=DictCursor)
     curs.execute(command)
     rows = curs.fetchall()
     return rows
@@ -178,7 +183,7 @@ def lookupPoolStorageInfo( connection, log ) :
     return listOfPools
 
 
-def getSESpace(cp, admin=None, gb=False, total=True):
+def getSESpace(cp, admin=None, gb=False, total=False):
     if admin == None:
         admin = connect_admin(cp)
     pools = lookupPoolStorageInfo(admin, log)
@@ -215,5 +220,43 @@ def getSETape(cp, vo="total"):
     return un, fn, tn
 
 def getSEVersion(cp, admin=None):
-    raise NotImplementedError()
+    """
+    Get the version info from the dCache system.
+
+    @param cp: A config parser object which holds the dCache login information
+    @type cp: ConfigParser
+    @param admin: An instance of the L{dCacheAdmin} interface.  If it is None,
+        then `cp` will be used to log in to the admin interface.
+    @type admin: None or L{dCacheAdmin}
+    @return: The dCache version number; UNKNOWN if it can't be determined.
+    """
+    if admin == None:
+        admin = connect_admin(cp)
+    pools = admin.execute("PoolManager", "cm ls")
+    pool = None
+    for line in pools.split('\n'):
+        pool = line.split('=')[0]
+        break
+    if pool == None:
+        return "UNKNOWN"
+    pool_info = admin.execute(pool, "info")
+    version = None
+    for line in pool_info.split('\n'):
+        line_info = line.split()
+        if line_info[0].strip() == 'Version':
+            version = line_info[2].strip()
+            break
+    if version == None:
+        return "UNKNOWN"
+    version_re = re.compile("(.*)-(.*)-(.*)-(.*)-(.*)\((.*)\)")
+    m = version_re.match(version)
+    if m:
+        kind, major, minor, bugfix, patch, revision = m.groups()
+        if kind != "production":
+            return "%s.%s.%s-%s (r%s), %s" % (major, minor, bugfix, patch,
+                revision, kind)
+        else:
+            return "%s.%s.%s-%s" % (major, minor, bugfix, patch)
+    else:
+        return version
 

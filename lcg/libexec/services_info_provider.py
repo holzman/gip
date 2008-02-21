@@ -5,20 +5,36 @@ import os, sys, re, socket
 sys.path.append(os.path.expandvars("$VDT_LOCATION/lcg/lib/python"))
 from gip_common import config, getTemplate, getLogger
 from gip_storage import connect_admin, getSESpace, getSEVersion, getSETape, \
-    seHasTape
+    seHasTape, voListStorage
+
+log = getLogger("GIP.services_info_provider")
 
 def print_se(cp):
     try:
         admin = connect_admin(cp)
-        used, available, total = getSESpace(cp, admin, total=True, gb=True)
-        version = getSEVersion
         status = "Production"
-    except:
+    except Exception, e:
+        log.error("Error occurred when connecting to the admin interface: %s"% \
+                  str(e))
+        status = "Closed"
+    if status == "Production":
+        try:
+            used, available, total = getSESpace(cp, admin, total=True, gb=True)
+        except Exception, e:
+            log.error("Error occurred when querying the total space: %s" % \
+                      str(e))
+            used, available, total = 0, 0, 0
+        try:
+            version = getSEVersion(cp, admin)
+        except Exception, e:
+            log.error("Error occurred when querying the version number: %s" % \
+                      str(e))
+            version = "UNKNOWN"
+    else:
         used = 0
         available = 0
         total = 0
-        version = "1.8.0"
-        status = "Closed"
+        version = "UNKNOWN"
     seTemplate = getTemplate("GlueSE", "GlueSEUniqueID")
     if seHasTape(cp):
         arch = "tape"
@@ -26,8 +42,9 @@ def print_se(cp):
         arch = "multi-disk"
     nu, nf, nt = getSETape(cp) 
     siteUniqueID = cp.get("site", "unique_name")
+    siteName = cp.get("site", "name")
     bdiiEndpoint = cp.get("bdii", "endpoint") + ("/mds-vo-name=%s," \
-        "mds-vo-name=local,o=grid" % siteUniqueID)
+        "mds-vo-name=local,o=grid" % siteName)
     info = { 'seName'         : cp.get("se", "name"),
              'seUniqueID'     : cp.get("se", "unique_name"),
              'implementation' : 'dcache',
@@ -70,21 +87,25 @@ def print_access_protocols(cp, admin):
             securityinfo = "none"
         else:
             securityinfo = "none"
-        info = {'accessProtocolId': doorname,
+        info = {'accessProtocolID': doorname,
                 'seUniqueID'      : sename,
                 'protocol'        : protocol,
                 'endpoint'        : endpoint,
                 'capability'      : 'file transfer',
                 'maxStreams'      : 10,
                 'security'        : securityinfo,
-                'port'            : port
+                'port'            : port,
+                'version'         : version,
                }
         print accessTemplate % info
 
 def print_srm(cp, admin):
     sename = cp.get("se", "unique_name")
-    sitename = cp.get("dcache_config", "site_name")
-    vos = [i.strip() for i in cp.get("vo", "vos").split(',')]
+    sitename = cp.get("se", "name")
+    #vos = [i.strip() for i in cp.get("vo", "vos").split(',')]
+    vos = voListStorage(cp)
+    ServiceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
+    ControlTemplate = getTemplate("GlueSE", "GlueSEControlProtocolLocalID")
     serviceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
     acbr_tmpl = '\nGlueServiceAccessControlRule: %s'
     acbr = ''
@@ -102,18 +123,42 @@ def print_srm(cp, admin):
             hostname = socket.getfqdn(hostname)
         except:
             pass
-        info = {"serviceID"   : endpoint,
-                "serviceName" : endpoint,
-                "serviceType" : "SRM",
-                "uri"         : endpoint,
-                "url"         : endpoint,
-                "acbr"        : acbr,
-                "siteID"      : sitename,
-                "cpLocalID" : doorname,
-                "seUniqueID" : sename,
+        info = {
+                "serviceType"  : "SRM",
+                "acbr"         : acbr[1:],
+                "siteID"       : sitename,
+                "cpLocalID"    : doorname,
+                "seUniqueID"   : sename,
                 "protocolType" : "SRM",
-                "capability" : "control",
+                "capability"   : "control",
+                "status"       : "Production",
+                "statusInfo"   : "UNKNOWN",
+                "wsdl"         : "http://sdm.lbl.gov/srm-wg/srm.v1.1.wsdl",
+                "semantics"    : "http://sdm.lbl.gov/srm-wg/doc/srm.v1.0.pdf",
+                "startTime"    : "1970-01-01T00:00:00Z",
                }
+
+        info['version'] = "1.1.0"
+        endpoint = "httpg://%s:%i/srm/managerv1" % (hostname, int(port))
+        info['endpoint'] = endpoint
+        info['serviceID'] = endpoint
+        info['uri'] = endpoint
+        info['url'] = endpoint
+        info['serviceName'] = endpoint
+        print ControlTemplate % info
+        print ServiceTemplate % info
+
+        info['version'] = "2.2.0"
+        endpoint = "httpg://%s:%i/srm/managerv2" % (hostname, int(port))
+        info['endpoint'] = endpoint
+        info['serviceID'] = endpoint
+        info['uri'] = endpoint
+        info['url'] = endpoint
+        info['serviceName'] = endpoint
+        info["wsdl"] = "http://sdm.lbl.gov/srm-wg/srm.v2.2.wsdl"
+        info["semantics"] = "http://sdm.lbl.gov/srm-wg/doc/SRM.v2.2.pdf"
+        print ControlTemplate % info
+        print ServiceTemplate % info
 
         info['version'] = "1.1.0"
         info['endpoint'] = "httpg://%s:%i/srm/managerv1" % (hostname, int(port))

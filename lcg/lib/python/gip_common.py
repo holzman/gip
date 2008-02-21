@@ -92,7 +92,7 @@ def config(*args):
             help='Configuration file.', default='gip.conf')
         (options, args) = p.parse_args()
         files += [i.strip() for i in options.config.split(',')]
-    files += ["$GIP_LOCATION/etc/gip.conf"]
+    files = ["$GIP_LOCATION/etc/gip.conf"] + files
     files = [os.path.expandvars(i) for i in files]
     cp.read(files)
     
@@ -139,6 +139,7 @@ def config_compat(cp):
                        "longitude")
         __write_config(cp, override, osg["OSG_SITE_LATITUDE"], "site",
                        "latitude")
+        __write_config(cp, override, osg["OSG_HOSTNAME"], "site", "unique_name")
         __write_config(cp, override, osg["OSG_APP"], "osg_dirs", "app")
         __write_config(cp, override, osg["OSG_DATA"], "osg_dirs", "data")
         __write_config(cp, override, osg["OSG_WN_TMP"], "osg_dirs", "wn_tmp")
@@ -151,6 +152,8 @@ def config_compat(cp):
     except Exception, e:
         log.error("Unable to open GIP attributes: %s" % str(e))
         return
+
+    __write_config(cp, override, gip["OSG_GIP_SE_HOST"], "se", "unique_name")
 
     if gip["OSG_GIP_SIMPLIFIED_SRM"].lower() == "y":
         #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
@@ -165,6 +168,8 @@ def __write_config(cp, override, new_val, section, option):
     """
     Helper function for config_compat; should not be called directly.
     """
+    if not cp.has_section(section):
+        cp.add_section(section)
     if override and (not cp.has_option(section, option)):
         cp.set(section, option, new_val)
     elif (not override):

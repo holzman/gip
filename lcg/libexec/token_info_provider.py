@@ -244,7 +244,6 @@ def print_SA(p, cp):
         #    un = '0'
         #    fn = '0'
         un, fn, tn = getSETape(cp, vo=link_group)
-        un, fn, tn = getSETape(cp, vo=vo)
 
 
         # Do the hard work of determining the acbr:

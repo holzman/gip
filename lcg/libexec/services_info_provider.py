@@ -101,16 +101,17 @@ def print_access_protocols(cp, admin):
 
 def print_srm(cp, admin):
     sename = cp.get("se", "unique_name")
-    sitename = cp.get("se", "name")
+    sitename = cp.get("site", "unique_name")
     #vos = [i.strip() for i in cp.get("vo", "vos").split(',')]
     vos = voListStorage(cp)
     ServiceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
     ControlTemplate = getTemplate("GlueSE", "GlueSEControlProtocolLocalID")
     serviceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
-    acbr_tmpl = '\nGlueServiceAccessControlRule: %s'
+    acbr_tmpl = '\nGlueServiceAccessControlRule: %s' \
+                '\nGlueServiceAccessControlRule: VO:%s'
     acbr = ''
     for vo in vos:
-        acbr += acbr_tmpl % vo
+        acbr += acbr_tmpl % (vo, vo)
     results = admin.execute("srm-LoginBroker", "ls")
     for line in results.split("\n"):
         if len(line.strip()) == 0:

@@ -29,7 +29,11 @@ Would you like to edit any of your subclusters?
 """
 
 save_progress = """
-Would you like to save your progress?
+Would you like to save your progress (y/n)?
+"""
+
+save_progress_done = """
+Configuration is done.  Would you like to save the results (y/n)?
 """
 
 post_save = """
@@ -118,5 +122,103 @@ exit this script and please re-run $VDT_LOCATION/monitoring/configure-osg.sh
  - OSG_WN_TMP: %(OSG_WN_TMP)s
  - OSG_JOB_MANAGER (Job manager for your site): %(OSG_JOB_MANAGER)s
 
+"""
+
+explain_dynamic = """
+The GIP can auto-configure dCache SEs by utilizing the admin interface and
+the SRM Postgres database.  This allows your site to use the GIP advertising
+to its fullest.  
+
+It will also allow you report accurate space usage information to the OSG.
+
+The CE will need access to the following resources:
+   * dCache admin interface
+   * Postgres server on the SRM node.
+You may need to configure your database and/or firewall to allow this.
+
+Would you like to continue (y/n) :
+"""
+
+admin_start = """
+We will now begin the configuration of the dCache admin interface connection.
+"""
+
+admin_test = """
+We will now test the dCache admin interface.
+"""
+
+admin_failure = """
+Failed to connect to the admin interface!  The command used was:
+
+%s
+
+Please test this on your own from this node.  Would you like to 
+reconfigure (y/n)? 
+"""
+
+admin_success = """
+Admin connection succeeded!
+"""
+
+admin_host = """
+What is the hostname of your dCache admin interface?
+"""
+
+admin_port = """
+What port is the admin interface running on?
+"""
+
+admin_user = """
+What is the admin user name?
+"""
+
+admin_password = """
+What is the admin password?
+"""
+
+db_start = """
+We will now begin the configuration of the Postgres DB connection.
+"""
+
+db_missing_bindings = """
+You do not appear to have the Postgres-Python bindings (psycopg2) installed.
+This component will not be functional until they are installed.
+"""
+
+db_test = """
+We will now test the Postgres DB connection.
+"""
+
+db_failure = """
+The DB connection failed.  The command attempted was:
+
+%s
+
+Please try on your own.
+Would you like to reconfigure (y/n)?
+"""
+
+db_success = """
+The DB connection succeeded.
+"""
+
+db_host = """
+What is the hostname of your SRM Postgres DB?
+"""
+
+db_port = """
+What DB port should be used?
+"""
+
+db_db = """
+What is the SRM database name?
+"""
+
+db_user = """
+What is the SRM database user?
+"""
+
+db_passwd = """
+What is the password for the SRM database?
 """
 

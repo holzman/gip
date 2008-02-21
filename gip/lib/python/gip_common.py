@@ -163,6 +163,8 @@ def __write_config(cp, override, new_val, section, option):
     """
     Helper function for config_compat; should not be called directly.
     """
+    if not cp.has_section(section):
+        cp.add_section(section)
     if override and (not cp.has_option(section, option)):
         cp.set(section, option, new_val)
     elif (not override):

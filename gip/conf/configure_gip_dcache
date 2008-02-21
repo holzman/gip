@@ -1,0 +1,90 @@
+#!/usr/bin/env python
+
+"""
+Configuration script for the dCache information provider
+"""
+
+import sys
+import os
+import socket
+
+sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+from gip_common import config, getOsgAttributes
+from gip_storage import connect_admin, connect
+from user_input import *
+
+q = GipQuestions()
+
+def config_admin_interface(ask):
+    """
+    Get the parameters for the admin interface, then test the connection.
+    """
+    print q.admin_start
+    ask(q.admin_host, "dcache_admin", "hostname", validHostname)
+    ask(q.admin_port, "dcache_admin", "port", validPort)
+    ask(q.admin_user, "dcache_admin", "username")
+    ask.password(q.admin_password, "dcache_admin", "password")
+    if not ask.cp.has_option("dcache_admin", "cipher"):
+        ask.cp.set("dcache_admin", "cipher", "blowfish")
+    print q.admin_test
+    try:
+        connect_admin(ask.cp)
+        print q.admin_success
+    except:
+        cp = ask.cp
+        cmd = "ssh -l %s -c %s -p %s %s" % (cp.get("dcache_admin", "username"),
+            cp.get("dcache_admin", "cipher"),
+            cp.get("dcache_admin", "port"),
+            cp.get("dcache_admin", "hostname"))
+        if ask(q.admin_failure % cmd, None, None, makeBoolean):
+            return config_admin_interface(ask)
+
+def config_postgres(ask):
+    print q.db_start
+    ask(q.db_host, "dcache_config", "pghost", validHostname)
+    ask(q.db_port, "dcache_config", "pgport", validPort)
+    ask(q.db_db, "dcache_config", "database")
+    ask(q.db_user, "dcache_config", "dbuser")
+    ask.password(q.db_passwd, "dcache_config", "dbpasswd") 
+    print q.db_test
+    try:
+        connect(ask.cp)
+        print q.db_success
+    except:
+        cp = ask.cp
+        cmd = "psql -U %s -h %s -p %s -W %s" % (cp.get("dcache_config", 
+            "dbuser"),
+            cp.get("dcache_config", "pghost"),
+            cp.get("dcache_config", "pgport"),
+            cp.get("dcache_config", "database"))
+        if ask(q.db_failure % cmd, None, None, makeBoolean):
+            return config_postgres(ask)
+
+
+def config_dcache(ask):
+    """
+    Configure the dCache information provider.
+    """
+    if not ask(q.explain_dynamic, None, None, makeBoolean):
+        return
+    config_admin_interface(ask)
+    config_postgres(ask)
+
+
+def main():
+    cp = config()
+    ask = InputHandler(cp)
+    try:
+        config_dcache(ask)
+    except:
+        if ask(q.save_progress, None, None, makeBoolean):
+            save(cp)
+            print q.post_save
+        sys.exit(1)
+    if ask(q.save_progress_done, None, None, makeBoolean):
+        save(cp)
+        print q.post_save
+
+if __name__ == '__main__':
+    main()
+

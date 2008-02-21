@@ -1,5 +1,19 @@
 
-import os, sys
+"""
+A simple module for handling user input to configure the GIP.
+
+The GIP uses simple question-and-answer based scripts to attempt to create
+a valid configuration for a site.  This module takes care of:
+
+  * Asking the user for input (even for passwords).
+  * Simple validation functions for the returned input.
+  * Separation of programming code and text questions for the user.
+"""
+
+import os
+import sys
+import socket
+import getpass
 
 # GNU readline is usually only available on Linux
 try:
@@ -15,16 +29,30 @@ class InputHandler:
     def __call__(self, *args, **kw):
         return self.ask(*args, **kw)
 
-    def ask(self, question, section, option, *verify):
-        try:
-            old_val = cp.get(section, option)
-        except:
+    def password(self, *args, **kw):
+        kw['password'] = True
+        return self.ask(*args, **kw)
+
+    def ask(self, question, section, option, *verify, **kw):
+        password = kw.get("password", False)
+        if section == None or option == None:
             old_val = None
+        else:
+            try:
+                old_val = self.cp.get(section, option)
+            except:
+                #raise
+                old_val = None
         if question[-1] != ' ':
             question += ' '
-        if old_val != None:
+        if old_val != None and not password:
             question += '[%s] ' % str(old_val)
-        answer = raw_input(question)
+        if password:
+            answer = getpass.getpass(question)
+        else:
+            answer = raw_input(question)
+        if len(answer.strip()) == 0:
+            answer = old_val
         if len(verify) > 0:
             try:
                 if len(verify) > 1:
@@ -35,6 +63,10 @@ class InputHandler:
                 #print e
                 print "Invalid answer!  Please try again."
                 return self.ask(question, section, option, *verify)
+        if section and not self.cp.has_section(section):
+            self.cp.add_section(section)
+        if section and option:
+            self.cp.set(section, option, str(answer))
         return answer
 
     def pick(self, question, list):
@@ -73,6 +105,34 @@ def makeBoolean(answer):
         return False
     raise ValueError("Did not pass a boolean value.")
 
+def makeInt(answer):
+    """
+    Make sure the anwer to the question is an integer.
+    """
+    try:
+        return int(answer)
+    except:
+        raise ValueError("Not a valid integer.")
+
+def validHostname(answer):
+    """
+    Verify that the question's answer is a valid hostname.
+    """
+    try:
+        socket.gethostbyname(answer)
+    except:
+        raise ValueError("That does not appear to be a valid hostname.")
+    return answer
+
+def validPort(answer):
+    """
+    Verify that the question's answer is a valid port number.
+    """
+    number = makeInt(answer)
+    if number >= 0 and number <= 65535:
+        return number
+    raise ValueError("A port must be between 0 and 65535")
+
 class GipQuestions:
 
     def __init__(self):
@@ -85,4 +145,22 @@ class GipQuestions:
 
     def __getattr__(self, attr_name):
         return getattr(self.__info, attr_name)
+
+def save(cp):
+    """
+    Save the information in the ConfigParser to gip.conf
+    """
+    bkp_num = os.path.expandvars("$GIP_LOCATION/etc/gip.conf.backup.%i")
+    bkp = os.path.expandvars("$GIP_LOCATION/etc/gip.conf.backup")
+    save_point = os.path.expandvars("$GIP_LOCATION/etc/gip.conf")
+    backup_name = None
+    if os.path.exists(save_point):
+        backup_name = bkp
+        if os.path.exists(bkp):
+            counter = 1
+            while os.path.exists(bkp_num % counter):
+                counter += 1
+            backup_name = bkp_num % counter
+        os.rename(save_point, backup_name)
+    cp.write(open(save_point, 'w'))
 

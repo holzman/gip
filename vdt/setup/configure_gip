@@ -112,12 +112,15 @@ my %vo_access_roots; ############
 my $se_data;
 my $disk=1;
 my $srm=0;
+my $dynamic_dcache=0;
 my $gums=1;
 my %se_access;
 my $sa_path;
 my $se_host='srmhost';
 my $se_name; ##########
 my $se_version;
+my $se_control_version;
+my $service_content;
 my $fullhost;
 my %user_vo_map;
 my %pbsQueues;
@@ -392,7 +395,7 @@ sub read_osg_attributes_info
     my $gip_conf = "$vdt_location/monitoring/gip-attributes.conf";
 
     if (-e $gip_conf){
-        my $output = `echo $gip_conf; . $gip_conf; echo \$OSG_GIP_BATCH; echo \$OSG_GIP_SRM; echo \$OSG_GIP_DISK; echo \$OSG_GIP_SE_NAME; echo \$OSG_GIP_SE_HOST; echo \$OSG_GIP_SA_PATH; echo \$OSG_GIP_SE_DISK; echo \$OSG_GIP_DATA; echo \$OSG_GIP_GUMS; echo \$OSG_GIP_SIMPLIFIED_SRM; echo \$OSG_GIP_SIMPLIFIED_SRM_PATH; echo \$OSG_GIP_SE_VERSION`;
+        my $output = `echo $gip_conf; . $gip_conf; echo \$OSG_GIP_BATCH; echo \$OSG_GIP_SRM; echo \$OSG_GIP_DISK; echo \$OSG_GIP_SE_NAME; echo \$OSG_GIP_SE_HOST; echo \$OSG_GIP_SA_PATH; echo \$OSG_GIP_SE_DISK; echo \$OSG_GIP_DATA; echo \$OSG_GIP_GUMS; echo \$OSG_GIP_SIMPLIFIED_SRM; echo \$OSG_GIP_SIMPLIFIED_SRM_PATH; echo \$OSG_GIP_SE_VERSION; echo \$OSG_GIP_DYNAMIC_DCACHE`;
         my @outList = split /\n/, $output;
         $batch   = &remove_quotes($outList[1]);
         $srm     = &remove_quotes($outList[2]);
@@ -406,7 +409,7 @@ sub read_osg_attributes_info
         $simplified_srm = &remove_quotes($outList[10]);
         $simplified_srm_path = &remove_quotes($outList[11]);
         $se_version = &remove_quotes($outList[12]);
-
+        $dynamic_dcache = &remove_quotes($outList[13]);
         $scinfo{sc_number}=`. $gip_conf; echo \$OSG_GIP_SC_NUMBER;`;
 		  for(my $i=1; $i<=$scinfo{sc_number};$i++) {
             my ($scname,$scvendor,$scmodel,$scclock,$scnumpcpus,$scnumlcpus,$scramsize,$scinbound,$scoutbound,$scnodes)=`. $gip_conf; echo \$SC_NAME; echo \$SC_VENDOR; echo \$SC_MODEL; echo \$SC_CLOCK; echo \$SC_NUMPCPUS; echo \$SC_NUMLCPUS; echo \$SC_RAMSIZE; echo \$SC_INBOUND; echo \$SC_OUTBOUND; echo \$SC_NODES`;
@@ -434,7 +437,6 @@ sub read_osg_attributes_info
 	#	}
 	#}
 	#close(OSGATTR);
-        
         #$batch   = $variable_hash{'OSG_GIP_BATCH'};
         #$srm     = $variable_hash{'OSG_GIP_SRM'};
         #$disk    = $variable_hash{'OSG_GIP_DISK'};
@@ -448,7 +450,6 @@ sub read_osg_attributes_info
 	#$simplified_srm_path = $variable_hash{'OSG_GIP_SIMPLIFIED_SRM_PATH'};
 
         if ($srm) {
-    
             if ($simplified_srm eq "y") {
                     foreach $vo (@vo_list) {
                             $vo_access_roots{$vo} = $simplified_srm_path;
@@ -1218,6 +1219,7 @@ sub create_ce_config_file
 ###########################################################################
 sub create_se_config_file
 {
+
     my $config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-se.conf";
     my $contents    = "";
 
@@ -1225,7 +1227,7 @@ sub create_se_config_file
     # Write SE part of configuration. A site could publish both srm and gsiftp information through GIP simultaneously.
 
 
-    if ($srm) {
+    if ($srm && $dynamic_dcache!=1) {
         $contents=$contents."\ndn: GlueSEUniqueID=$se_host\n"
                            ."GlueSEName: $se_name:srm_v$se_version\n"
                            ."GlueSEType: srm\n"
@@ -1763,7 +1765,10 @@ sub create_wrapper_files
     # if($srm){
     #     $contents = $contents."\n$lcg_location/libexec/osg-info-dynamic-dcache $ldif_file $vdt_location\n";
     # }
-
+    if ($dynamic_dcache){
+        $contents = $contents."\n$lcg_location/libexec/services_info_provider.py\n";
+        $contents = $contents."\n$lcg_location/libexec/token_info_provider.py\n";
+    }
     $contents = $contents."\nif [ -f \"$lcg_location/etc/alter-attributes.conf\" ]; then\n    cat $lcg_location/etc/alter-attributes.conf\nfi\n";
 
     #We remove the existing wrapper file because it will cause duplication of information

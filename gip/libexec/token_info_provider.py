@@ -318,7 +318,6 @@ def main():
             print_SA(p, cp)
             p.close()
         except Exception, e:
-            raise
             print >> sys.stderr, e
         print_SA_compat(cp)
     except:

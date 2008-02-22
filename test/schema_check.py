@@ -6,7 +6,7 @@ import tempfile
 import urllib2
 
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
-from ldap import read_ldap, query_bdii
+from ldap import read_ldap, query_bdii, getSiteList
 from gip_common import config, addToPath
 
 slap_conf = """
@@ -33,16 +33,6 @@ def createSlapConf():
     fp = open(conffile, 'w')
     fp.write(os.path.expandvars(slap_conf))
     return conffile
-
-def getSiteList(cp):
-    fp = query_bdii(cp, query="(&(objectClass=GlueTop)" \
-        "(!(objectClass=GlueSchemaVersion)))")
-    entries = read_ldap(fp)
-    sitenames = []
-    for entry in entries:
-        dummy, sitename = entry.dn[0].split('=')
-        sitenames.append(sitename)
-    return sitenames
 
 slap_cmd = "slapadd -u -c -f %(slap_conf)s -l %(slap_info)s"
 

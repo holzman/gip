@@ -139,7 +139,7 @@ def print_srm(cp, admin):
                 "startTime"    : "1970-01-01T00:00:00Z",
                }
 
-        info['version'] = "1.1.0"
+        info['version'] = "1.1"
         endpoint = "httpg://%s:%i/srm/managerv1" % (hostname, int(port))
         info['endpoint'] = endpoint
         info['serviceID'] = endpoint
@@ -149,7 +149,7 @@ def print_srm(cp, admin):
         print ControlTemplate % info
         print ServiceTemplate % info
 
-        info['version'] = "2.2.0"
+        info['version'] = "2.2"
         endpoint = "httpg://%s:%i/srm/managerv2" % (hostname, int(port))
         info['endpoint'] = endpoint
         info['serviceID'] = endpoint
@@ -158,16 +158,6 @@ def print_srm(cp, admin):
         info['serviceName'] = endpoint
         info["wsdl"] = "http://sdm.lbl.gov/srm-wg/srm.v2.2.wsdl"
         info["semantics"] = "http://sdm.lbl.gov/srm-wg/doc/SRM.v2.2.pdf"
-        print ControlTemplate % info
-        print ServiceTemplate % info
-
-        info['version'] = "1.1.0"
-        info['endpoint'] = "httpg://%s:%i/srm/managerv1" % (hostname, int(port))
-        print ControlTemplate % info
-        print ServiceTemplate % info
-
-        info['version'] = "2.0.0"
-        info['endpoint'] = "httpg://%s:%i/srm/managerv2" % (hostname, int(port))
         print ControlTemplate % info
         print ServiceTemplate % info
 

@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+
+"""
+Interact with a dCache admin interface through SSH.
+"""
+
 from __future__ import generators
 
 import signal
@@ -22,7 +27,24 @@ def handler(signum, frame):
 
 class Admin:
 
+  """
+  Object representing the dCache Admin interface connection.
+
+  Only one thread should access this at a time.  If you want to have multi-
+  threaded access to the admin interface, the recommendation is to create one
+  connection per thread.
+  """
+
   def __init__(self, info, timeout=5):
+    """
+    Connects to the admin interface.
+
+    @param info: Dictionary containing login info.  For usage in the GIP, it is
+        advised to create an Admin interface by using 
+        L{gip_storage.connect_admin}, not through the constructor directly.
+    @param timeout: Timeout (in seconds) before the class will give up on the
+        connection and raise an error.
+    """
     if isinstance(info, ConfigParser.ConfigParser):
         config_file = info.get("dCacheAdmin","config_file")
         if str(config_file) == 'None':
@@ -87,7 +109,7 @@ class Admin:
     len_text = len(text) 
     assert os.write(self.child, text)  == len_text
 
-  def make_connection( self, info ):
+  def make_connection(self, info):
     ssh_args = ssh_extra_args + [str(info['AdminHost'])]
     if 'Username' in info:
       ssh_args += ['-l', str(info['Username'])]
@@ -120,10 +142,17 @@ class Admin:
     raise Exception("Reached the end of the input stream, not a new prompt!")
 
   def logoff( self ):
+    """
+    Logoff the admin interface.
+    """
     self.cd( None )
     self.write( 'logoff\n' )
 
   def cd( self, cell ):
+    """
+    Change to a different cell.  This will be called automatically by L{execute}
+    when it is necessary.
+    """
     #print self.location, str(cell)
     if self.location == str(cell):
       return
@@ -146,6 +175,15 @@ class Admin:
       self.location = str(cell)
 
   def execute( self, cell, command, args=[] ):
+    """
+    Execute a command in the admin interface
+
+    @param cell: Cell name to send the command to.
+    @param command: Command name
+    @param args: Any additional arguments to pass to dCache
+    @type args: List
+    @returns: String containing command output.
+    """
     self.cd( cell )
     if cell == None:
       cell = 'local'

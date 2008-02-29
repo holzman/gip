@@ -8,6 +8,8 @@ probes which are consistent and correct.
 This module should generally follow PEP 8 coding guidelines.
 """
 
+__author__ = "Brian Bockelman"
+
 import os
 import ConfigParser
 import sys
@@ -21,6 +23,11 @@ from gip_testing import runCommand
 # This evaluates to true if Python 2.3 or higher is
 # available.
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
+"""
+True if the current version of Python is 2.3 or higher; enables a few extra
+capabilities which Python 2.2 does not have.
+"""
+
 if py23:
     import optparse, logging, logging.config
 
@@ -30,8 +37,10 @@ loglevel = "info"
 def check_gip_location():
     """
     This function checks to make sure that GIP_LOCATION is set and exists.
-    If GIP_LOCATION is not set and $VDT_LOCATION/gip exists, then it adds:
+    If GIP_LOCATION is not set and $VDT_LOCATION/gip exists, then it adds::
+
         GIP_LOCATION=$VDT_LOCATION/gip
+
     to the process's environment
 
     It raises ValueErrors if neither situation holds.
@@ -101,8 +110,10 @@ def config(*args):
 
 def config_compat(cp):
     """
-    Currently, all of the configuration information is kept in 
+    Currently, all of the configuration information is kept in::
+
         $VDT_LOCATION/monitoring/osg-attributes.conf
+
     This function will take in the ConfigParser object `cp` and update it
     with the configurations found from the OSG monitoring.
 
@@ -203,6 +214,9 @@ class VoMapper:
     
 
     def parse(self):
+        """
+        Parse the user-to-vo map specified at `self.map_location`
+        """
         fp = open(os.path.expandvars(self.map_location), 'r')
         for line in fp:
             try:
@@ -264,6 +278,8 @@ if py23:
 def getLogger(name):
     """
     Returns a logger object corresponding to `name`.
+
+    @param name: Name of the logger object.
     """
     if not py23:
         return FakeLogger()
@@ -288,33 +304,47 @@ def HMSToMin(hms):
     h, m, s = hms.split(':')
     return int(h)*60 + int(m) + int(round(int(s)/60.0))
 
-class Constants:
+class _Constants:
         def __init__(self):
                 self.CR = '\r'
                 self.LF = '\n'
 
 class Attributes(UserDict):
-        def __init__(self, attribute_file):
-                UserDict.__init__(self, dict=None)
-                self.constants = Constants()
-                self.load_attributes(attribute_file)
+    """
+    Given a filename containing attributes, parse it into a dictionary.
+    """
 
-        def load_attributes(self, attribute_file):
-                f = open(os.path.expandvars(attribute_file))
-                s = f.read()
-                e = s.split(self.constants.LF)
-                if (len(e[len(e)-1]) == 0): e.pop()
+    def __init__(self, attribute_file):
+        UserDict.__init__(self, dict=None)
+        self.constants = _Constants()
+        self.load_attributes(attribute_file)
 
-                # Look for lines that match the pattern "key=value"
-                # this will also stip out quotation marks
-                test = re.compile('^(.*)=(.*)')
-                for line in e:
-                        valid = test.match(line)
-                        if valid:
-                                grp = line.split("=")
-                                self[grp[0]] = grp[1][1:len(grp[1]) - 1]
+    def load_attributes(self, attribute_file):
+        f = open(os.path.expandvars(attribute_file))
+        s = f.read()
+        e = s.split(self.constants.LF)
+        if (len(e[len(e)-1]) == 0):
+            e.pop()
+
+        # Look for lines that match the pattern "key=value"
+        # this will also stip out quotation marks
+        test = re.compile('^(.*)=(.*)')
+        for line in e:
+            valid = test.match(line)
+            if valid:
+                grp = line.split("=")
+                self[grp[0]] = grp[1][1:len(grp[1]) - 1]
 
 def getTemplate(template, name):
+    """
+    Return a template from a file.
+
+    @param template: Name of the template file in $GIP_LOCATION/templates.
+    @param name: Entry in the template file; for now, this is the first
+        entry of the DN.
+    @return: Template string
+    @raise e: ValueError if it is unable to find the template in the file.
+    """
     fp = open(os.path.expandvars("$GIP_LOCATION/templates/%s" % template))
     start_str = "dn: %s" % name
     buffer = ''
@@ -339,8 +369,14 @@ def printTemplate(template, info):
     dictionary; the entries' values are the dictionary values.
 
     To see what keys `info` needs for your template, read the template as
-    found in
+    found in::
+
         $GIP_LOCATION/templates
+
+    @param info: Dictionary of information to fill out for the template.
+        The keys correspond to the blank entries in the template string.
+    @type info: Dictionary
+    @param template: Template string returned from getTemplate.
     """
     print template % info
 
@@ -349,6 +385,9 @@ def voList(cp, vo_map=None):
     Return the list of valid VOs for this install.  This data is taken from
     the vo mapper and the blacklist / whitelist in the "vo" section of the
     config parser `cp` is applied.
+
+    @param cp: Configuration information for this site.
+    @type cp: ConfigParser
     """
     if vo_map == None:
         vo_map = VoMapper(cp)

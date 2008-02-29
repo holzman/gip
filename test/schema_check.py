@@ -8,6 +8,7 @@ import urllib2
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from ldap import read_ldap, query_bdii, getSiteList
 from gip_common import config, addToPath
+from gip_testing import runBdiiTest
 
 slap_conf = """
 include		/etc/openldap/schema/core.schema
@@ -75,23 +76,8 @@ class TestSchema(unittest.TestCase):
         self.assertEquals(len(output), 0, msg="slapadd schema check failed" \
             " for site %s.  Output:\n%s" % (self.site, output))
 
-def generateTests(cls, args=[]):
-    cp = config()
-    sites = getSiteList(cp)
-    tests = []
-    for site in sites:
-        if len(args) > 0 and site not in args:
-            continue
-        if site == 'local' or site == 'grid':
-            continue
-        case = TestSchema(site, cp)
-        tests.append(case)
-    return unittest.TestSuite(tests)
-
 if __name__ == '__main__':
     addToPath("/usr/sbin")
-    testSuite = generateTests(TestSchema, sys.argv[1:])
-    testRunner = unittest.TextTestRunner(verbosity=2)
-    result = testRunner.run(testSuite)
-    sys.exit(not result.wasSuccessful())
+    cp = config()
+    runBdiiTest(cp, TestSchema)
 

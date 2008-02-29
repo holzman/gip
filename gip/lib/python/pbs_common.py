@@ -1,4 +1,8 @@
 
+"""
+Module for interacting with PBS.
+"""
+
 import re, sys, os
 from gip_common import HMSToMin, getLogger, runCommand
 
@@ -13,23 +17,24 @@ def pbsOutputFilter(fp):
     """
     PBS can be a pain to work with because it automatically cuts 
     lines off at 80 chars and continues the line on the next line.  For
-    example:
+    example::
 
-    Server: red
-    server_state = Active
-    server_host = red.unl.edu
-    scheduling = True
-    total_jobs = 2996
-    state_count = Transit:0 Queued:2568 Held:0 Waiting:0 Running:428 Exiting:0 
-        Begun:0 
-    acl_roots = t3
-    managers = mfurukaw@red.unl.edu,root@t3
+        Server: red
+        server_state = Active
+        server_host = red.unl.edu
+        scheduling = True
+        total_jobs = 2996
+        state_count = Transit:0 Queued:2568 Held:0 Waiting:0 Running:428 Exiting 
+         :0 Begun:0 
+        acl_roots = t3
+        managers = mfurukaw@red.unl.edu,root@t3
 
-    This function puts the line "Begun:0" with the above line.  It's meant
-    to filter the output, so you should "scrub" PBS output like this:
-    fp = runCommand(<pbs command>)
-    for line in pbsOutputFilter(fp):
-       ... parse line ...
+    This function puts the line ":0 Begun:0" with the above line.  It's meant
+    to filter the output, so you should "scrub" PBS output like this::
+
+        fp = runCommand(<pbs command>)
+        for line in pbsOutputFilter(fp):
+           ... parse line ...
 
     This function uses iterators
     """
@@ -192,10 +197,10 @@ def parseNodes(cp, version):
     Parse the node information from PBS.  Using the output from pbsnodes, 
     determine:
     
-       * The number of total CPUs in the system.
-       * The number of free CPUs in the system.
-       * A dictionary mapping PBS queue names to a tuple containing the
-         (totalCPUs, freeCPUs).
+        - The number of total CPUs in the system.
+        - The number of free CPUs in the system.
+        - A dictionary mapping PBS queue names to a tuple containing the
+            (totalCPUs, freeCPUs).
     """
     totalCpu = 0
     freeCpu = 0

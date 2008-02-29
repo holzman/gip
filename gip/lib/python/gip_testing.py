@@ -7,6 +7,10 @@ outputs from the test/command_output directory.
 """
 
 import os
+import sys
+import unittest
+
+from ldap import getSiteList
 
 replace_command = False
 
@@ -36,4 +40,42 @@ def runCommand(cmd, force_command=False):
             % filename))
     else:
         return os.popen(cmd)
+
+def generateTests(cp, cls, args=[]):
+    """
+    Given a class and args, generate a test case for every site in the BDII.
+    
+    @param cp: Site configuration
+    @type cp: ConfigParser
+    @param cls: Test class to use to generate a test suite.  It is assumed
+        that the constructor for this class has signature cls(cp, site_name)
+    @type cls: class
+    @keyword args: List of sites; if it is not empty, then tests will only be
+        generated for the given sites.
+    """
+    sites = getSiteList(cp)
+    tests = []
+    for site in sites:
+        if len(args) > 0 and site not in args:
+            continue
+        if site == 'local' or site == 'grid':
+            continue
+        case = cls(site, cp)
+        tests.append(case)
+    return unittest.TestSuite(tests)
+
+def runBdiiTest(cp, cls):
+    """
+    Given a test class, generate and run a test suite
+
+    @param cp: Site configuration
+    @type cp: ConfigParser
+    @param cls: Test class to use to generate a test suite.  It is assumed
+        that the constructor for this class has signature cls(cp, site_name)
+    @type cls: class
+    """
+    testSuite = generateTests(cp, cls, sys.argv[1:])
+    testRunner = unittest.TextTestRunner(verbosity=2)
+    result = testRunner.run(testSuite)
+    sys.exit(not result.wasSuccessful())
 

@@ -1,4 +1,8 @@
 
+"""
+Module for interacting with a dCache storage element.
+"""
+
 import string
 import traceback
 import sys
@@ -10,6 +14,12 @@ import dCacheAdmin
 log = getLogger("GIP.Storage")
 
 def connect_admin(cp):
+    """
+    Connect to the site's admin interface.
+
+    @param cp: Configuration of the site.
+    @type cp: ConfigParser
+    """
     info = {'Interface':'dCache'}
     info['AdminHost'] = cp.get("dcache_admin", "hostname")
     try:
@@ -38,13 +48,22 @@ def connect_admin(cp):
         timeout = 5
     return dCacheAdmin.Admin(info, timeout)
 
-def execute(p, command):
+def execute(p, command, bind_vars=None):
     """
-    Given a cursor, execute a command
+    Given a Postgres connection, execute a SQL statement.
+
+    @param p: Postgres connection, as returned by L{connect}
+    @type p: psycopg2.Connection
+    @param command: SQL statement
+    @param bind_vars: Bind vars for B{command}, if any.
+    @returns: All resulting rows.
     """
     from psycopg2.extras import DictCursor
     curs = p.cursor(cursor_factory=DictCursor)
-    curs.execute(command)
+    if bind_vars != None:
+        curs.execute(command, bind_vars)
+    else:
+        curs.execute(command)
     rows = curs.fetchall()
     return rows
 
@@ -52,6 +71,11 @@ def connect(cp):
     """
     Connect to the SRM database based upon the parameters in the passed
     config file.
+
+    @param cp: Site configuration
+    @type cp: ConfigParser
+    @returns: Connection to the SRM database.
+    @rtype: psycopg2.Connection
     """
     try:
         psycopg2 = __import__("psycopg2")
@@ -69,6 +93,12 @@ def connect(cp):
     return p
 
 def voListStorage(cp):
+    """
+    List of VOs which are allowed to access this storage element.
+
+    @param cp: Configuration for this site
+    @type cp: ConfigParser
+    """
     if cp.getboolean("vo", "autodetect_storage_vos"):
         gip_common = __import__("gip_common")
         return gip_common.voList(cp)
@@ -88,6 +118,13 @@ def voListStorage(cp):
     return refined
 
 def getPath(cp, vo):
+    """
+    Get the storage path for some VO.
+
+    @param cp: Configuration for this site
+    @type cp: ConfigParser
+    @param vo: VO name (if vo='', then the default path will be given)
+    """
     if cp.has_option("vo", vo):
         path = cp.get("vo", vo)
     else:
@@ -102,7 +139,10 @@ def convertToKB( valueString ) :
     The unit specifiers can be in uppercase or lowercase. Acceptable unit
     specifiers are g m k b. If no specifier is provided, bytes is assumed.
     E.g., 10G is translated to 10485760.
-          1048576 is assumed to be in bytes and is translated to 1024.
+
+    1048576 is assumed to be in bytes and is translated to 1024.
+
+    @param valueString: Size to be converted to kilobytes.
     """ 
     result = re.split( '(\d+)', string.lower( valueString ), 1 )
     val = long( result[1] )
@@ -153,6 +193,14 @@ class Pool :
                ', pnfs root = ' + self.pnfsRoot
 
 def lookupPoolStorageInfo( connection, log ) :
+    """
+    Get pool storage info for all pools from the admin interface
+
+    @param connection: Connection to the admin interface.
+    @type connection: dCacheAdmin
+    @param log: Log to use for this function.
+    @type log: Logger
+    """
     listOfPools = []
     # get a list of pools
     # If this raises an exception, it will be caught in main.
@@ -184,6 +232,20 @@ def lookupPoolStorageInfo( connection, log ) :
 
 
 def getSESpace(cp, admin=None, gb=False, total=False):
+    """
+    Get the total amount of space available in a dCache instance.  By default,
+    return the information in Kilobytes.
+
+    @param cp: Site configuration
+    @type cp: ConfigParser
+    @keyword admin: If set, reuse this admin interface instead of making a new
+        connection.
+    @keyword gb: If True, then return the results  in GB, not KB.
+    @keyword total: If True, also return the total amount of space in the SE.
+    @returns: Returns the used space, free space.  If C{total=true}, also 
+        return the total space.  If C{gb=True}, return the numbers in GB;
+        otherwise the numbers are in kilobytes.
+    """
     if admin == None:
         admin = connect_admin(cp)
     pools = lookupPoolStorageInfo(admin, log)
@@ -203,11 +265,27 @@ def getSESpace(cp, admin=None, gb=False, total=False):
     return used, free
 
 def seHasTape(cp):
+    """
+    Determine if the SE has tape information
+
+    @param cp: Site configuration
+    @type cp: ConfigParser
+    @returns: True if there is tape info; False otherwise.
+    """
     if cp.has_section("tape_info"):
         return True
     return False
 
 def getSETape(cp, vo="total"):
+    """
+    Get the amount of tape available; numbers are in kilobytes.
+
+    @param cp: Site configuration
+    @type cp: ConfigParser
+    @keyword vo: The VO information to consider; to get the aggregate info, use
+        C{vo="total"}
+    @returns: The used space, free space, and total space on tape in kilobytes.
+    """
     # Load up the tape statistics from the config file
     if cp.has_option("tape_info", vo):
         un, fn = [long(i.strip()) for i in cp.get("tape_info", vo).split(',')]
@@ -225,9 +303,8 @@ def getSEVersion(cp, admin=None):
 
     @param cp: A config parser object which holds the dCache login information
     @type cp: ConfigParser
-    @param admin: An instance of the L{dCacheAdmin} interface.  If it is None,
+    @keyword admin: An instance of the L{dCacheAdmin} interface.  If it is None,
         then `cp` will be used to log in to the admin interface.
-    @type admin: None or L{dCacheAdmin}
     @return: The dCache version number; UNKNOWN if it can't be determined.
     """
     if admin == None:

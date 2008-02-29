@@ -53,7 +53,7 @@ class TestCompareData(unittest.TestCase):
         for entry in bad_entries:
             dn = prettyDN(entry.dn) + ' (in CEMon %s; in BDII %s)' % \
                 (entry in entries2, entry in entries1)
-            #dn += '\n%s' % entry
+            dn += '\n%s' % entry
             dns.append(dn)
         dns.sort()
         for entry in dns:

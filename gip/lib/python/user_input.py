@@ -5,10 +5,13 @@ A simple module for handling user input to configure the GIP.
 The GIP uses simple question-and-answer based scripts to attempt to create
 a valid configuration for a site.  This module takes care of:
 
-  * Asking the user for input (even for passwords).
-  * Simple validation functions for the returned input.
-  * Separation of programming code and text questions for the user.
+    - Asking the user for input (even for passwords).
+    - Simple validation functions for the returned input.
+    - Separation of programming code and text questions for the user.
+
 """
+
+__author__ = "Brian Bockelman"
 
 import os
 import sys

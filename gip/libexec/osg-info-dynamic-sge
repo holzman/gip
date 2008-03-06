@@ -59,7 +59,7 @@ for (@ldif_file){
 open QSTAT, "sge_schedd --help 2>&1 |" or die "Error running qstat.\n";
 
 while(<QSTAT>) {
-    if (/SGE\s+(\S+)/){
+     if(/GE\s+(\S+)/){
         $Version=$1;
     }
 }

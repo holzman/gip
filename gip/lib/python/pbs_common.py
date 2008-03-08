@@ -135,13 +135,13 @@ def getQueueInfo(cp):
 
     The returned dictionary contains the following keys:
     
-    * B{status}: Production, Queueing, Draining, Closed
-    * B{priority}: The priority of the queue.
-    * B{max_wall}: Maximum wall time.
-    * B{max_running}: Maximum number of running jobs.
-    * B{running}: Number of running jobs in this queue.
-    * B{wait}: Waiting jobs in this queue.
-    * B{total}: Total number of jobs in this queue.
+      - B{status}: Production, Queueing, Draining, Closed
+      - B{priority}: The priority of the queue.
+      - B{max_wall}: Maximum wall time.
+      - B{max_running}: Maximum number of running jobs.
+      - B{running}: Number of running jobs in this queue.
+      - B{wait}: Waiting jobs in this queue.
+      - B{total}: Total number of jobs in this queue.
 
     @param cp: Configuration of site.
     @returns: A dictionary of queue data.  The keys are the queue names, and

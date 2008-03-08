@@ -223,3 +223,13 @@ def getSiteList(cp):
         sitenames.append(sitename)
     return sitenames
 
+def prettyDN(dn_list):
+    """
+    Take the DN in list form and transform it back into the traditional,
+    comma-separated format.
+    """
+    dn = ''
+    for entry in dn_list:
+        dn += entry + ','
+    return dn[:-1]
+

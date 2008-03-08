@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
-import re, sys, os
+import re
+import sys
+import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate

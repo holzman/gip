@@ -3,8 +3,10 @@
 Module for interacting with PBS.
 """
 
-import re, sys, os
-from gip_common import HMSToMin, getLogger, runCommand
+import re
+import os
+import sys
+from gip_common import HMSToMin, getLogger, runCommand, VoMapper, voList
 
 log = getLogger("GIP.PBS")
 
@@ -128,6 +130,23 @@ def getJobsInfo(vo_map, cp):
     return queue_jobs
 
 def getQueueInfo(cp):
+    """
+    Looks up the queue information from PBS.
+
+    The returned dictionary contains the following keys:
+    
+    * B{status}: Production, Queueing, Draining, Closed
+    * B{priority}: The priority of the queue.
+    * B{max_wall}: Maximum wall time.
+    * B{max_running}: Maximum number of running jobs.
+    * B{running}: Number of running jobs in this queue.
+    * B{wait}: Waiting jobs in this queue.
+    * B{total}: Total number of jobs in this queue.
+
+    @param cp: Configuration of site.
+    @returns: A dictionary of queue data.  The keys are the queue names, and
+        the value is the queue data dictionary.
+    """
     queueInfo = {}
     queue_data = None
     for orig_line in pbsCommand(queue_info_cmd, cp):
@@ -255,4 +274,41 @@ def parseNodes(cp, version):
 
     return totalCpu, freeCpu, queueCpu
 
+def getVoQueues(cp):
+    """
+    Determine the (vo, queue) tuples for this site.  This allows for central
+    configuration of which VOs are advertised.
+
+    Sites will be able to blacklist queues they don't want to advertise,
+    whitelist certain VOs for a particular queue, and blacklist VOs from queues.
+
+    @param cp: Site configuration
+    @returns: A list of (vo, queue) tuples representing the queues each VO
+        is allowed to run in.
+    """
+    voMap = VoMapper(cp)
+    try:
+        queue_exclude = [i.strip() for i in cp.get("pbs", "queue_exclude").\
+            split(',')]
+    except:
+        queue_exclude = []
+    vo_queues= []
+    for queue in getQueueInfo(cp):
+        if queue in queue_exclude:
+            continue
+        try:
+            whitelist = [i.strip() for i in cp.get("pbs", "%s_whitelist" % \
+                queue).split(',')]
+        except:
+            whitelist = []
+        try:
+            blacklist = [i.strip() for i in cp.get("pbs", "%s_blacklist" % \
+                queue).split(',')]
+        except:
+            blacklist = []
+        for vo in voList(cp, voMap):
+            if (vo in blacklist or "*" in blacklist) and vo not in whitelist:
+                continue
+            vo_queues.append((vo, queue))
+    return vo_queues
 

@@ -3,19 +3,18 @@ objectClass: GlueTop
 objectClass: GlueSite
 objectClass: GlueKey
 objectClass: GlueSchemaVersion
-GlueSiteUniqueID:
-GlueSiteName:
-GlueSiteDescription:
-GlueSiteEmailContact:
-GlueSiteUserSupportContact:
-GlueSiteSysAdminContact:
-GlueSiteSecurityContact:
-GlueSiteLocation:
-GlueSiteLatitude:
-GlueSiteLongitude:
-GlueSiteWeb:
-GlueSiteSponsor:
-GlueSiteOtherInfo:
-GlueForeignKey: 
+GlueSiteUniqueID: %(uniqueID)s
+GlueSiteName: %(siteName)s
+GlueSiteDescription: OSG site
+GlueSiteEmailContact: %(emailContact)s
+GlueSiteUserSupportContact: %(contact)s
+GlueSiteSysAdminContact: %(contact)s
+GlueSiteSecurityContact: %(contact)s
+GlueSiteLocation: %(location)s
+GlueSiteLatitude: %(latitude)s
+GlueSiteLongitude: %(longitude)s
+GlueSiteWeb: %(website)s
+GlueSiteSponsor: %(sponsor)s
+GlueSiteOtherInfo: UNDEFINED
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3

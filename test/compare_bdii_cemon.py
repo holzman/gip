@@ -7,14 +7,8 @@ import urllib2
 import cStringIO
 
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
-from ldap import read_ldap, read_bdii, getSiteList, compareDN
+from ldap import read_ldap, read_bdii, getSiteList, compareDN, prettyDN
 from gip_common import config
-
-def prettyDN(dn_list):
-    dn = ''
-    for entry in dn_list:
-        dn += entry + ','
-    return dn[:-1]
 
 def safe_site_name(site):
     return site.replace("-", "_")

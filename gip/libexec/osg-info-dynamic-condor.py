@@ -3,7 +3,7 @@
 import unittest
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from condor_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo
+from condor_common import parseNodes, getJobsInfo, getLrmsInfo
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, voList
 
 log = getLogger("GIP.Condor")
@@ -23,25 +23,25 @@ def print_CE(cp):
 			status = ce.get("condor", "status")
 		except:
 			status = "Production"
-			info = jobs_info.get("vo", {"running": 0, "queued": 0, "quota": 0, "prio":0})
-			info = {"version"     : condorVersion,
-                  "free_slots"  : unclaimed,
-                  "queue"       : vo,
-                  "job_manager" : 'condor',
-                  "running"     : info["running"],
-                  "wait"        : info["queued"],
-                  "total"       : total,
-                  "priority"    : info["prio"],
-                  "max_running" : info["quota"],
-                  "max_wall"    : 0,
-                  "status"      : status,
-                  "vo"          : vo,
-                  "job_slots"   : total_nodes
-               }
-			print CE_plugin % info
-	return queueInfo, totalCpu, freeCpu, queueCpus
+		info = jobs_info.get("vo", {"running": 0, "queued": 0, "quota": 0, "prio":0})
+		info = {"version"     : condorVersion,
+					"free_slots"  : unclaimed,
+					"queue"       : vo,
+					"job_manager" : 'condor',
+					"running"     : info["running"],
+					"wait"        : info["queued"],
+					"total"       : total,
+					"priority"    : info["prio"],
+					"max_running" : info["quota"],
+					"max_wall"    : 0,
+					"status"      : status,
+					"vo"          : vo,
+					"job_slots"   : total_nodes
+				}
+		print CE_plugin % info
+	return total_nodes, claimed, unclaimed
 
-def print_VOViewLocal(queue_info, cp):
+def print_VOViewLocal(cp):
    ce_name = cp.get("ce", "name")
    vo_map = VoMapper(cp)
    jobs_info = getJobsInfo(vo_map, cp)
@@ -64,8 +64,8 @@ def main():
       addToPath(cp.get("condor", "condor_path"))
       vo_map = VoMapper(cp)
       condorVersion = getLrmsInfo(cp)
-      queueInfo, totalCpu, freeCpu, queueCpus = print_CE(cp)
-      print_VOViewLocal(queueInfo, cp)
+      total_nodes, claimed, unclaimed = print_CE(cp)
+      print_VOViewLocal(cp)
    except Exception, e:
       sys.stdout = sys.stderr
       log.error(e)

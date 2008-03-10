@@ -14,7 +14,9 @@ class _hdict(dict):
     Hashable dictionary; used to make LdapData objects hashable.
     """
     def __hash__(self):
-        return hash(tuple(sorted(self.items())))
+        items = self.items()
+        items.sort()
+        return hash(tuple(items))
 
 class LdapData:
 

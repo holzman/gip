@@ -58,17 +58,17 @@ objectClass: GlueCEAccessControlBase
 objectClass: GlueCEPolicy
 objectClass: GlueKey
 objectClass: GlueSchemaVersion
-GlueVOViewLocalID:
-GlueCEAccessControlBaseRule:
-GlueCEStateRunningJobs:
-GlueCEStateWaitingJobs:
-GlueCEStateTotalJobs:
-GlueCEStateFreeJobSlots:
-GlueCEStateEstimatedResponseTime:
-GlueCEStateWorstResponseTime:
-GlueCEInfoDefaultSE:
-GlueCEInfoApplicationDir:
-GlueCEInfoDataDir:
+GlueVOViewLocalID: %(voLocalID)s
+GlueCEAccessControlBaseRule: %(acbr)s
+GlueCEStateRunningJobs: %(running)s
+GlueCEStateWaitingJobs: %(waiting)s
+GlueCEStateTotalJobs: %(total)s
+GlueCEStateFreeJobSlots: %(free)s
+GlueCEStateEstimatedResponseTime: %(ert)s
+GlueCEStateWorstResponseTime: %(wrt)s
+GlueCEInfoDefaultSE: %(default_se)s
+GlueCEInfoApplicationDir: %(app)s
+GlueCEInfoDataDir: %(data)s
 GlueChunkKey: GlueCEUniqueID=
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3

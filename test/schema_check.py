@@ -17,7 +17,7 @@ include		$GIP_LOCATION/../schema/Glue-CE.schema
 include		$GIP_LOCATION/../schema/Glue-CESEBind.schema
 include		$GIP_LOCATION/../schema/Glue-SE.schema
 
-database        ldif
+database        bdb
 suffix		"o=Grid"
 """
 
@@ -65,7 +65,7 @@ class TestSchema(unittest.TestCase):
             #print line.strip()
             ctr += 1
             if ctr < 3:
-                self.assertTrue(line.find("Error Message") < 0, \
+                self.failUnless(line.find("Error Message") < 0, \
                     msg="Site %s not serving with CEMon." % self.site)
             fp2.write(line)
         fp2.close()

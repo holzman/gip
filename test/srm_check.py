@@ -45,7 +45,7 @@ class TestSrmAds(unittest.TestCase):
             self.assertEquals(entry.glue['ServiceType'], 'SRM',
                 msg="ServiceType must be equal to 'SRM'")
             version = entry.glue['ServiceVersion']
-            self.assertTrue(version in valid_versions,
+            self.failUnless(version in valid_versions,
                 msg="ServiceVersion must be one of %s." % valid_versions)
             if version in deprecated_versions:
                 log.warning("Version string %s is deprecated." % version)

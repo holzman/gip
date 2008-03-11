@@ -29,7 +29,7 @@ class TestCompareData(unittest.TestCase):
         url = self.cp.get("test", "goc") % self.site
         #print url
         data = urllib2.urlopen(url).read()
-        self.assertTrue(data.find("Error Message") < 0, \
+        self.failUnless(data.find("Error Message") < 0, \
             msg = "Site %s not serving with CEMon." % self.site)
         fp1 = cStringIO.StringIO(data)
         entries1 = read_ldap(fp1, multi=True)

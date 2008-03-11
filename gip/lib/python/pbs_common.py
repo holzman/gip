@@ -274,6 +274,24 @@ def parseNodes(cp, version):
 
     return totalCpu, freeCpu, queueCpu
 
+def getQueueList(cp):
+    """
+    Returns a list of all the queue names that are supported.
+
+    @param cp: Site configuration
+    @returns: List of strings containing the queue names.
+    """
+    queues = []
+    try:            
+        queue_exclude = [i.strip() for i in cp.get("pbs", "queue_exclude").\
+            split(',')]
+    except:         
+        queue_exclude = []
+    for queue in getQueueInfo(cp):
+        if queue not in queue_exclude:
+            queues.append(queue)
+    return queues
+
 def getVoQueues(cp):
     """
     Determine the (vo, queue) tuples for this site.  This allows for central

@@ -14,6 +14,7 @@ import os
 import ConfigParser
 import sys
 import re
+import socket
 
 from UserDict import UserDict
 
@@ -72,7 +73,7 @@ def check_testing_environment():
     Check to see if the GIP_TESTING environment variable has been set.
     If so, set the gip_testing.replace_command variable to be true.  This causes
     the GIP to read output from static files instead of running the command.
-    This is useful if you want to test, say, PBS on a laptop with no PBS 
+    This is useful if you want to test, say, PBS on a laptop with no PBS
     installed.
     """
     if 'GIP_TESTING' in os.environ:
@@ -86,7 +87,7 @@ def config(*args):
     If python 2.3 is not available, the command line option is not checked.
 
     If any arguments are supplied to this function, they will be interpreted
-    as filenames for additional config files to read.  If the filename 
+    as filenames for additional config files to read.  If the filename
     considers environmental variables, they will be expanded.
     """
     check_gip_location()
@@ -102,7 +103,7 @@ def config(*args):
     files += ["$GIP_LOCATION/etc/gip.conf"]
     files = [os.path.expandvars(i) for i in files]
     cp.read(files)
-    
+
     # Set up the config object to be compatible with the OSG attributes
     # file.
     config_compat(cp)
@@ -151,7 +152,7 @@ def config_compat(cp):
         __write_config(cp, override, osg["OSG_APP"], "osg_dirs", "app")
         __write_config(cp, override, osg["OSG_DATA"], "osg_dirs", "data")
         __write_config(cp, override, osg["OSG_WN_TMP"], "osg_dirs", "wn_tmp")
-        __write_config(cp, override, osg["OSG_JOB_MANAGER"], "ce", 
+        __write_config(cp, override, osg["OSG_JOB_MANAGER"], "ce",
                        "job_manager")
 
     # Do the same but with the gip stuff.
@@ -184,7 +185,7 @@ def __write_config(cp, override, new_val, section, option):
 def getOsgAttributes():
     """
     Return a dictionary-like object containing the OSG attributes as configured
-    by the configure-osg.sh script and stored in the 
+    by the configure-osg.sh script and stored in the
     $VDT_LOCATION/monitoring/osg-attributes.conf file.
     """
     return Attributes("$VDT_LOCATION/monitoring/osg-attributes.conf")
@@ -211,7 +212,7 @@ class VoMapper:
         self.userMap = {}
         self.voMap = {}
         self.parse()
-    
+
 
     def parse(self):
         """
@@ -243,7 +244,7 @@ class VoMapper:
                 pass
 
     def __getitem__(self, username):
-        try: 
+        try:
             return self.voMap[self.userMap[username]]
         except KeyError:
             raise ValueError("Unable to map user: %s" % username)
@@ -283,7 +284,7 @@ def getLogger(name):
     """
     if not py23:
         return FakeLogger()
-    else: 
+    else:
         return logging.getLogger(name)
 
 log = getLogger("GIP.common")
@@ -298,16 +299,16 @@ def addToPath(new_element):
 
 def HMSToMin(hms):
     """
-    Helper function to convert something of the form HH:MM:SS to number of 
+    Helper function to convert something of the form HH:MM:SS to number of
     minutes.
     """
     h, m, s = hms.split(':')
     return int(h)*60 + int(m) + int(round(int(s)/60.0))
 
 class _Constants:
-        def __init__(self):
-                self.CR = '\r'
-                self.LF = '\n'
+	def __init__(self):
+		self.CR = '\r'
+		self.LF = '\n'
 
 class Attributes(UserDict):
     """
@@ -362,9 +363,9 @@ def getTemplate(template, name):
 
 def printTemplate(template, info):
     """
-    Print out the LDIF contained in template using the values from the 
+    Print out the LDIF contained in template using the values from the
     dictionary `info`.
-    
+
     The different entries of the template are matched up to keys in the `info`
     dictionary; the entries' values are the dictionary values.
 
@@ -407,6 +408,23 @@ def voList(cp, vo_map=None):
         if vo in vos:
             vos.remove(vo)
     return vos
+
+def getHostname:
+   return socket.gethostbyaddr(socket.gethostname())
+
+def fileRead(path):
+	rFile = open(path)
+	return rFile.read()
+
+def fileWrite(path, contents):
+   wFile = open(path,"a")
+	wFile.write(contents)
+	wFile.close()
+
+def fileOverWrite(path, contents):
+   owFile = open(path,"w")
+	owFile.write(contents)
+	owFile.close()
 
 def cp_get(cp, section, option, default):
     """

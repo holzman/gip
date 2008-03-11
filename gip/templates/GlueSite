@@ -1,4 +1,4 @@
-dn: GlueSiteUniqueID=,mds-vo-name=local,o=grid
+dn: GlueSiteUniqueID=%(uniqueID)s,mds-vo-name=local,o=grid
 objectClass: GlueTop
 objectClass: GlueSite
 objectClass: GlueKey

@@ -1186,7 +1186,9 @@ sub create_ce_config_file
         }
     }
 
-    safe_write($config_file, $contents);
+    if ($batch !~ /^pbs$/i) {
+        safe_write($config_file, $contents);
+    }
 
     vdt_install_log("===== BEGIN osg-info-static-ce.conf =====\n");
     vdt_install_log($contents);
@@ -1578,7 +1580,9 @@ sub create_cesebind_config_file
         }
     }
 
-    safe_write($config_file, $contents);
+    if ($batch /^lsf$/i) {
+        safe_write($config_file, $contents);
+    }
 
     vdt_install_log("===== BEGIN osg-info-static-cesebind.conf =====\n");
     vdt_install_log($contents);
@@ -1663,7 +1667,7 @@ sub create_generic_config_file
 ###########################################################################
 sub create_config_file
 {
-    create_site_config_file
+    #create_site_config_file
     create_cluster_config_file();
     create_ce_config_file();
     create_se_config_file();
@@ -1698,10 +1702,15 @@ sub create_wrapper_files
     #Create provider wrapper when necessary (Currently used for gums-monitoring)
     $wrapper_file = "$lcg_location/var/gip/provider/osg-info-dynamic-providers";
     $contents='#!/bin/sh';
-    $contents=$contents."\n"."$lcg_location/libexec/osg-info-software-provider $app/etc $fullhost\n";
+    $contents=$contents."\n"."$gip_location/libexec/osg-info-software-provider $app/etc $fullhost\n";
     if ($gums == 1){
-        $contents=$contents."\n"."$lcg_location/libexec/osg-info-gums-status-probe $vdt_location\n";
+        $contents=$contents."\n"."$gip_location/libexec/osg-info-gums-status-probe $vdt_location\n";
     }
+    if ($batch =~ /^pbs$/i) {
+        $contents=$contents."\n"."$gip_location/libexec/osg-info-provider-pbs.py\n";
+        $contents=$contents."\n"."$gip_location/libexec/osg_info_cesebind.py\n";
+    }
+    $contents = $contents."\n"."$gip_location/libexec/osg_info_site.py\n";
     $contents = $contents."\nif [ -f \"$lcg_location/etc/add-attributes.conf\" ]; then\n    cat $lcg_location/etc/add-attributes.conf\nfi\n";
 
         #We remove the existing wrapper file because it will cause duplication of information
@@ -1729,7 +1738,7 @@ sub create_wrapper_files
     }
     elsif ($batch =~ /pbs/i) {
         # The pbs script is also different--it requires the path to the binaries as an argument.
-        $contents = $contents."$gip_location/libexec/osg-info-dynamic-pbs.py \n";
+        # $contents = $contents."$gip_location/libexec/osg-info-dynamic-pbs.py \n";
     }
     else {
         $contents = $contents."$lcg_location/libexec/osg-info-dynamic-$batch $ldif_file \n";

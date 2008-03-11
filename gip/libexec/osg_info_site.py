@@ -1,9 +1,10 @@
+#!/usr/bin/env python
 
 import sys
 import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getLogger, getTemplate
+from gip_common import config, getLogger, getTemplate, printTemplate
 from gip_site import generateGlueSite
 
 log = getLogger("GIP.Site")

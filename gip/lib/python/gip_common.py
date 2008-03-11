@@ -145,6 +145,8 @@ def config_compat(cp):
         __write_config(cp, override, osg["OSG_SITE_NAME"], "site", "name")
         __write_config(cp, override, osg["OSG_SITE_CITY"], "site", "city")
         __write_config(cp, override, osg["OSG_SITE_COUNTRY"], "site", "country")
+        __write_config(cp, override, osg["OSG_CONTACT_NAME"], "site", "contact")
+        __write_config(cp, override, osg["OSG_CONTACT_EMAIL"], "site", "email")
         __write_config(cp, override, osg["OSG_SITE_LONGITUDE"], "site",
                        "longitude")
         __write_config(cp, override, osg["OSG_SITE_LATITUDE"], "site",
@@ -409,22 +411,22 @@ def voList(cp, vo_map=None):
             vos.remove(vo)
     return vos
 
-def getHostname:
+def getHostname():
    return socket.gethostbyaddr(socket.gethostname())
 
 def fileRead(path):
-	rFile = open(path)
-	return rFile.read()
+    rFile = open(path)
+    return rFile.read()
 
 def fileWrite(path, contents):
-   wFile = open(path,"a")
-	wFile.write(contents)
-	wFile.close()
+    wFile = open(path,"a")
+    wFile.write(contents)
+    wFile.close()
 
 def fileOverWrite(path, contents):
-   owFile = open(path,"w")
-	owFile.write(contents)
-	owFile.close()
+    owFile = open(path,"w")
+    owFile.write(contents)
+    owFile.close()
 
 def cp_get(cp, section, option, default):
     """

@@ -307,7 +307,8 @@ def getVoQueues(cp):
         except:
             blacklist = []
         for vo in voList(cp, voMap):
-            if (vo in blacklist or "*" in blacklist) and vo not in whitelist:
+            if (vo in blacklist or "*" in blacklist) and ((len(whitelist) == 0)\
+                    or vo not in whitelist):
                 continue
             vo_queues.append((vo, queue))
     return vo_queues

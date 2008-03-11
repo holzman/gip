@@ -408,4 +408,23 @@ def voList(cp, vo_map=None):
             vos.remove(vo)
     return vos
 
+def cp_get(cp, section, option, default):
+    """
+    Helper function for ConfigParser objects which allows setting the default.
+
+    ConfigParser objects throw an exception if one tries to access an option
+    which does not exist; this catches the exception and returns the default
+    value instead.
+
+    @param cp: ConfigParser object
+    @param section: Section of config parser to read
+    @param option: Option in section to retrieve
+    @param default: Default value if the section/option is not present.
+    @returns: Value stored in CP for section/option, or default if it is not
+        present.
+    """
+    try:
+        return cp.get(section, option)
+    except:
+        return default
 

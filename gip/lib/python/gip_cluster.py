@@ -10,10 +10,33 @@ The GLUE subcluster represents a subset of the cluster which is homogeneous
 hardware.
 """
 
-from gip_sections import cluster, subcluster
+from gip_sections import cluster, subcluster, ce
 
-__all__ = [generateGlueCluster, generateSubClusters]
+__all__ = ['generateGlueCluster', 'generateSubClusters', 'getClusterName', \
+    'getClusterID']
 __author__ = 'Brian Bockelman'
+
+def getClusterName(cp):
+    """
+    Return the name of the associated cluster.
+    """
+    ce_name = cp.get(ce, 'name')
+    simple = cp.getboolean(cluster, 'simple')
+    if simple:
+        return ce_name
+    else:
+        return cp.get(cluster, 'name')
+
+def getClusterID(cp):
+    """
+    Return the unique ID of the associated cluster.
+    """
+    ce_name = cp.get(ce, 'unique_name')
+    simple = cp.getboolean(cluster, 'simple')
+    if simple:
+        return ce_name
+    else:
+        return cp.get(cluster, 'name')
 
 def generateGlueCluster(cp):
     """
@@ -33,6 +56,6 @@ def generateSubClusters(cp):
     subclusters = []
     for sect in cp.sections:
         if sect.startswith(subcluster):
-            subclusters.append(_generateSubClusterHelper(cp, sect)
+            subclusters.append(_generateSubClusterHelper(cp, sect))
     return subclusters
 

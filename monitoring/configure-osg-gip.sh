@@ -303,34 +303,35 @@ function config_se {
         entry_required "$SRM_IMPLEMENTATION_NAME"
     done
 
-    if [ "$SRM_IMPLEMENTATION_NAME" == "dcache" ] || [ "$SRM_IMPLEMENTATION_NAME" == "dCache" ]; then
-        DYNAMIC_DCACHE=${OSG_GIP_DYNAMIC_DCACHE:-"n"}
-        while :
-        do
-            echo -n "
-GIP has the experimental ability to autodetect all dCache settings, 
-but this requires additional setup outside of this script.
-
-The separate configuration is documented at: 
-
-https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/DcacheGip
-
-Would you like to use this alternate config instead of the standard config? 
-(y/n) : [$DYNAMIC_DCACHE] "
-            read input
-            test -n "$input" && DYNAMIC_DCACHE="$input"
-            validate_entry "$DYNAMIC_DCACHE" "y n"
-        done
-        if [ "$DYNAMIC_DCACHE" = "n" ]; then
-            DYNAMIC_DCACHE=0
-        else
-            DYNAMIC_DCACHE=1
-            echo
-            echo "We will use the dynamic dCache providers."
-            return
-        fi
-        echo
-    fi
+#    if [ "$SRM_IMPLEMENTATION_NAME" == "dcache" ] || [ "$SRM_IMPLEMENTATION_NAME" == "dCache" ]; then
+#        DYNAMIC_DCACHE=${OSG_GIP_DYNAMIC_DCACHE:-"n"}
+#        while :
+#        do
+#            echo -n "
+#GIP has the experimental ability to autodetect all dCache settings, 
+#but this requires additional setup outside of this script.
+#
+#The separate configuration is documented at: 
+#
+#https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/DcacheGip
+#
+#Would you like to use this alternate config instead of the standard config? 
+#(y/n) : [$DYNAMIC_DCACHE] "
+#            read input
+#            test -n "$input" && DYNAMIC_DCACHE="$input"
+#            validate_entry "$DYNAMIC_DCACHE" "y n"
+#        done
+#        if [ "$DYNAMIC_DCACHE" = "n" ]; then
+#            DYNAMIC_DCACHE=0
+#        else
+#            DYNAMIC_DCACHE=1
+#            echo
+#            echo "We will use the dynamic dCache providers."
+#            return
+#        fi
+#        echo
+#    fi
+    export DYNAMIC_DCACHE=0
     if [ "$DYNAMIC_DCACHE" = "0" ]; then
         SRM_IMPLEMENTATION_VERSION=${OSG_GIP_SRM_IMPLEMENTATION_VERSION:-UNDEFINED}
         while :

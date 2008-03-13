@@ -11,7 +11,7 @@ import urlparse
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from ldap import read_bdii, prettyDN
 from gip_common import config, addToPath, getLogger
-from gip_testing import runBdiiTest
+from gip_testing import runTest, streamHandler
 
 log = getLogger("GIP.Testing.DN")
 
@@ -22,7 +22,7 @@ class TestDnAds(unittest.TestCase):
         unittest.TestCase.__init__(self, 'testDnAds_%s' % site)
         self.site = site
         self.cp = cp
-    
+
     def testDnAds(self):
         """
         Test DN ads for the following:
@@ -51,10 +51,11 @@ class TestDnAds(unittest.TestCase):
 
 def main():
     """
-    The main entry point for when srm_check is run in standalone mode.
+    The main entry point for when dn_check is run in standalone mode.
     """
     cp = config()
-    runBdiiTest(cp, TestDnAds)
+    stream = streamHandler(cp)
+    runTest(cp, TestDnAds, stream)
 
 if __name__ == '__main__':
     main()

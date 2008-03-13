@@ -1210,15 +1210,14 @@ sub create_se_config_file
     my $contents    = "";
 
     # Write SE part of configuration. A site could publish both srm and gsiftp information through GIP simultaneously.
-     my ($major_ver, $minor_ver) = split /. /, $se_control_version;
+     my ($major_ver, $minor_ver) = split(/\./, $se_control_version);
      
     my $se_version=$major_ver;
-    print "$se_control_version, $major_ver , $minor_ver \n\n";
+    #print "$se_control_version, $major_ver , $minor_ver \n\n";
 
     if ($srm) {
         $contents=$contents."\ndn: GlueSEUniqueID=$se_host\n"
                            ."GlueSEName: $se_name:srm_v$se_version\n"
-                           ."GlueSEType: srm\n"
                            ."GlueSEPort: 8443\n"
                            ."GlueSESizeTotal: 0\n"
                            ."GlueSESizeFree: 0\n"
@@ -1250,7 +1249,7 @@ sub create_se_config_file
 
         if($se_version eq '2') {
            $contents=$contents."\ndn: GlueSEControlProtocolLocalID=srm_v2,GlueSEUniqueID=$se_host\n"
-                              ."GlueSEControlProtocolType: srm\n"
+                              ."GlueSEControlProtocolType: SRM\n"
                               ."GlueSEControlProtocolEndpoint: httpg://$se_host:8443/srm/managerv2\n"
                               ."GlueSEControlProtocolVersion: 2.2.0\n"
                               ."GlueSEControlProtocolCapability: control\n"
@@ -1258,7 +1257,7 @@ sub create_se_config_file
         }
 
         $contents=$contents."\ndn: GlueSEControlProtocolLocalID=srm_v1,GlueSEUniqueID=$se_host\n"
-                           ."GlueSEControlProtocolType: srm\n"
+                           ."GlueSEControlProtocolType: SRM\n"
                            ."GlueSEControlProtocolEndpoint: httpg://$se_host:8443/srm/managerv1\n"
                            ."GlueSEControlProtocolVersion: 1.1.0\n"
                            ."GlueSEControlProtocolCapability: control\n"
@@ -1284,55 +1283,13 @@ sub create_se_config_file
                                 $service_contents=$service_contents."GlueServiceAccessControlRule: $vo\n";
         }
         $service_contents=$service_contents."\n";
-        $service_contents=$service_content."GlueForeignKey: GlueSiteUniqueID=$fullhost\n";
+        $service_contents=$service_contents."GlueForeignKey: GlueSiteUniqueID=$fullhost\n";
 
         my $service_config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-service.conf";
         safe_write($service_config_file, $service_contents);
         vdt_install_log("===== BEGIN osg-info-static-service.conf =====\n");
         vdt_install_log($service_contents);
         vdt_install_log("===== END osg-info-static-service.conf =====\n");
-
-
-#        $contents=$contents."\ndn: GlueSALocalID=$se_host,GlueSEUniqueID=$se_host\n"
-#                           ."GlueSARoot: $sa_path\n"
-#                           ."GlueSAPath: $sa_path\n";
-#        foreach $vo (@vo_list){
-#            $contents=$contents."GlueSAAccessControlBaseRule: $vo\n";
-#        }
-#        $contents=$contents."GlueChunkKey: GlueSEUniqueID=$se_host\n"
-#                           ."GlueSAType: permanent\n"
-#                           ."GlueSAPolicyFileLifeTime: permanent\n"
-#                           ."GlueSAName: $se_host\n"
-#                           ."GlueSATotalOnlineSize: 0\n"
-#                           ."GlueSAUsedOnlineSize: 0\n"
-#                           ."GlueSAFreeOnlineSize: 0\n"
-#                           ."GlueSAReservedOnlineSize: 0\n"
-#                           ."GlueSATotalNearlineSize: 0\n"
-#                           ."GlueSAUsedNearlineSize: 0\n"
-#                           ."GlueSAFreeNearlineSize: 0\n"
-#                           ."GlueSAReservedNearlineSize: 0\n"
-#                           ."GlueSARetentionPolicy: UNDEFINED\n"
-#                           ."GlueSAAccessLatency: 0\n"
-#                           ."GlueSAExpirationMode: UNDEFINED\n"
-#                           ."GlueSACapability: UNDEFINED\n"
-#                           ."GlueSAPolicyMaxFileSize: 10000\n"
-#                           ."GlueSAPolicyMinFileSize: 1\n"
-#                           ."GlueSAPolicyMaxData: 100\n"
-#                           ."GlueSAPolicyMaxNumFiles: 10\n"
-#                           ."GlueSAPolicyMaxPinDuration: 10\n"
-#                           ."GlueSAPolicyQuota: 0\n"
-#                           ."GlueSAStateAvailableSpace: 1\n"
-#                           ."GlueSAStateUsedSpace: 1\n\n";
-
-#        $contents=$contents."dn: GlueVOInfoLocalID=$se_host,GlueSALocalID=$se_host\n"
-#                           ."GlueChunkKey: GlueSALocalID=$se_host\n"
-#                           ."GlueVOInfoLocalID: $se_host\n"
-#                           ."GlueVOInfoName: $se_host\n"
-#                           ."GlueVOInfoPath: $sa_path\n";
-#        foreach $vo (@vo_list){
-#            $contents=$contents."GlueVOInfoAccessControlBaseRule: $vo\n";
-#        }
-#        $contents=$contents."GlueVOInfoTag: UNAVAILABLE\n\n";
 
 
         foreach $vo (@vo_list){
@@ -1703,7 +1660,7 @@ sub create_wrapper_files
     vdt_install_log("===== END osg-info-wrapper =====\n");
 
     #Create provider wrapper when necessary (Currently used for gums-monitoring)
-    $wrapper_file = "$gip_location/provider/osg-info-dynamic-providers";
+    $wrapper_file = "$gip_location/providers/osg-info-dynamic-providers";
     $contents='#!/bin/sh';
     $contents=$contents."\n"."$gip_location/libexec/osg-info-software-provider $app/etc $fullhost\n";
     if ($gums == 1){
@@ -1726,7 +1683,7 @@ sub create_wrapper_files
 
     #Create pluging wrappers here
 
-    $wrapper_file = "$gip_location/plugin/osg-info-dynamic-plugins";
+    $wrapper_file = "$gip_location/plugins/osg-info-dynamic-plugins";
 
     # Create appropriate lcg-info-dynamic-ce-plugin wrapper script in plugin dir
     my $ldif_file = "$gip_location/var/ldif/osg-info-static-ce.ldif";

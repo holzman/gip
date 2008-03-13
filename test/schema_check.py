@@ -4,11 +4,12 @@ import os
 import sys
 import tempfile
 import urllib2
+import datetime
 
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from ldap import read_ldap, query_bdii, getSiteList
 from gip_common import config, addToPath
-from gip_testing import runBdiiTest
+from gip_testing import runTest, streamHandler
 
 slap_conf = """
 include		/etc/openldap/schema/core.schema
@@ -76,8 +77,14 @@ class TestSchema(unittest.TestCase):
         self.assertEquals(len(output), 0, msg="slapadd schema check failed" \
             " for site %s.  Output:\n%s" % (self.site, output))
 
-if __name__ == '__main__':
+def main():
+    """
+    The main entry point for when schema_check is run in standalone mode.
+    """
     addToPath("/usr/sbin")
     cp = config()
-    runBdiiTest(cp, TestSchema)
+    stream = streamHandler(cp)
+    runTest(cp, TestSchema, stream)
 
+if __name__ == '__main__':
+    main()

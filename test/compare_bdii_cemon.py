@@ -9,6 +9,7 @@ import cStringIO
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from ldap import read_ldap, read_bdii, getSiteList, compareDN, prettyDN
 from gip_common import config
+from gip_testing import runTest, streamHandler
 
 def safe_site_name(site):
     return site.replace("-", "_")
@@ -54,22 +55,13 @@ class TestCompareData(unittest.TestCase):
             msg += entry + '\n'
         self.assertEquals(len(bad_entries), 0, msg=msg)
 
-def generateTests(cls, args=[]):
+def main():
+    """
+    The main entry point for when compare_bdii_cemon is run in standalone mode.
+    """
     cp = config()
-    sites = getSiteList(cp)
-    tests = []
-    for site in sites:
-        if len(args) > 0 and site not in args:
-            continue
-        if site == 'local' or site == 'grid':
-            continue
-        case = TestCompareData(site, cp)
-        tests.append(case)
-    return unittest.TestSuite(tests)
+    stream = streamHandler(cp)
+    runTest(cp, TestCompareData, stream)
 
 if __name__ == '__main__':
-    testSuite = generateTests(TestCompareData, sys.argv[1:])
-    testRunner = unittest.TextTestRunner(verbosity=2)
-    result = testRunner.run(testSuite)
-    sys.exit(not result.wasSuccessful())
-
+    main()

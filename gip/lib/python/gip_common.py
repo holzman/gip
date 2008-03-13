@@ -18,9 +18,6 @@ import socket
 
 from UserDict import UserDict
 
-import gip_testing
-from gip_testing import runCommand
-
 # This evaluates to true if Python 2.3 or higher is
 # available.
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
@@ -77,7 +74,39 @@ def check_testing_environment():
     installed.
     """
     if 'GIP_TESTING' in os.environ:
-        gip_testing.replace_command = True
+        __import__('gip_testing').replace_command = True
+
+def parseOpts( args ):
+    # Stupid python 2.2 on SLC3 doesn't have optparser...
+    keywordOpts = {}
+    passedOpts = []
+    givenOpts = []
+    length = len(args)
+    optNum = 0
+    while ( optNum < length ):
+        opt = args[optNum]
+        hasKeyword = False
+        if len(opt) > 2 and opt[0:2] == '--':
+            keyword = opt[2:]
+            hasKeyword = True
+        elif opt[0] == '-':
+            keyword = opt[1:]
+            hasKeyword = True
+        if hasKeyword:
+            if keyword.find('=') >= 0:
+                keyword, value = keyword.split('=', 1)
+                keywordOpts[keyword] = value
+            elif optNum + 1 == length:
+                passedOpts.append( keyword )
+            elif args[optNum+1][0] == '-':
+                passedOpts.append( keyword )
+            else:
+                keywordOpts[keyword] = args[optNum+1]
+                optNum += 1
+        else:
+            givenOpts.append( args[optNum] )
+        optNum += 1
+    return keywordOpts, passedOpts, givenOpts
 
 def config(*args):
     """
@@ -448,3 +477,11 @@ def cp_get(cp, section, option, default):
     except:
         return default
 
+def pathFormatter(path, slash=False):
+    if slash:
+        if not (path[-1] == "/"):
+            path = path + '/'
+    else:
+        path = path.rstrip('/')
+
+    return path

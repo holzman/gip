@@ -7,7 +7,7 @@ import unittest
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from ldap import read_bdii
 from gip_common import config, getLogger
-from gip_testing import runBdiiTest
+from gip_testing import runTest, streamHandler
 
 log = getLogger("GIP.Print.CE")
 
@@ -22,13 +22,13 @@ class TestPrintCe(unittest.TestCase):
     def testCeAds(self):
         """
         Print out the following information for each CE at a site:
-        
+
           - LRMS and version
           - Free batch slots
           - Running jobs and waiting jobs
           - Total batch slots
           - Max wall clock time
-        
+
         For each attached VO view, print:
           - VO
           - Running jobs
@@ -57,7 +57,7 @@ class TestPrintCe(unittest.TestCase):
             out += '\t\tLRMS type: %s, Version: %s\n' % \
                 (entry.glue['CEInfoLRMSType'], entry.glue['CEInfoLRMSVersion'])
             out += '\t\tSlots used %s, Free %s\n' % \
-                (entry.glue['CEStateFreeJobSlots'], 
+                (entry.glue['CEStateFreeJobSlots'],
                  entry.glue['CEStateRunningJobs'])
             out += '\t\tTotal batch slots: %s\n' % \
                 entry.glue['CEPolicyAssignedJobSlots']
@@ -72,10 +72,11 @@ class TestPrintCe(unittest.TestCase):
 
 def main():
     """
-    The main entry point for when srm_check is run in standalone mode.
+    The main entry point for when ce_print is run in standalone mode.
     """
     cp = config()
-    runBdiiTest(cp, TestPrintCe)
+    stream = streamHandler(cp)
+    runTest(cp, TestPrintCe, stream)
 
 if __name__ == '__main__':
     main()

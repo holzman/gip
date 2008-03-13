@@ -6,7 +6,8 @@ Module for interacting with PBS.
 import re
 import os
 import sys
-from gip_common import HMSToMin, getLogger, runCommand, VoMapper, voList
+from gip_common import HMSToMin, getLogger, VoMapper, voList
+from gip_testing import runCommand
 
 log = getLogger("GIP.PBS")
 

@@ -11,7 +11,7 @@ import urlparse
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from ldap import read_bdii
 from gip_common import config, addToPath, getLogger
-from gip_testing import runBdiiTest
+from gip_testing import runTest, streamHandler
 
 log = getLogger("GIP.Testing.SRM")
 
@@ -26,7 +26,7 @@ class TestSrmAds(unittest.TestCase):
         unittest.TestCase.__init__(self, 'testSrmAds_%s' % site)
         self.site = site
         self.cp = cp
-    
+
     def testSrmAds(self):
         """
         Test SRM ads for the following:
@@ -87,7 +87,8 @@ def main():
     The main entry point for when srm_check is run in standalone mode.
     """
     cp = config()
-    runBdiiTest(cp, TestSrmAds)
+    stream = streamHandler(cp)
+    runTest(cp, TestSrmAds, stream)
 
 if __name__ == '__main__':
     main()

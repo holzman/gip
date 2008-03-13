@@ -1063,7 +1063,7 @@ sub create_ce_config_file
                          ."GlueCEPolicyMaxWaitingJobs: 0\n"
                          ."GlueCEPolicyMaxSlotsPerJob: 0\n"
                          ."GlueCEPolicyPreemption: 0\n"
-                         ."GlueCEStateEstimatedResponseTime: 0\n"
+                         ."GlueCEStateEstimatedResponseTime: 14400\n"
                          ."GlueCEStateFreeCPUs: 0\n"
                          ."GlueCEStateRunningJobs: 0\n"
                          ."GlueCEStateStatus: Production\n"

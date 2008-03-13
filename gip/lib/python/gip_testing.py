@@ -9,7 +9,9 @@ outputs from the test/command_output directory.
 import os
 import sys
 import unittest
+import datetime
 
+from gip_common import cp_get, pathFormatter, parseOpts
 from ldap import getSiteList
 
 replace_command = False
@@ -44,7 +46,7 @@ def runCommand(cmd, force_command=False):
 def generateTests(cp, cls, args=[]):
     """
     Given a class and args, generate a test case for every site in the BDII.
-    
+
     @param cp: Site configuration
     @type cp: ConfigParser
     @param cls: Test class to use to generate a test suite.  It is assumed
@@ -54,6 +56,7 @@ def generateTests(cp, cls, args=[]):
         generated for the given sites.
     """
     sites = getSiteList(cp)
+    kw, passed, args = parseOpts(sys.argv[1:])
     tests = []
     for site in sites:
         if len(args) > 0 and site not in args:
@@ -64,7 +67,27 @@ def generateTests(cp, cls, args=[]):
         tests.append(case)
     return unittest.TestSuite(tests)
 
-def runBdiiTest(cp, cls):
+def streamHandler(cp):
+    """
+    Given the ConfigParser, find the preferred stream for test output
+
+    @param cp: Site configuration
+    @type cp: ConfigParser
+    """
+
+    streamName = cp_get(cp, "TestRunner", "StreamName", "")
+    if (streamName is None) or (streamName == ""):
+        return sys.stderr
+    elif (streamName.lower() == "stdout") or (streamName.lower() == "sys.stdout"):
+        return sys.stdout
+    elif (streamName.lower() == "file"):
+        logDir = pathFormatter(cp_get(cp, "TestRunner", "LogDir", "/tmp"))
+        logPrefix = cp_get(cp, "TestRunner", "LogPrefix", "")
+        logFile = logDir + "/" + logPrefix \
+            + datetime.datetime.now().strftime("%A_%b_%d_%Y_%H_%M_%S")
+        return open(logFile, 'w')
+
+def runTest(cp, cls, out=None):
     """
     Given a test class, generate and run a test suite
 
@@ -73,9 +96,14 @@ def runBdiiTest(cp, cls):
     @param cls: Test class to use to generate a test suite.  It is assumed
         that the constructor for this class has signature cls(cp, site_name)
     @type cls: class
+    @param out: A stream where the output from the test suite is logged
+    @type out: stream
     """
     testSuite = generateTests(cp, cls, sys.argv[1:])
-    testRunner = unittest.TextTestRunner(verbosity=2)
+
+    if out is None:
+        testRunner = unittest.TextTestRunner(verbosity=2)
+    else:
+        testRunner = unittest.TextTestRunner(stream=out, verbosity=2)
     result = testRunner.run(testSuite)
     sys.exit(not result.wasSuccessful())
-

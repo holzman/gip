@@ -34,7 +34,7 @@ The following changes will be made:
 =item $VDT_LOCATION/globus/etc/grid-info-slapd.conf is edited to
     include the GLUE Schema.
 
-=item $VDT_LOCATION/lcg/var/gip/lcg-info-generic.conf is created with some
+=item $VDT_LOCATION/gip/etc/osg-info-generic.conf is created with some
     default values.
 
 =item grid-info-resource-ldif.conf is configured to use the generic
@@ -46,12 +46,12 @@ After it is done, you will need to:
 
 =over 4
 
-=item Edit $VDT_LOCATION/lcg/var/gip/lcg-info-generic.conf to have correct
+=item Edit $VDT_LOCATION/gip/etc/osg-info-generic.conf to have correct
     default values for your site.
 
 =item Run the following command to create the generic information provider:
 
-$VDT_LOCATION/lcg/sbin/lcg-info-generic-config $VDT_LOCATION/lcg/var/gip/lcg-info-generic.conf
+$VDT_LOCATION/sbin/osg-info-generic-config $VDT_LOCATION//gip/osg-info-generic.conf
 
 =cut
 
@@ -74,7 +74,7 @@ use FileHandle;
 #-----------------------------------------------------------------------
 my $vdt_location = $ENV{VDT_LOCATION};
 my $globus_location;
-my $lcg_location;
+my $gip_location;
 my $condor_bin_location;
 my $lsf_bin_location;
 my $pbs_bin_location;
@@ -171,7 +171,7 @@ edit_resource_register_conf();
 setup_cemon();
 
 describe_postinstall();
-#system("$lcg_location/sbin/lcg-info-generic-config $lcg_location/var/gip/lcg-info-generic.conf");
+#system("$gip_location/sbin/lcg-info-generic-config $gip_location/etc/lcg-info-generic.conf");
 vdt_install_log("########## Configured Generic-Information-Provider correctly");
 
 exit(0);
@@ -222,18 +222,18 @@ sub initialize
     }
 
     $globus_location = $vdt_location . "/globus";
-    $lcg_location = $vdt_location . "/lcg";
+    $gip_location = $vdt_location . "/gip";
 
     vdt_install_log("##########");
     vdt_install_log("# Configuring Generic-Information-Provider at $date");
     vdt_install_log("##########");
 
     vdt_install_log("The Globus location is $globus_location");
-    vdt_install_log("The LCG location is $lcg_location");
+    vdt_install_log("The GIP location is $gip_location");
 
     stat($vdt_location) or die "Error can't access $vdt_location\n";
-    stat($globus_location) or die "Error can't access $lcg_location\n";
-    stat($lcg_location) or die "Error can't access $lcg_location\n";
+    stat($globus_location) or die "Error can't access $gip_location\n";
+    stat($gip_location) or die "Error can't access $gip_location\n";
 
     my $tmp_testbed = `$vdt_location/osg-version`;
     if ($tmp_testbed =~ /^OSG-ITB-\d\.\d\.\d/) {
@@ -455,6 +455,7 @@ sub read_osg_attributes_info
                	    #$vo_dir_var = "OSG_GIP_VO_".$vo."_DIR";
     
     		    # insensitive since osg-gip-configure.sh doesn't do conversion
+                    #if ($vo_path_conf_str =~ m/$vo_dir_var.*="(.*)"\n/i){
                     if ($vo_path_conf_str =~ m/OSG_GIP_VO_DIR\[\d+\]="$vo,(.*)"/i){
                         $vo_path = $1;
                         chomp($vo_path);
@@ -567,30 +568,30 @@ sub installation_remarks
 ###########################################################################
 sub create_directories()
 {
-    my $tmp_dir = "$lcg_location/var/gip/tmp";
+    my $tmp_dir = "$gip_location/var/tmp";
     if (!-d $tmp_dir) {
         # This will probably create both gip and tmp.
         vdt_install_log("Creating temporary directory for GIP: $tmp_dir");
-        system("mkdir -p $lcg_location/var/gip/tmp");
+        system("mkdir -p $gip_location/var/tmp");
     }
     if ($< == 0) {
-        system("chown daemon $lcg_location/var/gip/tmp");
+        system("chown daemon $gip_location/var/tmp");
     }
 
-    my $plugin_dir  = "$lcg_location/var/gip/plugin";
-    if (!-d $plugin_dir) {
-        # This will probably create plugin.
-        vdt_install_log("Creating plugin directory for GIP: $plugin_dir");
-        system("mkdir -p $plugin_dir");
-    }
+    #my $plugin_dir  = "$gip_location/var/gip/plugin";
+    #if (!-d $plugin_dir) {
+    #    # This will probably create plugin.
+    #    vdt_install_log("Creating plugin directory for GIP: $plugin_dir");
+    #    system("mkdir -p $plugin_dir");
+    #}
 
-    my $provider_dir  = "$lcg_location/var/gip/provider";
-    if (!-d $provider_dir) {
-        vdt_install_log("Creating provider directory for GIP: $provider_dir");
-        system("mkdir -p $provider_dir");
-    }
+    #my $provider_dir  = "$gip_location/var/gip/provider";
+    #if (!-d $provider_dir) {
+    #    vdt_install_log("Creating provider directory for GIP: $provider_dir");
+    #    system("mkdir -p $provider_dir");
+    #}
 
-    my $ldif_dir  = "$lcg_location/var/gip/ldif";
+    my $ldif_dir  = "$gip_location/var/ldif";
     if (!-d $ldif_dir) {
         vdt_install_log("Creating static ldif directory for GIP: $ldif_dir");
         system("mkdir -p $ldif_dir");
@@ -600,16 +601,16 @@ sub create_directories()
         system("rm -rf $ldif_dir/*");
     }
 
-    if (!-d "$lcg_location/share/doc/osg-info-gip-config"){
-        vdt_install_log("Creating directory for GIP: $lcg_location/share/doc/osg-info-gip-config");
-        system("mkdir -p $lcg_location/share/doc/osg-info-gip-config");
+    if (!-d "$gip_location/etc/osg-info-gip-config"){
+        vdt_install_log("Creating directory for GIP: $gip_location/etc/osg-info-gip-config");
+        system("mkdir -p $gip_location/etc/osg-info-gip-config");
     }
 
     foreach $vo (@vo_list){
-        vdt_install_log("Creating directory for GIP: $lcg_location/var/info/$vo");
-        `mkdir -p $lcg_location/var/info/$vo`;
-        vdt_install_log("Creating file for GIP: $lcg_location/var/info/$vo/$vo.list");
-        `touch -a $lcg_location/var/info/$vo/$vo.list`;
+        vdt_install_log("Creating directory for GIP: $gip_location/var/info/$vo");
+        `mkdir -p $gip_location/var/info/$vo`;
+        vdt_install_log("Creating file for GIP: $gip_location/var/info/$vo/$vo.list");
+        `touch -a $gip_location/var/info/$vo/$vo.list`;
     }
 
     return;
@@ -619,12 +620,12 @@ sub create_directories()
 ###########################################################################
 #
 # Function: create_site_config_file
-# Purpose:  We create the static conf file lcg-info-static-site.conf
+# Purpose:  We create the static conf file gip-info-static-site.conf
 #
 ###########################################################################
 sub create_site_config_file
 {
-    my $config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-site.conf";
+    my $config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-site.conf";
     my $contents ="";
 
    $contents = $contents."dn: GlueSiteUniqueID=$fullhost\n"
@@ -949,7 +950,7 @@ sub get_cpu_info(){
 ###########################################################################
 sub create_cluster_config_file
 {
-    my $config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-cluster.conf";
+    my $config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-cluster.conf";
     my $contents    = "";
     $contents = $contents."\ndn: GlueClusterUniqueID=$fullhost\n"
              ."GlueClusterName: $fullhost\n"
@@ -1044,7 +1045,7 @@ sub create_cluster_config_file
 sub create_ce_config_file
 {
 
-    my $config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-ce.conf";
+    my $config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-ce.conf";
     my $contents    = "";
 
     $contents = $contents."\nGlueCEHostingCluster: $fullhost\n"
@@ -1205,12 +1206,14 @@ sub create_ce_config_file
 ###########################################################################
 sub create_se_config_file
 {
-    my $config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-se.conf";
+    my $config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-se.conf";
     my $contents    = "";
 
     # Write SE part of configuration. A site could publish both srm and gsiftp information through GIP simultaneously.
-    my ($se_version, $minor_ver) = split(/\./, $se_control_version);
-  
+     my ($major_ver, $minor_ver) = split /. /, $se_control_version;
+     
+    my $se_version=$major_ver;
+    print "$se_control_version, $major_ver , $minor_ver \n\n";
 
     if ($srm) {
         $contents=$contents."\ndn: GlueSEUniqueID=$se_host\n"
@@ -1283,7 +1286,7 @@ sub create_se_config_file
         $service_contents=$service_contents."\n";
         $service_contents=$service_content."GlueForeignKey: GlueSiteUniqueID=$fullhost\n";
 
-        my $service_config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-service.conf";
+        my $service_config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-service.conf";
         safe_write($service_config_file, $service_contents);
         vdt_install_log("===== BEGIN osg-info-static-service.conf =====\n");
         vdt_install_log($service_contents);
@@ -1509,7 +1512,7 @@ sub create_se_config_file
 sub create_cesebind_config_file
 {
 
-    my $config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-cesebind.conf";
+    my $config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-cesebind.conf";
     my $contents    = "";
 
     if ($batch =~ /^pbs$/i) {
@@ -1580,13 +1583,13 @@ sub create_cesebind_config_file
         }
     }
 
-    if ($batch /^lsf$/i) {
+    if ($batch !~ /^pbs$/i) {
         safe_write($config_file, $contents);
-    }
 
-    vdt_install_log("===== BEGIN osg-info-static-cesebind.conf =====\n");
-    vdt_install_log($contents);
-    vdt_install_log("===== END osg-info-static-cesebind.conf =====\n");
+        vdt_install_log("===== BEGIN osg-info-static-cesebind.conf =====\n");
+        vdt_install_log($contents);
+        vdt_install_log("===== END osg-info-static-cesebind.conf =====\n");
+    }
 
     return;
 }
@@ -1600,7 +1603,7 @@ sub create_cesebind_config_file
 sub create_service_config_file
 {
 
-    my $config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-service.conf";
+    my $config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-service.conf";
     my $contents    = "\n";
 
     if(-e $config_file) {
@@ -1629,16 +1632,16 @@ sub create_service_config_file
 ###########################################################################
 sub create_generic_config_file
 {
-    my $config_file = "$lcg_location/etc/osg-info-generic.conf";
+    my $config_file = "$gip_location/etc/osg-info-generic.conf";
     if (-e $config_file){
         vdt_install_log("Warning: osg-info-generic.conf left unchanged since it already exists")
     }else{
         my $contents    = "";
 
-        $contents = $contents."temp_dir = $lcg_location/var/gip/tmp\n"
-                             ."plugin_dir = $lcg_location/var/gip/plugin\n"
-                             ."static_dir = $lcg_location/var/gip/ldif\n"
-                             ."provider_dir = $lcg_location/var/gip/provider\n"
+        $contents = $contents."temp_dir = $gip_location/var/tmp\n"
+                             ."plugin_dir = $gip_location/plugins\n"
+                             ."static_dir = $gip_location/var/ldif\n"
+                             ."provider_dir = $gip_location/providers\n"
                              ."freshness = 300\n"
                              ."cache_ttl = 600\n"
                              ."response = 60\n"
@@ -1688,10 +1691,10 @@ sub create_config_file
 sub create_wrapper_files
 {
     #Creating Wrapper Script
-    my $wrapper_file = "$lcg_location/libexec/osg-info-wrapper";
+    my $wrapper_file = "$gip_location/libexec/osg-info-wrapper";
     my $contents='#!/bin/sh';
     $contents=$contents."\n".'export LANG=C';
-    $contents=$contents."\n$lcg_location/bin/lcg-info-generic $lcg_location/etc/osg-info-generic.conf\n";
+    $contents=$contents."\n$gip_location/bin/lcg-info-generic $gip_location/etc/osg-info-generic.conf\n";
 
     safe_write($wrapper_file, $contents);
     system("chmod +x $wrapper_file");
@@ -1700,7 +1703,7 @@ sub create_wrapper_files
     vdt_install_log("===== END osg-info-wrapper =====\n");
 
     #Create provider wrapper when necessary (Currently used for gums-monitoring)
-    $wrapper_file = "$lcg_location/var/gip/provider/osg-info-dynamic-providers";
+    $wrapper_file = "$gip_location/provider/osg-info-dynamic-providers";
     $contents='#!/bin/sh';
     $contents=$contents."\n"."$gip_location/libexec/osg-info-software-provider $app/etc $fullhost\n";
     if ($gums == 1){
@@ -1711,7 +1714,7 @@ sub create_wrapper_files
         $contents=$contents."\n"."$gip_location/libexec/osg_info_cesebind.py\n";
     }
     $contents = $contents."\n"."$gip_location/libexec/osg_info_site.py\n";
-    $contents = $contents."\nif [ -f \"$lcg_location/etc/add-attributes.conf\" ]; then\n    cat $lcg_location/etc/add-attributes.conf\nfi\n";
+    $contents = $contents."\nif [ -f \"$gip_location/etc/add-attributes.conf\" ]; then\n    cat $gip_location/etc/add-attributes.conf\nfi\n";
 
         #We remove the existing wrapper file because it will cause duplication of information
     system("rm -f $wrapper_file");
@@ -1723,10 +1726,10 @@ sub create_wrapper_files
 
     #Create pluging wrappers here
 
-    $wrapper_file = "$lcg_location/var/gip/plugin/osg-info-dynamic-plugins";
+    $wrapper_file = "$gip_location/plugin/osg-info-dynamic-plugins";
 
     # Create appropriate lcg-info-dynamic-ce-plugin wrapper script in plugin dir
-    my $ldif_file = "$lcg_location/var/gip/ldif/osg-info-static-ce.ldif";
+    my $ldif_file = "$gip_location/var/ldif/osg-info-static-ce.ldif";
     $contents = '#!/bin/sh'."\n";
     if ($batch =~ /^condor$/i) {
         # The condor script is different--it requires the path to the binaries as an argument.
@@ -1734,36 +1737,36 @@ sub create_wrapper_files
     }
     elsif ($batch =~ /^lsf$/i) {
         # The lsf script is also different--it requires the path to the binaries as an argument.
-        $contents = $contents."$lcg_location/libexec/osg-info-dynamic-lsf $lsf_bin_location $ldif_file \n";
+        $contents = $contents."$gip_location/libexec/osg-info-dynamic-lsf $lsf_bin_location $ldif_file \n";
     }
     elsif ($batch =~ /pbs/i) {
         # The pbs script is also different--it requires the path to the binaries as an argument.
         # $contents = $contents."$gip_location/libexec/osg-info-dynamic-pbs.py \n";
     }
     else {
-        $contents = $contents."$lcg_location/libexec/osg-info-dynamic-$batch $ldif_file \n";
+        $contents = $contents."$gip_location/libexec/osg-info-dynamic-$batch $ldif_file \n";
     }
 
     # Create appropriate lcg-info-dynamic-software-plugin wrapper script in plugin dir. Not used by osg uses osg-info-dynamic-location plugin and osg-info-software-provider
-    #$ldif_file = "$lcg_location/var/gip/ldif/osg-info-static-cluster.ldif";
-    #$contents = $contents."\n$lcg_location/libexec/osg-info-dynamic-software $ldif_file $lcg_location/var/info\n";
+    #$ldif_file = "$gip_location/var/gip/ldif/osg-info-static-cluster.ldif";
+    #$contents = $contents."\n$gip_location/libexec/osg-info-dynamic-software $ldif_file $gip_location/var/info\n";
     
 
     # Create appropriate lcg-info-dynamic-location-plugin wrapper script in plugin dir
-    $ldif_file = "$lcg_location/var/gip/ldif/osg-info-static-cluster.ldif";
-    $contents = $contents."\n$lcg_location/libexec/osg-info-dynamic-location $ldif_file $app/etc\n";
+    $ldif_file = "$gip_location/var/ldif/osg-info-static-cluster.ldif";
+    $contents = $contents."\n$gip_location/libexec/osg-info-dynamic-location $ldif_file $app/etc\n";
 
     # Create appropriate lcg-info-dynamic-se-plugin wrapper script in plugin dir
-    $ldif_file = "$lcg_location/var/gip/ldif/osg-info-static-se.ldif";
+    $ldif_file = "$gip_location/var/ldif/osg-info-static-se.ldif";
     if($disk){
-        $contents = $contents."\n$lcg_location/libexec/osg-info-dynamic-classicSE $ldif_file $app/etc\n";
+        $contents = $contents."\n$gip_location/libexec/osg-info-dynamic-classicSE $ldif_file $app/etc\n";
     }
     # This script has been deprecated (newer versions of dcache have disabled this functionality)
     # if($srm){
-    #     $contents = $contents."\n$lcg_location/libexec/osg-info-dynamic-dcache $ldif_file $vdt_location\n";
+    #     $contents = $contents."\n$gip_location/libexec/osg-info-dynamic-dcache $ldif_file $vdt_location\n";
     # }
 
-    $contents = $contents."\nif [ -f \"$lcg_location/etc/alter-attributes.conf\" ]; then\n    cat $lcg_location/etc/alter-attributes.conf\nfi\n";
+    $contents = $contents."\nif [ -f \"$gip_location/etc/alter-attributes.conf\" ]; then\n    cat $gip_location/etc/alter-attributes.conf\nfi\n";
 
     #We remove the existing wrapper file because it will cause duplication of information
     system("rm -f $wrapper_file");
@@ -1779,60 +1782,60 @@ sub create_wrapper_files
 #
 # Function: create_static_ldif_files
 # Purpose:  We create the following static ldif files
-#           1. lcg-info-static-site.ldif
-#           2. lcg-info-static-cluster.ldif
-#           3. lcg-info-static-ce.ldif
-#           4. lcg-info-static-se.ldif
-#           5. lcg-info-static-cesebind.ldif
-#           6. lcg-info-static-service.ldif
+#           1. osg-info-static-site.ldif
+#           2. osg-info-static-cluster.ldif
+#           3. osg-info-static-ce.ldif
+#           4. osg-info-static-se.ldif
+#           5. osg-info-static-cesebind.ldif
+#           6. osg-info-static-service.ldif
 #
 ###########################################################################
 sub create_static_ldif_files
 {
 
-    my $contents = `$lcg_location/sbin/lcg-info-static-create -c $lcg_location/share/doc/osg-info-gip-config/osg-info-static-site.conf -t $lcg_location/etc/GlueSite.template`;
+    my $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-site.conf -t $gip_location/etc/GlueSite.template`;
 
-    safe_write("$lcg_location/var/gip/ldif/osg-info-static-site.ldif", $contents);
+    safe_write("$gip_location/var/ldif/osg-info-static-site.ldif", $contents);
 
     vdt_install_log("===== BEGIN osg-info-static-site.ldif =====\n");
     vdt_install_log($contents);
     vdt_install_log("===== END osg-info-static-site.ldif =====\n");
 
-    $contents = `$lcg_location/sbin/lcg-info-static-create -c $lcg_location/share/doc/osg-info-gip-config/osg-info-static-cluster.conf -t $lcg_location/etc/GlueCluster.template`;
+    $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-cluster.conf -t $gip_location/etc/GlueCluster.template`;
 
-    safe_write("$lcg_location/var/gip/ldif/osg-info-static-cluster.ldif", $contents);
+    safe_write("$gip_location/var/ldif/osg-info-static-cluster.ldif", $contents);
 
     vdt_install_log("===== BEGIN osg-info-static-cluster.ldif =====\n");
     vdt_install_log($contents);
     vdt_install_log("===== END osg-info-static-cluster.ldif =====\n");
 
-    $contents = `$lcg_location/sbin/lcg-info-static-create -c $lcg_location/share/doc/osg-info-gip-config/osg-info-static-ce.conf -t $lcg_location/etc/GlueCE.template`;
+    $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-ce.conf -t $gip_location/etc/GlueCE.template`;
 
-    safe_write("$lcg_location/var/gip/ldif/osg-info-static-ce.ldif", $contents);
+    safe_write("$gip_location/var/ldif/osg-info-static-ce.ldif", $contents);
 
     vdt_install_log("===== BEGIN osg-info-static-ce.ldif =====\n");
     vdt_install_log($contents);
     vdt_install_log("===== END osg-info-static-ce.ldif =====\n");
 
-    $contents = `$lcg_location/sbin/lcg-info-static-create -c $lcg_location/share/doc/osg-info-gip-config/osg-info-static-se.conf -t $lcg_location/etc/GlueSE.template`;
+    $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-se.conf -t $gip_location/etc/GlueSE.template`;
 
-    safe_write("$lcg_location/var/gip/ldif/osg-info-static-se.ldif", $contents);
+    safe_write("$gip_location/var/ldif/osg-info-static-se.ldif", $contents);
 
     vdt_install_log("===== BEGIN osg-info-static-se.ldif =====\n");
     vdt_install_log($contents);
     vdt_install_log("===== END osg-info-static-se.ldif =====\n");
 
-    $contents = `$lcg_location/sbin/lcg-info-static-create -c $lcg_location/share/doc/osg-info-gip-config/osg-info-static-cesebind.conf -t $lcg_location/etc/GlueCESEBind.template`;
+    $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-cesebind.conf -t $gip_location/etc/GlueCESEBind.template`;
 
-    safe_write("$lcg_location/var/gip/ldif/osg-info-static-cesebind.ldif", $contents);
+    safe_write("$gip_location/var/ldif/osg-info-static-cesebind.ldif", $contents);
 
     vdt_install_log("===== BEGIN osg-info-static-cesebind.ldif =====\n");
     vdt_install_log($contents);
     vdt_install_log("===== END osg-info-static-cesebind.ldif =====\n");
 
-    $contents = `$lcg_location/sbin/lcg-info-static-create -c $lcg_location/share/doc/osg-info-gip-config/osg-info-static-service.conf -t $lcg_location/etc/GlueService.template`;
+    $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-service.conf -t $gip_location/etc/GlueService.template`;
 
-    safe_write("$lcg_location/var/gip/ldif/osg-info-static-service.ldif", $contents);
+    safe_write("$gip_location/var/ldif/osg-info-static-service.ldif", $contents);
 
     vdt_install_log("===== BEGIN osg-info-static-service.ldif =====\n");
     vdt_install_log($contents);
@@ -1950,7 +1953,7 @@ sub edit_resource_ldif_conf
     $contents .= "objectclass: GlobusActiveObject\n";
     $contents .= "objectclass: GlobusActiveSearch\n";
     $contents .= "type: exec\n";
-    $contents .= "path: $lcg_location/libexec\n";
+    $contents .= "path: $gip_location/libexec\n";
     $contents .= "base: osg-info-wrapper\n";
     $contents .= "cachetime: 60\n";
     $contents .= "timelimit: 60\n";
@@ -2049,7 +2052,7 @@ sub setup_cemon
    ##
    my $glite_plugin = "${vdt_location}/glite/etc/glite-ce-ce-plugin/glite-ce-info";
    my $contents = "#!/bin/sh\n".
-                  "${vdt_location}/lcg/libexec/osg-info-wrapper";
+                  "${vdt_location}/gip/libexec/osg-info-wrapper";
    safe_write($glite_plugin, $contents);
    system("chmod 0755 $glite_plugin");
 }

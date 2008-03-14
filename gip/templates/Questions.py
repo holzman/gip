@@ -40,7 +40,7 @@ post_save = """
 Configuration saved.  If you would like to alter any choices without 
 re-running this configuration script, you may find these answers in:
 
-$VDT_LOCATION/gip/etc/gip.conf
+$VDT_LOCATION/gip/etc/%s
 """
 
 batch = """

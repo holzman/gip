@@ -149,13 +149,13 @@ class GipQuestions:
     def __getattr__(self, attr_name):
         return getattr(self.__info, attr_name)
 
-def save(cp):
+def save(cp, filename='gip.conf', mode=0644):
     """
     Save the information in the ConfigParser to gip.conf
     """
-    bkp_num = os.path.expandvars("$GIP_LOCATION/etc/gip.conf.backup.%i")
-    bkp = os.path.expandvars("$GIP_LOCATION/etc/gip.conf.backup")
-    save_point = os.path.expandvars("$GIP_LOCATION/etc/gip.conf")
+    bkp_num = os.path.expandvars("$GIP_LOCATION/etc/%s.backup.%%i" % filename)
+    bkp = os.path.expandvars("$GIP_LOCATION/etc/%s.backup" % filename)
+    save_point = os.path.expandvars("$GIP_LOCATION/etc/%s" % filename)
     backup_name = None
     if os.path.exists(save_point):
         backup_name = bkp
@@ -165,5 +165,7 @@ def save(cp):
                 counter += 1
             backup_name = bkp_num % counter
         os.rename(save_point, backup_name)
+        os.chmod(backup_name, mode)
     cp.write(open(save_point, 'w'))
+    os.chmod(save_point, mode)
 

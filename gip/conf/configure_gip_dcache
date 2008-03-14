@@ -8,8 +8,14 @@ import sys
 import os
 import socket
 
+if 'GIP_LOCATION' not in os.environ:
+    if 'VDT_LOCATION' not in os.environ:
+        print >> sys.stderr, "GIP_LOCATION and VDT_LOCATION are not set!"
+        sys.exit(1)
+    os.environ['GIP_LOCATION'] = os.path.expandvars('$VDT_LOCATION/gip')
+
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getOsgAttributes
+from gip_common import config, getOsgAttributes, cp_get
 from gip_storage import connect_admin, connect
 from user_input import *
 
@@ -70,20 +76,40 @@ def config_dcache(ask):
     config_admin_interface(ask)
     config_postgres(ask)
 
+def do_save(ask, cp, question=q.save_progress_done):
+    if ask(question, None, None, makeBoolean):
+        sections = list(cp.sections())
+        save_sections = ['dcache_config', 'dcache_admin']
+        for section in sections:
+            if section not in save_sections:
+                cp.remove_section(section)
+        save(cp, filename='dcache_storage.conf', mode=0600)
+        print q.post_save % 'dcache_storage.conf'
+
+def set_default(cp, section, option, new_val):
+    if not cp.has_section(section):
+        cp.add_section(section)
+    if (not cp.has_option(section, option)):
+        cp.set(section, option, new_val)
 
 def main():
-    cp = config()
+    cp = config('$GIP_LOCATION/etc/dcache_storage.conf')
+    set_default(cp, 'dcache_admin', 'port', '22223')
+    set_default(cp, 'dcache_admin', 'username', 'admin')
+    set_default(cp, 'dcache_admin', 'password', 'dickerelch')
+    set_default(cp, 'dcache_admin', 'cipher', 'blowfish')
+    set_default(cp, 'dcache_config', 'pgport', '5432')
+    set_default(cp, 'dcache_config', 'database', 'dcache')
+    set_default(cp, 'dcache_config', 'dbuser', 'srmdcache')
+    set_default(cp, 'dcache_config', 'dbpasswd', 'srmdcache')
+
     ask = InputHandler(cp)
     try:
         config_dcache(ask)
     except:
-        if ask(q.save_progress, None, None, makeBoolean):
-            save(cp)
-            print q.post_save
+        do_save(ask, cp, question=q.save_progress)
         sys.exit(1)
-    if ask(q.save_progress_done, None, None, makeBoolean):
-        save(cp)
-        print q.post_save
+    do_save(ask, cp)
 
 if __name__ == '__main__':
     main()

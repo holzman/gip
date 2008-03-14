@@ -1,0 +1,21 @@
+dn: GlueSiteUniqueID=,mds-vo-name=local,o=grid
+objectClass: GlueTop
+objectClass: GlueSite
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueSiteUniqueID:
+GlueSiteName:
+GlueSiteDescription:
+GlueSiteEmailContact:
+GlueSiteUserSupportContact:
+GlueSiteSysAdminContact:
+GlueSiteSecurityContact:
+GlueSiteLocation:
+GlueSiteLatitude:
+GlueSiteLongitude:
+GlueSiteWeb:
+GlueSiteSponsor:
+GlueSiteOtherInfo:
+GlueForeignKey: 
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3

@@ -162,16 +162,11 @@ if ($batch =~ /pbs/i) {
     fix_for_lsf_queues();
 }
 create_config_file();
-edit_slapd_conf();
-edit_resource_ldif_conf();
-edit_resource_register_conf();
 
 # CEMonitor Configuration
 # This will check to see if CEMon is even installed
 setup_cemon();
 
-describe_postinstall();
-#system("$gip_location/sbin/lcg-info-generic-config $gip_location/etc/lcg-info-generic.conf");
 vdt_install_log("########## Configured Generic-Information-Provider correctly");
 
 exit(0);
@@ -1647,22 +1642,11 @@ sub create_config_file
 ###########################################################################
 sub create_wrapper_files
 {
-    #Creating Wrapper Script
-    my $wrapper_file = "$gip_location/libexec/osg-info-wrapper";
-    my $contents='#!/bin/sh';
-    $contents=$contents."\n".'export LANG=C';
-    $contents=$contents."\n$gip_location/bin/lcg-info-generic $gip_location/etc/osg-info-generic.conf\n";
-
-    safe_write($wrapper_file, $contents);
-    system("chmod +x $wrapper_file");
-    vdt_install_log("===== BEGIN osg-info-wrapper =====\n");
-    vdt_install_log($contents);
-    vdt_install_log("===== END osg-info-wrapper =====\n");
 
     #Create provider wrapper when necessary (Currently used for gums-monitoring)
-    $wrapper_file = "$gip_location/providers/osg-info-dynamic-providers";
-    $contents='#!/bin/sh';
-    $contents=$contents."\n"."$gip_location/libexec/osg-info-software-provider $app/etc $fullhost\n";
+    my $wrapper_file = "$gip_location/providers/osg-info-dynamic-providers";
+    my $contents='#!/bin/sh';
+    $contents=$contents."\n"."$gip_location/libexec/osg-info-software-provider.py \n";
     if ($gums == 1){
         $contents=$contents."\n"."$gip_location/libexec/osg-info-gums-status-probe $vdt_location\n";
     }
@@ -1750,7 +1734,7 @@ sub create_wrapper_files
 sub create_static_ldif_files
 {
 
-    my $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-site.conf -t $gip_location/etc/GlueSite.template`;
+    my $contents = `$gip_location/libexec/gip-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-site.conf -t $gip_location/templates/compat/GlueSite.template`;
 
     safe_write("$gip_location/var/ldif/osg-info-static-site.ldif", $contents);
 
@@ -1758,7 +1742,7 @@ sub create_static_ldif_files
     vdt_install_log($contents);
     vdt_install_log("===== END osg-info-static-site.ldif =====\n");
 
-    $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-cluster.conf -t $gip_location/etc/GlueCluster.template`;
+    $contents = `$gip_location/libexec/gip-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-cluster.conf -t $gip_location/templates/compat/GlueCluster.template`;
 
     safe_write("$gip_location/var/ldif/osg-info-static-cluster.ldif", $contents);
 
@@ -1766,7 +1750,7 @@ sub create_static_ldif_files
     vdt_install_log($contents);
     vdt_install_log("===== END osg-info-static-cluster.ldif =====\n");
 
-    $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-ce.conf -t $gip_location/etc/GlueCE.template`;
+    $contents = `$gip_location/libexec/gip-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-ce.conf -t $gip_location/templates/compat/GlueCE.template`;
 
     safe_write("$gip_location/var/ldif/osg-info-static-ce.ldif", $contents);
 
@@ -1774,7 +1758,7 @@ sub create_static_ldif_files
     vdt_install_log($contents);
     vdt_install_log("===== END osg-info-static-ce.ldif =====\n");
 
-    $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-se.conf -t $gip_location/etc/GlueSE.template`;
+    $contents = `$gip_location/libexec/gip-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-se.conf -t $gip_location/templates/compat/GlueSE.template`;
 
     safe_write("$gip_location/var/ldif/osg-info-static-se.ldif", $contents);
 
@@ -1782,7 +1766,7 @@ sub create_static_ldif_files
     vdt_install_log($contents);
     vdt_install_log("===== END osg-info-static-se.ldif =====\n");
 
-    $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-cesebind.conf -t $gip_location/etc/GlueCESEBind.template`;
+    $contents = `$gip_location/libexec/gip-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-cesebind.conf -t $gip_location/templates/compat/GlueCESEBind.template`;
 
     safe_write("$gip_location/var/ldif/osg-info-static-cesebind.ldif", $contents);
 
@@ -1790,7 +1774,7 @@ sub create_static_ldif_files
     vdt_install_log($contents);
     vdt_install_log("===== END osg-info-static-cesebind.ldif =====\n");
 
-    $contents = `$gip_location/sbin/lcg-info-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-service.conf -t $gip_location/etc/GlueService.template`;
+    $contents = `$gip_location/libexec/gip-static-create -c $gip_location/etc/osg-info-gip-config/osg-info-static-service.conf -t $gip_location/templates/compat/GlueService.template`;
 
     safe_write("$gip_location/var/ldif/osg-info-static-service.ldif", $contents);
 
@@ -1800,197 +1784,6 @@ sub create_static_ldif_files
 
 }
 
-###########################################################################
-#
-# Function: edit_slapd_conf
-# Purpose:  Edit $globus_location/etc/grid-info-slapd.conf to include the
-#           GLUE Schema and the site name.
-#
-###########################################################################
-sub edit_slapd_conf
-{
-    my $slapd_conf  = "$globus_location/etc/grid-info-slapd.conf";
-    my $contents;
-    my $line;
-	my $in_giis = 0;
-    my $site_name;
-
-    $site_name = $osg_site_name;
-    $site_name =~ s/\"//g;
-
-    # We read the file and eliminate old glue schema lines while
-    # adding the lines we want in the right place.
-    open(CONF, "<", $slapd_conf);
-    while (defined($line = <CONF>)) {
-        if ($line =~ 'include.*core\.schema') {
-            $contents .= $line;
-            $contents .= "include $globus_location/etc/Glue-CORE.schema\n";
-            $contents .= "include $globus_location/etc/Glue-CE.schema\n";
-            $contents .= "include $globus_location/etc/Glue-CESEBind.schema\n";
-            $contents .= "include $globus_location/etc/Glue-SE.schema\n";
-		} elsif ($line =~ '^database\s+(\S*)') {
-			if ($1 eq "giis") {
-				$in_giis = 1;
-			} else {
-				$in_giis = 0;
-			}
-			$contents .= $line;
-		} elsif ($in_giis && $line =~ "^(suffix.*Mds-Vo-name=).*(o=Grid\")") {
-			$contents .= "$1$site_name, $2\n";
-        } elsif ($line !~ 'include.*Glue.*schema') {
-            $contents .= $line;
-        }
-    }
-    close(CONF);
-
-    safe_write($slapd_conf, $contents);
-
-    vdt_install_log("===== BEGIN grid-info-slapd.conf =====\n");
-    vdt_install_log($contents);
-    vdt_install_log("===== END grid-info-slapd.conf =====\n");
-
-    return;
-}
-
-###########################################################################
-#
-# Function: edit_resource_ldif_conf
-# Purpose:  Edit $globus_location/etc/grid-info-resource-ldif.conf.
-#           This is where we put in the description of how to run the
-#           glue information provider.
-# Note:     We aren't going to use slurp to read the file, because
-#           we need to do some careful deletions from this file.
-#
-###########################################################################
-sub edit_resource_ldif_conf
-{
-    my $ldif_conf = "$globus_location/etc/grid-info-resource-ldif.conf";
-    my $contents;
-    my $line;
-
-    open(CONF, "<", $ldif_conf);
-    my $in_block = 0;
-    my $in_comment_block = 0;
-    while (defined($line = <CONF>)) {
-        # This chunk of text indicates the beginning of the block we want to remove.
-        if ($line =~ "dn: Mds-Vo-Name=local, o=Grid") {
-            $in_block = 1;
-        }
-        # Empty lines indicate separators between chunks in the file
-        elsif ($in_block && $line =~ '^\s*$') {
-            $in_block = 0;
-            $in_comment_block = 0;
-        }
-        # Take the line if we're not in the block
-        elsif (!$in_block){
-            # These blocks should be commented out (There are more than three blocks,
-            # but they start out the same way)
-            if (   $line =~ "^dn: Mds-Host-hn"
-                || $line =~ "^dn: Mds-Device-Group-name"
-                || $line =~ "^dn: Mds-Software-deployment") {
-                $in_comment_block = 1;
-            }
-            if ($in_comment_block) {
-                if ($line =~ '^\s*$') {
-                    $in_comment_block = 0;
-                } else {
-                    $contents .= "#";
-                }
-            }
-            $contents .= $line;
-        }
-    }
-    close(CONF);
-
-    # Now we add the text we want, which describes what kind of information
-    # the glue information provider provides, and how to run it.
-    $contents .= "\n";
-    $contents .= "dn: Mds-Vo-Name=local, o=Grid\n";
-    $contents .= "objectclass: GlobusTop\n";
-    $contents .= "objectclass: GlobusActiveObject\n";
-    $contents .= "objectclass: GlobusActiveSearch\n";
-    $contents .= "type: exec\n";
-    $contents .= "path: $gip_location/libexec\n";
-    $contents .= "base: osg-info-wrapper\n";
-    $contents .= "cachetime: 60\n";
-    $contents .= "timelimit: 60\n";
-    $contents .= "sizelimit: 500\n";
-
-    safe_write($ldif_conf, $contents);
-
-    vdt_install_log("===== BEGIN grid-info-resource-ldif.conf =====\n");
-    vdt_install_log($contents);
-    vdt_install_log("===== END grid-info-resource-ldif.conf =====\n");
-
-    return;
-}
-
-###########################################################################
-#
-# Function: edit_resource_register_conf
-# Purpose:  Edit $globus_location/etc/grid-info-resource-register.conf
-#           to contain our site name.
-#
-###########################################################################
-sub edit_resource_register_conf
-{
-    my $register_conf = "$globus_location/etc/grid-info-resource-register.conf";
-    my $contents;
-    my $site_name;
-
-    $site_name = $osg_site_name;
-    $site_name =~ s/\"//g;
-
-	$contents = slurp($register_conf);
-	$contents =~ s|^dn(.*)(Mds-Vo-name=).*(o=grid)|dn$1$2$site_name, $3|m;
-	safe_write($register_conf, $contents);
-
-    vdt_install_log("===== BEGIN grid-info-resource-register.conf =====\n");
-    vdt_install_log($contents);
-    vdt_install_log("===== END grid-info-resource-register.conf =====\n");
-
-    return;
-}
-
-###########################################################################
-#
-# Function: describe_postinstall
-# Purpose:  Tell people what they have to do to finish up the process.
-#           We tell them both to stdout and to the post-install README.
-#           We expect them to run this interactively, which is why it goes
-#           to stdout, but we don't want them to lose the information, which
-#           is why it goes to the post-install README.
-#
-###########################################################################
-sub describe_postinstall
-{
-    my $post =
-        "We have set up the Generic Information Providers (GIP). "
-        ."If you were running the GRIS (MDS), you must stop and "
-        ."restart it for these changes to take affect. You can do this "
-        ."with the following commands:\n\n";
-
-    my $stop_cmd  = "$vdt_location/post-install/gris stop";
-    my $start_cmd = "$vdt_location/post-install/gris start";
-
-    my $post2 =
-        "Note that this information is also in $vdt_location/post-install/README\n";
-
-    #post_install_log("$post");
-    #post_install_log("$stop_cmd");
-    #post_install_log("$start_cmd");
-
-    if ($have_warnings) {
-       # print "\n";
-    }
-    #print wrap("", "", "$post\n");
-    #print "\n";
-    #print "$stop_cmd\n";
-    #print "$start_cmd\n\n";
-    #print wrap("", "", "$post2\n");
-
-    return;
-}
 ###########################################################################
 #
 # Function: setup_cemon

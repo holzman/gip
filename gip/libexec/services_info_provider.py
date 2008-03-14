@@ -138,7 +138,7 @@ def print_srm(cp, admin):
                 "startTime"    : "1970-01-01T00:00:00Z",
                }
 
-        info['version'] = "1.1"
+        info['version'] = "1.1.0"
         endpoint = "httpg://%s:%i/srm/managerv1" % (hostname, int(port))
         info['endpoint'] = endpoint
         info['serviceID'] = endpoint
@@ -148,7 +148,7 @@ def print_srm(cp, admin):
         print ControlTemplate % info
         print ServiceTemplate % info
 
-        info['version'] = "2.2"
+        info['version'] = "2.2.0"
         endpoint = "httpg://%s:%i/srm/managerv2" % (hostname, int(port))
         info['endpoint'] = endpoint
         info['serviceID'] = endpoint

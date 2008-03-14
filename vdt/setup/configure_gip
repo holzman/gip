@@ -2,7 +2,7 @@
 
 =head1 configure_gip
 
-configurer_gip - Generic Information Provider configuration script
+configure_gip - Generic Information Provider configuration script
 
 =head2 Synopsis
 
@@ -119,8 +119,8 @@ my $sa_path;
 my $se_host='srmhost';
 my $se_name; ##########
 my $se_version;
-my $se_control_version;
-my $service_content;
+my $se_control_version = "UNDEFINED";
+my $service_contents;
 my $fullhost;
 my %user_vo_map;
 my %pbsQueues;
@@ -395,7 +395,7 @@ sub read_osg_attributes_info
     my $gip_conf = "$vdt_location/monitoring/gip-attributes.conf";
 
     if (-e $gip_conf){
-        my $output = `echo $gip_conf; . $gip_conf; echo \$OSG_GIP_BATCH; echo \$OSG_GIP_SRM; echo \$OSG_GIP_DISK; echo \$OSG_GIP_SE_NAME; echo \$OSG_GIP_SE_HOST; echo \$OSG_GIP_SA_PATH; echo \$OSG_GIP_SE_DISK; echo \$OSG_GIP_DATA; echo \$OSG_GIP_GUMS; echo \$OSG_GIP_SIMPLIFIED_SRM; echo \$OSG_GIP_SIMPLIFIED_SRM_PATH; echo \$OSG_GIP_SE_VERSION; echo \$OSG_GIP_DYNAMIC_DCACHE`;
+        my $output = `echo $gip_conf; . $gip_conf; echo \$OSG_GIP_BATCH; echo \$OSG_GIP_SRM; echo \$OSG_GIP_DISK; echo \$OSG_GIP_SE_NAME; echo \$OSG_GIP_SE_HOST; echo \$OSG_GIP_SA_PATH; echo \$OSG_GIP_SE_DISK; echo \$OSG_GIP_DATA; echo \$OSG_GIP_GUMS; echo \$OSG_GIP_SIMPLIFIED_SRM; echo \$OSG_GIP_SIMPLIFIED_SRM_PATH; echo \$OSG_GIP_SE_VERSION; echo \$OSG_GIP_DYNAMIC_DCACHE; echo \$OSG_GIP_SE_CONTROL_VERSION`;
         my @outList = split /\n/, $output;
         $batch   = &remove_quotes($outList[1]);
         $srm     = &remove_quotes($outList[2]);
@@ -410,6 +410,7 @@ sub read_osg_attributes_info
         $simplified_srm_path = &remove_quotes($outList[11]);
         $se_version = &remove_quotes($outList[12]);
         $dynamic_dcache = &remove_quotes($outList[13]);
+        $se_control_version = &remove_quotes($outList[14]);
         $scinfo{sc_number}=`. $gip_conf; echo \$OSG_GIP_SC_NUMBER;`;
 		  for(my $i=1; $i<=$scinfo{sc_number};$i++) {
             my ($scname,$scvendor,$scmodel,$scclock,$scnumpcpus,$scnumlcpus,$scramsize,$scinbound,$scoutbound,$scnodes)=`. $gip_conf; echo \$SC_NAME; echo \$SC_VENDOR; echo \$SC_MODEL; echo \$SC_CLOCK; echo \$SC_NUMPCPUS; echo \$SC_NUMLCPUS; echo \$SC_RAMSIZE; echo \$SC_INBOUND; echo \$SC_OUTBOUND; echo \$SC_NODES`;
@@ -1225,7 +1226,8 @@ sub create_se_config_file
 
 
     # Write SE part of configuration. A site could publish both srm and gsiftp information through GIP simultaneously.
-
+    my ($major_ver, $minor_ver) = split(/\./, $se_control_version);
+    my $se_version=$major_ver;
 
     if ($srm && $dynamic_dcache!=1) {
         $contents=$contents."\ndn: GlueSEUniqueID=$se_host\n"
@@ -1290,7 +1292,7 @@ sub create_se_config_file
         foreach $vo (@vo_list) {
                                 $service_contents=$service_contents."GlueServiceAccessControlRule: $vo\n";
         }
-        $service_contents=$service_content."GlueForeignKey: GlueSiteUniqueID=$fullhost\n";
+        $service_contents=$service_contents."GlueForeignKey: GlueSiteUniqueID=$fullhost\n";
         $service_contents=$service_contents."\n";
 
         my $service_config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-service.conf";

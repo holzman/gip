@@ -8,7 +8,7 @@ import traceback
 import sys
 import re
 
-from gip_common import getLogger
+from gip_common import getLogger, cp_get
 import dCacheAdmin
 
 log = getLogger("GIP.Storage")
@@ -99,7 +99,11 @@ def voListStorage(cp):
     @param cp: Configuration for this site
     @type cp: ConfigParser
     """
-    if cp.getboolean("vo", "autodetect_storage_vos"):
+    try:
+        autodetect = cp.getboolean("vo", "autodetect_storage_vos")
+    except:
+        autodetect = True
+    if autodetect:
         gip_common = __import__("gip_common")
         return gip_common.voList(cp)
     vos = cp.get("vo", "storage_vos")

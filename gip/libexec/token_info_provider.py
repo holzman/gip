@@ -8,7 +8,7 @@ import datetime
 import ConfigParser
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getTemplate, getLogger
+from gip_common import config, getTemplate, getLogger, cp_get
 from gip_storage import execute, connect, connect_admin, voListStorage, \
     getPath, getSESpace, getSETape
 
@@ -62,7 +62,8 @@ def print_VOinfo(p, cp):
     Print out the VOInfo tags based upon the contents of the space reservation
     database.
     """
-    command = VOInfo_command % (cp.getint('dcache_config', 'min_lifetime')*1000)
+    min_lifetime = int(cp_get(cp, 'dcache_config', 'min_lifetime', 60))
+    command = VOInfo_command % (min_lifetime*1000)
     rows=execute(p,command)
 
     seUniqueID = cp.get("se", "unique_name")
@@ -150,7 +151,7 @@ def print_SA_compat(cp):
                 "accessLatency"    : "online",
                 "expiration"       : "neverExpire",
                 "availableSpace"   : available,
-                "usedSpace"        : available,
+                "usedSpace"        : used,
                 "acbr"             : acbr,
                }
         print saTemplate % info

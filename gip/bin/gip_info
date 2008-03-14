@@ -1,0 +1,5 @@
+#!/bin/sh
+
+export GIP_LOCATION=$VDT_LOCATION/gip
+$GIP_LOCATION/libexec/osg-info-wrapper
+

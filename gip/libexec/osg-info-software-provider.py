@@ -13,7 +13,7 @@ def print_Locations(cp):
     app_dir = cp.get("osg_dirs", "app")
     ce_name = cp.get('ce', 'name')
     template = getTemplate("GlueCluster", "GlueLocationLocalID")
-    path = "%s/grid3-locations.txt" % app_dir
+    path = "%s/etc/grid3-locations.txt" % app_dir
     fp = open(path, 'r')
     for line in fp:
         line = line.strip()

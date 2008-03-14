@@ -1,0 +1,20 @@
+dn: GlueCESEBindGroupCEUniqueID=,mds-vo-name=local,o=grid
+objectClass: GlueGeneralTop
+objectClass: GlueCESEBindGroup
+objectClass: GlueSchemaVersion
+GlueCESEBindGroupCEUniqueID: 
+GlueCESEBindGroupSEUniqueID:
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+
+dn: GlueCESEBindSEUniqueID=,GlueCESEBindGroupCEUniqueID=,mds-vo-name=local,o=grid
+objectClass: GlueGeneralTop
+objectClass: GlueCESEBind
+objectClass: GlueSchemaVersion
+GlueCESEBindSEUniqueID: 
+GlueCESEBindCEAccesspoint: 
+GlueCESEBindCEUniqueID: 
+GlueCESEBindMountInfo: none
+GlueCESEBindWeight: 0
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3

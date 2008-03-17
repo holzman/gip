@@ -1,14 +1,16 @@
 #!/usr/bin/python
 
+import re, sys, os
 import unittest
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from condor_common import parseNodes, getJobsInfo, getLrmsInfo
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, voList
+from condor_common import parseNodes, getJobsInfo, getLrmsInfo
+
 
 log = getLogger("GIP.Condor")
 
-def usage:
+def usage():
    print "Usage: osg-info-dynamic-condor.py <condor path> <ldif file> [central manager]\n"
 
 def print_CE(cp):

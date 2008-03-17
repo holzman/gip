@@ -6,7 +6,8 @@ This module interacts with condor through the following commands:
   - condor_q
   - condor_status
 """
-from gip_common import runCommand, voList
+from gip_common import voList
+from gip_testing import runCommand
 
 condor_version = "condor_version"
 condor_group = "condor_config_val GROUP_NAMES"

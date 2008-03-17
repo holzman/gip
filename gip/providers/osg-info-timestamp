@@ -15,8 +15,8 @@ def main():
         cp = config()
 
         # Get the timestamp in the two formats we wanted
-        epoch = str(time.mktime(time.localtime()))
-        now = time.strftime("%a %b %d %I:%M:%S %p %Y", time.gmtime())
+        epoch = str(time.time())
+        now = time.strftime("%a %b %d %T UTC %Y", time.gmtime())
 
         # Load up the template for GlueLocationLocalID
         # To view its contents, see $VDT_LOCATION/gip/templates/GlueCluster

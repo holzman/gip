@@ -552,7 +552,7 @@ sub read_osg_attributes_info
 sub installation_remarks
 {
     post_install_log("The Generic Information Provider (GIP) has been installed but not configured.  If you" . 
-                     "wish to use it then you should run $VDT_LOCATION/vdt/setup/configure_gip. If" . 
+                     "wish to use it then you should run $vdt_location/vdt/setup/configure_gip. If" . 
                      "you are installing as part of the OSG software stack, the configure_osg.sh program will" .
                      "do this on your behalf.\n\n");
 }

@@ -12,7 +12,7 @@ import unittest
 import datetime
 
 from gip_common import cp_get, pathFormatter, parseOpts
-from ldap import getSiteList
+from gip_ldap import getSiteList
 
 replace_command = False
 

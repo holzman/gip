@@ -13,10 +13,10 @@ from gip_testing import runTest, streamHandler
 
 slap_conf = """
 include		/etc/openldap/schema/core.schema
-include		$GIP_LOCATION/../schema/Glue-CORE.schema
-include		$GIP_LOCATION/../schema/Glue-CE.schema
-include		$GIP_LOCATION/../schema/Glue-CESEBind.schema
-include		$GIP_LOCATION/../schema/Glue-SE.schema
+include		$GIP_LOCATION/test/schema/Glue-CORE.schema
+include		$GIP_LOCATION/test/schema/Glue-CE.schema
+include		$GIP_LOCATION/test/schema/Glue-CESEBind.schema
+include		$GIP_LOCATION/test/schema/Glue-SE.schema
 
 database        bdb
 suffix		"o=Grid"

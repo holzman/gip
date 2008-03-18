@@ -337,9 +337,9 @@ def HMSToMin(hms):
     return int(h)*60 + int(m) + int(round(int(s)/60.0))
 
 class _Constants:
-	def __init__(self):
-		self.CR = '\r'
-		self.LF = '\n'
+    def __init__(self):
+        self.CR = '\r'
+        self.LF = '\n'
 
 class Attributes(UserDict):
     """

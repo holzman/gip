@@ -28,8 +28,8 @@ def print_CE(cp):
                 "job_manager" : 'condor',
                 "queue"       : vo,
                 "version"     : condorVersion,
-                "job_slots"   : total_nodes,
-                "free_slots"  : unclaimed,
+                "job_slots"   : int(total_nodes),
+                "free_slots"  : int(unclaimed),
                 # Held jobs are included as "waiting" since the definition is:
                 #    Number of jobs that are in a state different than running
                 "wait"        : info["idle"] + info["held"],
@@ -57,7 +57,7 @@ def print_VOViewLocal(cp):
     groupInfo = getGroupInfo(vo_map, cp)
 
     for vo in voList(cp):
-        info = jobs_info.get(vo, {"running": 0, "queued": 0, "quota": 0, "prio":0})
+        info = jobs_info.get(vo, {"running": 0, "idle": 0, "held": 0})
         info = {"vo"          : vo,
                 "ce_name"     : ce_name,
                 "job_manager" : 'condor',
@@ -73,17 +73,17 @@ def print_VOViewLocal(cp):
         printTemplate(VOView_plugin, info)
 
 def main():
-   try:
-      cp = config()
-      addToPath(cp.get("condor", "condor_path"))
-      vo_map = VoMapper(cp)
-      condorVersion = getLrmsInfo(cp)
-      total_nodes, claimed, unclaimed = print_CE(cp)
-      print_VOViewLocal(cp)
-   except Exception, e:
-      sys.stdout = sys.stderr
-      log.error(e)
-      raise
+    try:
+        cp = config()
+        addToPath(cp.get("condor", "condor_path"))
+        vo_map = VoMapper(cp)
+        condorVersion = getLrmsInfo(cp)
+        total_nodes, claimed, unclaimed = print_CE(cp)
+        print_VOViewLocal(cp)
+    except Exception, e:
+        sys.stdout = sys.stderr
+        log.error(e)
+        raise
 
 if __name__ == '__main__':
    main()

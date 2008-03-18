@@ -582,10 +582,12 @@ echo "OSG_GIP_DYNAMIC_DCACHE=\"$DYNAMIC_DCACHE\"" >> $config_file
 echo "#---Storage Element Access Protocol Details---#">>$config_file
 echo "OSG_GIP_SE_ACCESS_NUMBER=\"$SE_ACCESS_NUMBER\"" >> $config_file
 echo "OSG_GIP_SE_ACCESS_VERSION=\"$SE_ACCESS_VERSION\"" >> $config_file
-for (( i = 0 ; i<$SE_ACCESS_NUMBER ; i++ ))
-do
-    echo "OSG_GIP_SE_ACCESS_ARR[$i]=\"${OSG_GIP_SE_ACCESS_ARR[$i]}\"" >> $config_file
-done
+if [ ${SE_ACCESS_NUMBER} ] ; then
+    for (( i = 0 ; i < $SE_ACCESS_NUMBER ; i++ ))
+      do
+      echo "OSG_GIP_SE_ACCESS_ARR[$i]=\"${OSG_GIP_SE_ACCESS_ARR[$i]}\"" >> $config_file
+    done
+fi
 echo "#---Storage Element Control Protocol Details---#">>$config_file
 echo "OSG_GIP_SE_CONTROL_VERSION=\"$SE_CONTROL_VERSION\"" >> $config_file
 echo "#---Storage Area Details---#">>$config_file

@@ -6,14 +6,15 @@ This module interacts with condor through the following commands:
   - condor_q
   - condor_status
 """
-from gip_common import voList
+from gip_common import voList, cp_getBoolean
 from gip_testing import runCommand
 
 condor_version = "condor_version"
 condor_group = "condor_config_val GROUP_NAMES"
 condor_quota = "condor_config_val GROUP_QUOTA_group_%(group)s"
 condor_prio = "condor_config_val GROUP_PRIO_FACTOR_group_%(group)s"
-condor_status = "condor_status -pool %(central_manager)s"
+condor_status = "condor_status"
+condor_job_status = "condor_status -submitter -format '%s:' Name -format '%d:' RunningJobs -format '%d:' IdleJobs -format '%d\n' HeldJobs"
 
 def condorCommand(command, cp, info={}):
     """
@@ -22,7 +23,8 @@ def condorCommand(command, cp, info={}):
 
     Use this function instead of executing directly (os.popen); this will
     allow you to hook your providers into the testing framework.
-   """
+    """
+
     cmd = command % info
     return runCommand(cmd)
 
@@ -50,56 +52,51 @@ def getGroupInfo(vo_map, cp):
         retval[vo] = {'quota': quota, 'prio': prio}
     return retval
 
-def getCentralManager(cp):
-    manager = condorCommand(condor_manager, cp).split(',')[0].strip()
-    return manager
+#def getCentralManager(cp):
+#    manager = condorCommand(condor_manager, cp).split(',')[0].strip()
+#    return manager
 
 def getJobsInfo(vo_map, cp):
-    fp = condorCommand(condor_q, cp, {'manager': getCentralManager(cp)})
-    info = fp.read()
-    info = info[info.find('\n', 3)+1:]
-    retval = {}
-    groupsInfo = getGroupInfo(vo_map, cp)
-    for ctag in parseString.getElementsByTagName('c'):
-        owner = None
-        status = None
-        for tag in parseString.getElementsByTagName('a'):
-            if tag.getAttribute('n') == 'Owner':
-                owner = tag.firstChild.firstChild.data
-                vo = vo_map[owner]
-                if vo not in retval:
-                    retval[vo] = {'running': 0, 'queued': 0}
-            if tag.getAttribute('n') == 'JobStatus':
-                status = int(tag.firstChild.firstChild.data)
-        if owner == None or status==None:
-            raise ValueError("Invalid condor job!")
-        if status == 2:
-            retval[vo]['running'] += 1
-        else:
-            retval[vo]['queued'] += 1
-    for vo in retval:
-        if vo in groupsInfo:
-            retval[vo]['quota'] = groupsInfo['quota']
-            retval[vo]['prio'] = groupsInfo['prio']
-        else:
-            retval[vo]['quota'] = 0
-            retval[vo]['prio'] = 0
-    return retval
+
+    # Job stats
+    # Held jobs are included as "waiting" since the definition is:
+    #    Number of jobs that are in a state different than running
+
+    vo_jobs = {}
+    fp = condorCommand(condor_job_status, cp)
+    jobs = fp.read().split("\n")
+    for line in jobs:
+        name, running, idle, held = line.split(":")
+        name = name.split("@")[0]
+
+        try:
+            vo = vo_map[user].lower()
+        except:
+            # Most likely, this means that the user is local and not
+            # associated with a VO, so we skip the job.
+            continue
+
+        info = vo_jobs.get(vo, {"running":0, "idle":0, "held":0})
+        info["running"] += 1
+        info["idle"] += 1
+        info["held"] += 1
+
+        vo_jobs[vo] = info
+    return vo_jobs
 
 def parseNodes(cp):
-    manager = getCentralManager(cp)
-    info = {'manager': manager}
+    total, owner, claimed, unclaimed, Matched, Preempting, Backfill = 0
     at_totals = False
-    for line in condorCommand(condor_status, cp, info):
-        if line.find("Total Owner Claimed Unclaimed Matched Preempting " \
-                "Backfill") >= 0:
+    for line in condorCommand(condor_status, cp):
+        if line.find("Total Owner Claimed Unclaimed Matched Preempting Backfill") >= 0:
             at_totals = True
             continue
         if at_totals and line.find("Total") >= 0:
             info = line.split()
-            total, owner, claimed, unclaimed = total[1:5]
+            total, owner, claimed, unclaimed, Matched, Preempting, Backfill = total[1:]
+            total -= owner
             break
-    if cp.getboolean("condor", "subtract_owner"):
-        total -= owner
+    if not cp_getBoolean("condor", "subtract_owner"):
+        total += owner
     return total, claimed, unclaimed
 

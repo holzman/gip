@@ -15,8 +15,8 @@ def usage():
 
 def print_CE(cp):
     CE_plugin = getTemplate("GlueCEPlugin", "GlueCEUniqueID")
-    ce_name = cp_get("ce", "name", "")
-    status = cp_get("condor", "status", "Production")
+    ce_name = cp_get(cp, "ce", "name", "")
+    status = cp_get(cp, "condor", "status", "Production")
     condorVersion = getLrmsInfo(cp)
     total_nodes, claimed, unclaimed = parseNodes(cp)
     vo_map = VoMapper(cp)
@@ -46,9 +46,9 @@ def print_CE(cp):
 
 def print_VOViewLocal(cp):
     VOView_plugin = getTemplate("GlueCEPlugin", "GlueVOViewLocalID")
-    ce_name = cp_get("ce", "name", "")
+    ce_name = cp_get(cp, "ce", "name", "")
 
-    status = cp_get("condor", "status", "Production")
+    status = cp_get(cp, "condor", "status", "Production")
     condorVersion = getLrmsInfo(cp)
     total_nodes, claimed, unclaimed = parseNodes(cp)
 

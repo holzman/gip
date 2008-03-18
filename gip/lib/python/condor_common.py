@@ -14,7 +14,7 @@ condor_group = "condor_config_val GROUP_NAMES"
 condor_quota = "condor_config_val GROUP_QUOTA_group_%(group)s"
 condor_prio = "condor_config_val GROUP_PRIO_FACTOR_group_%(group)s"
 condor_status = "condor_status"
-condor_job_status = "condor_status -submitter -format '%s:' Name -format '%d:' RunningJobs -format '%d:' IdleJobs -format '%d\n' HeldJobs"
+condor_job_status = "condor_status -submitter -format '%s:' Name -format '%d:' RunningJobs -format '%d:' IdleJobs -format '%d:\n' HeldJobs"
 
 def condorCommand(command, cp, info={}):
     """
@@ -25,7 +25,14 @@ def condorCommand(command, cp, info={}):
     allow you to hook your providers into the testing framework.
     """
 
-    cmd = command % info
+    # must test for empty dict for special cases like the condor_status
+    #  command which has -format '%s' arguments.  Python will try to do
+    #  the string substitutions regardless of single quotes
+    if info:
+        cmd = command % info
+    else:
+        cmd = command
+
     return runCommand(cmd)
 
 def getLrmsInfo(cp):
@@ -40,32 +47,24 @@ def getLrmsInfo(cp):
     raise ValueError("Bad output from condor_version.")
 
 def getGroupInfo(vo_map, cp):
-    output = condorCommand(condor_group, cp)
-    if line.startswith("Not defined"):
-        return {}
-    retval = {}
-    for group in output.split(','):
-        group = group.strip()
-        quota = condorCommand(condor_quota, cp, {'group': group}).strip()
-        prio = condorCommand(condor_prio, cp, {'group': group}).strip()
-        vo = vo_map[group]
-        retval[vo] = {'quota': quota, 'prio': prio}
+    output = condorCommand(condor_group, cp).read().split(',')
+    retval = {'quota': 0, 'prio': 0}
+    if (not (output[0].strip().startswith('Not defined'))) and (len(output[0].strip()) > 0):
+        for group in output:
+            group = group.strip()
+            quota = condorCommand(condor_quota, cp, {'group': group}).read().strip()
+            prio = condorCommand(condor_prio, cp, {'group': group}).read().strip()
+            vo = vo_map[group]
+            retval[vo] = {'quota': quota, 'prio': prio}
     return retval
 
-#def getCentralManager(cp):
-#    manager = condorCommand(condor_manager, cp).split(',')[0].strip()
-#    return manager
-
 def getJobsInfo(vo_map, cp):
-
-    # Job stats
-    # Held jobs are included as "waiting" since the definition is:
-    #    Number of jobs that are in a state different than running
-
     vo_jobs = {}
     fp = condorCommand(condor_job_status, cp)
     jobs = fp.read().split("\n")
     for line in jobs:
+        if not line: # if the line is empty e.g. the last line break, skip
+            continue
         name, running, idle, held = line.split(":")
         name = name.split("@")[0]
 

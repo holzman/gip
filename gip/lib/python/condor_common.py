@@ -85,7 +85,8 @@ def getJobsInfo(vo_map, cp):
     return vo_jobs
 
 def parseNodes(cp):
-    total, owner, claimed, unclaimed, Matched, Preempting, Backfill = 0
+    subtract = cp_getBoolean(cp, "condor", "subtract_owner")
+    total, owner, claimed, unclaimed, Matched, Preempting, Backfill = [0, 0, 0, 0, 0, 0, 0]
     at_totals = False
     for line in condorCommand(condor_status, cp):
         if line.find("Total Owner Claimed Unclaimed Matched Preempting Backfill") >= 0:
@@ -93,10 +94,12 @@ def parseNodes(cp):
             continue
         if at_totals and line.find("Total") >= 0:
             info = line.split()
-            total, owner, claimed, unclaimed, Matched, Preempting, Backfill = total[1:]
-            total -= owner
+            total, owner, claimed, unclaimed, Matched, Preempting, Backfill = info[1:]
+            if subtract:
+                iTotal = int(total) - int(owner)
+                total = str(iTotal)
+            else:
+                total = total
             break
-    if not cp_getBoolean("condor", "subtract_owner"):
-        total += owner
     return total, claimed, unclaimed
 

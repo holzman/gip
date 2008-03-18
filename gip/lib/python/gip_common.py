@@ -477,6 +477,26 @@ def cp_get(cp, section, option, default):
     except:
         return default
 
+def cp_getBoolean(cp, section, option, default=True):
+    """
+    Helper function for ConfigParser objects which allows setting the default.
+
+    ConfigParser objects throw an exception if one tries to access an option
+    which does not exist; this catches the exception and returns the default
+    value instead.
+
+    @param cp: ConfigParser object
+    @param section: Section of config parser to read
+    @param option: Option in section to retrieve
+    @param default: Default value if the section/option is not present.
+    @returns: Value stored in CP for section/option, or default if it is not
+        present.
+    """
+    try:
+        return cp.getboolean(section, option)
+    except:
+        return default
+
 def pathFormatter(path, slash=False):
     if slash:
         if not (path[-1] == "/"):

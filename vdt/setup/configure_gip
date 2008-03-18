@@ -1660,7 +1660,7 @@ sub create_wrapper_files
         $contents = $contents."\n$gip_location/libexec/services_info_provider.py\n";
         $contents = $contents."\n$gip_location/libexec/token_info_provider.py\n";
     }
-#    $contents = $contents."\n"."$gip_location/libexec/osg_info_site.py\n";
+
     $contents = $contents."\nif [ -f \"$gip_location/etc/add-attributes.conf\" ]; then\n    cat $gip_location/etc/add-attributes.conf\nfi\n";
 
         #We remove the existing wrapper file because it will cause duplication of information

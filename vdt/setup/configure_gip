@@ -1624,7 +1624,7 @@ sub create_generic_config_file
 ###########################################################################
 sub create_config_file
 {
-    #create_site_config_file
+    create_site_config_file
     create_cluster_config_file();
     create_ce_config_file();
     create_se_config_file();
@@ -1660,7 +1660,7 @@ sub create_wrapper_files
         $contents = $contents."\n$gip_location/libexec/services_info_provider.py\n";
         $contents = $contents."\n$gip_location/libexec/token_info_provider.py\n";
     }
-    $contents = $contents."\n"."$gip_location/libexec/osg_info_site.py\n";
+#    $contents = $contents."\n"."$gip_location/libexec/osg_info_site.py\n";
     $contents = $contents."\nif [ -f \"$gip_location/etc/add-attributes.conf\" ]; then\n    cat $gip_location/etc/add-attributes.conf\nfi\n";
 
         #We remove the existing wrapper file because it will cause duplication of information
@@ -1680,7 +1680,7 @@ sub create_wrapper_files
     $contents = '#!/bin/sh'."\n";
     if ($batch =~ /^condor$/i) {
         # The condor script is different--it requires the path to the binaries as an argument.
-        $contents = $contents."$gip_location/libexec/osg-info-dynamic-condor.py \n";
+        $contents = $contents."$gip_location/libexec/osg-info-dynamic-condor $condor_bin_location $ldif_file \n";
     }
     elsif ($batch =~ /^lsf$/i) {
         # The lsf script is also different--it requires the path to the binaries as an argument.

@@ -4,8 +4,8 @@ import re, sys, os
 import unittest
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, voList
-from condor_common import parseNodes, getJobsInfo, getLrmsInfo
+from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, voList,  printTemplate, cp_get
+from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
 
 
 log = getLogger("GIP.Condor")
@@ -14,51 +14,64 @@ def usage():
    print "Usage: osg-info-dynamic-condor.py <condor path> <ldif file> [central manager]\n"
 
 def print_CE(cp):
-	condorVersion = getLrmsInfo(cp)
-	total_nodes, claimed, unclaimed = parseNodes(cp)
-	vo_map = VoMapper(cp)
-	jobs_info = getJobsInfo(vo_map, cp)
-	ce_name = cp.get("ce", "name")
-	CE_plugin = getTemplate("GlueCEPlugin", "GlueCEUniqueID")
-	for vo in voList(cp):
-		try:
-			status = ce.get("condor", "status")
-		except:
-			status = "Production"
-		info = jobs_info.get("vo", {"running": 0, "queued": 0, "quota": 0, "prio":0})
-		info = {"version"     : condorVersion,
-					"free_slots"  : unclaimed,
-					"queue"       : vo,
-					"job_manager" : 'condor',
-					"running"     : info["running"],
-					"wait"        : info["queued"],
-					"total"       : total,
-					"priority"    : info["prio"],
-					"max_running" : info["quota"],
-					"max_wall"    : 0,
-					"status"      : status,
-					"vo"          : vo,
-					"job_slots"   : total_nodes
-				}
-		print CE_plugin % info
+    CE_plugin = getTemplate("GlueCEPlugin", "GlueCEUniqueID")
+    ce_name = cp_get("ce", "name", "")
+    status = cp_get("condor", "status", "Production")
+    condorVersion = getLrmsInfo(cp)
+    total_nodes, claimed, unclaimed = parseNodes(cp)
+    vo_map = VoMapper(cp)
+    jobs_info = getJobsInfo(vo_map, cp)
+    groupInfo = getGroupInfo(vo_map, cp)
+    for vo in voList(cp):
+        info = jobs_info.get(vo, {"running": 0, "idle": 0, "held": 0})
+        info = {"ce_name"     : ce_name,
+                "job_manager" : 'condor',
+                "queue"       : vo,
+                "version"     : condorVersion,
+                "job_slots"   : total_nodes,
+                "free_slots"  : unclaimed,
+                # Held jobs are included as "waiting" since the definition is:
+                #    Number of jobs that are in a state different than running
+                "wait"        : info["idle"] + info["held"],
+                "running"     : info["running"],
+                "total"       : info["running"] + info["idle"] + info["held"],
+                "priority"    : groupInfo["prio"],
+                "max_running" : groupInfo["quota"],
+                "max_wall"    : 0,
+                "status"      : status,
+                "vo"          : vo
+                }
+		printTemplate(CE_plugin, info)
+
 	return total_nodes, claimed, unclaimed
 
 def print_VOViewLocal(cp):
-   ce_name = cp.get("ce", "name")
-   vo_map = VoMapper(cp)
-   jobs_info = getJobsInfo(vo_map, cp)
-   total_nodes, claimed, unclaimed = parseNodes(cp)
-   VOView_plugin = getTemplate("GlueCEPlugin", "GlueVOViewLocalID")
-   for vo in voList(cp):
-      info = jobs_info.get("vo", {"running": 0, "queued": 0, "quota": 0, "prio":0})
-      info["vo"]          = vo
-      info["job_manager"] = "condor"
-      info["queue"]       = vo
-      info["wait"]        = info["queued"]
-      info["total"]       = info["running"] + info["wait"]
-      info["free_slots"]  = info["quota"]
-      info["job_slots"]   = total_nodes
-      print VOView_plugin % info
+    VOView_plugin = getTemplate("GlueCEPlugin", "GlueVOViewLocalID")
+    ce_name = cp_get("ce", "name", "")
+
+    status = cp_get("condor", "status", "Production")
+    condorVersion = getLrmsInfo(cp)
+    total_nodes, claimed, unclaimed = parseNodes(cp)
+
+    vo_map = VoMapper(cp)
+    jobs_info = getJobsInfo(vo_map, cp)
+    groupInfo = getGroupInfo(vo_map, cp)
+
+    for vo in voList(cp):
+        info = jobs_info.get(vo, {"running": 0, "queued": 0, "quota": 0, "prio":0})
+        info = {"vo"          : vo,
+                "ce_name"     : ce_name,
+                "job_manager" : 'condor',
+                "queue"       : vo,
+                "running"     : info["running"],
+                # Held jobs are included as "waiting" since the definition is:
+                #    Number of jobs that are in a state different than running
+                "wait"        : info["idle"] + info["held"],
+                "total"       : info["running"] + info["idle"] + info["held"],
+                "free_slots"  : unclaimed,
+                "job_slots"   : total_nodes
+                }
+        printTemplate(VOView_plugin, info)
 
 def main():
    try:

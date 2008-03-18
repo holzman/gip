@@ -150,11 +150,10 @@ if(! defined $owner_vms){
     $owner_vms=0;
 }
 
-my $subtract_owner = `. ../../monitoring/gip-attributes.conf; echo \$OSG_GIP_SUBTRACT_OWNER`;
-chomp($subtract_owner);
-if(defined $subtract_owner and $subtract_owner eq 1) {
-    $total_vms-=$owner_vms;
-}
+my $dont_subtract_owner = `. ../../monitoring/gip-attributes.conf; echo \$OSG_GIP_DONT_SUBTRACT_OWNER`;
+chomp($dont_subtract_owner);
+$total_vms-=$owner_vms unless 
+    (defined $dont_subtract_owner and $dont_subtract_owner eq 1);
 
 $glue{GlueCEInfoTotalCPUs} = $total_vms;
 $glue{GlueCEStateFreeJobSlots} = $idle_vms;

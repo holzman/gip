@@ -41,9 +41,8 @@ def print_CE(cp):
                 "status"      : status,
                 "vo"          : vo
                 }
-		printTemplate(CE_plugin, info)
-
-	return total_nodes, claimed, unclaimed
+        printTemplate(CE_plugin, info)
+    return total_nodes, claimed, unclaimed
 
 def print_VOViewLocal(cp):
     VOView_plugin = getTemplate("GlueCEPlugin", "GlueVOViewLocalID")

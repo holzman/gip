@@ -163,7 +163,7 @@ function check_disk {
           HOSTname=$(hostname)
 
           SE_DISK=${OSG_GIP_SE_DISK:-UNDEFINED}
-          
+
           if [ "$OSG_DEFAULT_SE" != "$HOSTname" ]; then
 
              echo "
@@ -179,13 +179,13 @@ access path on your CE.
 "
 
              while :
-	     do 
+	     do
                 echo -n "Please enter SE where gsiftp is running: [$SE_DISK] "
                 read input
                 test -n "$input" && SE_DISK="$input"
 	        entry_required "$SE_DISK"
              done
-    
+
              while :
 	     do
 	        DATA=${OSG_GIP_DATA:-UNDEFINED}
@@ -216,8 +216,8 @@ function config_gums {
     echo "
 Information status of GUMS Service
 ----------------------------------
-Information about the status of the GUMS Server is configured to be published 
-by the GIP. If you would like to turn off this option, please set the 
+Information about the status of the GUMS Server is configured to be published
+by the GIP. If you would like to turn off this option, please set the
 OSG_GIP_GUMS=\"0\" in the $VDT_LOCATION/monitoring/gip-attributes.conf.
 "
     GUMS=1
@@ -237,7 +237,7 @@ function config_srm {
     echo "
 Information about a possible SRM storage element
 ------------------------------------------------
-If an SRM (Storage Resource Management) Storage Element exists that you would 
+If an SRM (Storage Resource Management) Storage Element exists that you would
 like to associate with this Compute Element, please answer 'Y'
 "
 
@@ -308,14 +308,14 @@ function config_se {
         while :
         do
             echo -n "
-GIP has the experimental ability to autodetect all dCache settings, 
+GIP has the experimental ability to autodetect all dCache settings,
 but this may require additional setup outside of this script.
 
-The separate configuration is documented at: 
+The separate configuration is documented at:
 
 https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/DcacheGip
 
-Would you like to use this alternate config instead of the standard config? 
+Would you like to use this alternate config instead of the standard config?
 (y/n) : [$DYNAMIC_DCACHE] "
             read input
             test -n "$input" && DYNAMIC_DCACHE="$input"
@@ -410,7 +410,7 @@ local directory: The directory relative from the root directory.
 
 simplified option: All Virtual Oranizations will share the same local directory.
 
-detailed option: Seperate local directories can be entered for each 
+detailed option: Seperate local directories can be entered for each
 VO.  To deny a VO access to the SRM Storage Element use the value 'UNDEFINED'.
 
 detailed example:  A site has the following paths for VOs on an SRM.
@@ -422,7 +422,7 @@ Will translate to:
    root directory: /pnfs/example.edu/data/
    local directory (cms): cms
    local directory (cdf): cdf/store
-   local directory (evilvo): UNDEFINED 
+   local directory (evilvo): UNDEFINED
 "
 
 SA_PATH=${OSG_GIP_SA_PATH:-UNDEFINED}
@@ -452,7 +452,7 @@ function config_sa_roots {
     FILE="$VDT_LOCATION/monitoring/osg-user-vo-map.txt"
     exec 3<&0
     exec 0<$FILE
-    
+
 
     if [ "$SIMPLIFIED_CHOICE" = "n" ]; then
        echo
@@ -462,7 +462,7 @@ function config_sa_roots {
        #echo "If you would like to delete a previously supported VO, type UNDEFINED"
        #ask
        echo
-   
+
 
      while read line
         do
@@ -486,7 +486,7 @@ function config_sa_roots {
                 continue
             fi
             processed_vos="$processed_vos $vo"
-	    
+
 	    #vo_var=$(eval echo "\$OSG_GIP_VO_${vo}_DIR")
             for (( i = 0 ; i < ${#OSG_GIP_VO_DIR[@]} ; i++ ))
             do
@@ -505,7 +505,7 @@ function config_sa_roots {
             read -u 3 in
 	    if [ "$in" = "UNDEFINED" ]; then
                 srm_dir=""
-	    else 
+	    else
                 test -n "$in" && srm_dir="$in"
             fi
             SA_ROOTS_VO[$counter]="$vo"
@@ -517,7 +517,7 @@ function config_sa_roots {
 
        SIMPLIFIED_CHOICE_PATH=${OSG_GIP_SIMPLIFIED_SRM_PATH:-UNDEFINED}
        while :
-       do 
+       do
            echo -n "What is the local directory for all VOs [$SIMPLIFIED_CHOICE_PATH] ? "
            read -u 3 in
            test -n "$in" && SIMPLIFIED_CHOICE_PATH="$in"
@@ -582,10 +582,12 @@ echo "OSG_GIP_DYNAMIC_DCACHE=\"$DYNAMIC_DCACHE\"" >> $config_file
 echo "#---Storage Element Access Protocol Details---#">>$config_file
 echo "OSG_GIP_SE_ACCESS_NUMBER=\"$SE_ACCESS_NUMBER\"" >> $config_file
 echo "OSG_GIP_SE_ACCESS_VERSION=\"$SE_ACCESS_VERSION\"" >> $config_file
-for (( i = 0 ; i<$SE_ACCESS_NUMBER ; i++ ))
-do
-    echo "OSG_GIP_SE_ACCESS_ARR[$i]=\"${OSG_GIP_SE_ACCESS_ARR[$i]}\"" >> $config_file
-done
+if [ ${SE_ACCESS_NUMBER} ] ; then
+    for (( i = 0 ; i<$SE_ACCESS_NUMBER ; i++ ))
+    do
+        echo "OSG_GIP_SE_ACCESS_ARR[$i]=\"${OSG_GIP_SE_ACCESS_ARR[$i]}\"" >> $config_file
+    done
+fi
 echo "#---Storage Element Control Protocol Details---#">>$config_file
 echo "OSG_GIP_SE_CONTROL_VERSION=\"$SE_CONTROL_VERSION\"" >> $config_file
 echo "#---Storage Area Details---#">>$config_file
@@ -689,7 +691,7 @@ function config_sc_ind {
 	OSG_GIP_SC_ARR[${SC_COUNT}${NUM_SC_NAME}]=$VAL
 	ask_question "What is the Vendor of the processor? (i.e. Intel, AMD) " "${OSG_GIP_SC_ARR[${SC_COUNT}${NUM_SC_VENDOR}]}"
 	OSG_GIP_SC_ARR[${SC_COUNT}${NUM_SC_VENDOR}]=$VAL
-	ask_question "What is the Model of the processor? " "${OSG_GIP_SC_ARR[${SC_COUNT}${NUM_SC_MODEL}]}" 
+	ask_question "What is the Model of the processor? " "${OSG_GIP_SC_ARR[${SC_COUNT}${NUM_SC_MODEL}]}"
 	OSG_GIP_SC_ARR[${SC_COUNT}${NUM_SC_MODEL}]=$VAL
 	ask_question "What is the Clockspeed of the processor? "  "${OSG_GIP_SC_ARR[${SC_COUNT}${NUM_SC_CLOCK}]}"
 	OSG_GIP_SC_ARR[${SC_COUNT}${NUM_SC_CLOCK}]=$VAL
@@ -743,7 +745,7 @@ inbound='FALSE'
 outbound='TRUE'
 nodes='1'
 
-for i in `seq 1 $OSG_GIP_SC_NUMBER`; do 
+for i in `seq 1 $OSG_GIP_SC_NUMBER`; do
 	SC_COUNT=$i
 	echo
 	echo "Configuring SubCluster #$SC_COUNT"
@@ -817,8 +819,8 @@ function main {
     echo
 
     echo "Configuring GIP..."
-    $VDT_LOCATION/vdt/setup/configure_gip 
+    $VDT_LOCATION/vdt/setup/configure_gip
 }
 
-main 
+main
 exit

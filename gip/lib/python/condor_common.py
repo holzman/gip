@@ -14,7 +14,7 @@ condor_group = "condor_config_val GROUP_NAMES"
 condor_quota = "condor_config_val GROUP_QUOTA_group_%(group)s"
 condor_prio = "condor_config_val GROUP_PRIO_FACTOR_group_%(group)s"
 condor_status = "condor_status"
-condor_job_status = "condor_status -submitter -format '%s:' Name -format '%d:' RunningJobs -format '%d:' IdleJobs -format '%d:\n' HeldJobs"
+condor_job_status = "condor_status -submitter -format '%s:' Name -format '%d:' RunningJobs -format '%d:' IdleJobs -format '%d\n' HeldJobs"
 
 def condorCommand(command, cp, info={}):
     """
@@ -87,7 +87,9 @@ def parseNodes(cp):
     subtract = cp_getBoolean(cp, "condor", "subtract_owner")
     total, owner, claimed, unclaimed, Matched, Preempting, Backfill = [0, 0, 0, 0, 0, 0, 0]
     at_totals = False
-    for line in condorCommand(condor_status, cp):
+    cs = condorCommand(condor_status, cp)
+    status = cs.read().split("\n")
+    for line in status:
         if line.find("Total Owner Claimed Unclaimed Matched Preempting Backfill") >= 0:
             at_totals = True
             continue

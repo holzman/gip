@@ -16,12 +16,15 @@ def usage():
 def print_CE(cp):
     CE_plugin = getTemplate("GlueCEPlugin", "GlueCEUniqueID")
     ce_name = cp_get(cp, "ce", "name", "")
+
     status = cp_get(cp, "condor", "status", "Production")
     condorVersion = getLrmsInfo(cp)
     total_nodes, claimed, unclaimed = parseNodes(cp)
+
     vo_map = VoMapper(cp)
     jobs_info = getJobsInfo(vo_map, cp)
     groupInfo = getGroupInfo(vo_map, cp)
+
     for vo in voList(cp):
         info = jobs_info.get(vo, {"running": 0, "idle": 0, "held": 0})
         info = {"ce_name"     : ce_name,
@@ -67,8 +70,8 @@ def print_VOViewLocal(cp):
                 #    Number of jobs that are in a state different than running
                 "wait"        : info["idle"] + info["held"],
                 "total"       : info["running"] + info["idle"] + info["held"],
-                "free_slots"  : unclaimed,
-                "job_slots"   : total_nodes
+                "free_slots"  : int(unclaimed),
+                "job_slots"   : int(total_nodes)
                 }
         printTemplate(VOView_plugin, info)
 
@@ -81,7 +84,7 @@ def main():
         total_nodes, claimed, unclaimed = print_CE(cp)
         print_VOViewLocal(cp)
     except Exception, e:
-        sys.stdout = sys.stderr
+#        sys.stdout = sys.stderr
         log.error(e)
         raise
 

@@ -120,7 +120,7 @@ my $se_host='srmhost';
 my $se_name; ##########
 my $se_version;
 my $se_control_version = "UNDEFINED";
-my $service_contents;
+my $service_contents = '';
 my $fullhost;
 my %user_vo_map;
 my %pbsQueues;
@@ -1270,7 +1270,7 @@ sub create_se_config_file
 
 
 
-        my $service_contents="\ndn: GlueServiceUniqueID=httpg://$se_host:8443/srm/managerv$se_version\n"
+        $service_contents="\ndn: GlueServiceUniqueID=httpg://$se_host:8443/srm/managerv$se_version\n"
             ."GlueServiceUniqueID: httpg://$se_host:8443/srm/managerv$se_version\n"
             ."GlueServiceName: $se_host\n"
             ."GlueServiceType: SRM\n"
@@ -1289,13 +1289,6 @@ sub create_se_config_file
         }
         $service_contents=$service_contents."GlueForeignKey: GlueSiteUniqueID=$fullhost\n";
         $service_contents=$service_contents."\n";
-
-        my $service_config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-service.conf";
-        safe_write($service_config_file, $service_contents);
-        vdt_install_log("===== BEGIN osg-info-static-service.conf =====\n");
-        vdt_install_log($service_contents);
-        vdt_install_log("===== END osg-info-static-service.conf =====\n");
-
 
         $contents=$contents."\ndn: GlueSALocalID=$se_host,GlueSEUniqueID=$se_host\n"
                            ."GlueSARoot: $sa_path\n"
@@ -1386,6 +1379,12 @@ sub create_se_config_file
         }
 
     }
+
+        my $service_config_file = "$lcg_location/share/doc/osg-info-gip-config/osg-info-static-service.conf";
+        safe_write($service_config_file, $service_contents);
+        vdt_install_log("===== BEGIN osg-info-static-service.conf =====\n");
+        vdt_install_log($service_contents);
+        vdt_install_log("===== END osg-info-static-service.conf =====\n");
 
     if ($disk) {
         $contents=$contents."\ndn: GlueSEUniqueID=$se_disk\n"

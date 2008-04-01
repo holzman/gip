@@ -565,15 +565,10 @@ sub read_osg_attributes_info
 ###########################################################################
 sub installation_remarks
 {
-    post_install_log("The Generic Information Provider (GIP) has been "
-                     ."installed but not configured. If you wish to use it "
-                     ."then you should run $vdt_location/vdt/setup/configure_gip. "
-                     ."It takes an argument, --batch, which should be condor, "
-                     ."pbs, sge, or lsf, depending on which batch system you use. "
-                     ."It also takes in an optional --srm flag if you "
-                     ."wish to publish your srm information through GIP."
-                     ."Another optional flag is --gums if you want your gums"
-		     ."installation to be monitored through GIP\n\n");
+    post_install_log("The Generic Information Provider (GIP) has been installed but not configured.  If you" .
+                     "wish to use it then you should run $vdt_location/vdt/setup/configure_gip. If" .
+                     "you are installing as part of the OSG software stack, the configure_osg.sh program will" .
+                     "do this on your behalf.\n\n");
 }
 
 ###########################################################################

@@ -345,7 +345,7 @@ sub read_osg_attributes_info
            } else {
                 chomp;
                 my ($user_nm, $user_vo) = split /\ /;
-		
+
                 my $user_tmp;
                 #($user_tmp, $user_vo,)= $user_vo =~ /(us)?(\w)/;
                 ($user_tmp, $user_vo,)= $user_vo =~ /^(us)?(.*)/;
@@ -418,7 +418,7 @@ sub read_osg_attributes_info
         $scinfo{sc_number}=`. $gip_conf; echo \$OSG_GIP_SC_NUMBER;`;
 		  for(my $i=1; $i<=$scinfo{sc_number};$i++) {
             my ($scname,$scvendor,$scmodel,$scclock,$scnumpcpus,$scnumlcpus,$scramsize,$scinbound,$scoutbound,$scnodes)=`. $gip_conf; echo \$SC_NAME; echo \$SC_VENDOR; echo \$SC_MODEL; echo \$SC_CLOCK; echo \$SC_NUMPCPUS; echo \$SC_NUMLCPUS; echo \$SC_RAMSIZE; echo \$SC_INBOUND; echo \$SC_OUTBOUND; echo \$SC_NODES`;
-		
+
             ($scinfo{$i}{scname},$scinfo{$i}{scvendor},$scinfo{$i}{scmodel},$scinfo{$i}{scclock},$scinfo{$i}{scnumpcpus},$scinfo{$i}{scnumlcpus},$scinfo{$i}{scramsize},$scinfo{$i}{scinbound},$scinfo{$i}{scoutbound},$scinfo{$i}{scnodes})=`. $gip_conf; echo \${OSG_GIP_SC_ARR[$i$scname]}; echo \${OSG_GIP_SC_ARR[$i$scvendor]}; echo \${OSG_GIP_SC_ARR[$i$scmodel]}; echo \${OSG_GIP_SC_ARR[$i$scclock]}; echo \${OSG_GIP_SC_ARR[$i$scnumpcpus]}; echo \${OSG_GIP_SC_ARR[$i$scnumlcpus]}; echo \${OSG_GIP_SC_ARR[$i$scramsize]}; echo \${OSG_GIP_SC_ARR[$i$scinbound]}; echo \${OSG_GIP_SC_ARR[$i$scoutbound]}; echo \${OSG_GIP_SC_ARR[$i$scnodes]};`;
 
             foreach my $val (keys %{$scinfo{$i}}) {
@@ -434,23 +434,23 @@ sub read_osg_attributes_info
                    my $door = $1;
                    chomp($door);
                    $gridftp_doors[$i]=$door;
-               } 
+               }
             }
-            
+
             if ($simplified_srm eq "y") {
                     foreach $vo (@vo_list) {
                             $vo_access_roots{$vo} = $simplified_srm_path;
                     }
             } else {
-    
+
                 my $vo_dir_var;
                 my $vo_path;
                 my $vo_path_conf_str = `cat $gip_conf | grep ^OSG_GIP_VO_DIR`;
 
                 foreach $vo (@vo_list){
-		    
+
                	    #$vo_dir_var = "OSG_GIP_VO_".$vo."_DIR";
-    
+
     		    # insensitive since osg-gip-configure.sh doesn't do conversion
                     #if ($vo_path_conf_str =~ m/$vo_dir_var.*="(.*)"\n/i){
                     if ($vo_path_conf_str =~ m/OSG_GIP_VO_DIR\[\d+\]="$vo,(.*)"/i){
@@ -551,8 +551,8 @@ sub read_osg_attributes_info
 ###########################################################################
 sub installation_remarks
 {
-    post_install_log("The Generic Information Provider (GIP) has been installed but not configured.  If you" . 
-                     "wish to use it then you should run $vdt_location/vdt/setup/configure_gip. If" . 
+    post_install_log("The Generic Information Provider (GIP) has been installed but not configured.  If you" .
+                     "wish to use it then you should run $vdt_location/vdt/setup/configure_gip. If" .
                      "you are installing as part of the OSG software stack, the configure_osg.sh program will" .
                      "do this on your behalf.\n\n");
 }
@@ -625,7 +625,7 @@ sub create_site_config_file
     my $config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-site.conf";
     my $contents ="";
 
-   $contents = $contents."dn: GlueSiteUniqueID=$fullhost\n"
+   $contents = $contents."dn: GlueSiteUniqueID=$osg_site_name\n"
                         ."GlueSiteName: $osg_site_name\n"
                         ."GlueSiteDescription: OSG Site\n"
                         ."GlueSiteUserSupportContact: mailto: $ml_contact_email\n"
@@ -637,7 +637,7 @@ sub create_site_config_file
                         ."GlueSiteLongitude: $ml_long\n"
                         ."GlueSiteSponsor: $osg_sponsor\n"
                         ."GlueSiteOtherInfo: UNDEFINED\n"
-                        ."GlueForeignKey: GlueSiteUniqueID=$fullhost\n"
+                        ."GlueForeignKey: GlueSiteUniqueID=$osg_site_name\n"
                         ."GlueSiteWeb: $osg_site_policy\n";
 
     safe_write($config_file, $contents);
@@ -805,7 +805,7 @@ sub fix_for_pbs_queues{
         }
 
     }
-    
+
 
 }
 ###########################################################################
@@ -968,7 +968,7 @@ sub create_cluster_config_file
             $contents = $contents."GlueForeignKey: GlueCEUniqueID=$fullhost:2119/jobmanager-$batch-$vo\n";
         }
     }
-    $contents = $contents."GlueForeignKey: GlueSiteUniqueID=$fullhost\n";
+    $contents = $contents."GlueForeignKey: GlueSiteUniqueID=$osg_site_name\n";
     $contents = $contents."GlueInformationServiceURL: $bdii_contact\n";
 
 
@@ -1011,7 +1011,7 @@ sub create_cluster_config_file
                              ."GlueLocationVersion: UNDEFINED\n"
                              ."GlueLocationPath: $site_read\n"
                              ."GlueChunkKey: GlueClusterUniqueID=$fullhost\n";
-    
+
         $contents = $contents."\ndn: GlueLocationLocalID=OSG_SITE_WRITE, GlueSubClusterUniqueID=$scinfo{$sc_count}{scname}, GlueClusterUniqueID=$fullhost\n"
                              ."GlueLocationName: OSG_SITE_WRITE\n"
                              ."GlueLocationVersion: UNDEFINED\n"
@@ -1138,7 +1138,7 @@ sub create_ce_config_file
             foreach $vo (@{$pbsQueues{$queue}}){
                 $contents = $contents."\ndn: GlueVOViewLocalID=$vo,GlueCEUniqueID=$fullhost:2119/jobmanager-$batch-$queue\n";
                 $contents = $contents."GlueCEAccessControlBaseRule: VO:$vo\n";
-            
+
                 if ($default_se =~ /^UNDEFINED$/i || $default_se eq "") {
                     $contents = $contents."GlueCEInfoDefaultSE:  $fullhost\n";
                 } else {
@@ -1155,7 +1155,7 @@ sub create_ce_config_file
             foreach $vo (@vo_list){
                 $contents = $contents."\ndn: GlueVOViewLocalID=$vo,GlueCEUniqueID=$fullhost:2119/jobmanager-$batch-$queue\n";
                 $contents = $contents."GlueCEAccessControlBaseRule: VO:$vo\n";
-            
+
                 if ($default_se =~ /^UNDEFINED$/i || $default_se eq "") {
                     $contents = $contents."GlueCEInfoDefaultSE:  $fullhost\n";
                 } else {
@@ -1208,7 +1208,7 @@ sub create_se_config_file
 
     # Write SE part of configuration. A site could publish both srm and gsiftp information through GIP simultaneously.
      my ($major_ver, $minor_ver) = split(/\./, $se_control_version);
-     
+
     my $se_version=$major_ver;
     #print "$se_control_version, $major_ver , $minor_ver \n\n";
 
@@ -1226,7 +1226,7 @@ sub create_se_config_file
                            ."GlueSEUsedOnlineSize: 0\n"
                            ."GlueSETotalNearlineSize: 0\n"
                            ."GlueSEUsedNearlineSize: 0\n"
-                           ."GlueForeignKey: GlueSiteUniqueID=$fullhost\n"
+                           ."GlueForeignKey: GlueSiteUniqueID=$osg_site_name\n"
                            ."GlueInformationServiceURL: $bdii_contact\n";
 
 
@@ -1280,7 +1280,7 @@ sub create_se_config_file
                                 $service_contents=$service_contents."GlueServiceAccessControlRule: $vo\n";
         }
         $service_contents=$service_contents."\n";
-        $service_contents=$service_contents."GlueForeignKey: GlueSiteUniqueID=$fullhost\n";
+        $service_contents=$service_contents."GlueForeignKey: GlueSiteUniqueID=$osg_site_name\n";
 
         my $service_config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-service.conf";
         safe_write($service_config_file, $service_contents);
@@ -1352,7 +1352,7 @@ sub create_se_config_file
                            ."GlueSEUsedOnlineSize: 0\n"
                            ."GlueSETotalNearlineSize: 0\n"
                            ."GlueSEUsedNearlineSize: 0\n"
-                           ."GlueForeignKey: GlueSiteUniqueID=$fullhost\n"
+                           ."GlueForeignKey: GlueSiteUniqueID=$osg_site_name\n"
                            ."GlueInformationServiceURL: $bdii_contact\n";
 
 
@@ -1361,7 +1361,7 @@ sub create_se_config_file
                            ."GlueSEAccessProtocolType: gsiftp\n"
                            ."GlueSEAccessProtocolPort: 2811\n"
                            ."GlueSEAccessProtocolVersion: 1.0.0\n"
-			   ."GlueSEAccessProtocolMaxStreams: 1\n" 
+			   ."GlueSEAccessProtocolMaxStreams: 1\n"
                            ."GlueSEAccessProtocolSupportedSecurity: gsi\n"
                            ."GlueChunkKey: GlueSEUniqueID=$se_disk\n\n";
 
@@ -1697,7 +1697,7 @@ sub create_wrapper_files
     # Create appropriate lcg-info-dynamic-software-plugin wrapper script in plugin dir. Not used by osg uses osg-info-dynamic-location plugin and osg-info-software-provider
     #$ldif_file = "$gip_location/var/gip/ldif/osg-info-static-cluster.ldif";
     #$contents = $contents."\n$gip_location/libexec/osg-info-dynamic-software $ldif_file $gip_location/var/info\n";
-    
+
 
     # Create appropriate lcg-info-dynamic-location-plugin wrapper script in plugin dir
     $ldif_file = "$gip_location/var/ldif/osg-info-static-cluster.ldif";
@@ -1812,5 +1812,5 @@ sub setup_cemon
    safe_write($glite_plugin, $contents);
    system("chmod 0755 $glite_plugin");
 }
-            
+
 

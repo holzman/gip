@@ -186,6 +186,9 @@ def config_compat(cp):
         __write_config(cp, override, osg["OSG_WN_TMP"], "osg_dirs", "wn_tmp")
         __write_config(cp, override, osg["OSG_JOB_MANAGER"], "ce",
                        "job_manager")
+        __write_config(cp, override, osg["OSG_PBS_LOCATION"], "pbs", "pbs_path")
+        __write_config(cp, override, osg["OSG_SGE_LOCATION"], "sge", "sge_path")
+        __write_config(cp, override, osg["OSG_SGE_ROOT"], "sge", "sge_root")
         __write_config(cp, override, osg["GRID3_SITE_INFO"], "site", \
             "sitepolicy")
         __write_config(cp, override, osg["GRID3_SPONSOR"], "site", "sponsor")

@@ -170,6 +170,7 @@ def config_compat(cp):
         # Write the attributes from the flat attributes file to the
         # ConfigParser object, which is organized by sections.
         __write_config(cp, override, osg["OSG_HOSTNAME"], "ce", "name")
+        __write_config(cp, override, osg["OSG_HOSTNAME"], "ce", "unique_name")
         __write_config(cp, override, osg["OSG_DEFAULT_SE"], "se", "name")
         __write_config(cp, override, osg["OSG_SITE_NAME"], "site", "name")
         __write_config(cp, override, osg["OSG_SITE_CITY"], "site", "city")
@@ -185,6 +186,10 @@ def config_compat(cp):
         __write_config(cp, override, osg["OSG_WN_TMP"], "osg_dirs", "wn_tmp")
         __write_config(cp, override, osg["OSG_JOB_MANAGER"], "ce",
                        "job_manager")
+        __write_config(cp, override, osg["GRID3_SITE_INFO"], "site", \
+            "sitepolicy")
+        __write_config(cp, override, osg["GRID3_SPONSOR"], "site", "sponsor")
+
 
     # Do the same but with the gip stuff.
     try:
@@ -193,6 +198,8 @@ def config_compat(cp):
         log.error("Unable to open GIP attributes: %s" % str(e))
         return
 
+    __write_config(cp, override, gip["OSG_GIP_SE_HOST"], "se", "unique_name")
+    __write_config(cp, override, gip["OSG_GIP_SE_NAME"], "se", "name")
     if gip["OSG_GIP_SIMPLIFIED_SRM"].lower() == "y":
         #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
         simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]

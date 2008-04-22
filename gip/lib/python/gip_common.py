@@ -166,6 +166,10 @@ def config_compat(cp):
         log.error("Unable to open OSG attributes: %s" % str(e))
         osg = None
 
+    __write_config(cp, override, "ldap://is.grid.iu.edu:2170", "bdii", \
+        "endpoint")
+    __write_config(cp, override, "True", "cluster", "simple")
+
     if osg != None:
         # Write the attributes from the flat attributes file to the
         # ConfigParser object, which is organized by sections.
@@ -438,8 +442,14 @@ def voList(cp, vo_map=None):
         vo = vo.lower()
         if vo not in vos:
             vos.append(vo)
-    blacklist = [i.strip() for i in cp.get("vo", "vo_blacklist").split(',')]
-    whitelist = [i.strip() for i in cp.get("vo", "vo_whitelist").split(',')]
+    try:
+        blacklist = [i.strip() for i in cp.get("vo", "vo_blacklist").split(',')]
+    except:
+        blacklist = []
+    try:
+        whitelist = [i.strip() for i in cp.get("vo", "vo_whitelist").split(',')]
+    except:
+        whitelist = []
     for vo in whitelist:
         vo = vo.lower()
         if vo not in vos:

@@ -84,7 +84,10 @@ def pbsOutputFilter(fp):
     return PBSFilter(PBSIter(fp))
 
 def pbsCommand(command, cp):
-    pbsHost = cp.get("pbs", "host")
+    try:
+        pbsHost = cp.get("pbs", "host")
+    except:
+        pbsHost = ""
     if pbsHost.lower() == "none" or pbsHost.lower() == "localhost":
         pbsHost = ""
     cmd = command % {'pbsHost': pbsHost}
@@ -228,7 +231,7 @@ def parseNodes(cp, version):
     queue = None
     avail_cpus = None
     used_cpus = None
-    if version.find("PBSPro") >= -1:
+    if version.find("PBSPro") >= 0:
         for line in pbsCommand(pbsnodes_cmd, cp):
             if len(line.strip()) == 0:
                 continue
@@ -258,6 +261,8 @@ def parseNodes(cp, version):
                 attr, val = line.split(" = ")
             except:
                 continue
+            val = val.strip()
+            attr = attr.strip()
             if attr == "state":
                 state = val
             if attr == "np":

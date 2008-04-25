@@ -228,7 +228,7 @@ sub initialize
     vdt_install_log("The GIP location is $gip_location");
 
     stat($vdt_location) or die "Error can't access $vdt_location\n";
-    stat($globus_location) or die "Error can't access $gip_location\n";
+    stat($globus_location) or die "Error can't access $globus_location\n";
     stat($gip_location) or die "Error can't access $gip_location\n";
 
     my $tmp_testbed = `$vdt_location/osg-version`;

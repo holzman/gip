@@ -1323,8 +1323,9 @@ sub create_se_config_file
                                    ."GlueSAStateAvailableSpace: 0\n"
                                    ."GlueSAStateUsedSpace: 0\n\n";
 
-                $contents=$contents."dn: GlueVOInfoLocalID=$vo,GlueSALocalID=$vo\n"
+                $contents=$contents."dn: GlueVOInfoLocalID=$vo,GlueSALocalID=$vo,GlueSEUniqueID=$se_host\n"
                                    ."GlueChunkKey: GlueSALocalID=$vo\n"
+                                   ."GlueChunkKey: GlueSEUniqueID=$se_host\n"
                                    ."GlueVOInfoLocalID: $vo\n"
                                    ."GlueVOInfoName: $vo\n"
                                    ."GlueVOInfoPath: $se_access_root\n"

@@ -270,10 +270,10 @@ def parseNodes(cp, version):
                     np = int(val)
                 except:
                     np = 1
-                if not (state.find("down") >= -1 or \
-                        state.find("offline") >= -1):
+                if not (state.find("down") >= 0 or \
+                        state.find("offline") >= 0):
                     totalCpu += np
-                if state.find("free") >= -1:
+                if state.find("free") >= 0:
                     freeCpu += np
             if attr == "jobs" and state == "free":
                 freeCpu -= val.count(',')

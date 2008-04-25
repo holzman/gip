@@ -1291,7 +1291,7 @@ sub create_se_config_file
                 $se_access{$vo} = $se_access_root;
                 $contents=$contents."\ndn: GlueSALocalID=$vo,GlueSEUniqueID=$se_host\n"
                                    ."GlueSARoot: $vo:$se_access_root\n"
-                                   ."GlueSAPath: $se_access_root/$sa_path\n"
+                                   ."GlueSAPath: $se_access_root\n"
                                    ."GlueSAAccessControlBaseRule: $vo\n"
                                    ."GlueChunkKey: GlueSEUniqueID=$se_host\n"
                                    ."GlueSAType: permanent\n"

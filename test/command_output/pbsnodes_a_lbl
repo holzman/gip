@@ -1,0 +1,19 @@
+osp4.lbl.gov
+     state = free
+     np = 20
+     ntype = cluster
+     status = opsys=linux,uname=Linux osp4.lbl.gov 2.6.9-42.0.3.ELsmp #1 SMP Thu Oct 5 15:04:03 CDT 2006 i686,sessions=4165,nsessions=1,nusers=1,idletime=1357660,totmem=3057004kb,availmem=2797340kb,physmem=1025396kb,ncpus=2,loadave=0.00,netload=1193453575,state=free,jobs=? 0,rectime=1208966246
+
+osp3.lbl.gov
+     state = free
+     np = 20
+     ntype = cluster
+     status = opsys=linux,uname=Linux osp3.lbl.gov 2.6.9-42.0.3.ELsmp #1 SMP Thu Oct 5 15:04:03 CDT 2006 i686,sessions=4246 8213,nsessions=2,nusers=2,idletime=164096,totmem=3057004kb,availmem=2930924kb,physmem=1025396kb,ncpus=2,loadave=0.05,netload=1012597265,state=free,jobs=? 0,rectime=1208966249
+
+osp2.lbl.gov
+     state = free
+     np = 20
+     ntype = cluster
+     jobs = 0/35275.osp1.lbl.gov, 1/35276.osp1.lbl.gov, 2/35277.osp1.lbl.gov, 3/35278.osp1.lbl.gov, 4/35279.osp1.lbl.gov, 5/35280.osp1.lbl.gov, 6/35281.osp1.lbl.gov, 7/35282.osp1.lbl.gov, 8/35283.osp1.lbl.gov, 9/35284.osp1.lbl.gov
+     status = opsys=linux,uname=Linux osp2.lbl.gov 2.6.9-42.0.10.ELsmp #1 SMP Tue Feb 27 08:38:56 CST 2007 i686,sessions=4427 820 18459 13971 14009 14029 14071 14078 14133,nsessions=9,nusers=4,idletime=3178570,totmem=3057004kb,availmem=2511588kb,physmem=1025396kb,ncpus=2,loadave=0.00,netload=3288245901,state=free,jobs=35275.osp1.lbl.gov 35276.osp1.lbl.gov 35277.osp1.lbl.gov 35278.osp1.lbl.gov 35279.osp1.lbl.gov 35280.osp1.lbl.gov,rectime=1208966255
+

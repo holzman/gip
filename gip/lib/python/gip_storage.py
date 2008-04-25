@@ -58,8 +58,11 @@ def execute(p, command, bind_vars=None):
     @param bind_vars: Bind vars for B{command}, if any.
     @returns: All resulting rows.
     """
-    from psycopg2.extras import DictCursor
-    curs = p.cursor(cursor_factory=DictCursor)
+    try:
+        from psycopg2.extras import DictCursor
+        curs = p.cursor(cursor_factory=DictCursor)
+    except:
+        curs = p.cursor()
     if bind_vars != None:
         curs.execute(command, bind_vars)
     else:
@@ -75,7 +78,7 @@ def connect(cp):
     @param cp: Site configuration
     @type cp: ConfigParser
     @returns: Connection to the SRM database.
-    @rtype: psycopg2.Connection
+    @rtype: psycopg2.Connection or pgdb.Connection
     """
     try:
         psycopg2 = __import__("psycopg2")
@@ -88,7 +91,14 @@ def connect(cp):
             (database, dbuser, dbpasswd, pghost, pgport)
         p=psycopg2.connect(connectstring)
     except Exception, e:
-        raise
+        pgdb = __import__("pgdb")
+        database = cp.get("dcache_config", "database")
+        dbuser = cp.get("dcache_config", "dbuser")
+        dbpasswd = cp.get("dcache_config", "dbpasswd")
+        pghost = cp.get("dcache_config", "pghost")
+        pgport = cp.get("dcache_config", "pgport")
+        p=pgdb.connect(user=dbuser, password=dbpasswd, host='%s:%s' % \
+            (pghost, pgport), database=database)
 
     return p
 

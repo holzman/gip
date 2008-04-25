@@ -166,10 +166,15 @@ def config_compat(cp):
         log.error("Unable to open OSG attributes: %s" % str(e))
         osg = None
 
+    __write_config(cp, override, "ldap://is.grid.iu.edu:2170", "bdii", \
+        "endpoint")
+    __write_config(cp, override, "True", "cluster", "simple")
+
     if osg != None:
         # Write the attributes from the flat attributes file to the
         # ConfigParser object, which is organized by sections.
         __write_config(cp, override, osg["OSG_HOSTNAME"], "ce", "name")
+        __write_config(cp, override, osg["OSG_HOSTNAME"], "ce", "unique_name")
         __write_config(cp, override, osg["OSG_DEFAULT_SE"], "se", "name")
         __write_config(cp, override, osg["OSG_SITE_NAME"], "site", "name")
         __write_config(cp, override, osg["OSG_SITE_CITY"], "site", "city")
@@ -185,6 +190,13 @@ def config_compat(cp):
         __write_config(cp, override, osg["OSG_WN_TMP"], "osg_dirs", "wn_tmp")
         __write_config(cp, override, osg["OSG_JOB_MANAGER"], "ce",
                        "job_manager")
+        __write_config(cp, override, osg["OSG_PBS_LOCATION"], "pbs", "pbs_path")
+        __write_config(cp, override, osg["OSG_SGE_LOCATION"], "sge", "sge_path")
+        __write_config(cp, override, osg["OSG_SGE_ROOT"], "sge", "sge_root")
+        __write_config(cp, override, osg["GRID3_SITE_INFO"], "site", \
+            "sitepolicy")
+        __write_config(cp, override, osg["GRID3_SPONSOR"], "site", "sponsor")
+
 
     # Do the same but with the gip stuff.
     try:
@@ -193,6 +205,8 @@ def config_compat(cp):
         log.error("Unable to open GIP attributes: %s" % str(e))
         return
 
+    __write_config(cp, override, gip["OSG_GIP_SE_HOST"], "se", "unique_name")
+    __write_config(cp, override, gip["OSG_GIP_SE_NAME"], "se", "name")
     if gip["OSG_GIP_SIMPLIFIED_SRM"].lower() == "y":
         #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
         simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]
@@ -337,9 +351,9 @@ def HMSToMin(hms):
     return int(h)*60 + int(m) + int(round(int(s)/60.0))
 
 class _Constants:
-	def __init__(self):
-		self.CR = '\r'
-		self.LF = '\n'
+    def __init__(self):
+        self.CR = '\r'
+        self.LF = '\n'
 
 class Attributes(UserDict):
     """
@@ -428,8 +442,14 @@ def voList(cp, vo_map=None):
         vo = vo.lower()
         if vo not in vos:
             vos.append(vo)
-    blacklist = [i.strip() for i in cp.get("vo", "vo_blacklist").split(',')]
-    whitelist = [i.strip() for i in cp.get("vo", "vo_whitelist").split(',')]
+    try:
+        blacklist = [i.strip() for i in cp.get("vo", "vo_blacklist").split(',')]
+    except:
+        blacklist = []
+    try:
+        whitelist = [i.strip() for i in cp.get("vo", "vo_whitelist").split(',')]
+    except:
+        whitelist = []
     for vo in whitelist:
         vo = vo.lower()
         if vo not in vos:

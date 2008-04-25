@@ -7,6 +7,7 @@ outputs from the test/command_output directory.
 """
 
 import os
+import re
 import sys
 import unittest
 import datetime
@@ -20,6 +21,11 @@ commands = {}
 
 def lookupCommand(cmd):
     cmd = cmd.strip()
+    env = os.environ['GIP_TESTING']
+    m = re.match("suffix=(.*)", env)
+    suffix = None
+    if m:
+        suffix = m.groups()[0]
     if cmd not in commands:
         fd = open(os.path.expandvars("$VDT_LOCATION/test/command_output/" \
             "commands"))
@@ -28,7 +34,10 @@ def lookupCommand(cmd):
                 continue
             command, val = line.split(':', 1)
             val = val.strip()
-            commands[val.strip()] = command.strip()
+            command = command.strip()
+            if suffix:
+                command = '%s_%s' % (command, suffix)
+            commands[val.strip()] = command
     return commands[cmd]
 
 def runCommand(cmd, force_command=False):
@@ -36,7 +45,7 @@ def runCommand(cmd, force_command=False):
         try:
             filename = lookupCommand(cmd)
         except Exception, e:
-            print e
+            print >> sys.stderr, e
             return runCommand(cmd, force_command=True)
         return open(os.path.expandvars("$VDT_LOCATION/test/command_output/%s" \
             % filename))
@@ -87,19 +96,25 @@ def streamHandler(cp):
             + datetime.datetime.now().strftime("%A_%b_%d_%Y_%H_%M_%S")
         return open(logFile, 'w')
 
-def runTest(cp, cls, out=None):
+def runTest(cp, cls, out=None, per_site=True):
     """
     Given a test class, generate and run a test suite
 
     @param cp: Site configuration
     @type cp: ConfigParser
     @param cls: Test class to use to generate a test suite.  It is assumed
-        that the constructor for this class has signature cls(cp, site_name)
+        that the constructor for this class has signature cls(cp, site_name).
+        If per_site=False, then the signature is assumed to be cls().
     @type cls: class
+    @keyword per_site: Set to true if there is one instance of the test class
+        per site.
     @param out: A stream where the output from the test suite is logged
     @type out: stream
     """
-    testSuite = generateTests(cp, cls, sys.argv[1:])
+    if per_site:
+        testSuite = generateTests(cp, cls, sys.argv[1:])
+    else:
+        testSuite = suite = unittest.TestLoader().loadTestsFromTestCase(cls)
 
     if out is None:
         testRunner = unittest.TextTestRunner(verbosity=2)

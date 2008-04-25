@@ -63,8 +63,9 @@ def print_CE(cp):
         info['default_se'] = cp.get('se', 'name')
         info['max_waiting'] = 999999
         info['max_slots'] = 1
-        info['max_total'] = info['max_running']
-        info['assigned'] = info['max_running']
+        #info['max_total'] = info['max_running']
+        info['max_total'] = info['max_waiting'] + info['max_running']
+        info['assigned'] = info['job_slots']
         info['lrmsType'] = 'pbs'
         info['preemption'] = cp_get(cp, 'pbs', 'preemption', 'FALSE')
         acbr = ''

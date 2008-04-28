@@ -633,7 +633,7 @@ sub create_site_config_file
                         ."GlueSiteSysAdminContact: mailto: $ml_contact_email\n"
                         ."GlueSiteSecurityContact: mailto: $ml_contact_email\n"
                         ."GlueSiteEmailContact: mailto: $ml_contact_email\n"
-                        ."GlueSiteLocation: $ml_city , $ml_country\n"
+                        ."GlueSiteLocation: $ml_city,$ml_country\n"
                         ."GlueSiteLatitude: $ml_lat\n"
                         ."GlueSiteLongitude: $ml_long\n"
                         ."GlueSiteSponsor: $osg_sponsor\n"

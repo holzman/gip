@@ -9,12 +9,12 @@ Original version by Laurence.Field@cern.ch
 Complete rewrite by Brian Bockelman
 """
 
-raise NotImplementedError()
-
 import os
+import sys
 import glob
 import time
 import signal
+import cStringIO
 
 try:
    import md5
@@ -23,25 +23,26 @@ except:
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getLogger, cp_get
+from gip_ldap import read_ldap, compareDN
 
 log = getLogger("GIP.Wrapper")
 
 def main():
     cp = config()
-    temp_dir = os.path.expandvars(cp_get("gip", "temp_dir", \
-        "$VDT_LOCATION/gip/var/tmp")
-    plugin_dir = os.path.expandvars(cp_get("gip", "plugin_dir", \
-        "$VDT_LOCATION/gip/plugins")
-    provider_dir = os.path.expandvars(cp_get("gip", "provider_dir", \
-        "$VDT_LOCATION/gip/providers")
-    static_dir = os.path.expandvars(cp_get("gip", "static_dir", \
-        "$VDT_LOCATION/gip/var/ldif")
-    delete_attributes = os.path.expandvars(cp_get("gip", "remove_attributes", \
-        "$GIP_LOCATION/etc/remove-attributes.conf")
-    freshness = int(cp_get("gip", "freshness", 300)
-    cache_ttl = int(cp_get("gip", "cache_ttl", 600)
-    response  = int(cp_get("gip", "response",  60)
-    timeout = int(cp_get("gip",   "timeout",   150)
+    temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
+        "$VDT_LOCATION/gip/var/tmp"))
+    plugin_dir = os.path.expandvars(cp_get(cp, "gip", "plugin_dir", \
+        "$VDT_LOCATION/gip/plugins"))
+    provider_dir = os.path.expandvars(cp_get(cp, "gip", "provider_dir", \
+        "$VDT_LOCATION/gip/providers"))
+    static_dir = os.path.expandvars(cp_get(cp, "gip", "static_dir", \
+        "$VDT_LOCATION/gip/var/ldif"))
+    delete_attributes = os.path.expandvars(cp_get(cp, "gip", \
+        "remove_attributes", "$GIP_LOCATION/etc/remove-attributes.conf"))
+    freshness = int(cp_get(cp, "gip", "freshness", 300))
+    cache_ttl = int(cp_get(cp, "gip", "cache_ttl", 600))
+    response  = int(cp_get(cp, "gip", "response",  60))
+    timeout = int(cp_get(cp, "gip",   "timeout",   150))
 
     os.setpgrp()
     static_info = read_static()
@@ -49,16 +50,55 @@ def main():
     plugins = list_modules(plugin_dir)
     check_cache(providers, temp_dir, freshness)
     check_cache(plugins, temp_dir, freshness)
-    pids = launch_modules(providers, temp_dir, timeout)
-    pids += launch_modules(plugins, temp_dir, timeout)
-    wait_children(response)
+    pids = launch_modules(providers, provider_dir, temp_dir, timeout)
+    pids += launch_modules(plugins, plugin_dir, temp_dir, timeout)
+    wait_children(pids, response)
     check_cache(providers, temp_dir, cache_ttl)
     check_cache(plugins, temp_dir, cache_ttl)
 
-    handle_providers(static_info, providers)
-    handle_plugins(static_info, plugins)
+    static_fp = cStringIO.StringIO(static_info)
+    entries = read_ldap(static_fp, multi=True)
+    entries = handle_providers(entries, providers)
+    entries = handle_plugins(entries, plugins)
+    for entry in entries:
+        print entry.to_ldif()
 
-def wait_children(response):
+def handle_providers(entries, providers):
+    provider_entries = []
+    for provider, p_info in providers.items():
+        if 'output' in p_info:
+            fp = cStringIO.StringIO(p_info['output'])
+            provider_entries += read_ldap(fp, multi=True)
+    remove_entries = []
+    # Calculate all the duplicate entries, build a list of the ones
+    # to remove.
+    for entry in entries:
+        for p_entry in provider_entries:
+            if compareDN(entry, p_entry):
+                remove_entries.append(entry)
+    for entry in remove_entries:
+        entries.remove(entry)
+    # Now add all the new entries from the providers
+    for p_entry in provider_entries:
+        entries.append(p_entry)
+    return entries
+
+def handle_plugins(entries, plugins):
+    # Make a list of all the plugin GLUE entries
+    plugin_entries = []
+    for plugin in plugins:
+        if 'modules' in plugin:
+            fp = cStringIO.StringIO(provider['modules'])
+            plugin_entries += read_ldap(fp, multi=True)
+    # Merge all the plugin entries into the main stream.
+    for entry in entries:
+        for p_entry in plugin_entries:
+            if compareDN(entry, p_entry):
+                for glue, value in p_entry.glue.items():
+                    entry[glue] = value
+    return entries
+
+def wait_children(pids, response):
     """
     Wait for any children of this process.
 
@@ -68,10 +108,11 @@ def wait_children(response):
         raise Exception("Response timed out")
     signal.signal(signal.SIGALRM, handler)
     signal.alarm(int(response))
-    os.wait(-1)
+    for pid in pids:
+        os.waitpid(pid, 0)
     signal.alarm(0)
 
-def launch_modules(modules, temp_dir, timeout):
+def launch_modules(modules, module_dir, temp_dir, timeout):
     """
     Launch any module which does not have cached output available.
 
@@ -92,10 +133,10 @@ def launch_modules(modules, temp_dir, timeout):
         if 'output' in info:
             continue
         filename = os.path.join(temp_dir, '%(name)s.ldif.%(cksum)s' % info)
-        exec = os.path.join(temp_dir, module)
+        executable = os.path.join(module_dir, module)
         pid = os.fork()
         if pid == 0:
-            run_child(exec, filename, timeout)
+            run_child(executable, filename, timeout)
         else:
             pids.append(pid)
     return pids
@@ -118,21 +159,27 @@ def check_cache(modules, temp_dir, freshness):
     @param freshness: If a file is older than $freshness seconds, its contents
        are ignored.
     """
-    for mod in modules:
-        filename = os.path.join(temp_dir, "%(name)s.ldif.%(cksum)s", \
-            modules[mod])
-        if not os.path.exists(filename)
+    for mod, mod_info in modules.items():
+        if 'output' in mod_info:
+            continue
+        filename = os.path.join(temp_dir, "%(name)s.ldif.%(cksum)s" % \
+            mod_info)
+        if not os.path.exists(filename):
             continue
         try:
-            mtime = os.stat(filename)
+            my_stat = os.stat(filename)
         except:
             continue
+        try:
+            mtime = my_stat.st_mtime
+        except:
+            mtime = my_stat[8]
         if mtime + int(freshness) > time.time():
             try:
                 fp = open(filename, 'r')
             except:
                 continue
-            modules['output'] = fp.read()
+            mod_info['output'] = fp.read()
 
 def list_modules(dirname):
     """
@@ -147,22 +194,29 @@ def list_modules(dirname):
     """
     info = {}
     for file in os.listdir(dirname):
+         if os.path.isdir(file):
+             continue
          mod_info = {}
          mod_info['name'] = file
-         mod_info['cksum'] = calculate_hash(os.path.join(dirname, file))
+         try:
+             mod_info['cksum'] = calculate_hash(os.path.join(dirname, file))
+         except Exception, e:
+             log.exception(e)
          info[file] = mod_info
     return info
 
-def run_child(exec, filename, timeout):
+def run_child(executable, orig_filename, timeout):
     pgrp = os.getpgrp()
-    filename = '%s.%s' % (filename, pgrp)
+    filename = '%s.%s' % (orig_filename, pgrp)
     def handler(signum, frame):
         os.unlink(filename)
         os.killpg(-signal.SIGKILL, pgrp)
     signal.signal(signal.SIGALRM, handler)
     signal.alarm(timeout)
-    os.system("%s > %s" % (exec, filename))
+    exit_code = os.system("%s > %s" % (executable, filename))
     signal.alarm(0)
+    if exit_code == 0:
+        os.rename(filename, orig_filename)
     os._exit(os.EX_OK)
 
 def calculate_hash(filename):
@@ -174,7 +228,7 @@ def calculate_hash(filename):
     """
     m = md5.md5()
     m.update(open(filename, 'r').read())
-    return m.digest()
+    return m.hexdigest()
 
 def read_static():
     """

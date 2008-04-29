@@ -211,11 +211,11 @@ def config_compat(cp):
     if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() == "y":
         #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
         simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]
-        __write_config(cp, override, simple_path, "vo", "default")
+        __write_config(cp, override, {1: simple_path}, 1, "vo", "default")
     for key in gip.keys():
         if key.startswith("OSG_GIP_VO_DIR"):
             vo, dir = gip[key].split(',')
-            __write_config(cp, override, dir, "vo", vo)
+            __write_config(cp, override, {1: dir}, 1, "vo", vo)
 
 def __write_config(cp, override, dict_object, key, section, option):
     """

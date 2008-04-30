@@ -9,7 +9,8 @@ import time
 from xml.dom.minidom import parseString
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getTemplate, getLogger, runCommand, voList
+from gip_common import config, getTemplate, getLogger, voList
+from gip_testing import runCommand
 
 log = getLogger("GIP.gt4")
 
@@ -32,7 +33,10 @@ def handler():
                     " response")
 
 def print_gt4(cp):
-    use_gt4 = cp.getboolean("ce", "use_gt4")
+    try:
+        use_gt4 = cp.getboolean("ce", "use_gt4")
+    except:
+        use_gt4 = False
     if not use_gt4:
         return
 

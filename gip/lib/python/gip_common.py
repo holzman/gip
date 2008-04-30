@@ -170,6 +170,7 @@ def config_compat(cp):
     __write_config(cp, override, info, 1, "bdii", \
         "endpoint")
     __write_config(cp, override, info, 2, "cluster", "simple")
+    __write_config(cp, override, info, 2, "cesebind", "simple")
 
     if osg != None:
         # Write the attributes from the flat attributes file to the
@@ -178,6 +179,7 @@ def config_compat(cp):
         __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "unique_name")
         __write_config(cp, override, osg, "OSG_DEFAULT_SE", "se", "name")
         __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "name")
+        __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "unique_name")
         __write_config(cp, override, osg, "OSG_SITE_CITY", "site", "city")
         __write_config(cp, override, osg, "OSG_SITE_COUNTRY", "site", "country")
         __write_config(cp, override, osg, "OSG_CONTACT_NAME", "site", "contact")

@@ -129,8 +129,8 @@ def config(*args):
             help='Configuration file.', default='gip.conf')
         (options, args) = p.parse_args()
         files += [i.strip() for i in options.config.split(',')]
-    files += ["$GIP_LOCATION/etc/gip.conf"]
     files = [os.path.expandvars(i) for i in files]
+    files += ["$GIP_LOCATION/etc/gip.conf"]
     cp.read(files)
 
     # Set up the config object to be compatible with the OSG attributes
@@ -166,6 +166,7 @@ def config_compat(cp):
         log.error("Unable to open OSG attributes: %s" % str(e))
         osg = None
 
+
     info = {1: "ldap://is.grid.iu.edu:2170", 2: "True"}
     __write_config(cp, override, info, 1, "bdii", \
         "endpoint")
@@ -178,6 +179,7 @@ def config_compat(cp):
         __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "name")
         __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "unique_name")
         __write_config(cp, override, osg, "OSG_DEFAULT_SE", "se", "name")
+        __write_config(cp, override, osg, "OSG_GIP_SE_HOST", "se", "unique_name")
         __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "name")
         __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "unique_name")
         __write_config(cp, override, osg, "OSG_SITE_CITY", "site", "city")

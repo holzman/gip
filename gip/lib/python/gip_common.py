@@ -166,36 +166,39 @@ def config_compat(cp):
         log.error("Unable to open OSG attributes: %s" % str(e))
         osg = None
 
-    __write_config(cp, override, "ldap://is.grid.iu.edu:2170", "bdii", \
+    info = {1: "ldap://is.grid.iu.edu:2170", 2: "True"}
+    __write_config(cp, override, info, 1, "bdii", \
         "endpoint")
-    __write_config(cp, override, "True", "cluster", "simple")
+    __write_config(cp, override, info, 2, "cluster", "simple")
+    __write_config(cp, override, info, 2, "cesebind", "simple")
 
     if osg != None:
         # Write the attributes from the flat attributes file to the
         # ConfigParser object, which is organized by sections.
-        __write_config(cp, override, osg["OSG_HOSTNAME"], "ce", "name")
-        __write_config(cp, override, osg["OSG_HOSTNAME"], "ce", "unique_name")
-        __write_config(cp, override, osg["OSG_DEFAULT_SE"], "se", "name")
-        __write_config(cp, override, osg["OSG_SITE_NAME"], "site", "name")
-        __write_config(cp, override, osg["OSG_SITE_CITY"], "site", "city")
-        __write_config(cp, override, osg["OSG_SITE_COUNTRY"], "site", "country")
-        __write_config(cp, override, osg["OSG_CONTACT_NAME"], "site", "contact")
-        __write_config(cp, override, osg["OSG_CONTACT_EMAIL"], "site", "email")
-        __write_config(cp, override, osg["OSG_SITE_LONGITUDE"], "site",
+        __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "name")
+        __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "unique_name")
+        __write_config(cp, override, osg, "OSG_DEFAULT_SE", "se", "name")
+        __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "name")
+        __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "unique_name")
+        __write_config(cp, override, osg, "OSG_SITE_CITY", "site", "city")
+        __write_config(cp, override, osg, "OSG_SITE_COUNTRY", "site", "country")
+        __write_config(cp, override, osg, "OSG_CONTACT_NAME", "site", "contact")
+        __write_config(cp, override, osg, "OSG_CONTACT_EMAIL", "site", "email")
+        __write_config(cp, override, osg, "OSG_SITE_LONGITUDE", "site",
                        "longitude")
-        __write_config(cp, override, osg["OSG_SITE_LATITUDE"], "site",
+        __write_config(cp, override, osg, "OSG_SITE_LATITUDE", "site",
                        "latitude")
-        __write_config(cp, override, osg["OSG_APP"], "osg_dirs", "app")
-        __write_config(cp, override, osg["OSG_DATA"], "osg_dirs", "data")
-        __write_config(cp, override, osg["OSG_WN_TMP"], "osg_dirs", "wn_tmp")
-        __write_config(cp, override, osg["OSG_JOB_MANAGER"], "ce",
+        __write_config(cp, override, osg, "OSG_APP", "osg_dirs", "app")
+        __write_config(cp, override, osg, "OSG_DATA", "osg_dirs", "data")
+        __write_config(cp, override, osg, "OSG_WN_TMP", "osg_dirs", "wn_tmp")
+        __write_config(cp, override, osg, "OSG_JOB_MANAGER", "ce",
                        "job_manager")
-        __write_config(cp, override, osg["OSG_PBS_LOCATION"], "pbs", "pbs_path")
-        __write_config(cp, override, osg["OSG_SGE_LOCATION"], "sge", "sge_path")
-        __write_config(cp, override, osg["OSG_SGE_ROOT"], "sge", "sge_root")
-        __write_config(cp, override, osg["GRID3_SITE_INFO"], "site", \
+        __write_config(cp, override, osg, "OSG_PBS_LOCATION", "pbs", "pbs_path")
+        __write_config(cp, override, osg, "OSG_SGE_LOCATION", "sge", "sge_path")
+        __write_config(cp, override, osg, "OSG_SGE_ROOT", "sge", "sge_root")
+        __write_config(cp, override, osg, "GRID3_SITE_INFO", "site", \
             "sitepolicy")
-        __write_config(cp, override, osg["GRID3_SPONSOR"], "site", "sponsor")
+        __write_config(cp, override, osg, "GRID3_SPONSOR", "site", "sponsor")
 
 
     # Do the same but with the gip stuff.
@@ -205,21 +208,25 @@ def config_compat(cp):
         log.error("Unable to open GIP attributes: %s" % str(e))
         return
 
-    __write_config(cp, override, gip["OSG_GIP_SE_HOST"], "se", "unique_name")
-    __write_config(cp, override, gip["OSG_GIP_SE_NAME"], "se", "name")
-    if gip["OSG_GIP_SIMPLIFIED_SRM"].lower() == "y":
+    __write_config(cp, override, gip, "OSG_GIP_SE_HOST", "se", "unique_name")
+    __write_config(cp, override, gip, "OSG_GIP_SE_NAME", "se", "name")
+    if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() == "y":
         #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
         simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]
-        __write_config(cp, override, simple_path, "vo", "default")
+        __write_config(cp, override, {1: simple_path}, 1, "vo", "default")
     for key in gip.keys():
         if key.startswith("OSG_GIP_VO_DIR"):
             vo, dir = gip[key].split(',')
-            __write_config(cp, override, dir, "vo", vo)
+            __write_config(cp, override, {1: dir}, 1, "vo", vo)
 
-def __write_config(cp, override, new_val, section, option):
+def __write_config(cp, override, dict_object, key, section, option):
     """
     Helper function for config_compat; should not be called directly.
     """
+    try:
+        new_val = dict_object[key]
+    except:
+        return
     if not cp.has_section(section):
         cp.add_section(section)
     if override and (not cp.has_option(section, option)):

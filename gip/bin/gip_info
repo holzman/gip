@@ -1,5 +1,7 @@
 #!/bin/sh
 
-export GIP_LOCATION=$VDT_LOCATION/gip
+if [ -z "$GIP_LOCATION" ]; then
+  export GIP_LOCATION=$VDT_LOCATION/gip
+fi
 $GIP_LOCATION/libexec/osg-info-wrapper
 

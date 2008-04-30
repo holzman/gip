@@ -19,8 +19,10 @@ my %config = (
         temp_dir => '',
 	 );
 
-$ENV{'GIP_LOCATION'} = "$ENV{'VDT_LOCATION'}/gip";
-my $conffile = "$ENV{'VDT_LOCATION'}/gip/etc/osg-info-generic.conf";
+if (! exists $ENV{'GIP_LOCATION'}) {
+    $ENV{'GIP_LOCATION'} = "$ENV{'VDT_LOCATION'}/gip";
+}
+my $conffile = "$ENV{'GIP_LOCATION'}/etc/osg-info-generic.conf";
 my $fh = new FileHandle $conffile
 	or die "Error: Can't open config file: $conffile\n";
 foreach (<$fh>){

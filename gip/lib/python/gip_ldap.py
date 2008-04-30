@@ -79,6 +79,19 @@ class LdapData:
             if multi:
                 glue[entry] = tuple(glue[entry])
         self.glue = _hdict(glue)
+        self.multi = multi
+
+    def to_ldif(self):
+        ldif = 'dn: ' + ','.join(self.dn) + '\n'
+        for obj in self.objectClass:
+            ldif += 'objectClass: %s\n' % obj
+        for entry, values in self.glue.items():
+            if not self.multi:
+                ldif += 'Glue%s: %s\n' % (entry, values)
+            else:
+                for value in values:
+                    ldif += 'Glue%s: %s\n' % (entry, value)
+        return ldif
 
     def __hash__(self):
         return hash(tuple([normalizeDN(self.dn), self.objectClass, self.glue]))

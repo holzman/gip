@@ -161,11 +161,12 @@ def config_compat(cp):
         override = False
     osg = None
     try:
-        osg = Attributes("$VDT_LOCATION/monitoring/osg-attributes.conf")
+        attributes = cp_get(cp, "gip", "osg_attributes", \
+            "$VDT_LOCATION/monitoring/osg-attributes.conf")
+        osg = Attributes(attributes)
     except Exception, e:
         log.error("Unable to open OSG attributes: %s" % str(e))
         osg = None
-
 
     info = {1: "ldap://is.grid.iu.edu:2170", 2: "True"}
     __write_config(cp, override, info, 1, "bdii", \
@@ -179,7 +180,12 @@ def config_compat(cp):
         __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "name")
         __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "unique_name")
         __write_config(cp, override, osg, "OSG_DEFAULT_SE", "se", "name")
-        __write_config(cp, override, osg, "OSG_GIP_SE_HOST", "se", "unique_name")
+        __write_config(cp, override, osg, "OSG_GIP_SE_HOST", "se", \
+            "unique_name")
+        # No SE at the site; use the disk's SE
+        if cp.get("se", "unique_name") == '':
+            __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
+                "unique_name")
         __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "name")
         __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "unique_name")
         __write_config(cp, override, osg, "OSG_SITE_CITY", "site", "city")
@@ -205,13 +211,23 @@ def config_compat(cp):
 
     # Do the same but with the gip stuff.
     try:
-        gip = Attributes("$VDT_LOCATION/monitoring/gip-attributes.conf")
+        attributes = cp_get(cp, "gip", "gip_attributes", \
+            "$VDT_LOCATION/monitoring/gip-attributes.conf")
+        gip = Attributes(attributes)
     except Exception, e:
         log.error("Unable to open GIP attributes: %s" % str(e))
         return
 
     __write_config(cp, override, gip, "OSG_GIP_SE_HOST", "se", "unique_name")
+    # No SE at the site; use the disk's SE
+    if cp.get("se", "unique_name") == '':
+        __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
+            "unique_name")
     __write_config(cp, override, gip, "OSG_GIP_SE_NAME", "se", "name")
+    # No SE at the site; use the disk's SE
+    if cp.get("se", "name") == '':
+        __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
+            "name")
     if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() == "y":
         #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
         simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]

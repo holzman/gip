@@ -1,4 +1,6 @@
 
+import sys
+
 from gip_common import voList, cp_get
 from pbs_common import getQueueList
 from gip_sections import ce, cesebind, se
@@ -13,7 +15,7 @@ def getCEList(cp):
     @param cp: Site configuration
     @returns: List of strings containing all the local CE names.
     """
-    jobman = cp.get(ce, "job_manager").strip()
+    jobman = cp.get(ce, "job_manager").strip().lower()
     hostname = cp.get(ce, 'name')
     ce_name = '%s:2119/jobmanager-%s-%%s' % (hostname, jobman)
     ce_list = []

@@ -24,7 +24,7 @@ def getCEList(cp):
         for queue in queue_entries:
             ce_list.append(ce_name % queue)
     else:
-        for vo in getVoList(cp):
+        for vo in voList(cp):
              ce_list.append(ce_name % vo)
     return ce_list
 

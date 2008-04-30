@@ -208,7 +208,6 @@ def config_compat(cp):
             "sitepolicy")
         __write_config(cp, override, osg, "GRID3_SPONSOR", "site", "sponsor")
 
-
     # Do the same but with the gip stuff.
     try:
         attributes = cp_get(cp, "gip", "gip_attributes", \
@@ -228,7 +227,7 @@ def config_compat(cp):
     if cp.get("se", "name") == '':
         __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
             "name")
-    if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() == "y":
+    if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() in ["1", "y"]:
         #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
         simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]
         __write_config(cp, override, {1: simple_path}, 1, "vo", "default")

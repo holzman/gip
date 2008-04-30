@@ -22,8 +22,10 @@ my @template;
 my @config;
 my $fh;
 
+#$fh = new FileHandle $config
+#    or die "Can't open static ldif file: $config\n";
 $fh = new FileHandle $config
-    or die "Can't open static ldif file: $config\n";
+    or exit 2;
 @config = <$fh>;
 
 $fh = new FileHandle $template

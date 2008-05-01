@@ -183,7 +183,8 @@ def config_compat(cp):
         __write_config(cp, override, osg, "OSG_GIP_SE_HOST", "se", \
             "unique_name")
         # No SE at the site; use the disk's SE
-        if cp.get("se", "unique_name") == '':
+        if cp.has_section("se") and cp.has_option("se", "unique_name") and \
+                cp.get("se", "unique_name") == '':
             __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
                 "unique_name")
         __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "name")
@@ -219,7 +220,8 @@ def config_compat(cp):
 
     __write_config(cp, override, gip, "OSG_GIP_SE_HOST", "se", "unique_name")
     # No SE at the site; use the disk's SE
-    if cp.get("se", "unique_name") == '':
+    if cp.has_section("se") and cp.has_option('se', "unique_name") and \
+            cp.get("se", "unique_name") == '':
         __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
             "unique_name")
     __write_config(cp, override, gip, "OSG_GIP_SE_NAME", "se", "name")

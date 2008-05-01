@@ -1,0 +1,25 @@
+n2
+    state = job-exclusive
+    np = 8
+    ntype = cluster
+    jobs = 0/1142.everest.cigi.uiuc.edu, 1/1143.everest.cigi.uiuc.edu, 2/1144.everest.cigi.uiuc.edu, 3/1145.everest.cigi.uiuc.edu, 4/1146.everest.cigi.uiuc.edu, 5/1147.everest.cigi.uiuc.edu, 6/1148.everest.cigi.uiuc.edu, 7/1149.everest.cigi.uiuc.edu
+    status = opsys=linux,uname=Linux n2.cigi.uiuc.edu 2.6.9-55.ELsmp #1 SMP Mon May 7 15:00:28 CDT 2007 x86_64,sessions=14449 14470 14491 14512 14533 14554 14575 14596,nsessions=8,nusers=1,idletime=3817781,totmem=9218236kb,availmem=8967940kb,physmem=8166020kb,ncpus=8,loadave=0.00,netload=21851887286,state=free,jobs=1142.everest.cigi.uiuc.edu 1143.everest.cigi.uiuc.edu 1144.everest.cigi.uiuc.edu 1145.everest.cigi.uiuc.edu 1146.everest.cigi.uiuc.edu 1147.everest.cigi.uiuc.edu 1148.everest.cigi.uiuc.edu 1149.everest.cigi.uiuc.edu,rectime=1209592527
+
+n3
+    state = free
+    np = 8
+    ntype = cluster
+    status = opsys=linux,uname=Linux n3.cigi.uiuc.edu 2.6.9-55.ELsmp #1 SMP Mon May 7 15:00:28 CDT 2007 x86_64,sessions=? 15201,nsessions=? 15201,nusers=0,idletime=3818997,totmem=9218236kb,availmem=9049896kb,physmem=8166020kb,ncpus=8,loadave=0.00,netload=8465693156,state=free,jobs=? 15201,rectime=1209592559
+
+n4
+    state = free
+    np = 8
+    ntype = cluster
+    status = opsys=linux,uname=Linux n4.cigi.uiuc.edu 2.6.9-55.ELsmp #1 SMP Mon May 7 15:00:28 CDT 2007 x86_64,sessions=? 15201,nsessions=? 15201,nusers=0,idletime=6102884,totmem=9218236kb,availmem=9060860kb,physmem=8166020kb,ncpus=8,loadave=0.00,netload=10184108895,state=free,jobs=? 15201,rectime=1209592562
+
+n5
+    state = free
+    np = 16
+    ntype = cluster
+    status = opsys=linux,uname=Linux mckinley.cigi.uiuc.edu 2.6.9-67.0.1.ELlargesmp #1 SMP Wed Dec 19 15:59:32 CST 2007 x86_64,sessions=10992 13878,nsessions=2,nusers=2,idletime=1685,totmem=33252664kb,availmem=32825000kb,physmem=32200416kb,ncpus=16,loadave=3.72,netload=6229188463978,state=free,jobs=? 15201,rectime=1209592520
+

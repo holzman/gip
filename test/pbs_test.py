@@ -12,26 +12,16 @@ from ldap import read_ldap
 from gip_testing import runTest, streamHandler
 import gip_testing
 
-example_queues = [('osg', 'default'), ('osgedu', 'default'),
-    ('mis', 'default'),      ('fmri', 'default'),    ('grase', 'default'),
-    ('gridex', 'default'),   ('ligo', 'default'),    ('ivdgl', 'default'),
-    ('gadu', 'default'),     ('glow', 'default'),    ('cdf', 'default'),
-    ('nanohub', 'default'),  ('sdss', 'default'),    ('gpn', 'default'),
-    ('engage', 'default'),   ('dteam', 'default'),   ('ops', 'default'),
-    ('cms', 'lcgadmin'),     ('osg', 'lcgadmin'),    ('osgedu', 'lcgadmin'),
-    ('mis', 'lcgadmin'),     ('fmri', 'lcgadmin'),   ('grase', 'lcgadmin'),
-    ('gridex', 'lcgadmin'),  ('ligo', 'lcgadmin'),   ('ivdgl', 'lcgadmin'),
-    ('gadu', 'lcgadmin'),    ('glow', 'lcgadmin'),   ('cdf', 'lcgadmin'),
-    ('nanohub', 'lcgadmin'), ('dzero', 'lcgadmin'),  ('sdss', 'lcgadmin'),
-    ('gpn', 'lcgadmin'),     ('engage', 'lcgadmin'), ('atlas', 'lcgadmin'),
-    ('dteam', 'lcgadmin'),   ('ops', 'lcgadmin'),    ('cms', 'cmsprod'),
-    ('atlas', 'atlas'),      ('osg', 'workq'),       ('osgedu', 'workq'),
-    ('mis', 'workq'),        ('fmri', 'workq'),      ('grase', 'workq'),
-    ('gridex', 'workq'),     ('ligo', 'workq'),      ('ivdgl', 'workq'),
-    ('gadu', 'workq'),       ('glow', 'workq'),      ('cdf', 'workq'),
-    ('nanohub', 'workq'),    ('sdss', 'workq'),      ('gpn', 'workq'),
-    ('engage', 'workq'),     ('dteam', 'workq'),     ('ops', 'workq'),
-    ('cms', 'cms'),          ('dzero', 'dzero')]
+example_queues = \
+   [('cms', 'lcgadmin'),  ('gridex', 'default'), ('cms', 'cmsprod'),
+    ('atlas', 'atlas'),   ('osg', 'workq'),      ('osgedu', 'workq'),
+    ('mis', 'workq'),     ('fmri', 'workq'),     ('grase', 'workq'),
+    ('gridex', 'workq'),  ('ligo', 'workq'),     ('ivdgl', 'workq'),
+    ('gadu', 'workq'),    ('glow', 'workq'),     ('cdf', 'workq'),
+    ('nanohub', 'workq'), ('sdss', 'workq'),     ('gpn', 'workq'),
+    ('engage', 'workq'),  ('cms', 'cms'),        ('dzero', 'dzero')]
+    
+
 example_queues = Set(example_queues)
 
 class TestPbsDynamic(unittest.TestCase):
@@ -51,9 +41,9 @@ class TestPbsDynamic(unittest.TestCase):
         self.assertEquals(fd.close(), None)
 
     def test_vo_queues(self):
-        cp = config()
+        os.environ['GIP_TESTING'] = '1'
+        cp = config("test_configs/red.conf")
         vo_queues = Set(getVoQueues(cp))
-        #print vo_queues
         diff = vo_queues.symmetric_difference(example_queues)
         self.assertEquals(len(diff), 0, msg="The following VO-queues are " \
             "different between the expected and actual: %s" % str(diff))
@@ -75,7 +65,7 @@ class TestPbsDynamic(unittest.TestCase):
             gip_testing.commands = old_commands
         for entry in entries:
             if 'GlueCE' in entry.objectClass:
-                print entry
+                #print entry
                 self.assertEquals(entry.glue['CEStateTotalJobs'], '6')
                 self.assertEquals(entry.glue['CEStateRunningJobs'], '6')
                 self.assertEquals(entry.glue['CEStateFreeCPUs'], '51')
@@ -83,6 +73,23 @@ class TestPbsDynamic(unittest.TestCase):
                 self.assertEquals(entry.glue['CEPolicyAssignedJobSlots'], '60')
                 self.assertEquals(entry.glue['CEUniqueID'], \
                     'red.unl.edu:2119/jobmanager-pbs-batch')
+
+    def make_site_tester(site):
+        def test_site_entries(self):
+            """
+            Checks the %s information.
+            """ % site
+            # Switch commands over to the site ones:
+            os.environ['GIP_TESTING'] = 'suffix=%s' % site
+            path = os.path.expandvars("$GIP_LOCATION/libexec/" \
+                "osg-info-provider-pbs.py --config=test_configs/%s.conf" % site)
+            fd = os.popen(path)
+            entries = read_ldap(fd)
+            self.assertEquals(fd.close(), None)
+        return test_site_entries
+
+    test_cigi_entries = make_site_tester("cigi")
+    test_uc_entries = make_site_tester("uc")
 
 def main():
     """

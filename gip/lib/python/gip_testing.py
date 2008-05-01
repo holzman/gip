@@ -122,3 +122,47 @@ def runTest(cp, cls, out=None, per_site=True):
         testRunner = unittest.TextTestRunner(stream=out, verbosity=2)
     result = testRunner.run(testSuite)
     sys.exit(not result.wasSuccessful())
+
+class GipValidate(unittest.TestCase):
+
+    def __init__(self, entries):
+        self.entries = entries
+
+    def run(self):
+        self.test_existence_all()
+        self.test_egee_site_unique_id()
+
+    def test_existence_all(self):
+        self.test_existence("GlueCEUniqueID")
+        self.test_existence("GlueVOViewLocalID")
+        self.test_existence("GlueSubClusterUniqueID")
+        self.test_existence("GlueClusterUniqueID")
+        self.test_existence("GlueCESEBindSEUniqueID")
+        self.test_existence("GlueCESEBindGroupCEUniqueID")
+        self.test_existence("GlueLocationLocalID")
+        self.test_existence("GlueServiceUniqueID")
+        self.test_existence("GlueSEUniqueID")
+        self.test_existence("GlueSEAccessProtocolLocalID")
+        self.test_existence("GlueSEControlProtocolLocalID")
+        self.test_existence("GlueSALocalID")
+
+    def test_existence(self, name):
+        for entry in self.entries:
+            if entry.dn[0].startswith(name):
+                return
+        self.assertEquals(0, 1, msg="GLUE Entity %s does not exist." % name)
+
+    def test_chunk_keys(self):
+        for entry in entries:
+            if 'ChunkKey' not in entry.glue:
+                continue
+            self.test_existence(entry.glue['ChunkKey'])
+        
+    def test_egee_site_unique_id(self):
+        for entry in entries:
+            if 'GlueSite' not in entry.objectClass:
+                continue
+            self.assertEquals(entry.glue['SiteName'], \
+                entry.glue['SiteUniqueID'], msg="For EGEE compat., must have" \
+                "GlueSiteName == GlueSiteUniqueID")
+

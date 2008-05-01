@@ -8,7 +8,7 @@ from sets import Set
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config
 from pbs_common import getVoQueues
-from ldap import read_ldap
+from gip_ldap import read_ldap
 from gip_testing import runTest, streamHandler
 import gip_testing
 

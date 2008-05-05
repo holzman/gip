@@ -1,5 +1,6 @@
-#!/bin/bash 
+#!/bin/bash
 
+set -o noglob
 usage='usage: make_release.sh releasename'
 
 if [ -z "$GIP_LOCATION" ] ; then
@@ -22,7 +23,7 @@ if [ ! -d "$tagdir/$releasename" ] ; then
     exit 3
 fi
 
-excludelist='--exclude */.svn --exclude *~ --exclude #*# --exclude *.tar.gz --exclude *.tgz'
+excludelist="--exclude */.svn --exclude *~ --exclude #*# --exclude *.tar.gz --exclude *.tgz"
 
 tar cfvz /tmp/$releasename.tgz -C $tagdir $releasename $excludelist
 

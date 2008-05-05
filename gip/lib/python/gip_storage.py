@@ -118,9 +118,9 @@ def voListStorage(cp):
         return gip_common.voList(cp)
     vos = cp.get("vo", "storage_vos")
     vos = [i.strip() for i in vos.split(',')]
-    blacklist = cp.get("vo", "vo_blacklist").split(',')
+    blacklist = cp_get(cp, "vo", "vo_blacklist", "").split(',')
     blacklist = [i.strip() for i in blacklist]
-    whitelist = cp.get("vo", "vo_whitelist").split(',')
+    whitelist = cp_get(cp, "vo", "vo_whitelist", "").split(',')
     whitelist = [i.strip() for i in whitelist]
     for vo in whitelist:
         if vo not in vos:

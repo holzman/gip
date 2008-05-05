@@ -129,8 +129,8 @@ def config(*args):
             help='Configuration file.', default='gip.conf')
         (options, args) = p.parse_args()
         files += [i.strip() for i in options.config.split(',')]
-    files += ["$GIP_LOCATION/etc/gip.conf"]
     files = [os.path.expandvars(i) for i in files]
+    files += ["$GIP_LOCATION/etc/gip.conf"]
     cp.read(files)
 
     # Set up the config object to be compatible with the OSG attributes
@@ -161,7 +161,9 @@ def config_compat(cp):
         override = False
     osg = None
     try:
-        osg = Attributes("$VDT_LOCATION/monitoring/osg-attributes.conf")
+        attributes = cp_get(cp, "gip", "osg_attributes", \
+            "$VDT_LOCATION/monitoring/osg-attributes.conf")
+        osg = Attributes(attributes)
     except Exception, e:
         log.error("Unable to open OSG attributes: %s" % str(e))
         osg = None
@@ -178,6 +180,13 @@ def config_compat(cp):
         __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "name")
         __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "unique_name")
         __write_config(cp, override, osg, "OSG_DEFAULT_SE", "se", "name")
+        __write_config(cp, override, osg, "OSG_GIP_SE_HOST", "se", \
+            "unique_name")
+        # No SE at the site; use the disk's SE
+        if cp.has_section("se") and cp.has_option("se", "unique_name") and \
+                cp.get("se", "unique_name") == '':
+            __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
+                "unique_name")
         __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "name")
         __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "unique_name")
         __write_config(cp, override, osg, "OSG_SITE_CITY", "site", "city")
@@ -200,17 +209,27 @@ def config_compat(cp):
             "sitepolicy")
         __write_config(cp, override, osg, "GRID3_SPONSOR", "site", "sponsor")
 
-
     # Do the same but with the gip stuff.
     try:
-        gip = Attributes("$VDT_LOCATION/monitoring/gip-attributes.conf")
+        attributes = cp_get(cp, "gip", "gip_attributes", \
+            "$VDT_LOCATION/monitoring/gip-attributes.conf")
+        gip = Attributes(attributes)
     except Exception, e:
         log.error("Unable to open GIP attributes: %s" % str(e))
         return
 
     __write_config(cp, override, gip, "OSG_GIP_SE_HOST", "se", "unique_name")
+    # No SE at the site; use the disk's SE
+    if cp.has_section("se") and cp.has_option('se', "unique_name") and \
+            cp.get("se", "unique_name") == '':
+        __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
+            "unique_name")
     __write_config(cp, override, gip, "OSG_GIP_SE_NAME", "se", "name")
-    if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() == "y":
+    # No SE at the site; use the disk's SE
+    if cp.get("se", "name") == '':
+        __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
+            "name")
+    if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() in ["1", "y"]:
         #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
         simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]
         __write_config(cp, override, {1: simple_path}, 1, "vo", "default")

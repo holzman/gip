@@ -24,7 +24,7 @@ fi
 
 excludelist='--exclude */.svn --exclude *~ --exclude #*# --exclude *.tar.gz --exclude *.tgz'
 
-echo "tar cfvz $GIP_LOCATION/$releasename.tgz -C $tagdir $releasename $excludelist"
+echo "tar cfvz /tmp/$releasename.tgz -C $tagdir $releasename $excludelist"
 
 
     

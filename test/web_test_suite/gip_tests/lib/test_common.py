@@ -38,13 +38,12 @@ def getConfig(base_path):
     cp.readfp(open(base_path + "/etc/tests.conf"))
     return cp
 
-def runlcginfo(opt, bdii="is.grid.iu.edu", port="2170"):
-    cmd = "lcg-info " + opt + " --vo ops --bdii " + bdii + ":" + port
+def runlcginfo(opt, bdii="is.grid.iu.edu", port="2170", VO="ops"):
+    cmd = "lcg-info " + opt + " --vo " + VO + " --bdii " + bdii + ":" + port
     return runCommand(cmd)
 
-def runlcginfosites(bdii="is.grid.iu.edu", *opts)
-    cmd = "lcg-infosites --is " + bdii + " --vo ops "
-    for opt in opts:
+def runlcginfosites(bdii="is.grid.iu.edu", VO="ops", opts_list=[]):
+    cmd = "lcg-infosites --is " + bdii + " --vo " + VO + " "
+    for opt in opts_list:
         cmd += opt + " "
-
     return runCommand(cmd)

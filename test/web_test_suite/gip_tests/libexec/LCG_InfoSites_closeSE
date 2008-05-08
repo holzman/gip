@@ -10,47 +10,38 @@ CR = '\r'
 LF = '\n'
 CRLF = CR+LF
 
- lcg-infosites --is is.grid.iu.edu --vo ops closeSE
-
-
-class SD_Query:
+class LCG_InfoSites_closeSE:
     def __init__(self, base_path):
         self.cp = getConfig(base_path)
-        self.site_list = self.get_sites()
+        self.bdii = self.cp.get("gip", "bdii_addr")
+        self.opts = ['closeSE']
+        try:
+            self.vo = self.cp.get("gip", "vo")
+        except:
+            self.vo = "ops"
 
-    def get_sites(self):
-        sites = self.cp.get("gip", "site_dns")
-        sites = [i.strip() for i in sites.split(',')]
-        return sites
 
     def runquery(self):
-        command = 'glite-sd-query -e -t srm'
-        return runCommand(command)
+        return runlcginfosites(self.bdii, self.vo, self.opts)
 
-    def concatoutput(self, pout):
-        output = ''
-        for l in pout:
-            if l == '':
-                output = output + ' '
-            output = output + l + ' '
 
-        return output
-
-    def checkSD(self):
+    def main(self):
         pout = self.runquery()
-        output = self.concatoutput(pout)
+        output = pout.read().split(LF + LF)
         colorize = -1
 
         html = self.getHeader()
-        for site in self.site_list:
-            re_site = re.compile('([\s\S]*)' + site + '([\s\S]*)')
-            m = re_site.match(output)
-            if m:
-                pf = "Pass"
-            else:
-                pf = "Fail"
-            html += self.getDetail(site, pf, colorize)
-            colorize = colorize * -1
+        for section in output:
+            if len(section) > 10: # arbitrary number
+                items = section.split(LF)
+                if "Name" not in items[0]:
+                    items.pop(0)
+
+                ce = items.pop(0).split(":")[1].strip()
+                for se in items:
+                    html += self.getDetail(ce, se, colorize)
+                    ce = ""
+                colorize = colorize * -1
 
         html += self.getFooter()
 
@@ -60,18 +51,18 @@ class SD_Query:
         updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
 
         html = """
-            <h1>SD Query: 'glite-sd-query -e -t srm'</h1>
+            <h1>LCG InfoSites Query: 'lcg-infosites --is is.grid.iu.edu --vo ops closeSE'</h1>
             <h2>Last Updated on: %s </h2>
             <table rules='all' frame='border'>
             <tr>
-                <th>Site Name</th>
-                <th>Pass/Fail</th>
+                <th>CE</th>
+                <th>Close SE</th>
             </tr>
         """
 
         return html % updateDateTime
 
-    def getDetail(self, site_name, pf, colorize):
+    def getDetail(self, ce, se, colorize):
         if (colorize == -1):
             html = "      <tr style='background-color:#99ccff'>"
         else:
@@ -83,12 +74,12 @@ class SD_Query:
                 <td>%s</td>
             </tr>
         """
-        return html + (detail % (site_name, pf))
+        return html + (detail % (ce, se))
 
     def getFooter(self):
         return "</table>"
 
 if __name__ == '__main__':
-    s = SD_Query(sys.argv[1])
-    print s.checkSD()
+    l = LCG_InfoSites_closeSE(sys.argv[1])
+    print l.main()
 

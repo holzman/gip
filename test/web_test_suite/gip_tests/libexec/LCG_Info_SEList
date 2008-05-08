@@ -10,17 +10,19 @@ CR = '\r'
 LF = '\n'
 CRLF = CR+LF
 
-# lcg-info --list-se --vo ops --bdii is.grid.iu.edu:2170
-
 class LCG_InfoSEList:
     def __init__(self, base_path):
         self.cp = getConfig(base_path)
         self.opt = "--list-se"
         self.bdii = self.cp.get("gip", "bdii_addr")
         self.port = self.cp.get("gip", "bdii_port")
+        try:
+            self.vo = self.cp.get("gip", "vo")
+        except:
+            self.vo = "ops"
 
     def runquery(self):
-        return runlcginfo(self.opt, self.bdii, self.port):
+        return runlcginfo(self.opt, self.bdii, self.port, self.vo)
 
     def main(self):
         pout = self.runquery()
@@ -30,7 +32,7 @@ class LCG_InfoSEList:
         for line in pout:
             if len(line) > 10: # arbitrary number
                 se = line.split(":")[1].strip()
-                html += self.getDetail(site, se, colorize)
+                html += self.getDetail(se, colorize)
                 colorize = colorize * -1
 
         html += self.getFooter()

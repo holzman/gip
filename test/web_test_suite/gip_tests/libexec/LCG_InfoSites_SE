@@ -1,0 +1,94 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import datetime
+
+from test_common import *
+
+CR = '\r'
+LF = '\n'
+CRLF = CR+LF
+
+ lcg-infosites --is is.grid.iu.edu --vo ops se
+
+
+class SD_Query:
+    def __init__(self, base_path):
+        self.cp = getConfig(base_path)
+        self.site_list = self.get_sites()
+
+    def get_sites(self):
+        sites = self.cp.get("gip", "site_dns")
+        sites = [i.strip() for i in sites.split(',')]
+        return sites
+
+    def runquery(self):
+        command = 'glite-sd-query -e -t srm'
+        return runCommand(command)
+
+    def concatoutput(self, pout):
+        output = ''
+        for l in pout:
+            if l == '':
+                output = output + ' '
+            output = output + l + ' '
+
+        return output
+
+    def checkSD(self):
+        pout = self.runquery()
+        output = self.concatoutput(pout)
+        colorize = -1
+
+        html = self.getHeader()
+        for site in self.site_list:
+            re_site = re.compile('([\s\S]*)' + site + '([\s\S]*)')
+            m = re_site.match(output)
+            if m:
+                pf = "Pass"
+            else:
+                pf = "Fail"
+            html += self.getDetail(site, pf, colorize)
+            colorize = colorize * -1
+
+        html += self.getFooter()
+
+        return html
+
+    def getHeader(self):
+        updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+
+        html = """
+            <h1>SD Query: 'glite-sd-query -e -t srm'</h1>
+            <h2>Last Updated on: %s </h2>
+            <table rules='all' frame='border'>
+            <tr>
+                <th>Site Name</th>
+                <th>Pass/Fail</th>
+            </tr>
+        """
+
+        return html % updateDateTime
+
+    def getDetail(self, site_name, pf, colorize):
+        if (colorize == -1):
+            html = "      <tr style='background-color:#99ccff'>"
+        else:
+            html = "      <tr>"
+
+
+        detail = """
+                <td>%s</td>
+                <td>%s</td>
+            </tr>
+        """
+        return html + (detail % (site_name, pf))
+
+    def getFooter(self):
+        return "</table>"
+
+if __name__ == '__main__':
+    s = SD_Query(sys.argv[1])
+    print s.checkSD()
+

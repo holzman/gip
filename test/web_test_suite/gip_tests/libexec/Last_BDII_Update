@@ -1,0 +1,128 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import copy
+import datetime
+import time
+
+from test_common import *
+
+class LastBDIIUpdate:
+    def __init__(self, base_path):
+        self.cp = getConfig(base_path)
+        self.site_list = self.get_sites()
+        self.colorize = 1
+        self.port = self.cp.get("gip", "bdii_port")
+        self.bdii = self.cp.get("gip", "bdii_addr")
+        self.CONST_NOT_REPORTED = "Not Reported"
+
+    def get_sites(self):
+        sites = self.cp.get("gip", "site_names")
+        sites = [i.strip() for i in sites.split(',')]
+        return sites
+
+    def main(self):
+        html = self.getHeader()
+        for site in self.site_list:
+            self.colorize = self.colorize * -1
+            time = self.getUpdateTime(site)
+            critical = self.getCritical(time)
+            html += self.getDetail(site, time, critical)
+        html += self.getFooter()
+
+        return html
+
+    def getUpdateTime(self, site):
+        filter = "mds-vo-name=" + site + ",mds-vo-name=local,o=grid '(GlueLocationLocalID=TIMESTAMP)'"
+        attributes = "GlueLocationVersion"
+        r = re.compile('^GlueLocationVersion:(.*)')
+
+        time = self.CONST_NOT_REPORTED
+        ldap_data = self.runldapquery(filter, attributes)
+        for line in ldap_data:
+            m = r.match(line)
+            if m:
+                time = m.groups()[0]
+                break
+
+        return time
+
+    def getCritical(self, arg_time):
+        ret = False
+        if arg_time != self.CONST_NOT_REPORTED:
+            local_time = time.time()
+            time_difference = local_time - float(arg_time)
+            diff_minutes = abs(time_difference / 60)
+
+            if diff_minutes > 30:
+                ret = True
+
+        return ret
+
+    def runldapquery(self, filter, attributes):
+        command = 'ldapsearch -xLLL -p ' + self.port + ' -h ' + self.bdii + ' -b ' + filter + ' ' + attributes
+        pout = runCommand(command)
+        pout = self.unwraplines(pout)
+
+        return pout
+
+    def unwraplines(self, wrapped_list):
+        r = re.compile('^ (.*)$')
+        unwrapped_list = []
+        for l in wrapped_list:
+            m = r.match(l)
+            if m:
+                unwrapped_list[-1] += m.groups()[0]
+            else:
+                unwrapped_list.append(l.rstrip())
+        return unwrapped_list
+
+
+    def getHeader(self):
+        updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+        html = """
+            <h1>Last BDII Update Timestamp</h1>
+            <h2>
+                This check reports the timestamp last reported to the BDII for each site.<br>
+                If it is more than 10 minutes old, the BDII update process is considered <br>
+                broken and is listed in red.
+            </h2>
+            <h2>Last Updated on: %s </h2>
+            <table rules='all' frame='border'>
+            <tr>
+                <th>&nbsp;Site Name&nbsp;</th>
+                <th>&nbsp;Last Update Timestamp&nbsp;</th>
+            </tr>
+        """
+        return html % updateDateTime
+
+    def getDetail(self, site, arg_time, critical):
+        if arg_time != self.CONST_NOT_REPORTED:
+            arg_time = time.strftime("%a %b %d %T UTC %Y", time.gmtime(float(arg_time)))
+
+        if critical:
+            html = "      <tr style='background-color:#FF0000'>"
+        elif (self.colorize == -1):
+            html = "      <tr style='background-color:#99ccff'>"
+        else:
+            html = "      <tr>"
+
+        detail = """
+                <td>&nbsp;%s&nbsp;</td>
+                <td>&nbsp;%s&nbsp;</td>
+            </tr>
+            """
+
+        return html + (detail % (site, arg_time))
+
+    def getFooter(self):
+        html =  """
+            </table>
+        """
+        return html
+
+if __name__ == '__main__':
+     l = LastBDIIUpdate(sys.argv[1])
+     print l.main()
+

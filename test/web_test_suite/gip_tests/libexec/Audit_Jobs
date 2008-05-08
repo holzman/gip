@@ -28,10 +28,14 @@ def getCMSJobInfo(cp):
     re_totaljobs = re.compile('^GlueCEStateTotalJobs: (.*)')
     re_freeslots = re.compile('^GlueCEStateFreeJobSlots: (.*)')
     re_CEkey = re.compile('^GlueCEUniqueID: (.*)')
+    re_HTMLResults = re.compile('^\<html\>(.*)')
 
     for site in site_list:
         url = 'http://' + bdii + '/cgi-bin/show_source_data?which=' + site + '&source=cemon'
         results = getURLData(url)
+        h = re_HTMLResults.match(results)
+        if h:
+            continue
 
         re_GlueCEAccessControlBaseRule.match(results)
         if re_GlueCEAccessControlBaseRule:

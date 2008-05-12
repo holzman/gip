@@ -347,6 +347,7 @@ while(<QSTAT>){
 }
 close QSTAT;
 
+@dn=();
 for (@ldif_file){
     if(/dn:\s+GlueVOViewLocalID=/){
         push @dn, "$_";

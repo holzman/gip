@@ -62,10 +62,7 @@ gt4_timeout = 15
 
 [cluster]
 advertise_cluster = True
-
-# If simple is True, then we assume that the cluster has precisely one CE
-simple = True
-#name = red.unl.edu
+name = red.unl.edu
 
 # Have one section for each subcluster; call each section subcluster_X
 
@@ -81,14 +78,19 @@ simple = True
 [subcluster_1]
 name = Dell Opteron nodes
 uniqueID=dellnodes
-cores_per_node = 4
+
+# All the host stats refer to the worker nodes in this cluster.
+cpus_per_node = 2
+cores_per_cpu = 2
 total_cores=160
 total_cpus=80
-ram_size = 8GB
+
+# Size is in MB
+ram_size = 8000
+swap_size = 4000
 
 # Do the worker nodes in this cluster have a public IP?
 inbound_network = False
-
 # Do they have outgoing access (as in, through a NAT)?
 outbound_network = True
 
@@ -106,8 +108,8 @@ cpu_vendor=UNDEFINED
 # These are now highly controversial; if you don't feel comfortable filling
 # them in, leave them blank, and we will assign a number for you.
 
-kSI00 = UNDEFINED
-kSF00 = UNDEFINED
+SI00 = UNDEFINED
+SF00 = UNDEFINED
 
 # If left undefined, the WN tmp directory will default to the OSG one.
 wn_tmp=UNDEFINED

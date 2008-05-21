@@ -142,7 +142,7 @@ def getPath(cp, vo):
     if cp.has_option("vo", vo):
         path = cp.get("vo", vo)
     else:
-        path = cp.get("vo", "default").replace("$VO", vo)
+        path = cp_get(cp, "vo", "default", "/UNKNOWN").replace("$VO", vo)
     return path
 
 # The next three definitions are taken from the Gratia storage probe

@@ -1,20 +1,21 @@
-dn: GlueClusterUniqueID=,mds-vo-name=local,o=grid
+dn: GlueClusterUniqueID=%(clusterUniqueID)s,mds-vo-name=local,o=grid
 objectClass: GlueClusterTop
 objectClass: GlueCluster
 objectClass: GlueSchemaVersion
 objectClass: GlueInformationService
 objectClass: GlueKey
-GlueClusterName: 
-GlueClusterTmpDir: 
-GlueClusterWNTmpDir: 
-GlueClusterService: 
-GlueClusterUniqueID: 
-GlueForeignKey: 
-GlueInformationServiceURL: 
+GlueClusterName: %(cluster)s
+GlueClusterTmpDir: %(tmp)s
+GlueClusterWNTmpDir: %(wn_tmp)s
+GlueClusterService: UNAVAILABLE
+GlueClusterUniqueID: %(clusterUniqueID)s
+GlueForeignKey: GlueSiteUniqueID=%(siteUniqueID)s
+%(glueClusters)s
+GlueInformationServiceURL: %(bdii)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 
-dn: GlueSubClusterUniqueID=,GlueClusterUniqueID=,mds-vo-name=local,o=grid
+dn: GlueSubClusterUniqueID=%(subClusterUniqueID)s,GlueClusterUniqueID=%(clusterUniqueID)s,mds-vo-name=local,o=grid
 objectClass: GlueClusterTop
 objectClass: GlueSubCluster
 objectClass: GlueSchemaVersion
@@ -27,28 +28,28 @@ objectClass: GlueHostOperatingSystem
 objectClass: GlueHostProcessor
 objectClass: GlueInformationService
 objectClass: GlueKey
-GlueChunkKey: GlueClusterUniqueID=
-GlueHostApplicationSoftwareRunTimeEnvironment: 
-GlueHostArchitectureSMPSize: 
-GlueHostBenchmarkSF00: 
-GlueHostBenchmarkSI00: 
-GlueHostMainMemoryRAMSize: 
-GlueHostMainMemoryVirtualSize: 
-GlueHostNetworkAdapterInboundIP: 
-GlueHostNetworkAdapterOutboundIP: 
-GlueHostOperatingSystemName: 
-GlueHostOperatingSystemRelease: 
-GlueHostOperatingSystemVersion: 
-GlueHostProcessorClockSpeed: 
-GlueHostProcessorModel: 
-GlueHostProcessorVendor: 
-GlueSubClusterName: 
-GlueSubClusterUniqueID: 
-GlueSubClusterPhysicalCPUs:
-GlueSubClusterLogicalCPUs:
-GlueSubClusterTmpDir:
-GlueSubClusterWNTmpDir:
-GlueInformationServiceURL: 
+GlueChunkKey: GlueClusterUniqueID=%(clusterUniqueID)s
+%(applications)s
+GlueHostArchitectureSMPSize: %(cpuCount)s
+GlueHostBenchmarkSF00: %(sf2k)s
+GlueHostBenchmarkSI00: %(si2k)s
+GlueHostMainMemoryRAMSize: %(ram)s
+GlueHostMainMemoryVirtualSize: %(virtualMem)s
+GlueHostNetworkAdapterInboundIP: %(inboundIP)s
+GlueHostNetworkAdapterOutboundIP: %(outboundIP)s
+GlueHostOperatingSystemName: %(osName)s
+GlueHostOperatingSystemRelease: %(osRelease)s
+GlueHostOperatingSystemVersion: %(osVersion)s
+GlueHostProcessorClockSpeed: %(clockSpeed)s
+GlueHostProcessorModel: %(model)s
+GlueHostProcessorVendor: %(vendor)s
+GlueSubClusterName: %(subCluster)s
+GlueSubClusterUniqueID: %(subClusterUniqueID)s
+GlueSubClusterPhysicalCPUs: %(cpus)s
+GlueSubClusterLogicalCPUs: %(cores)s
+GlueSubClusterTmpDir: %(tmp)s
+GlueSubClusterWNTmpDir: %(wn_tmp)s
+GlueInformationServiceURL: %(bdii)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 

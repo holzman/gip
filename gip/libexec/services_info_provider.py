@@ -3,7 +3,7 @@
 import os, sys, re, socket
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getTemplate, getLogger
+from gip_common import config, getTemplate, getLogger, cp_get, cp_getBoolean
 from gip_storage import connect_admin, getSESpace, getSEVersion, getSETape, \
     seHasTape, voListStorage
 
@@ -131,8 +131,8 @@ def print_srm(cp, admin):
                 "seUniqueID"   : sename,
                 "protocolType" : "SRM",
                 "capability"   : "control",
-                "status"       : "Production",
-                "statusInfo"   : "UNKNOWN",
+                "status"       : "OK",
+                "statusInfo"   : "SRM instance is responding.",
                 "wsdl"         : "http://sdm.lbl.gov/srm-wg/srm.v1.1.wsdl",
                 "semantics"    : "http://sdm.lbl.gov/srm-wg/doc/srm.v1.0.pdf",
                 "startTime"    : "1970-01-01T00:00:00Z",
@@ -160,6 +160,64 @@ def print_srm(cp, admin):
         print ControlTemplate % info
         print ServiceTemplate % info
 
+def print_srm_compat(cp):
+    """
+    In the case of an error for the dynamic stuff, advertise a down SRM.
+    """
+    if cp_get(cp, "se", "srm_present", "n").lower().find("n") >= 0 or \
+            cp_get(cp, "se", "srm_present", "n").lower().find("f") >= 0 or \
+            cp_get(cp, "se", "srm_present", "n") == "0":
+        return
+    publish_down = cp_getBoolean(cp, "se", "publish_down", True)
+    srm_host = cp_get(cp, "se", "srm_host", "UNAVAILABLE")
+    srm_version = cp_get(cp, "se", "srm_version", "2.2.0")
+    port = 8443
+    sename = cp.get("se", "unique_name")
+    sitename = cp.get("site", "unique_name")
+    #vos = [i.strip() for i in cp.get("vo", "vos").split(',')]
+    vos = voListStorage(cp) 
+    ServiceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
+    ControlTemplate = getTemplate("GlueSE", "GlueSEControlProtocolLocalID")
+    acbr_tmpl = '\nGlueServiceAccessControlRule: %s' \
+                '\nGlueServiceAccessControlRule: VO:%s'
+    acbr = ''   
+    for vo in vos:
+        acbr += acbr_tmpl % (vo, vo)
+    
+    # Maybe dynamic dCache stuff is just broken, and we always want to
+    # publish things as in production
+    if publish_down:
+        status = "Critical"
+    else:
+        status = "Unknown"
+    info = {
+        "serviceType"  : "SRM",
+        "acbr"         : acbr[1:],
+        "siteID"       : sitename,
+        "cpLocalID"    : srm_host,
+        "seUniqueID"   : sename,
+        "protocolType" : "SRM",
+        "capability"   : "control",
+        "status"       : status,
+        "statusInfo"   : "An error occurred when looking up the SRM info.",
+        "wsdl"         : "http://sdm.lbl.gov/srm-wg/srm.v1.1.wsdl",
+        "semantics"    : "http://sdm.lbl.gov/srm-wg/doc/srm.v1.0.pdf",
+        "startTime"    : "1970-01-01T00:00:00Z",
+    }
+
+    info['version'] = srm_version
+    if srm_version.find('1') >= 0:
+        endpoint = "httpg://%s:%i/srm/managerv1" % (srm_host, int(port))
+    else:
+        endpoint = "httpg://%s:%i/srm/managerv2" % (srm_host, int(port))
+    info['endpoint'] = endpoint
+    info['serviceID'] = endpoint
+    info['uri'] = endpoint
+    info['url'] = endpoint
+    info['serviceName'] = endpoint
+    print ControlTemplate % info
+    print ServiceTemplate % info
+
 def main():
     try:
         cp = config("$GIP_LOCATION/etc/dcache_storage.conf", \
@@ -169,11 +227,13 @@ def main():
         admin = connect_admin(cp)
         print_access_protocols(cp, admin)
         print_srm(cp, admin)
-    except:
+    except Exception, e:
         # Make sure we don't feed the error to the BDII stream;
         # fail silently, hopefully someone logs the stderr.
+        print_srm_compat(cp)
         sys.stdout = sys.stderr
-        raise
+        log.exception(e)
+        #raise
 
 if __name__ == '__main__':
     main()

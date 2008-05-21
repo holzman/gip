@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-gip-static-create: Configure the generic information provider
+osg-info-wrapper: Configure the generic information provider
 
 THIS IMPLEMENTATION IS NOT YET COMPLETE.
 
@@ -27,8 +27,14 @@ from gip_ldap import read_ldap, compareDN
 
 log = getLogger("GIP.Wrapper")
 
-def main():
-    cp = config()
+def main(cp = None, return_entries=False):
+    """
+    Main method for the osg-info-wrapper script.  This script safely runs the
+    plugin and provider modules, caching where necessary, and combines it with
+    the static data.  It then outputs the final GLUE information for this site.
+    """
+    if cp == None:
+        cp = config()
     temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
         "$VDT_LOCATION/gip/var/tmp"))
     plugin_dir = os.path.expandvars(cp_get(cp, "gip", "plugin_dir", \
@@ -39,6 +45,8 @@ def main():
         "$VDT_LOCATION/gip/var/ldif"))
     delete_attributes = os.path.expandvars(cp_get(cp, "gip", \
         "remove_attributes", "$GIP_LOCATION/etc/remove-attributes.conf"))
+    flush_cache = cp_get(cp, "gip", "flush_cache", "False")
+    flush_cache = flush_cache.lower().find('t') >= 0
     freshness = int(cp_get(cp, "gip", "freshness", 300))
     cache_ttl = int(cp_get(cp, "gip", "cache_ttl", 600))
     response  = int(cp_get(cp, "gip", "response",  60))
@@ -60,10 +68,22 @@ def main():
     entries = read_ldap(static_fp, multi=True)
     entries = handle_providers(entries, providers)
     entries = handle_plugins(entries, plugins)
+    if return_entries:
+        return entries
     for entry in entries:
         print entry.to_ldif()
 
 def handle_providers(entries, providers):
+    """
+    Add the output from the providers to the list of the GIP entries.
+
+    This will match the DNs; if two DNs are repeated, then one will be thrown
+    out
+
+    @param entries: A list of LDIFData objects
+    @param providers: A list of provider information dictionaries.
+    @returns: The altered entries list.
+    """
     provider_entries = []
     for provider, p_info in providers.items():
         if 'output' in p_info:
@@ -103,6 +123,11 @@ def wait_children(pids, response):
     Wait for any children of this process.
 
     Blocks until all children are dead or $response seconds have passed.
+
+    @param pids: A list of process IDs to wait on.
+    @param response: The maximum number of seconds to wait on child processes.
+    @returns: A list of child PIDs which have not been reaped (you should call
+        os.wait on these PIDs some time in the future).
     """
     def handler(signum, frame):
         raise Exception("Response timed out")

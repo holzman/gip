@@ -229,14 +229,22 @@ def config_compat(cp):
     if cp.get("se", "name") == '':
         __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
             "name")
-    if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() in ["1", "y"]:
-        #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
-        simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]
-        __write_config(cp, override, {1: simple_path}, 1, "vo", "default")
+    # BUGFIX: always set vo.default, no matter what.
+    #if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() in ["1", "y"]:
+    #    #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
+    simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]
+    __write_config(cp, override, {1: simple_path}, 1, "vo", "default")
     for key in gip.keys():
         if key.startswith("OSG_GIP_VO_DIR"):
             vo, dir = gip[key].split(',')
             __write_config(cp, override, {1: dir}, 1, "vo", vo)
+
+    # Always report the SE Control version and the SRM host, even in the case
+    # of dynamic information
+    __write_config(cp, override, gip, "OSG_GIP_SE_CONTROL_VERSION", "se", \
+        "srm_version")
+    __write_config(cp, override, gip, "OSG_GIP_SE_HOST", "se", "srm_host")
+    __write_config(cp, override, gip, "OSG_GIP_SRM", "se", "srm_present")
 
 def __write_config(cp, override, dict_object, key, section, option):
     """

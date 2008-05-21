@@ -67,7 +67,7 @@ def print_CE(cp):
         info['max_total'] = info['max_waiting'] + info['max_running']
         info['assigned'] = info['job_slots']
         info['lrmsType'] = 'pbs'
-        info['preemption'] = cp_get(cp, 'pbs', 'preemption', 'FALSE')
+        info['preemption'] = cp_get(cp, 'pbs', 'preemption', '0')
         acbr = ''
         for vo, queue2 in vo_queues:
             if queue == queue2:

@@ -601,6 +601,10 @@ sub create_directories()
     if (!-d "$gip_location/etc/osg-info-gip-config"){
         vdt_install_log("Creating directory for GIP: $gip_location/etc/osg-info-gip-config");
         system("mkdir -p $gip_location/etc/osg-info-gip-config");
+    }else{
+        #Clear the existing config files - otherwise the information will be duiplicated
+        vdt_install_log("Clear the existing files in $gip_location/etc/osg-info-gip-config otherwise the information will be duiplicated");
+        system("rm -rf $gip_location/etc/osg-info-gip-config/*");
     }
 
     foreach $vo (@vo_list){

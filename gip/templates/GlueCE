@@ -9,7 +9,7 @@ objectClass: GlueCEState
 objectClass: GlueInformationService
 objectClass: GlueKey
 GlueCEHostingCluster: %(hostingCluster)s
-GlueCEName: %(ceName)s
+GlueCEName: %(queue)s
 GlueCEImplementationName: %(ceImpl)s
 GlueCEImplementationVersion: %(ceImplVersion)s
 GlueCEUniqueID: %(ceUniqueID)s

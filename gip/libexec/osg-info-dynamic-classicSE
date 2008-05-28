@@ -101,8 +101,13 @@ foreach $fs (keys %all_fs){
     $global_used =  $all_fs{$fs}{'used'};
     
 }
-$tmp = int(($global_available+$global_used)/(1024*1024));
-$global_available /= (1024*1024);
+$tmp = ($global_available+$global_used)/(1024.*1024);
+$global_available /= (1024.*1024.);
+
+# round off (Camel book p732)
+$tmp = sprintf("%.0f", $tmp);
+$global_available = sprintf("%.0f", $global_available);
+
 foreach $dn (@se_dns){
     print "\n";
     print "$dn";

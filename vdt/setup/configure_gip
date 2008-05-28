@@ -233,11 +233,11 @@ sub initialize
     stat($gip_location) or die "Error can't access $gip_location\n";
 
     my $tmp_testbed = `$vdt_location/osg-version`;
-    if ($tmp_testbed =~ /^OSG-ITB-\d\.\d\.\d/) {
+    if ($tmp_testbed =~ /^OSG-(I|V)TB-\d+\.\d+\.\d+/) {
         $testbed = 'Integration';
 	$bdii_hostname = 'is-itb.grid.iu.edu';
 
-    } elsif ($tmp_testbed =~ /^OSG-\d\.\d\.\d/) {
+    } elsif ($tmp_testbed =~ /^OSG-\d+\.\d+\.\d+/) {
         $testbed = 'Production';
 	$bdii_hostname = 'is.grid.iu.edu';
     }

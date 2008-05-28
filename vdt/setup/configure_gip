@@ -594,7 +594,7 @@ sub create_directories()
         vdt_install_log("Creating static ldif directory for GIP: $ldif_dir");
         system("mkdir -p $ldif_dir");
     }else{
-        #Clear the existing ldif files - otherwise the information will be duiplicated
+        #Clear the existing ldif files - otherwise the information will be duplicated
         vdt_install_log("Clear the existing files in $ldif_dir otherwise the information will be duiplicated");
         system("rm -rf $ldif_dir/*");
     }

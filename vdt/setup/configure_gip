@@ -595,7 +595,7 @@ sub create_directories()
         system("mkdir -p $ldif_dir");
     }else{
         #Clear the existing ldif files - otherwise the information will be duplicated
-        vdt_install_log("Clear the existing files in $ldif_dir otherwise the information will be duiplicated");
+        vdt_install_log("Clear the existing files in $ldif_dir otherwise the information will be duplicated");
         system("rm -rf $ldif_dir/*");
     }
 
@@ -603,8 +603,8 @@ sub create_directories()
         vdt_install_log("Creating directory for GIP: $gip_location/etc/osg-info-gip-config");
         system("mkdir -p $gip_location/etc/osg-info-gip-config");
     }else{
-        #Clear the existing config files - otherwise the information will be duiplicated
-        vdt_install_log("Clear the existing files in $gip_location/etc/osg-info-gip-config otherwise the information will be duiplicated");
+        #Clear the existing config files - otherwise the information will be duplicated
+        vdt_install_log("Clear the existing files in $gip_location/etc/osg-info-gip-config otherwise the information will be duplicated");
         system("rm -rf $gip_location/etc/osg-info-gip-config/*");
     }
 

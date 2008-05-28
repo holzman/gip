@@ -69,8 +69,8 @@ while (($dn, $path) = each(%storage)){
         while (<DF>) {
             next if !$line++;
 	        ($fs, undef, $used, $free) = split;
-		$used = int($used/(1024*1024));
-		$free = int($free/(1024*1024));
+		$used = int($used);
+		$free = int($free);
             last;
         }
         
@@ -101,7 +101,8 @@ foreach $fs (keys %all_fs){
     $global_used =  $all_fs{$fs}{'used'};
     
 }
-$tmp = $global_available+$global_used;
+$tmp = int(($global_available+$global_used)/(1024*1024));
+$global_available /= (1024*1024);
 foreach $dn (@se_dns){
     print "\n";
     print "$dn";

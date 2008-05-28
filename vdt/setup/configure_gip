@@ -322,7 +322,7 @@ sub read_osg_attributes_info
 	}
 
 
-    if ($default_se =~ /^UNDEFINED$/i || =~ /^UNAVAILABLE$/i || $default_se eq "") {
+    if ($default_se =~ /^UNDEFINED$/i || $default_se =~ /^UNAVAILABLE$/i || $default_se eq "") {
         $default_se=$fullhost;
     }
 

@@ -232,7 +232,7 @@ def config_compat(cp):
     # BUGFIX: always set vo.default, no matter what.
     #if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() in ["1", "y"]:
     #    #simple_path = os.path.join(gip["OSG_GIP_SIMPLIFIED_SRM_PATH"], "$VO")
-    simple_path = gip["OSG_GIP_SIMPLIFIED_SRM_PATH"]
+    simple_path = gip.get("OSG_GIP_SIMPLIFIED_SRM_PATH", '/')
     __write_config(cp, override, {1: simple_path}, 1, "vo", "default")
     for key in gip.keys():
         if key.startswith("OSG_GIP_VO_DIR"):

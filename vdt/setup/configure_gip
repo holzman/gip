@@ -1092,7 +1092,7 @@ sub create_ce_config_file
                 $contents = $contents."GlueCEAccessControlBaseRule: VO:$vo\n";
             }
 
-            if ($default_se =~ /^UNDEFINED$/i || =~ /^UNAVAILABLE$/i || $default_se eq "") {
+            if ($default_se =~ /^UNDEFINED$/i || $default_se =~ /^UNAVAILABLE$/i || $default_se eq "") {
                 $contents = $contents."GlueCEInfoDefaultSE:  $fullhost\n";
             } else {
                 $contents = $contents."GlueCEInfoDefaultSE: $default_se\n";
@@ -1111,7 +1111,7 @@ sub create_ce_config_file
                 $contents = $contents."GlueCEAccessControlBaseRule: VO:$vo\n";
             }
 
-            if ($default_se =~ /^UNDEFINED$/i || =~ /^UNAVAILABLE$/i || $default_se eq "") {
+            if ($default_se =~ /^UNDEFINED$/i || $default_se =~ /^UNAVAILABLE$/i || $default_se eq "") {
                 $contents = $contents."GlueCEInfoDefaultSE:  $fullhost\n";
             } else {
                 $contents = $contents."GlueCEInfoDefaultSE: $default_se\n";
@@ -1128,7 +1128,7 @@ sub create_ce_config_file
                                  ."GlueCEInfoApplicationDir:  $app\n"
                                  ."GlueCEInfoDataDir: $data\n";
 
-            if ($default_se =~ /^UNDEFINED$/i || =~ /^UNAVAILABLE$/i || $default_se eq "") {
+            if ($default_se =~ /^UNDEFINED$/i || $default_se =~ /^UNAVAILABLE$/i || $default_se eq "") {
                 $contents = $contents."GlueCEInfoDefaultSE:  $fullhost\n";
             } else {
                 $contents = $contents."GlueCEInfoDefaultSE: $default_se\n";
@@ -1143,7 +1143,7 @@ sub create_ce_config_file
                 $contents = $contents."\ndn: GlueVOViewLocalID=$vo,GlueCEUniqueID=$fullhost:2119/jobmanager-$batch-$queue\n";
                 $contents = $contents."GlueCEAccessControlBaseRule: VO:$vo\n";
 
-                if ($default_se =~ /^UNDEFINED$/i || =~ /^UNAVAILABLE$/i || $default_se eq "") {
+                if ($default_se =~ /^UNDEFINED$/i || $default_se =~ /^UNAVAILABLE$/i || $default_se eq "") {
                     $contents = $contents."GlueCEInfoDefaultSE:  $fullhost\n";
                 } else {
                     $contents = $contents."GlueCEInfoDefaultSE: $default_se\n";
@@ -1160,7 +1160,7 @@ sub create_ce_config_file
                 $contents = $contents."\ndn: GlueVOViewLocalID=$vo,GlueCEUniqueID=$fullhost:2119/jobmanager-$batch-$queue\n";
                 $contents = $contents."GlueCEAccessControlBaseRule: VO:$vo\n";
 
-                if ($default_se =~ /^UNDEFINED$/i || =~ /^UNAVAILABLE$/i || $default_se eq "") {
+                if ($default_se =~ /^UNDEFINED$/i || $default_se =~ /^UNAVAILABLE$/i || $default_se eq "") {
                     $contents = $contents."GlueCEInfoDefaultSE:  $fullhost\n";
                 } else {
                     $contents = $contents."GlueCEInfoDefaultSE: $default_se\n";
@@ -1176,7 +1176,7 @@ sub create_ce_config_file
             $contents = $contents."\ndn: GlueVOViewLocalID=$vo,GlueCEUniqueID=$fullhost:2119/jobmanager-$batch-$vo\n"
                                  ."GlueCEAccessControlBaseRule: VO:$vo\n";
 
-            if ($default_se =~ /^UNDEFINED$/i || =~ /^UNAVAILABLE$/i || $default_se eq "") {
+            if ($default_se =~ /^UNDEFINED$/i || $default_se =~ /^UNAVAILABLE$/i || $default_se eq "") {
                 $contents = $contents."GlueCEInfoDefaultSE:  $fullhost\n";
             } else {
                 $contents = $contents."GlueCEInfoDefaultSE: $default_se\n";

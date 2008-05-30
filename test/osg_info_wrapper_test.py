@@ -25,7 +25,7 @@ class TestOsgInfoWrapper(unittest.TestCase):
         has_ce = False
         for entry in entries:
             print entry
-            if entry.glue['LocationName'][0] == 'TIMESTAMP':
+            if entry.glue.get('LocationName', (0,))[0] == 'TIMESTAMP':
                 has_timestamp = True
             if entry.dn[0] == 'GlueCEUniqueID=red.unl.edu:2119/jobmanager' \
                     '-pbs-workq':
@@ -51,7 +51,18 @@ class TestOsgInfoWrapper(unittest.TestCase):
         """
         Make sure the alter-attributes.conf file works properly
         """
-        raise NotImplementedError()
+        cp = config("test_modules/simple/config")
+        cp.set("gip","alter_attributes", "test_modules/simple/alter_attributes")
+        has_ce = False
+        entries = osg_info_wrapper.main(cp, return_entries=True)
+        for entry in entries:
+            if entry.dn[0] == 'GlueCEUniqueID=red.unl.edu:2119/jobmanager' \
+                    '-pbs-workq':
+                has_ce = True
+                self.assertEquals(entry.glue['CEPolicyAssignedJobSlots'][0], \
+                    '1235', msg="Plugin did not get applied properly")
+        self.assertEquals(has_ce, True, msg="Static info was not included.")
+
 
     def test_add_attributes(self):
         """

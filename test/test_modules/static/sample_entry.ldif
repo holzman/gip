@@ -20,4 +20,5 @@ GlueCEInfoHostName: red.unl.edu
 GlueCEInfoLRMSType: pbs
 GlueCEInfoLRMSVersion: PBSPro_9.1.0.72982
 GlueCEInfoTotalCPUs: 444
+GlueCEPolicyAssignedJobSlots: 444
 

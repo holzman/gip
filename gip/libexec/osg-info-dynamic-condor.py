@@ -4,14 +4,16 @@ import re, sys, os
 import unittest
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, voList,  printTemplate, cp_get
+from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
+    voList,  printTemplate, cp_get
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
 
 
 log = getLogger("GIP.Condor")
 
 def usage():
-   print "Usage: osg-info-dynamic-condor.py <condor path> <ldif file> [central manager]\n"
+    print "Usage: osg-info-dynamic-condor.py <condor path> <ldif file>" \
+        "[central manager]\n"
 
 def print_CE(cp):
     CE_plugin = getTemplate("GlueCEPlugin", "GlueCEUniqueID")

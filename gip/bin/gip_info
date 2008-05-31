@@ -1,7 +1,21 @@
-#!/bin/sh
+#!/bin/env python
 
-if [ -z "$GIP_LOCATION" ]; then
-  export GIP_LOCATION=$VDT_LOCATION/gip
-fi
-$GIP_LOCATION/libexec/osg-info-wrapper
+import os
+import sys
+
+#Standard testing imports:
+sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+from gip_common import config
+
+#Add the path with the osg_info_wrapper script:
+sys.path.append(os.path.expandvars("$GIP_LOCATION/libexec"))
+import osg_info_wrapper
+
+def main():
+    cp = config()
+    cp.set("gip", "flush_cache", "True")
+    osg_info_wrapper.main(cp)
+
+if __name__ == '__main__':
+    main()
 

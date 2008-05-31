@@ -146,6 +146,10 @@ def read_ldap(fp, multi=False):
                 buffer += origline[1:-1]
             else:
                 buffer += '\n' + line
+    #Catch the case where we started the entry and got to the end of the file
+    #stream
+    if entry_started == True:
+        entries.append(LdapData(buffer[1:], multi=multi))
     return entries
 
 def query_bdii(cp, query="(objectClass=GlueCE)", base="o=grid"):

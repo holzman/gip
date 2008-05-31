@@ -535,9 +535,11 @@ def cp_getBoolean(cp, section, option, default=True):
     """
     Helper function for ConfigParser objects which allows setting the default.
 
-    ConfigParser objects throw an exception if one tries to access an option
-    which does not exist; this catches the exception and returns the default
-    value instead.
+    If the cp object has a section/option of the proper name, and if that value
+    has a 'y' or 't', we assume it's supposed to be true.  Otherwise, if it
+    contains a 'n' or 'f', we assume it's supposed to be true.
+    
+    If neither applies - or the option doesn't exist, return the default
 
     @param cp: ConfigParser object
     @param section: Section of config parser to read
@@ -546,8 +548,27 @@ def cp_getBoolean(cp, section, option, default=True):
     @returns: Value stored in CP for section/option, or default if it is not
         present.
     """
+    val = str(cp_get(cp, section, option, default)).lower()
+    if val.find('t') >= 0 or val.find('y') >= 0:
+        return True
+    if val.find('f') >= 0 or val.find('n') >= 0:
+        return False
+    return default
+
+def cp_getInt(cp, section, option, default):
+    """
+    Helper function for ConfigParser objects which allows setting the default.
+    Returns an integer, or the default if it can't make one.
+
+    @param cp: ConfigParser object
+    @param section: Section of the config parser to read
+    @param option: Option in section to retrieve
+    @param default: Default value if the section/option is not present.
+    @returns: Value stored in the CP for section/option, or default if it is
+        not present.
+    """
     try:
-        return cp.getboolean(section, option)
+        return int(str(cp_get(cp, section, option, default)).strip())
     except:
         return default
 
@@ -559,3 +580,12 @@ def pathFormatter(path, slash=False):
         path = path.rstrip('/')
 
     return path
+
+def ldap_boolean(val):
+    """
+    Return a LDIF-formatted boolean.
+    """
+    if val:
+        return "TRUE"
+    return "FALSE"
+

@@ -93,7 +93,7 @@ class TestPbsDynamic(unittest.TestCase):
 
 def main():
     """
-    The main entry point for when ce_print is run in standalone mode.
+    The main entry point for when pbs_test is run in standalone mode.
     """
     cp = config()
     stream = streamHandler(cp)

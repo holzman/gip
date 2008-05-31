@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+
+import time
+
+info = """
+dn: GlueVOInfoLocalID=fmri,GlueSALocalID=fmri,mds-vo-name=FNAL_GPFARM,o=grid
+objectClass: GlueSATop
+objectClass: GlueVOInfo
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueChunkKey: GlueSALocalID=fmri
+GlueChunkKey: GlueSALocalID=fmri
+GlueVOInfoLocalID: fmri
+GlueVOInfoName: fmri
+GlueVOInfoName: fmri
+GlueVOInfoPath: fmri
+GlueVOInfoPath: /grid/data
+GlueVOInfoTag: UNAVAILABLE
+GlueVOInfoTag: UNAVAILABLE
+GlueVOInfoAccessControlBaseRule: fmri
+GlueVOInfoAccessControlBaseRule: fmri
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+"""
+
+print info
+
+time.sleep(20)
+

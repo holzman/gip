@@ -1,0 +1,7 @@
+
+[gip]
+temp_dir = test_modules/tmp
+plugin_dir = test_modules/timeout/plugins
+provider_dir = test_modules/timeout/providers
+static_dir = test_modules/static
+

@@ -6,90 +6,74 @@ Module for interacting with LSF.
 import re
 import os
 import sys
+import sets
 from gip_common import HMSToMin, getLogger, VoMapper, voList
 from gip_testing import runCommand
 
 log = getLogger("GIP.LSF")
 
-batch_system_info_cmd = "qstat -B -f %(lsfHost)s"
-queue_info_cmd = "qstat -Q -f %(lsfHost)s"
-jobs_cmd = "qstat"
-lsfnodes_cmd = "lsfnodes -a"
-
-def lsfOutputFilter(fp):
-    """
-        This is left here on the assumption that LSF has the same issues that PBS does
-        with wrapping output.  Don't really know, since I don't have LSF
-    """
-    class LSFIter:
-
-        def __init__(self, fp):
-            self.fp = fp
-            self.fp_iter = fp.__iter__()
-            self.prevline = None
-            self.done = False
-
-        def next(self):
-            if self.prevline == None:
-                line = self.fp_iter.next()
-                if line.startswith('\t'):
-                    # Bad! The output shouldn't start with a
-                    # partial line
-                    raise ValueError("LSF output contained bad data.")
-                self.prevline = line
-                return self.next()
-            if self.done:
-                raise StopIteration()
-            try:
-                line = self.fp_iter.next()
-                if line.startswith('\t'):
-                    self.prevline = self.prevline[:-1] + line[1:-1]
-                    return self.next()
-                else:
-                    old_line = self.prevline
-                    self.prevline = line
-                    return old_line
-            except StopIteration:
-                self.done = True
-                return self.prevline
-
-    class LSFFilter:
-
-        def __init__(self, iter):
-            self.iter = iter
-
-        def __iter__(self):
-            return self.iter
-
-    return LSFFilter(LSFIter(fp))
+queue_info_cmd = "bqueues -l"
+jobs_cmd = "bjobs -u all"
+lsfnodes_cmd = "bhosts"
+lsid_cmd = 'lsid'
+bmgroup_r_cmd = 'bmgroup -r'
+bugroup_r_cmd = 'bugroup -r'
 
 def lsfCommand(command, cp):
-    lsfHost = cp.get("lsf", "host")
+    lsfHost = cp_get(cp, "lsf", "host", "localhost")
     if lsfHost.lower() == "none" or lsfHost.lower() == "localhost":
         lsfHost = ""
     cmd = command % {'lsfHost': lsfHost}
     fp = runCommand(cmd)
-
-    return lsfOutputFilter(fp)
+    return fp
 
 def getLrmsInfo(cp):
-    version_re = re.compile("some version output regex")
-    for line in lsfCommand(batch_system_info_cmd, cp):
+    version_re = re.compile("Platform LSF")
+    for line in lsfCommand(lsid_cmd, cp):
         m = version_re.search(line)
         if m:
-            return m.groups()[0]
+            return line.strip()
     raise Exception("Unable to determine LRMS version info.")
+
+def getUserGroups(cp):
+    groups = {}
+    for line in lsfCommand(bugroup_r_cmd, cp):
+        line = line.strip()
+        info = line.split()
+        group = info[0]
+        users = info[1:]
+        groups[group] = users
+    return groups
+
+def usersToVos(qInfo, user_groups, vo_map):
+    users = qInfo['USERS']
+    all_users = []
+    for user in users.split():
+        if user.endswith('/'):
+            all_users += user_groups.get(user[:-1], [])
+        else:
+            all_users.append(user)
+    all_vos = sets.Set()
+    for user in users:
+        try:
+            vo = vo_map[user]
+        except:
+            continue
+        all_vos.add(vo)
+    return list(all_vos)
 
 def getJobsInfo(vo_map, cp):
     queue_jobs = {}
     for orig_line in lsfCommand(jobs_cmd, cp):
+        line = orig_line.strip()
         try:
-            job, name, user, time, status, queue = orig_line.split()
+            info = line.split()
+            job, user, stat, queue, from_host, exec_host = info[:6]
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
             continue
-        if job.startswith("-"):
+        if job == 'JOBID':
             continue
         queue_data = queue_jobs.get(queue, {})
         try:
@@ -99,9 +83,9 @@ def getJobsInfo(vo_map, cp):
             # associated with a VO, so we skip the job.
             continue
         info = queue_data.get(vo, {"running":0, "wait":0, "total":0})
-        if status == "R":
+        if status == "RUN":
             info["running"] += 1
-        else:
+        elif status == 'PEND':
             info["wait"] += 1
         info["total"] += 1
         queue_data[vo] = info
@@ -112,9 +96,10 @@ def getQueueInfo(cp):
     """
     Looks up the queue information from LSF.
     
-    This is an almost direct copy from PBS, MUST CHANGE!!!
+    The keys of the returned dictionary are the queue names, and the value is
+    the queue data directory. 
 
-    The returned dictionary contains the following keys:
+    The queue data dictionary contains the following keys:
 
       - B{status}: Production, Queueing, Draining, Closed
       - B{priority}: The priority of the queue.
@@ -129,108 +114,128 @@ def getQueueInfo(cp):
         the value is the queue data dictionary.
     """
     queueInfo = {}
-    queue_data = None
+    statistics_re = '\s*(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+' \
+        '(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+'
+    statistics_re = re.compile(statistics_re)
+    attribute_re = re.compile('(\S*):\s+(\S*?)\s*')
+    limits_re = re.compile('(.*)\s+LIMITS:')
+    queue = None
+    limits = None
+    limit_key = None
     for orig_line in lsfCommand(queue_info_cmd, cp):
         line = orig_line.strip()
-        if line.startswith("Queue: "):
-            if queue_data != None:
-                if queue_data["started"] and queue_data["enabled"]:
-                    queue_data["status"] = "Production"
-                elif queue_data["enabled"]:
-                    queue_data["status"] = "Queueing"
-                elif queue_data["started"]:
-                    queue_data["status"] = "Draining"
-                else:
-                    queue_data["status"] = "Closed"
-                del queue_data["started"]
-                del queue_data['enabled']
-            queue_data = {}
-            queue_name = line[7:]
-            queueInfo[queue_name] = queue_data
-            continue
-        if queue_data == None:
-            continue
+        # Skip blank lines
         if len(line) == 0:
             continue
-        attr, val = line.split(" = ")
-        if attr == "Priority":
-            queue_data['priority'] = int(val)
-        elif attr == "total_jobs":
-            queue_data["total"] = int(val)
-        elif attr == "state_count":
-            info = val.split()
-            for entry in info:
-                state, count = entry.split(':')
-                count = int(count)
-                if state == 'Queued':
-                    queue_data['wait'] = queue_data.get('wait', 0) + count
-                #elif state == 'Waiting':
-                #    queue_data['wait'] = queue_data.get('wait', 0) + count
-                elif state == 'Running':
-                    queue_data['running'] = count
-        elif attr == "resources_max.walltime":
-            queue_data["max_wall"] = HMSToMin(val)
-        elif attr == "enabled":
-            queue_data["enabled"] = val == "True"
-        elif attr == "started":
-            queue_data["started"] = val == "True"
-        elif attr == "max_running":
-            queue_data["max_running"] = int(val)
-        elif attr == "resources_max.nodect":
-            queue_data["job_slots"] = int(val)
-    if queue_data != None:
-        if queue_data["started"] and queue_data["enabled"]:
-            queue_data["status"] = "Production"
-        elif queue_data["enabled"]:
-            queue_data["status"] = "Queueing"
-        elif queue_data["started"]:
-            queue_data["status"] = "Draining"
-        else:
-            queue_data["status"] = "Closed"
-        del queue_data["started"]
-        del queue_data['enabled']
+        # Queue attribute
+        m = attribute_re.match(orig_line)
+        if m:
+            key, val = m.groups()
+            if key == 'QUEUE':
+                queue = val
+                if queue not in queueInfo:
+                    queueInfo[queue] = {}
+                qInfo = queueInfo[queue]
+            qInfo[key] = val
+            continue
+        if not queue:
+            continue
+        # Queue statistics line
+        m = statistics_re.match(orig_line)
+        if m:
+            prio, nice, status, max, _, _, _, njobs, pend, run, _, _, _ = \
+                m.groups()
+            if prio == 'PRIO': # Header line
+                continue
+            qInfo['priority'] = prio
+            qInfo['nice'] = nice
+            qInfo['total'] = njobs
+            qInfo['wait'] = pend
+            qInfo['running'] = run
+            qInfo['max_running'] = max
+            if status == 'Open:Active':
+                qInfo['status'] = "Production"
+            elif status == 'Open:Inact':
+                qInfo['status'] = "Queueing"
+            elif status == 'Closed:Active':
+                qInfo['status'] = 'Draining'
+            elif status == 'Closed:Inact':
+                qInfo['status'] = 'Closed'
+            continue
 
+        # We are left with parsing limits data
+        m = limits_re.match(line)
+        if m:
+            limits = m.groups()[0]
+            continue
+        if limits != 'MAXIMUM':
+            continue
+        if not limit_key:
+            limit_key = line
+            continue
+        try:
+            val = float(line.split()[0])
+            qInfo[limit_key] = val
+            if limit_key == 'RUNLIMIT':
+                qInfo['max_wall'] = val
+            elif limit_key == 'PROCLIMIT':
+                qInfo['max_processors'] = int(val)
+        except:
+            pass
+        limit_key = None
+    
+    user_groups = getUserGroups(cp)
+    for queue, qInfo in queueInfo.items():
+        qInfo['vos'] = usersToVos(qInfo, user_groups, vo_map)
     return queueInfo
 
-def parseNodes(cp, version):
+def parseNodes(queueInfo, cp):
     """
-    Parse the node information from LSF.  Using the output from lsfnodes,
+    Parse the node information from LSF.  Using the output from bhosts,
     determine:
 
         - The number of total CPUs in the system.
         - The number of free CPUs in the system.
         - A dictionary mapping LSF queue names to a tuple containing the
             (totalCPUs, freeCPUs).
+
+    @param queueInfo: The information about the queues, as returned by
+       getQueueInfo
+    @param cp: ConfigParser object holding the GIP configuration.
     """
     totalCpu = 0
     freeCpu = 0
     queueCpu = {}
-    queue = None
-    avail_cpus = None
-    used_cpus = None
+    bhosts_re = re.compile('(.?*)\s+(.?*)\s+(.?*)\s+(.?*)\s+(.?*)\s+(.?*)\s+' \
+        '(.?*)\s+(.?*)\s+(.?*)')
+    hostInfo = {}
     for line in lsfCommand(lsfnodes_cmd, cp):
-        try:
-            attr, val = line.split(" = ")
-        except:
+        m = bhosts_re.match(line)
+        if not m:
             continue
-        if attr == "state":
-            state = val
-        if attr == "np":
-            try:
-                np = int(val)
-            except:
-                np = 1
-            if not (state.find("down") >= -1 or \
-                    state.find("offline") >= -1):
-                totalCpu += np
-            if state.find("free") >= -1:
-                freeCpu += np
-        if attr == "jobs" and state == "free":
-            freeCpu -= val.count(',')
-
+        host, status, jl_u, max, njobs, run, ssusp, ususp, rsv = m.groups()
+        if host == 'HOST_NAME':
+            continue
+        if status == 'unavail' or status == 'unreach':
+            continue
+        hostInfo[host] = {'max': max, 'njobs': njobs}
+        totalCpu += max
+        freeCpu += njobs
+    groupInfo = {}
+    for line in lsfCommand(bmgroup_r_cmd, cp):
+        info = line.strip().split()
+        groupInfo[info[0]] = info[1:]
+    for queue, qInfo in queueInfo.items():
+        max, njobs = 0, 0
+        for group in qInfo['HOSTS']:
+            for host in groupInfo[group]:
+                hInfo = hostInfo.get(host, {})
+                max += hInfo.get('max', 0)
+                njobs += hInfo.get('njobs', 0)
+        queueCpu[queue] = {'max': max, 'njobs': njobs}
     return totalCpu, freeCpu, queueCpu
 
-def getQueueList(cp):
+def getQueueList(queueInfo, cp):
     """
     Returns a list of all the queue names that are supported.
 
@@ -243,12 +248,12 @@ def getQueueList(cp):
             split(',')]
     except:
         queue_exclude = []
-    for queue in getQueueInfo(cp):
+    for queue in queueInfo:
         if queue not in queue_exclude:
             queues.append(queue)
     return queues
 
-def getVoQueues(cp):
+def getVoQueues(queueInfo, cp):
     """
     Determine the (vo, queue) tuples for this site.  This allows for central
     configuration of which VOs are advertised.
@@ -262,22 +267,25 @@ def getVoQueues(cp):
     """
     voMap = VoMapper(cp)
     try:
-        queue_exclude = [i.strip() for i in cp.get("lsf", "queue_exclude").split(',')]
+        queue_exclude = [i.strip() for i in cp.get("lsf", "queue_exclude").\
+            split(',')]
     except:
         queue_exclude = []
     vo_queues= []
-    for queue in getQueueInfo(cp):
+    for queue in queueInfo:
         if queue in queue_exclude:
             continue
         try:
-            whitelist = [i.strip() for i in cp.get("lsf", "%s_whitelist" % queue).split(',')]
+            whitelist = [i.strip() for i in cp.get("lsf", "%s_whitelist" % \
+                queue).split(',')]
         except:
             whitelist = []
         try:
-            blacklist = [i.strip() for i in cp.get("lsf", "%s_blacklist" % queue).split(',')]
+            blacklist = [i.strip() for i in cp.get("lsf", "%s_blacklist" % \
+                queue).split(',')]
         except:
             blacklist = []
-        for vo in voList(cp, voMap):
+        for vo in queueInfo[queue].get('vos', voList(cp, voMap)):
             if (vo in blacklist or "*" in blacklist) and ((len(whitelist) == 0)\
                     or vo not in whitelist):
                 continue

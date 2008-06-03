@@ -20,10 +20,11 @@ kilo=1000L
 # SQL commands to get the space token info from the DB
 VOInfo_command = """
 SELECT 
-  vogroup,vorole,linkgroupid,description,P.name, L.name
+  vogroup,vorole,linkgroupid,description,P.name, L.name,LG.name
 FROM srmspace 
 JOIN srmretentionpolicy P on P.id=srmspace.retentionpolicy 
 JOIN srmaccesslatency L on L.id=srmspace.accesslatency
+JOIN srmlinkgroup LG on LG.id=srmspace.linkgroupid
 WHERE 
   state=0 AND
   description<>'null' AND
@@ -85,7 +86,8 @@ def print_VOinfo(p, cp):
         description=row[3]
         retentionpolicy=row[4].lower()
         accesslatency=row[5].lower()
-       
+        link_group=row[6].lower()
+
         # Determine the access control based upon whether this is a VO,
         # VO group, or VO group plus VO role.
         acbr=''
@@ -110,7 +112,7 @@ def print_VOinfo(p, cp):
                 "path" : path,
                 "tag" : description,
                 "acbr" : acbr,
-                "saLocalID" : "%s:%s:%s"%(cvo, retentionpolicy, accesslatency),
+                "saLocalID" : "%s:%s:%s"%(link_group, retentionpolicy, accesslatency),
                }
         print VOInfo % info
 

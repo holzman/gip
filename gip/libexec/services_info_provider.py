@@ -145,6 +145,7 @@ def print_srm(cp, admin):
         info['uri'] = endpoint
         info['url'] = endpoint
         info['serviceName'] = endpoint
+        info['cpLocalID'] = doorname + '_srmv1'
         print ControlTemplate % info
         print ServiceTemplate % info
 
@@ -157,6 +158,7 @@ def print_srm(cp, admin):
         info['serviceName'] = endpoint
         info["wsdl"] = "http://sdm.lbl.gov/srm-wg/srm.v2.2.wsdl"
         info["semantics"] = "http://sdm.lbl.gov/srm-wg/doc/SRM.v2.2.pdf"
+        info['cpLocalID'] = doorname + '_srmv2'
         print ControlTemplate % info
         print ServiceTemplate % info
 

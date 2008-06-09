@@ -1,10 +1,18 @@
 #!/usr/bin/python
 
+"""
+Provide the information related to the Condor batch system.  The general
+outline of how this is computed is given here:
+
+https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/GipCeInfo
+"""
+
 import os
 import re
 import sys
 import unittest
 
+# Standard GIP imports
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     voList, printTemplate, cp_get, ldap_boolean, cp_getBoolean, cp_getInt
@@ -17,16 +25,39 @@ log = getLogger("GIP.Condor")
 
 def print_CE(cp):
     """
-    Print out the CE for Condor
+    Print out the CE(s) for Condor
+
+    Config options used:
+       * ce.name.  The name of the CE.  Defaults to "".
+       * condor.status.  The status of the condor LRMS.  Defaults to
+          "Production".
+       * ce.globus_version.  The used Globus version.  Defaults to 4.0.6
+       * ce.hosting_cluster.  The attached cluster name.  Defaults to ce.name
+       * ce.host_name.  The CE's host name.  Default to ce.name
+       * condor.preemption.  Whether or not condor allows preemption.  Defaults
+          to False
+       * condor.max_wall.  The maximum allowed wall time for Condor.  Defaults
+          to 1440 (in minutes)
+       * osg_dirs.app.  The $OSG_APP directory.  Defaults to "/Unknown".
+       * osg_dirs.data.  The $OSG_DATA directory.  Defaults to "/Unknown".
+       * se.name.  The human-readable name of the closest SE
+       * bdii.endpoint.  The endpoint of the BDII this will show up in.
+
+    @param cp: The GIP configuration
+    @type cp: ConfigParser.ConfigParser
     """
     ce_template = getTemplate("GlueCE", "GlueCEUniqueID")
     ce_name = cp_get(cp, "ce", "name", "")
 
     status = cp_get(cp, "condor", "status", "Production")
+    
+    # Get condor version
     try:
         condorVersion = getLrmsInfo(cp)
     except:
         condorVersion = "Unknown"
+
+    # Get the node information for condor
     try:
         total_nodes, claimed, unclaimed = parseNodes(cp)
     except Exception, e:
@@ -34,30 +65,41 @@ def print_CE(cp):
         total_nodes, claimed, unclaimed = 0, 0, 0
 
     vo_map = VoMapper(cp)
+
+    # Determine the information about the current jobs in queue
     try:
         jobs_info = getJobsInfo(vo_map, cp)
     except Exception, e:
         log.exception(e)
         jobs_info = dict([(vo, {'running': 0, 'idle': 0, 'held': 0}) for vo in \
             voList(cp)])
+
+    # Determine the group information, if there are any Condor groups
     try:
         groupInfo = getGroupInfo(vo_map, cp)
     except Exception, e:
         log.exception(e)
+        # Default to no groups.
         groupInfo = {}
 
+    # Accumulate the entire statistics, instead of breaking down by VO.
     running, idle, held = 0, 0, 0
     for vo, info in jobs_info.items():
         running += info.get('running', 0)
         idle += info.get('idle', 0)
         held += info.get('held')
-    if not groupInfo:
-        groupInfo = {'batch': {'prio': 0, 'quota': 0}}
-        acbr = 'GlueAccessControlBaseRule: ' + '\nGlueAccessControlBaseRule: '.\
-            join(voList(cp)) + '\n'
-        acbr +='GlueAccessControlBaseRule: ' + '\nGlueAccessControlBaseRule: '.\
-            join(['VO:%s' % i for i in voList(cp)])
-        groupInfo['batch']['acbr'] = acbr
+
+    # Set up the "default" group with all the VOs which aren't already in a 
+    # group
+    groupInfo['default'] = {'prio': 0, 'quota': 0}}
+    defaultVoList = voList(cp)
+    defaultVoList = [i for i in defaultVoList if i not in groupInfo]
+    acbr = 'GlueAccessControlBaseRule: ' + '\nGlueAccessControlBaseRule: '.\
+        join(defaultVoList) + '\n'
+    acbr +='GlueAccessControlBaseRule: ' + '\nGlueAccessControlBaseRule: '.\
+        join(['VO:%s' % i for i in defaultVoList])
+    groupInfo['default']['acbr'] = acbr
+
     for group, ginfo in groupInfo.items():
         ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)
         if 'acbr' not in ginfo:
@@ -68,6 +110,8 @@ def print_CE(cp):
             max_running = jobs_info[group].get('max_running', 0)
         max_running = max(max_running, ginfo.get('quota', 0))
         assigned = max(ginfo.get("quota", 0), total_nodes)
+
+        # Build all the GLUE CE entity information.
         info = { \
             "ceUniqueID"  : ce_unique_id,
             'contact_string': ce_unique_id,
@@ -115,6 +159,20 @@ def print_CE(cp):
     return total_nodes, claimed, unclaimed
 
 def print_VOViewLocal(cp):
+    """
+    Print the GLUE VOView entity; shows the VO's view of the condor batch
+    system.
+
+    Config options used:
+        * ce.name.  The human-readable name of the ce.
+        * condor.status.  The status of condor; defaults to "Production"
+        * osg_dirs.app.  The $OSG_APP directory; defaults to "/Unknown"
+        * osg_dirs.data.  The $OSG_DATA directory; defaults to "/Unknown"
+        * se.name. The human-readable name of the closest SE.
+
+    @param cp:  The GIP configuration object
+    @type cp: ConfigParser.ConfigParser
+    """
     VOView = getTemplate("GlueCE", "GlueVOViewLocalID")
     ce_name = cp_get(cp, "ce", "name", "")
     
@@ -126,8 +184,9 @@ def print_VOViewLocal(cp):
     jobs_info = getJobsInfo(vo_map, cp)
     groupInfo = getGroupInfo(vo_map, cp)
 
-    if groupInfo == {}:
-        groupInfo = {'batch': {'vos': voList(cp)}}
+    # Add in the default group
+    defaultVoList = [i for i in voList(cp) if i not in groupInfo]
+    groupInfo = {'default': {'vos': defaultVoList}}
 
     for group in groupInfo:
         vos = groupInfo[group].get('vos', [group])

@@ -3,8 +3,11 @@
 Common function which provide information about the Condor batch system.
 
 This module interacts with condor through the following commands:
-  - condor_q
-  - condor_status
+   * condor_q
+   * condor_status
+
+It takes advantage of the XML format of the ClassAds in order to make parsing
+easier.
 """
 
 from xml.sax import make_parser
@@ -37,16 +40,28 @@ class ClassAdParser(ContentHandler):
     """
 
     def __init__(self, idx, attrlist=[]):
+        """
+        @param idx: The attribute name used to index the classads with.
+        @keyword attrlist: A list of attributes to record; if it is empty, then
+           parse all attributes.
+        """
         self.attrlist = list(attrlist)
         if self.attrlist and idx not in self.attrlist:
             self.attrlist.append(idx)
         self.idxAttr = idx
 
     def startDocument(self):
+        """
+        Start up a parsing sequence; initialize myself.
+        """
         self.attrInfo = ''
         self.caInfo = {}
     
     def startElement(self, name, attrs):
+        """
+        Open an XML element - take note if its a 'c', for the start of a new
+        classad, or an 'a', the start of a new attribute.
+        """
         if name == 'c':
             self.curCaInfo = {}
         elif name == 'a':
@@ -56,6 +71,9 @@ class ClassAdParser(ContentHandler):
             pass
 
     def endElement(self, name):
+        """
+        End of an XML element - save everything we learned
+        """
         if name == 'c':
             idx = self.curCaInfo.get(self.idxAttr, None)
             if idx:
@@ -67,9 +85,16 @@ class ClassAdParser(ContentHandler):
             pass
 
     def characters(self, ch):
+        """
+        Save up the XML characters found in the attribute.
+        """
         self.attrInfo += str(ch)
 
     def getClassAds(self):
+        """
+        Returns a dictionary of dictionaries consisting of all the classAds
+        and their attributes.
+        """
         return self.caInfo
 
 def parseCondorXml(fp, handler):
@@ -96,6 +121,11 @@ def condorCommand(command, cp, info={}):
 
     Use this function instead of executing directly (os.popen); this will
     allow you to hook your providers into the testing framework.
+
+    @param command: The command to execute
+    @param cp: The GIP configuration object
+    @keyword info: A dictionary-like object for Python string substitution
+    @returns: a file-like object.
     """
 
     # must test for empty dict for special cases like the condor_status
@@ -113,6 +143,9 @@ def getLrmsInfo(cp):
     Get information from the LRMS (batch system).
 
     Returns the version of the condor client on your system.
+
+    @returns: The condor version
+    @rtype: string
     """
     for line in condorCommand(condor_version, cp):
         if line.startswith("$CondorVersion:"):

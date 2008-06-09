@@ -1,3 +1,14 @@
+# Tony's notes
+#
+# CE must have SGE_ROOT mounted
+#
+# get list of queues: qconf -sql
+# get queue properties: qconf -sq queue_name
+# Master hostname is in <sge_root>/<cell>/common/act_qmaster
+# get list of execution hosts: qconf -sel
+# get list of requestable attributes: qconf -scl
+# get list of ACL's: qconf -sul
+#
 
 """
 Module for interacting with SGE.
@@ -6,16 +17,19 @@ Module for interacting with SGE.
 import re
 import os
 import sys
+import xml.dom.minidom
 from gip_common import HMSToMin, getLogger, VoMapper, voList
+from xml_common import getGipDom, getText
 from gip_testing import runCommand
 
 log = getLogger("GIP.SGE")
 
-batch_system_info_cmd = "sge_schedd --help"
-queue_info_cmd = "qstat -f -xml %(sgeHost)s"
-jobs_cmd = "qstat -xml %(sgeHost)s"
-sgenodes_cmd = "sgenodes -a"
-
+sge_version_cmd = "qstat -help"
+sge_queue_job_info_cmd = 'qstat -f -xml'
+sge_queue_list_cmd = 'qconf -sql'
+sge_queue_config_cmd = 'qconf -sq %(queue)s'
+sge_job_explain_cmd = 'qstat -j %(joblist)s -xml'
+# h_rt - hard real time limit (max_walltime)
 
 def sgeCommand(command, cp):
     """
@@ -25,231 +39,172 @@ def sgeCommand(command, cp):
     Use this function instead of executing directly (os.popen); this will
     allow you to hook your providers into the testing framework.
     """
-
-    sgeHost = cp.get("sge", "host")
-    if sgeHost.lower() == "none" or sgeHost.lower() == "localhost":
-        sgeHost = ""
-    cmd = command % {'sgeHost': sgeHost}
-
-    if info:
-        cmd = command % info
-    else:
-        cmd = command
-
     return runCommand(cmd)
 
 def getLrmsInfo(cp):
-    version_re = re.compile("GE\s+(\S+)")
-    for line in sgeCommand(batch_system_info_cmd, cp):
-        m = version_re.search(line)
-        if m:
-            return m.groups()[0]
+
+    for line in sgeCommand(sge_version_cmd, cp):
+        return line
     raise Exception("Unable to determine LRMS version info.")
 
-def getJobsInfo(vo_map, cp):
-    queue_jobs = {}
-    for orig_line in lsfCommand(jobs_cmd, cp):
+def getQueueInfo(cp):
+    """
+    Looks up the queue and job information from SGE.
+
+    @param cp: Configuration of site.
+    @returns: A dictionary of queue data and a dictionary of job data.
+    """
+    queueInfo = {}
+    jobInfo = {}
+
+    sge_queue_job_info = sgeCommand(sge_queue_job_info_cmd, cp)
+    dom = getDom(sge_queue_job_info, sourcetype="string")
+    elmQueue_Info = dom.getElementsByTagName("queue-info")
+    elmQueueLists = elmQueue_Info.getElementsByTagName("Queue-List")
+    for elmQueue in elmQueueLists:
+        # get queue name
+        name = getText(elmQueue.getElementsByTagName("name"))
+        queue = name[:find(name, "@")]
+
+        queue_data = queueInfo.get(queue, {})
+
+        queue_data["queue"] = queue
+
+        used = int(getText(elmQueue.getElementsByTagName("slots_used")))
+        total = int(getText(elmQueue.getElementsByTagName("slots_total")))
+        free = total - used
+        arch = getText(elmQueue.getElementsByTagName("arch"))
+
+        # what about jobs that span slots?
+        queue_data["used_slots"] += used
+        queue_data["free_slots"] += free
+        queue_data["running"] += used
+        queue_data["job_slots"] += total
+        queue_data["max_running"] += total
         try:
-            job, name, user, time, status, queue = orig_line.split()
-        except (KeyboardInterrupt, SystemExit):
-            raise
+            state = getText(elmQueue.getElementsByTagName("state"))
+            if state == "d":
+                status = "Draining"
+            elif state == "s":
+                status = "Closed"
+            else:
+                status = "Production"
         except:
-            continue
-        if job.startswith("-"):
-            continue
-        queue_data = queue_jobs.get(queue, {})
+            status = "Production"
+
+        queue_data["status"] = status
+        if status == "Production":
+            queue_data["enabled"] = "True"
+            queue_data["started"] = "True"
+        else:
+            queue_data["enabled"] = "False"
+            queue_data["started"] = "False"
+
+        queue_data['priority'] = 0  # No such thing that I can find
+
+        # How do you handle queues with no limit?
+        sqc = SGEQueueConfig(sgeCommand(sge_queue_config_cmd, cp))
+        if sqc['s_rt'].lower() == 'infinity': sqc['s_rt'] = '99999'
+        if sqc['h_rt'].lower() == 'infinity': sqc['h_rt'] = '99999'
+
+        if "max_wall" not in queue_data
+            queue_data["max_wall"] = min(int(sqc['h_rt']), int(sqc['s_rt']))
+        else:
+            queue_data["max_wall"] = min(int(sqc['h_rt']), queue_data["max_wall"])
+            queue_data["max_wall"] = min(int(sqc['s_rt']), queue_data["max_wall"])
+
+        queueInfo[queue] = queue_data
+
+    return sge_queue_job_info, queueInfo
+
+def getJobInfo(sge_queue_job_info, queueInfo, cp):
+
+    dom = getDom(sge_queue_job_info, sourcetype="string")
+
+    # run through the jobs in pending state
+    # find out which queue they belong to and update waiting numbers
+    elmJob_Info = dom.getElementsByTagName("job-info")
+    elmJobLists = elmJob_Info.getElementsByTagName("job_list")
+    job_numbers = ""
+    for elmJob in elmJobLists:
+        job_numbers = job_numbers + getText(elmJob.getElementsByTagName("JB_job_number")) + ","
+    # strip the trailing comma
+    job_numbers = job_numbers[-1]
+
+    cmd = sge_job_explain_cmd % {'joblist': job_numbers}
+    sge_job_explain = sgeCommand(cmd, cp)
+    jobDom = getDom(sge_job_explain, sourcetype="string")
+    elmJob_Explain = jobDom.getElementsByTagName("qmaster_response")
+
+    for elmJob in elmJob_Explain:
+        # get JB_owner
+        owner = getText(elmJob.getElementsByTagName("JB_owner"))
         try:
             vo = vo_map[user].lower()
         except:
             # Most likely, this means that the user is local and not
             # associated with a VO, so we skip the job.
             continue
+
+        # get the queue that the job is waiting for
+        queue = getText(elmJob.getElementsByTagName("JB_hard_queue_list")).getElementsByTagName("QR_name")))
+        queue_data = queueInfo.get(queue, {})
+        queue_data["queue"] = queue
+
         info = queue_data.get(vo, {"running":0, "wait":0, "total":0})
-        if status == "R":
-            info["running"] += 1
-        else:
-            info["wait"] += 1
+        # every job listed here is "not running" so they are listed as wait
+        info["wait"] += 1
         info["total"] += 1
+
         queue_data[vo] = info
-        queue_jobs[queue] = queue_data
-    return queue_jobs
+        queueInfo[queue] = queue_data
 
-def getQueueInfo(cp):
-    """
-    Looks up the queue information from SGE.
-    
-    This is an almost direct copy from PBS, MUST CHANGE!!!
+    # run through jobs running on queues and update running totals
+    elmQueue_Info = dom.getElementsByTagName("queue-info")
+    elmQueueLists = elmQueue_Info.getElementsByTagName("Queue-List")
 
-    The returned dictionary contains the following keys:
+    for elmQueue in elmQueueLists
+        name = getText(elmQueue.getElementsByTagName("name"))
+        queue = name[:find(name, "@")]
+        queue_data = queueInfo.get(queue, {})
+        queue_data["queue"] = queue
 
-      - B{status}: Production, Queueing, Draining, Closed
-      - B{priority}: The priority of the queue.
-      - B{max_wall}: Maximum wall time.
-      - B{max_running}: Maximum number of running jobs.
-      - B{running}: Number of running jobs in this queue.
-      - B{wait}: Waiting jobs in this queue.
-      - B{total}: Total number of jobs in this queue.
+        try: # if there are no jobs running on the queue, then the joblist won't show up
+            elmJobLists = elmQueue.getElementsByTagName("job_list")
 
-    @param cp: Configuration of site.
-    @returns: A dictionary of queue data.  The keys are the queue names, and
-        the value is the queue data dictionary.
-    """
-    queueInfo = {}
-    queue_data = None
-    for orig_line in sgeCommand(queue_info_cmd, cp):
-        line = orig_line.strip()
-        if line.startswith("Queue: "):
-            if queue_data != None:
-                if queue_data["started"] and queue_data["enabled"]:
-                    queue_data["status"] = "Production"
-                elif queue_data["enabled"]:
-                    queue_data["status"] = "Queueing"
-                elif queue_data["started"]:
-                    queue_data["status"] = "Draining"
+            for elmJob in elmJobLists:
+                # get JB_owner
+                owner = getText(elmJob.getElementsByTagName("JB_owner"))
+                try:
+                    vo = vo_map[user].lower()
+                except:
+                    # Most likely, this means that the user is local and not
+                    # associated with a VO, so we skip the job.
+                    continue
+                info = queue_data.get(vo, {"queue":queue, "running":0, "wait":0, "total":0})
+
+                # I don't *think* this check is necessary, but I don't know enough about SGE to be sure
+                status = getText(elmJob.getElementsByTagName("state"))
+                if status.lower() == "r":
+                    info["running"] += 1
                 else:
-                    queue_data["status"] = "Closed"
-                del queue_data["started"]
-                del queue_data['enabled']
-            queue_data = {}
-            queue_name = line[7:]
-            queueInfo[queue_name] = queue_data
-            continue
-        if queue_data == None:
-            continue
-        if len(line) == 0:
-            continue
-        attr, val = line.split(" = ")
-        if attr == "Priority":
-            queue_data['priority'] = int(val)
-        elif attr == "total_jobs":
-            queue_data["total"] = int(val)
-        elif attr == "state_count":
-            info = val.split()
-            for entry in info:
-                state, count = entry.split(':')
-                count = int(count)
-                if state == 'Queued':
-                    queue_data['wait'] = queue_data.get('wait', 0) + count
-                #elif state == 'Waiting':
-                #    queue_data['wait'] = queue_data.get('wait', 0) + count
-                elif state == 'Running':
-                    queue_data['running'] = count
-        elif attr == "resources_max.walltime":
-            queue_data["max_wall"] = HMSToMin(val)
-        elif attr == "enabled":
-            queue_data["enabled"] = val == "True"
-        elif attr == "started":
-            queue_data["started"] = val == "True"
-        elif attr == "max_running":
-            queue_data["max_running"] = int(val)
-        elif attr == "resources_max.nodect":
-            queue_data["job_slots"] = int(val)
-    if queue_data != None:
-        if queue_data["started"] and queue_data["enabled"]:
-            queue_data["status"] = "Production"
-        elif queue_data["enabled"]:
-            queue_data["status"] = "Queueing"
-        elif queue_data["started"]:
-            queue_data["status"] = "Draining"
-        else:
-            queue_data["status"] = "Closed"
-        del queue_data["started"]
-        del queue_data['enabled']
+                    # basically, if the job's not running, then we lump it into the waiting status
+                    info["wait"] += 1
+                info["total"] += 1
 
-    return queueInfo
-
-def parseNodes(cp, version):
-    """
-    Parse the node information from SGE.  Using the output from sgenodes,
-    determine:
-
-        - The number of total CPUs in the system.
-        - The number of free CPUs in the system.
-        - A dictionary mapping SGE queue names to a tuple containing the
-            (totalCPUs, freeCPUs).
-    """
-    totalCpu = 0
-    freeCpu = 0
-    queueCpu = {}
-    queue = None
-    avail_cpus = None
-    used_cpus = None
-    for line in sgeCommand(sgenodes_cmd, cp):
-        try:
-            attr, val = line.split(" = ")
-        except:
-            continue
-        if attr == "state":
-            state = val
-        if attr == "np":
-            try:
-                np = int(val)
+                queue_data[vo] = info
+                queueInfo[queue] = queue_data
             except:
-                np = 1
-            if not (state.find("down") >= -1 or \
-                    state.find("offline") >= -1):
-                totalCpu += np
-            if state.find("free") >= -1:
-                freeCpu += np
-        if attr == "jobs" and state == "free":
-            freeCpu -= val.count(',')
-
-    return totalCpu, freeCpu, queueCpu
-
-def getQueueList(cp):
-    """
-    Returns a list of all the queue names that are supported.
-
-    @param cp: Site configuration
-    @returns: List of strings containing the queue names.
-    """
-    queues = []
-    try:
-        queue_exclude = [i.strip() for i in cp.get("sge", "queue_exclude").\
-            split(',')]
-    except:
-        queue_exclude = []
-    for queue in getQueueInfo(cp):
-        if queue not in queue_exclude:
-            queues.append(queue)
-    return queues
-
-def getVoQueues(cp):
-    """
-    Determine the (vo, queue) tuples for this site.  This allows for central
-    configuration of which VOs are advertised.
-
-    Sites will be able to blacklist queues they don't want to advertise,
-    whitelist certain VOs for a particular queue, and blacklist VOs from queues.
-
-    @param cp: Site configuration
-    @returns: A list of (vo, queue) tuples representing the queues each VO
-        is allowed to run in.
-    """
-    voMap = VoMapper(cp)
-    try:
-        queue_exclude = [i.strip() for i in cp.get("sge", "queue_exclude").\
-            split(',')]
-    except:
-        queue_exclude = []
-    vo_queues= []
-    for queue in getQueueInfo(cp):
-        if queue in queue_exclude:
-            continue
-        try:
-            whitelist = [i.strip() for i in cp.get("sge", "%s_whitelist" % \
-                queue).split(',')]
-        except:
-            whitelist = []
-        try:
-            blacklist = [i.strip() for i in cp.get("sge", "%s_blacklist" % \
-                queue).split(',')]
-        except:
-            blacklist = []
-        for vo in voList(cp, voMap):
-            if (vo in blacklist or "*" in blacklist) and ((len(whitelist) == 0)\
-                    or vo not in whitelist):
+                # most likely there are no jobs in this queue@execute_host, so the get element operation will fail
                 continue
-            vo_queues.append((vo, queue))
-    return vo_queues
 
+class SGEQueueConfig(QueueConfig):
+
+    def __init__(self, configstring):
+        QueueConfig.__init__(self, configstring)
+
+    def digest(self, configstring):
+        configList = configstring.split(self.constants.LF)
+        for pair in configList:
+            key_val = pair.split()
+            self[key_val[0].strip()] = key_val[1].strip()

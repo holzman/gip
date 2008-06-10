@@ -1,6 +1,8 @@
 
 """
 Module for interacting with LSF.
+
+Originally developed using CERN as a test case.
 """
 
 import re
@@ -20,6 +22,14 @@ bmgroup_r_cmd = 'bmgroup -r'
 bugroup_r_cmd = 'bugroup -r'
 
 def lsfCommand(command, cp):
+    """
+    Run a command for the LSF batch system
+
+    Config options used:
+       * lsf.host.  The LSF server hostname.  Defaults to localhost
+
+    @returns: File-like object of the LSF output.
+    """
     lsfHost = cp_get(cp, "lsf", "host", "localhost")
     if lsfHost.lower() == "none" or lsfHost.lower() == "localhost":
         lsfHost = ""
@@ -28,6 +38,13 @@ def lsfCommand(command, cp):
     return fp
 
 def getLrmsInfo(cp):
+    """
+    Get the version information about the LSF version.
+
+    @returns: The LSF version string.
+    @throws Excaeption: General exception thrown if version string can't
+        be determined.
+    """
     version_re = re.compile("Platform LSF")
     for line in lsfCommand(lsid_cmd, cp):
         m = version_re.search(line)
@@ -36,6 +53,12 @@ def getLrmsInfo(cp):
     raise Exception("Unable to determine LRMS version info.")
 
 def getUserGroups(cp):
+    """
+    Get a list of groups and the users in the groups, using bugroup -r.
+
+    @returns: A dictionary of user-groups; the keys are the group name,
+        the value is a list of user names
+    """
     groups = {}
     for line in lsfCommand(bugroup_r_cmd, cp):
         line = line.strip()
@@ -46,6 +69,16 @@ def getUserGroups(cp):
     return groups
 
 def usersToVos(qInfo, user_groups, vo_map):
+    """
+    Given a queue's information, determine the users allowed to access the
+    queue.
+
+    @param qInfo: Information about a LSF queue; we assume that qInfo['USERS']
+       is a string of users/groups allowed to access the queue.
+    @param user_groups: A mapping of group name to a list of user names.
+    @param vo_map: A mapping of user name to vo name.
+    @returns: List of all the VOs allowed to access this queue.
+    """
     users = qInfo['USERS']
     all_users = []
     for user in users.split():
@@ -63,6 +96,10 @@ def usersToVos(qInfo, user_groups, vo_map):
     return list(all_vos)
 
 def getJobsInfo(vo_map, cp):
+    """
+    @param vo_map: A mapping of user name to vo name.
+    @param cp: The GIP configuration object
+    """
     queue_jobs = {}
     for orig_line in lsfCommand(jobs_cmd, cp):
         line = orig_line.strip()
@@ -239,6 +276,9 @@ def getQueueList(queueInfo, cp):
     """
     Returns a list of all the queue names that are supported.
 
+    Config options used:
+        * lsf.queue_exclude
+    
     @param cp: Site configuration
     @returns: List of strings containing the queue names.
     """

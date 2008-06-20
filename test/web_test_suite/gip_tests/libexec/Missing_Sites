@@ -74,10 +74,13 @@ class MissingSites:
         return html % updateDateTime
 
     def getDetail(self, site, missing):
-        if (self.colorize == -1):
-            html = "      <tr style='background-color:#99ccff'>"
+        if missing:
+            html = "      <tr style='background-color:#FF0000'>"
         else:
-            html = "      <tr>"
+            if (self.colorize == -1):
+                html = "      <tr style='background-color:#99ccff'>"
+            else:
+                html = "      <tr>"
 
         detail = """
                 <td>%s</td>

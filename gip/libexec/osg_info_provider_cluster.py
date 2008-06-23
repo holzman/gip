@@ -1,7 +1,14 @@
 
+import os
 import re
+import sys
 
-from gip_common import config, cp_get, cp_getBoolean, getLogger, runCommand
+sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+import gip_cluster
+
+from gip_common import config, cp_get, cp_getBoolean, getLogger, getTemplate, \
+    printTemplate
+from gip_testing import runCommand
 from gip_sections import *
 from gip_cese_bind import getCEList
 
@@ -45,19 +52,19 @@ def print_clusters(cp):
     if not cluster_name:
         raise Exception("Could not determine cluster name.")
     clusterUniqueID = cp_get(cp, 'ce', 'unique_name', cluster_name)
-    siteUniqueID = cp.get(cp, "site", "unique_name")
+    siteUniqueID = cp_get(cp, "site", "unique_name", 'UNKNOWN_SITE')
     ces = getCEList(cp)
     glueClusters = ''
     for ce in ces:
-        glueClusters += 'GlueForeignKey: GlueCEUniqueID=%s" %  ce
-    bdii = cp.get('gip', 'bdii')
+        glueClusters += 'GlueForeignKey: GlueCEUniqueID=%s\n' %  ce
+    bdii = cp_get(cp, 'gip', 'bdii', 'ldap://is.grid.iu.edu:2170')
     info = { \
         'cluster': cluster_name,
         'clusterUniqueID': clusterUniqueID,
         'tmp': cp_get(cp, "osg_dirs", "tmp", cp_get(cp, "osg_dirs", "data", \
              "/tmp")),
         'wn_tmp': cp_get(cp, "osg_dirs", "wn_tmp", "/tmp"),
-        'siteUniqueID": siteUniqueID,
+        'siteUniqueID': siteUniqueID,
         'glueClusters': glueClusters,
         'bdii': bdii,
     }
@@ -66,8 +73,8 @@ def print_clusters(cp):
     
 def print_subcluster(cp, cluster, section):
     # Names
-    name = cp.get(section, "name")
-    uniqueID = cp.get(section
+    name = cp_get(cp, section, "name", cluster)
+    uniqueID = cp_get(cp, section, "unique_id", name)
 
     # Host statistics
     cpu_count = cp_getInt(section, "cpus_per_node", 2)
@@ -88,11 +95,11 @@ def print_subcluster(cp, cluster, section):
     if notDefined(tmp):
         tmp = default_tmp
 
-
-
 def print_subclusters(cp):
-    subclusters = 
-    for 
+    subclusters = gip_cluster.generateSubClusters(cp)
+    template = getTemplate("GlueCluster", "GlueSubClusterUniqueID")
+    for subcluster_info in subclusters:
+        printTemplate(template, subcluster_info)
 
 def main():
     cp = config()

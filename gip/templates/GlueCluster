@@ -10,8 +10,7 @@ GlueClusterWNTmpDir: %(wn_tmp)s
 GlueClusterService: UNAVAILABLE
 GlueClusterUniqueID: %(clusterUniqueID)s
 GlueForeignKey: GlueSiteUniqueID=%(siteUniqueID)s
-%(glueClusters)s
-GlueInformationServiceURL: %(bdii)s
+%(glueClusters)sGlueInformationServiceURL: %(bdii)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 

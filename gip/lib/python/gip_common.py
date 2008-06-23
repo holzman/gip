@@ -589,3 +589,11 @@ def ldap_boolean(val):
         return "TRUE"
     return "FALSE"
 
+def notDefined(val):
+    """
+    Returns TRUE if the input value is possibly not defined (i.e., matches
+    UNAVAILABLE, UNDEFINED, or UNKNOWN).
+    """
+    if val.lower() in ['UNAVAILABLE', 'UNDEFINED', 'UNKNOWN']:
+        return True
+    return False

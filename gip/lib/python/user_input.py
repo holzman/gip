@@ -175,5 +175,15 @@ def save(cp, filename='gip.conf', mode=0644, uid=None, gid=None):
             return
         if gid == None:
             gid = uid
-        os.chown(save_point, uid, gid)
+        try:
+            os.chown(save_point, uid, gid)
+        except OSError, oe:
+            if oe.errno == 1:
+                print "\nUnable to chown %s to UID %i, GID %i.  Please do this"\
+                    " manually; otherwise, this may cause a security hole." \
+                    % (save_point, uid, gid)
+
+                print "\nThe configuration has been saved, but it is not owned"\
+                    " by the correct user!"
+            raise
 

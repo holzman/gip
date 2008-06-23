@@ -4,8 +4,9 @@
 Configuration script for the dCache information provider
 """
 
-import sys
 import os
+import pwd
+import sys
 import socket
 
 if 'GIP_LOCATION' not in os.environ:
@@ -83,7 +84,11 @@ def do_save(ask, cp, question=q.save_progress_done):
         for section in sections:
             if section not in save_sections:
                 cp.remove_section(section)
-        save(cp, filename='dcache_storage.conf', mode=0600)
+        try:
+            uid = pwd.getpwnam('daemon')[2]
+        except:
+            uid = 1
+        save(cp, filename='dcache_storage.conf', mode=0600, uid=uid)
         print q.post_save % 'dcache_storage.conf'
 
 def set_default(cp, section, option, new_val):

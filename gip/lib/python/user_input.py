@@ -149,7 +149,7 @@ class GipQuestions:
     def __getattr__(self, attr_name):
         return getattr(self.__info, attr_name)
 
-def save(cp, filename='gip.conf', mode=0644):
+def save(cp, filename='gip.conf', mode=0644, uid=None, gid=None):
     """
     Save the information in the ConfigParser to gip.conf
     """
@@ -168,4 +168,22 @@ def save(cp, filename='gip.conf', mode=0644):
         os.chmod(backup_name, mode)
     cp.write(open(save_point, 'w'))
     os.chmod(save_point, mode)
+    if uid != None:
+        try:
+            uid = int(uid)
+        except:
+            return
+        if gid == None:
+            gid = uid
+        try:
+            os.chown(save_point, uid, gid)
+        except OSError, oe:
+            if oe.errno == 1:
+                print "\nUnable to chown %s to UID %i, GID %i.  Please do this"\
+                    " manually; otherwise, this may cause a security hole." \
+                    % (save_point, uid, gid)
+
+                print "\nThe configuration has been saved, but it is not owned"\
+                    " by the correct user!"
+            raise
 

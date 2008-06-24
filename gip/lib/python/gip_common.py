@@ -11,10 +11,11 @@ This module should generally follow PEP 8 coding guidelines.
 __author__ = "Brian Bockelman"
 
 import os
-import ConfigParser
-import sys
 import re
+import sys
 import socket
+import traceback
+import ConfigParser
 
 from UserDict import UserDict
 
@@ -27,7 +28,7 @@ capabilities which Python 2.2 does not have.
 """
 
 if py23:
-    import optparse, logging, logging.config
+    import optparse, logging, logging.config, logging.handlers
 
 # Default log level for our FakeLogger object.
 loglevel = "info"
@@ -130,7 +131,18 @@ def config(*args):
         (options, args) = p.parse_args()
         files += [i.strip() for i in options.config.split(',')]
     files = [os.path.expandvars(i) for i in files]
-    files += ["$GIP_LOCATION/etc/gip.conf"]
+    files += [os.path.expandvars("$GIP_LOCATION/etc/gip.conf")]
+
+    # Try to read all the files; toss a warning if a config file can't be
+    # read:
+    for file in files:
+        try:
+            open(file, 'r')
+        except IOError, ie:
+            if ie.errno == 13:
+                log.warning("Could not read config file %s due to permissions"%\
+                    file)
+
     cp.read(files)
 
     # Set up the config object to be compatible with the OSG attributes
@@ -348,12 +360,30 @@ def FakeLogger():
     def exception(msg, *args):
         print >> sys.stderr, msg
 
+def add_giplog_handler():
+    log = logging.getLogger()
+    try:
+        os.makedirs(os.path.expandvars('$GIP_LOCATION/var/logs'))
+    except OSError, oe:
+        #errno 17 = File Exists
+        if oe.errno != 17:
+            return
+    logfile = os.path.expandvars('$GIP_LOCATION/var/logs/gip.log')
+    formatter = logging.Formatter('%(asctime)s %(name)s:%(levelname)s ' \
+        '%(pathname)s:%(lineno)d:  %(message)s')
+    handler = logging.handlers.RotatingFileHandler(logfile,
+        maxBytes=1024*1024*10, backupCount=5)
+    handler.setFormatter(formatter)
+    handler.setLevel(logging.DEBUG)
+    log.addHandler(handler)
+
 if py23:
     try:
         logging.config.fileConfig(os.path.expandvars("$GIP_LOCATION/etc/" \
             "logging.conf"))
+        add_giplog_handler()
     except:
-        pass
+        traceback.print_exc(file=sys.stderr)
 
 def getLogger(name):
     """

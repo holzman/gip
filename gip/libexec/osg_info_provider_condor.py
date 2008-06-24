@@ -91,7 +91,7 @@ def print_CE(cp):
 
     # Set up the "default" group with all the VOs which aren't already in a 
     # group
-    groupInfo['default'] = {'prio': 0, 'quota': 0}}
+    groupInfo['default'] = {'prio': 0, 'quota': 0}
     defaultVoList = voList(cp)
     defaultVoList = [i for i in defaultVoList if i not in groupInfo]
     acbr = 'GlueAccessControlBaseRule: ' + '\nGlueAccessControlBaseRule: '.\

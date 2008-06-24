@@ -329,6 +329,7 @@ def getSEVersion(cp, admin=None):
         pool = line.split('=')[0]
         break
     if pool == None:
+        log.warning("No pools found attached to dCache.")
         return "UNKNOWN"
     pool_info = admin.execute(pool, "info")
     version = None
@@ -338,6 +339,7 @@ def getSEVersion(cp, admin=None):
             version = line_info[2].strip()
             break
     if version == None:
+        log.warning("Unable to parse version info from pool %s." % str(pool))
         return "UNKNOWN"
     version_re = re.compile("(.*)-(.*)-(.*)-(.*)-(.*)\((.*)\)")
     m = version_re.match(version)

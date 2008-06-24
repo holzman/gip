@@ -150,7 +150,9 @@ def getLrmsInfo(cp):
     for line in condorCommand(condor_version, cp):
         if line.startswith("$CondorVersion:"):
             return line[15:].strip()
-    raise ValueError("Bad output from condor_version.")
+    ve = ValueError("Bad output from condor_version.")
+    log.exception(ve)
+    raise ve
 
 def getGroupInfo(vo_map, cp):
     """

@@ -28,8 +28,7 @@ objectClass: GlueHostProcessor
 objectClass: GlueInformationService
 objectClass: GlueKey
 GlueChunkKey: GlueClusterUniqueID=%(clusterUniqueID)s
-%(applications)s
-GlueHostArchitectureSMPSize: %(cpuCount)s
+%(applications)sGlueHostArchitectureSMPSize: %(cpuCount)s
 GlueHostBenchmarkSF00: %(sf2k)s
 GlueHostBenchmarkSI00: %(si2k)s
 GlueHostMainMemoryRAMSize: %(ram)s

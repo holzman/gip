@@ -164,7 +164,8 @@ def print_SA(p, cp):
     database.
     """
 
-    command = SA_command % (cp.getint('dcache_config', 'min_lifetime')*1000)
+    command = SA_command % (cp_getInt(cp, 'dcache_config', 'min_lifetime',
+        3600)*1000)
     rows=execute(p, command)
     saTemplate = getTemplate("GlueSE", "GlueSALocalID")
 

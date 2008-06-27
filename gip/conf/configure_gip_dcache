@@ -53,6 +53,11 @@ def config_postgres(ask):
     ask(q.db_db, "dcache_config", "database")
     ask(q.db_user, "dcache_config", "dbuser")
     ask.password(q.db_passwd, "dcache_config", "dbpasswd") 
+    try:
+        ask.cp.set("dcache_config", "min_lifetime", "3600")
+    except:
+        #TODO: Log exception
+        pass
     print q.db_test
     try:
         connect(ask.cp)

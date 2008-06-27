@@ -26,7 +26,7 @@ $ENV{CONDOR_CONFIG}=$condor_config;
 my $condor_status_constraint = `. ../../monitoring/gip-attributes.conf; echo \$OSG_GIP_CONDOR_STATUS_CONSTRAINT`;
 chomp($condor_status_constraint);
 
-my $vo_file = "../../monitoring/grid3-user-vo-map.txt";
+my $vo_file = "../../monitoring/osg-user-vo-map.txt";
 my %user_vo_map;
 my $user_tmp;
 my $user_id;
@@ -109,7 +109,13 @@ $glue{GlueCEInfoLRMSType} = "condor";
 
 # Figure out the correct central manager
 chomp(my $collector_manager = $MANAGER ? $MANAGER : `$PATH/condor_config_val COLLECTOR_HOST`);
-my @tmp_mgr= split / ,/, $collector_manager;
+
+# BUG REPORT: originally, this split the names returned like so:
+# my @tmp_mgr= split / ,/, $collector_manager;
+# This assumes that the names are of this form: name1 ,name2 ,name3
+# This is changed to /\s*,\s*/, which allows any sort of comma-separation:
+# name1,name2 ,name3 ,name4    , name5
+my @tmp_mgr= split /\s*,\s*/, $collector_manager;
 my $central_manager = $tmp_mgr[0];
 chomp($central_manager);
 

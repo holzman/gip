@@ -9,3 +9,9 @@ condor_status_xml: condor_status -xml
 condor_status_submitter_xml: condor_status -submitter -xml
 condor_version: condor_version
 condor_group: condor_config_val GROUP_NAMES
+bjobs_u_all_r: bjobs -u all -r
+bhosts: bhosts
+bqueues_l: bqueues -l
+lsid: lsid
+bmgroup_r: bmgroup -r
+bugroup_r: bugroup -r

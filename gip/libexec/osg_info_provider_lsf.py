@@ -6,7 +6,7 @@ import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    printTemplate, cp_get
+    printTemplate, cp_get, ldap_boolean
 from gip_cluster import getClusterID
 from lsf_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
@@ -15,9 +15,16 @@ from gip_sections import ce
 log = getLogger("GIP.LSF")
 
 def print_CE(cp):
-    lsfVersion = getLrmsInfo(cp)
+    try:
+        lsfVersion = getLrmsInfo(cp)
+    except:
+        lsfVersion = 'Unknown'
     queueInfo = getQueueInfo(cp)
-    totalCpu, freeCpu, queueCpus = parseNodes(cp)
+    try:
+        totalCpu, freeCpu, queueCpus = parseNodes(queueInfo, cp)
+    except:
+        raise
+        totalCpu, freeCpu, queueCpus = 0, 0, {}
     ce_name = cp.get(ce, "name")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
     try:
@@ -25,13 +32,20 @@ def print_CE(cp):
             "queue_exclude").split(',')]
     except:
         excludeQueues = []
-    vo_queues = getVoQueues(cp)
+    vo_queues = getVoQueues(queueInfo, cp)
     for queue, info in queueInfo.items():
         if queue in excludeQueues:
             continue
+        if 'running' not in info:
+            info['running'] = 0
+        if 'status' not in info:
+            # There really should be an unknown status...
+            info['status'] = 'Closed'
+        if 'total' not in info:
+            info['total'] = 0
         info["lrmsVersion"] = lsfVersion
         info["job_manager"] = "lsf"
-        if info["wait"] > 0:
+        if info.get("wait", 0) > 0:
             info["free_slots"] = 0
         else:
             if queue in queueCpus:
@@ -43,11 +57,16 @@ def print_CE(cp):
         unique_id = '%s:2119/jobmanager-lsf-%s' % (ce_name, queue)
         info['ceUniqueID'] = unique_id
         if "job_slots" not in info:
-            info["job_slots"] = totalCpu
+            if queue in queueCpus and 'max' in queueCpus[queue]:
+                info['job_slots'] = queueCpus[queue]['max']
+            else:
+                info["job_slots"] = totalCpu
         if "priority" not in info:
             info["priority"] = 0
         if "max_running" not in info:
             info["max_running"] = info["job_slots"]
+        elif not info['max_running'] or info['max_running'] == '-':
+            info['max_running'] = 999999
         if "max_wall" not in info:
             info["max_wall"] = 0
         info["job_slots"] = min(totalCpu, info["job_slots"])
@@ -67,18 +86,21 @@ def print_CE(cp):
         info['max_total'] = info['max_waiting'] + info['max_running']
         info['assigned'] = info['job_slots']
         info['lrmsType'] = 'lsf'
-        info['preemption'] = ldap_booleancp_get(cp, 'lsf', 'preemption', '0')
+        info['preemption'] = ldap_boolean(cp_get(cp, 'lsf', 'preemption', '0'))
         acbr = ''
         for vo, queue2 in vo_queues:
             if queue == queue2:
-                acbr += 'GlueCEAccessControlBaseRule: VO:%s\n' % vo
+                acbr += 'GlueCEAccessControlBaseRule: VO:%s\n' % vo.lower()
+        if not acbr:
+            continue
+        print info
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
         info['gramVersion'] = '2.0'
         info['port'] = 2119
-        info['waiting'] = info['wait']
+        info['waiting'] = info.get('wait', 0)
         info['clusterUniqueID'] = getClusterID(cp)
-        print CE % info
+        printTemplate(CE, info)
     return queueInfo, totalCpu, freeCpu, queueCpus
 
 def print_VOViewLocal(queue_info, cp):
@@ -86,8 +108,9 @@ def print_VOViewLocal(queue_info, cp):
     vo_map = VoMapper(cp)
     queue_jobs = getJobsInfo(vo_map, cp)
     VOView = getTemplate("GlueCE", "GlueVOViewLocalID")
-    vo_queues = getVoQueues(queueInfo, cp)
+    vo_queues = getVoQueues(queue_info, cp)
     for vo, queue in vo_queues:
+        vo = vo.lower()
         vo_info = queue_jobs.get(queue, {})
         info2 = vo_info.get(vo, {})
         ce_unique_id = '%s:2119/jobmanager-lsf-%s' % (ce_name, queue)
@@ -121,7 +144,6 @@ def main():
         if lsf_path:
             addToPath(lsf_path)
         vo_map = VoMapper(cp)
-        lsfVersion = getLrmsInfo(cp)
         queueInfo, totalCpu, freeCpu, queueCpus = print_CE(cp)
         print_VOViewLocal(queueInfo, cp)
     except Exception, e:

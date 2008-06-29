@@ -9,13 +9,13 @@ import re
 import os
 import sys
 import sets
-from gip_common import HMSToMin, getLogger, VoMapper, voList
+from gip_common import HMSToMin, getLogger, VoMapper, voList, cp_get
 from gip_testing import runCommand
 
 log = getLogger("GIP.LSF")
 
 queue_info_cmd = "bqueues -l"
-jobs_cmd = "bjobs -u all"
+jobs_cmd = "bjobs -u all -r"
 lsfnodes_cmd = "bhosts"
 lsid_cmd = 'lsid'
 bmgroup_r_cmd = 'bmgroup -r'
@@ -84,10 +84,14 @@ def usersToVos(qInfo, user_groups, vo_map):
     for user in users.split():
         if user.endswith('/'):
             all_users += user_groups.get(user[:-1], [])
+        elif user == 'all':
+            all_users.append(None)
         else:
             all_users.append(user)
     all_vos = sets.Set()
-    for user in users:
+    if None in all_users:
+        return vo_map.voMap.values()
+    for user in all_users:
         try:
             vo = vo_map[user]
         except:
@@ -105,7 +109,7 @@ def getJobsInfo(vo_map, cp):
         line = orig_line.strip()
         try:
             info = line.split()
-            job, user, stat, queue, from_host, exec_host = info[:6]
+            job, user, status, queue, from_host, exec_host = info[:6]
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
@@ -154,22 +158,30 @@ def getQueueInfo(cp):
     statistics_re = '\s*(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+' \
         '(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+(.*?)\s+'
     statistics_re = re.compile(statistics_re)
-    attribute_re = re.compile('(\S*):\s+(\S*?)\s*')
+    attribute_re = re.compile('(\S*):\s+(.*)\s*')
     limits_re = re.compile('(.*)\s+LIMITS:')
     queue = None
     limits = None
     limit_key = None
+    hasQueueInfoHeader = False # Set to true when we have found the header line
+        # for the PARAMETERS/STATISTICS data.
+    hasQueueInfo = False # Set to true when we have found the values in the
+        # PARAMETERS/STATISTICS data.
     for orig_line in lsfCommand(queue_info_cmd, cp):
         line = orig_line.strip()
         # Skip blank lines
         if len(line) == 0:
             continue
-        # Queue attribute
+        # Queue attribute line.  Something like this:
+        # JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
         m = attribute_re.match(orig_line)
         if m:
             key, val = m.groups()
+            # The line starting the new queue information is something like:
+            # QUEUE: grid_ops
             if key == 'QUEUE':
                 queue = val
+                hasQueueInfo, hasQueueInfoHeader = False, False
                 if queue not in queueInfo:
                     queueInfo[queue] = {}
                 qInfo = queueInfo[queue]
@@ -179,17 +191,24 @@ def getQueueInfo(cp):
             continue
         # Queue statistics line
         m = statistics_re.match(orig_line)
-        if m:
+        if m and not hasQueueInfo:
             prio, nice, status, max, _, _, _, njobs, pend, run, _, _, _ = \
                 m.groups()
-            if prio == 'PRIO': # Header line
+            if prio == 'PRIO': # Header line, no useful information
+                hasQueueInfoHeader = True
+                continue
+            # Make sure we only parse the data *after* the header
+            if not hasQueueInfoHeader:
                 continue
             qInfo['priority'] = prio
             qInfo['nice'] = nice
             qInfo['total'] = njobs
             qInfo['wait'] = pend
             qInfo['running'] = run
-            qInfo['max_running'] = max
+            try:
+                qInfo['max_running'] = int(max)
+            except:
+                qInfo['max_running'] = 999999
             if status == 'Open:Active':
                 qInfo['status'] = "Production"
             elif status == 'Open:Inact':
@@ -198,6 +217,7 @@ def getQueueInfo(cp):
                 qInfo['status'] = 'Draining'
             elif status == 'Closed:Inact':
                 qInfo['status'] = 'Closed'
+            hasQueueInfo = True
             continue
 
         # We are left with parsing limits data
@@ -220,7 +240,8 @@ def getQueueInfo(cp):
         except:
             pass
         limit_key = None
-    
+   
+    vo_map = VoMapper(cp) 
     user_groups = getUserGroups(cp)
     for queue, qInfo in queueInfo.items():
         qInfo['vos'] = usersToVos(qInfo, user_groups, vo_map)
@@ -243,29 +264,36 @@ def parseNodes(queueInfo, cp):
     totalCpu = 0
     freeCpu = 0
     queueCpu = {}
-    bhosts_re = re.compile('(.?*)\s+(.?*)\s+(.?*)\s+(.?*)\s+(.?*)\s+(.?*)\s+' \
-        '(.?*)\s+(.?*)\s+(.?*)')
     hostInfo = {}
     for line in lsfCommand(lsfnodes_cmd, cp):
-        m = bhosts_re.match(line)
-        if not m:
+        info = [i.strip() for i in line.split()]
+        # Skip any malformed lines
+        if len(info) != 9:
             continue
-        host, status, jl_u, max, njobs, run, ssusp, ususp, rsv = m.groups()
+        host, status, jl_u, max, njobs, run, ssusp, ususp, rsv = info
         if host == 'HOST_NAME':
             continue
         if status == 'unavail' or status == 'unreach':
             continue
+        try:
+            max = int(max)
+        except:
+            max = 0
+        try:
+            njobs = int(njobs)
+        except:
+            njobs = 0
         hostInfo[host] = {'max': max, 'njobs': njobs}
         totalCpu += max
-        freeCpu += njobs
+        freeCpu += max-njobs
     groupInfo = {}
     for line in lsfCommand(bmgroup_r_cmd, cp):
         info = line.strip().split()
         groupInfo[info[0]] = info[1:]
     for queue, qInfo in queueInfo.items():
         max, njobs = 0, 0
-        for group in qInfo['HOSTS']:
-            for host in groupInfo[group]:
+        for group in qInfo['HOSTS'].split():
+            for host in groupInfo.get(group[:-1], []):
                 hInfo = hostInfo.get(host, {})
                 max += hInfo.get('max', 0)
                 njobs += hInfo.get('njobs', 0)

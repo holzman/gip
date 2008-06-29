@@ -139,6 +139,10 @@ advertise_se = True
 name=T2_Nebraska_Storage
 unique_name=srm.unl.edu
 
+# Known values are dcache, bestman, bestman/xrootd
+# Unknown values won't break anything.
+implementation=dcache
+
 [bdii]
 endpoint=ldap://is.grid.iu.edu:2170
 #endpoint=ldap://is-itb2.grid.iu.edu:2170

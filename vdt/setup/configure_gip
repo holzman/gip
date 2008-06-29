@@ -1542,7 +1542,7 @@ sub create_cesebind_config_file
         }
     }
 
-    if ($batch !~ /^pbs$/i) {
+    if ($batch !~ /pbs|lsf/i) {
         safe_write($config_file, $contents);
 
         vdt_install_log("===== BEGIN osg-info-static-cesebind.conf =====\n");
@@ -1659,6 +1659,10 @@ sub create_wrapper_files
     }
     if ($batch =~ /^pbs$/i) {
         $contents=$contents."\n"."$gip_location/libexec/osg-info-provider-pbs.py\n";
+        $contents=$contents."\n"."$gip_location/libexec/osg_info_cesebind.py\n";
+    }
+    if ($batch =~ /^lsf$/i) {
+        $contents=$contents."\n"."$gip_location/libexec/osg_info_provider_pbs.py\n";
         $contents=$contents."\n"."$gip_location/libexec/osg_info_cesebind.py\n";
     }
     if ($dynamic_dcache == 1) {

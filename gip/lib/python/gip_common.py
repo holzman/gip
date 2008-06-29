@@ -220,6 +220,7 @@ def config_compat(cp):
         __write_config(cp, override, osg, "GRID3_SITE_INFO", "site", \
             "sitepolicy")
         __write_config(cp, override, osg, "GRID3_SPONSOR", "site", "sponsor")
+        __write_config(cp, override, osg, "OSG_GIP_DYNAMIC_DCACHE", "se", "dynamic_dcache")
 
     # Do the same but with the gip stuff.
     try:

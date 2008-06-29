@@ -4,8 +4,7 @@ import os
 import sys
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip.provider.services_info_provider import main
+from gip.providers.software import main
 
 if __name__ == '__main__':
     main()
-

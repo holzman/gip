@@ -200,7 +200,8 @@ def config_compat(cp):
             __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
                 "unique_name")
         __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "name")
-        __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "unique_name")
+        __write_config(cp, override, osg, "OSG_SITE_NAME", "site",
+            "unique_name")
         __write_config(cp, override, osg, "OSG_SITE_CITY", "site", "city")
         __write_config(cp, override, osg, "OSG_SITE_COUNTRY", "site", "country")
         __write_config(cp, override, osg, "OSG_CONTACT_NAME", "site", "contact")
@@ -217,7 +218,7 @@ def config_compat(cp):
         __write_config(cp, override, osg, "OSG_PBS_LOCATION", "pbs", "pbs_path")
         __write_config(cp, override, osg, "OSG_SGE_LOCATION", "sge", "sge_path")
         __write_config(cp, override, osg, "OSG_SGE_ROOT", "sge", "sge_root")
-        __write_config(cp, override, osg, "GRID3_SITE_INFO", "site", \
+        __write_config(cp, override, osg, "GRID3_SITE_INFO", "site",
             "sitepolicy")
         __write_config(cp, override, osg, "GRID3_SPONSOR", "site", "sponsor")
         __write_config(cp, override, osg, "OSG_GIP_DYNAMIC_DCACHE", "se", "dynamic_dcache")
@@ -258,6 +259,9 @@ def config_compat(cp):
         "srm_version")
     __write_config(cp, override, gip, "OSG_GIP_SE_HOST", "se", "srm_host")
     __write_config(cp, override, gip, "OSG_GIP_SRM", "se", "srm_present")
+    __write_config(cp, override, gip, "OSG_GIP_DISK", "se", "classic_se")
+    __write_config(cp, override, gip, "OSG_GIP_SE_DISK", "se",
+        "classic_se_host")
 
 def __write_config(cp, override, dict_object, key, section, option):
     """

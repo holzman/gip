@@ -5,7 +5,7 @@ use strict;
 my @config;    # Contains the configuration for the information provider.
 my $path;
 my @output;    # ldif output that is sent to std out.
-my @dirs;      # The contents of the path  
+my @dirs;      # The contents of the path
 my $ldif_file; # File name for the static ldif file
 my @ldif_file; # Content of the static ldif file
 my $file;      # A .list file
@@ -50,7 +50,7 @@ open (LDIF, $ldif_file) || die "Cannot open '$ARGV[0]': $!,";
 while (<LDIF>) {
     push @ldif_file, $_;
 }
-close (LDIF);  	
+close (LDIF);
 
 #Produces the output from the static ldif file and the install software.
 for (@ldif_file){
@@ -65,7 +65,7 @@ for (@ldif_file){
 	undef $dn;
     }
     if (/GlueHostApplicationSoftwareRunTimeEnvironment:/ &&  $dn){
-	#push @output, $_;
+	push @output, $_;
     }
 }
 

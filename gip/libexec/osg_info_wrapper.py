@@ -426,6 +426,7 @@ def run_child(executable, orig_filename, timeout):
             os.unlink(orig_filename)
         except:
             pass
+        log.warning("The module %s timed out!" % executable)
         log.warning("Attempting to kill pgrp %i" % pgrp)
         try:
             os.kill(pid, signal.SIGKILL)

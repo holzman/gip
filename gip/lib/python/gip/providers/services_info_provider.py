@@ -132,6 +132,16 @@ def print_srm(cp, admin):
     """
     sename = cp.get("se", "unique_name")
     sitename = cp.get("site", "unique_name")
+    # BUGFIX: Resolve the IP address of srm host that the admin specifies.
+    # If this IP address matches the IP address given by dCache, then we will
+    # print out the admin-specified hostname instead of looking it up.  This
+    # is for sites where the SRM host is a CNAME instead of the A name.
+    srm_host = cp_get(cp, "se", "srm_host", None)
+    if srm_host:
+        try:
+            srm_ip = socket.gethostbyname(srm_host)
+        except:
+            srm_ip = None
     #vos = [i.strip() for i in cp.get("vo", "vos").split(',')]
     ServiceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
     ControlTemplate = getTemplate("GlueSE", "GlueSEControlProtocolLocalID")
@@ -160,8 +170,11 @@ def print_srm(cp, admin):
         # domain name internally.
         try:
             hostname = socket.getfqdn(hostname)
+            hostname_ip = socket.gethostbyname(hostname)
         except:
-            pass
+            hostname_ip = None
+        if hostname_ip != None and hostname_ip == srm_ip and srm_host != None:
+            hostname = srm_host
 
         # From the SRM info, build the information for the GLUE entity.
         info = {

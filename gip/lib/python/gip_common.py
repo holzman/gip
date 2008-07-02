@@ -130,7 +130,7 @@ def config(*args):
         (options, args) = p.parse_args()
         files += [i.strip() for i in options.config.split(',')]
     files = [os.path.expandvars(i) for i in files]
-    files += ["$GIP_LOCATION/etc/gip.conf"]
+    files += [os.path.expandvars("$GIP_LOCATION/etc/gip.conf")]
     cp.read(files)
 
     # Set up the config object to be compatible with the OSG attributes

@@ -306,7 +306,7 @@ class VoMapper:
         self.voi = []
         self.voc = []
         self.userMap = {}
-        self.voMap = {}
+        #self.voMap = {}
         self.parse()
 
 
@@ -326,22 +326,24 @@ class VoMapper:
                     continue
                 else:
                     user, vo = line.split()
+                    if vo.startswith('us'):
+                        vo = vo[2:]
                     self.userMap[user] = vo
             except (KeyboardInterrupt, SystemExit):
                 raise
             except:
                 pass
-        for i in range(len(self.voi)):
-            try:
-                 self.voMap[self.voi[i]] = self.voc[i]
-            except (KeyboardInterrupt, SystemExit):
-                raise
-            except:
-                pass
+        #for i in range(len(self.voi)):
+        #    try:
+        #         self.voMap[self.voi[i]] = self.voc[i]
+        #    except (KeyboardInterrupt, SystemExit):
+        #        raise
+        #    except:
+        #        pass
 
     def __getitem__(self, username):
         try:
-            return self.voMap[self.userMap[username]]
+            return self.userMap[username]
         except KeyError:
             raise ValueError("Unable to map user: %s" % username)
 
@@ -507,8 +509,8 @@ def voList(cp, vo_map=None):
     if vo_map == None:
         vo_map = VoMapper(cp)
     vos = []
-    for vo in vo_map.voc:
-        vo = vo.lower()
+    for vo in vo_map.userMap.values():
+        #vo = vo.lower()
         if vo not in vos:
             vos.append(vo)
     try:

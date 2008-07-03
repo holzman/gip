@@ -68,7 +68,7 @@ def getUserGroups(cp):
         groups[group] = users
     return groups
 
-def usersToVos(qInfo, user_groups, vo_map):
+def usersToVos(cp, qInfo, user_groups, vo_map):
     """
     Given a queue's information, determine the users allowed to access the
     queue.
@@ -90,7 +90,7 @@ def usersToVos(qInfo, user_groups, vo_map):
             all_users.append(user)
     all_vos = sets.Set()
     if None in all_users:
-        return vo_map.voMap.values()
+        return voList(cp, vo_map)
     for user in all_users:
         try:
             vo = vo_map[user]
@@ -244,7 +244,7 @@ def getQueueInfo(cp):
     vo_map = VoMapper(cp) 
     user_groups = getUserGroups(cp)
     for queue, qInfo in queueInfo.items():
-        qInfo['vos'] = usersToVos(qInfo, user_groups, vo_map)
+        qInfo['vos'] = usersToVos(cp, qInfo, user_groups, vo_map)
     return queueInfo
 
 def parseNodes(queueInfo, cp):

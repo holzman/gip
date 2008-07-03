@@ -115,7 +115,8 @@ chomp(my $collector_manager = $MANAGER ? $MANAGER : `$PATH/condor_config_val COL
 # This assumes that the names are of this form: name1 ,name2 ,name3
 # This is changed to /\s*,\s*/, which allows any sort of comma-separation:
 # name1,name2 ,name3 ,name4    , name5
-my @tmp_mgr= split /\s*,\s*/, $collector_manager;
+$collector_manager =~ s/,/ /g;
+my @tmp_mgr = split /\s+/, $collector_manager;
 my $central_manager = $tmp_mgr[0];
 chomp($central_manager);
 

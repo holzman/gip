@@ -6,7 +6,7 @@ import unittest
 from sets import Set
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config
+from gip_common import config, cp_get
 from pbs_common import getVoQueues
 from gip_ldap import read_ldap
 from gip_testing import runTest, streamHandler
@@ -17,9 +17,10 @@ example_queues = \
     ('atlas', 'atlas'),   ('osg', 'workq'),      ('osgedu', 'workq'),
     ('mis', 'workq'),     ('fmri', 'workq'),     ('grase', 'workq'),
     ('gridex', 'workq'),  ('ligo', 'workq'),     ('ivdgl', 'workq'),
-    ('gadu', 'workq'),    ('glow', 'workq'),     ('cdf', 'workq'),
+    ('gadu', 'workq'),    ('GLOW', 'workq'),     ('cdf', 'workq'),
     ('nanohub', 'workq'), ('sdss', 'workq'),     ('gpn', 'workq'),
-    ('engage', 'workq'),  ('cms', 'cms'),        ('dzero', 'dzero')]
+    ('engage', 'workq'),  ('cms', 'cms'),        ('dzero', 'dzero'),
+   ]
     
 
 example_queues = Set(example_queues)
@@ -45,6 +46,7 @@ class TestPbsDynamic(unittest.TestCase):
         cp = config("test_configs/red.conf")
         vo_queues = Set(getVoQueues(cp))
         diff = vo_queues.symmetric_difference(example_queues)
+        print vo_queues
         self.assertEquals(len(diff), 0, msg="The following VO-queues are " \
             "different between the expected and actual: %s" % str(diff))
 
@@ -73,6 +75,26 @@ class TestPbsDynamic(unittest.TestCase):
                 self.assertEquals(entry.glue['CEPolicyAssignedJobSlots'], '60')
                 self.assertEquals(entry.glue['CEUniqueID'], \
                     'red.unl.edu:2119/jobmanager-pbs-batch')
+
+
+    def test_red_entries(self):
+        """
+        Make sure that VOLocal gets the correct queue information.
+        """
+        os.environ['GIP_TESTING'] = '1'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
+            "osg-info-provider-pbs.py")
+        fd = os.popen(path)
+        entries = read_ldap(fd)
+        self.failUnless(fd.close() == None)
+        for entry in entries:
+            if 'GlueVOView' in entry.objectClass and \
+                    entry.glue['VOViewLocalID'] == 'cms' and \
+                    entry.glue['ChunkKey']=='GlueCEUniqueID=red.unl.edu:2119/'\
+                    'jobmanager-pbs-cms':
+                self.failUnless(entry.glue['CEStateRunningJobs'] == '203')
+                self.failUnless(entry.glue['CEStateWaitingJobs'] == '1')
+                self.failUnless(entry.glue['CEStateTotalJobs'] == '204')
 
     def make_site_tester(site):
         def test_site_entries(self):

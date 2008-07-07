@@ -55,6 +55,8 @@ def getCESEBindInfo(cp):
     ce_list = getCEList(cp)
     se_list = getSEList(cp)
     access_point = cp_get(cp, "vo", "default", "/")
+    if not access_point:
+        access_point = "/UNAVAILABLE"
     for ce in ce_list:
         for se in se_list:
             info = {'ceUniqueID' : ce,

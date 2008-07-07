@@ -49,7 +49,7 @@ class TestCondorProvider(unittest.TestCase):
                 self.assertEquals(entry.glue['CEStateFreeCPUs'], '77')
                 self.assertEquals(entry.glue['CEPolicyAssignedJobSlots'], '81')
                 self.assertEquals(entry.glue['CEUniqueID'], \
-                    'red.unl.edu:2119/jobmanager-condor')
+                    'red.unl.edu:2119/jobmanager-condor-default')
         self.assertEquals(has_ce, True)
 
 def main():

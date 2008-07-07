@@ -522,11 +522,11 @@ def voList(cp, vo_map=None):
     except:
         whitelist = []
     for vo in whitelist:
-        vo = vo.lower()
+        #vo = vo.lower()
         if vo not in vos:
             vos.append(vo)
     for vo in blacklist:
-        vo = vo.lower()
+        #vo = vo.lower()
         if vo in vos:
             vos.remove(vo)
     return vos

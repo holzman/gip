@@ -1337,6 +1337,19 @@ sub create_se_config_file
 
     }
 
+    # BUGFIX: se_access is not filled in if you are using dynamic_dcache, but
+    # this global variable must be populated for the CESE bind to work right
+    # later on
+    if ($srm && $dynamic_dcache==1) {
+        
+        foreach $vo (@vo_list){
+            my $se_access_root = $vo_access_roots{$vo};
+            if ($se_access_root!~/^$/) {
+                $se_access{$vo} = $se_access_root;
+            }              
+        }                  
+    }                      
+
     my $service_config_file = "$gip_location/etc/osg-info-gip-config/osg-info-static-service.conf";
     safe_write($service_config_file, $service_contents);
     vdt_install_log("===== BEGIN osg-info-static-service.conf =====\n");
@@ -1536,8 +1549,9 @@ sub create_cesebind_config_file
             }
 
             if ($srm && exists $se_access{$vo} && defined $sa_path) {
+                # BUGFIX: use $se_access{$vo} instead of $sa_path/$se_access{$vo}.
                 $contents = $contents."\ndn: GlueCESEBindSEUniqueID=$se_host, GlueCESEBindGroupCEUniqueID=$fullhost:2119/jobmanager-$batch-$vo\n"
-                                     ."GlueCESEBindCEAccesspoint: $sa_path/$se_access{$vo}\n"
+                                     ."GlueCESEBindCEAccesspoint: $se_access{$vo}\n"
                                      ."GlueCESEBindCEUniqueID: $fullhost:2119/jobmanager-$batch-$vo\n";
             }
         }

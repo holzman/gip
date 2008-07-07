@@ -103,7 +103,7 @@ def print_VOViewLocal(queue_info, cp):
             'running'     : info2.get('running', 0),
             'max_running' : info2.get('max_running', 0),
             'priority'    : queue_info.get(queue, {}).get('priority', 0),
-            'waiting'     : info2.get('waiting', 0),
+            'waiting'     : info2.get('wait', 0),
             'data'        : cp.get("osg_dirs", "data"),
             'app'         : cp.get("osg_dirs", "app"),
             'default_se'  : cp.get("se", "name"),

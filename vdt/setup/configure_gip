@@ -1222,7 +1222,7 @@ sub create_se_config_file
                            ."GlueSEPort: 8443\n"
                            ."GlueSESizeTotal: 0\n"
                            ."GlueSESizeFree: 0\n"
-                           ."GlueSEArchitecture: srm\n"
+                           ."GlueSEArchitecture: other\n"
                            ."GlueSEImplementationName: $srm_implementation_name\n"
                            ."GlueSEImplementationVersion: $srm_implementation_version\n"
                            ."GlueSEStatus: Production\n"

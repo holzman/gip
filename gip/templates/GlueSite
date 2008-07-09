@@ -18,3 +18,4 @@ GlueSiteSponsor: %(sponsor)s
 GlueSiteOtherInfo: UNDEFINED
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
+

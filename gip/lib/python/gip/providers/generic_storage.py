@@ -7,8 +7,7 @@ log = getLogger("GIP.Storage.Generic")
 
 def print_SA(cp):
     """
-    Print out the SALocal information for backward compatibility with 
-    GLUE 1.2
+    Print out the SALocal information for GLUE 1.3.
     """ 
     vos = voListStorage(cp)
     se_unique_id = cp.get("se", "unique_name")

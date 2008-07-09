@@ -3,12 +3,15 @@
 Module for interacting with a dCache storage element.
 """
 
-import string
-import traceback
-import sys
 import re
+import sys
+import stat
+import string
+import statvfs
+import traceback
 
-from gip_common import getLogger, cp_get
+from gip_common import getLogger, cp_get, cp_getBoolean
+from gip_sections import se
 import dCacheAdmin
 
 log = getLogger("GIP.Storage")
@@ -246,6 +249,59 @@ def lookupPoolStorageInfo( connection, log ) :
 
 
 def getSESpace(cp, admin=None, gb=False, total=False):
+    if cp_getBoolean(cp, se, "dynamic_dcache", False):
+        return getdCacheSESpace(cp, admin, gb, total)
+    else:
+        return getClassicSESpace(cp, gb=gb, total=total)
+
+def getClassicSESpace(cp, gb=False, total=False):
+    """
+    Get the total amount of the locally available space.  By default, return
+    the information in kilobytes.
+
+    @param cp: Site configuration
+    @type cp: ConfigParser
+    @keyword gb: If True, then return the results  in GB, not KB.
+    @keyword total: If True, also return the total amount of space in the SE.
+    @returns: Returns the used space, free space.  If C{total=true}, also 
+        return the total space.  If C{gb=True}, return the numbers in GB;
+        otherwise the numbers are in kilobytes.
+    """
+    used, free, tot = 0, 0, 0
+    mount_info = {}
+    # First, find out all the storage paths for the supported VOs
+    # Uses statvfs to find out the mount info; stat to find the device ID
+    for vo in voListStorage(cp):
+        path = getPath(cp, vo)
+        # Skip fake paths
+        if not os.path.exists(path):
+            continue
+        stat_info = os.stat(path)
+        vfs_info = os.statvfs(path)
+        device = stat_info[stat.ST_DEV]
+        mount_info[device] = vfs_info
+    # For each unique device, determine the free/total information from statvfs
+    # results.
+    for dev, vfs in mount_info.items():
+        dev_free = vfs[statvfs.F_FRSIZE] * vfs[statvfs.F_BAVAIL]
+        dev_total = vfs[statvfs.F_FRSIZE] * vfs[statvfs.F_BLOCKS]
+        dev_used = dev_total - dev_free
+        used += dev_used
+        free += dev_free
+        tot += dev_total
+    if gb: # Divide by 1000^2.  Results in a number in MB
+        used /= 1000000L
+        free /= 1000000L
+        tot /= 1000000L
+    # Divide by 1000 to get KB or GB
+    used /= 1000
+    free /= 1000
+    tot /= 1000
+    if total:
+        return used, free, tot
+    return used, free
+
+def getdCacheSESpace(cp, admin=None, gb=False, total=False):
     """
     Get the total amount of space available in a dCache instance.  By default,
     return the information in Kilobytes.

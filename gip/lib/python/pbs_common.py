@@ -201,6 +201,11 @@ def getQueueInfo(cp):
             queue_data["max_running"] = int(val)
         elif attr == "resources_max.nodect":
             queue_data["job_slots"] = int(val)
+        elif attr == "max_queuable":
+            try:
+                queue_data["max_waiting"] = int(val)
+            except:
+                log.warning("Invalid input for max_queuable: %s" % str(val))
     if queue_data != None:
         if queue_data["started"] and queue_data["enabled"]:
             queue_data["status"] = "Production"

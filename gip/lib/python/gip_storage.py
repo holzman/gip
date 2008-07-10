@@ -134,7 +134,7 @@ def voListStorage(cp):
             refined.append(vo)
     return refined
 
-def getPath(cp, vo):
+def getPath(cp, vo, section='vo'):
     """
     Get the storage path for some VO.
 
@@ -142,10 +142,8 @@ def getPath(cp, vo):
     @type cp: ConfigParser
     @param vo: VO name (if vo='', then the default path will be given)
     """
-    if cp.has_option("vo", vo):
-        path = cp.get("vo", vo)
-    else:
-        path = cp_get(cp, "vo", "default", "/UNKNOWN").replace("$VO", vo)
+    path = cp_get(cp, section, vo, cp_get(cp, section, "default",
+        "/UNKNOWN").replace("$VO", vo))
     return path
 
 # The next three definitions are taken from the Gratia storage probe
@@ -408,4 +406,27 @@ def getSEVersion(cp, admin=None):
             return "%s.%s.%s-%s" % (major, minor, bugfix, patch)
     else:
         return version
+
+def getAccessProtocols(cp):
+    """
+    Stub function for providing access protocol information.
+
+    Eventually, this will return a list of dictionaries.  Each dictionary will
+    have the following keys with reference to an access endpoint:
+       
+       - protocol
+       - hostname
+       - port
+    
+    Optionally, the following keys may be included (default in parenthesis):
+       
+       - capability (file transfer)
+       - maxStreams (1)
+       - securityinfo (none)
+       - version (UNKNOWN)
+       - endpoint (<protocol>://<hostname>:<port>)
+
+    Currently, this just returns []
+    """
+    return []
 

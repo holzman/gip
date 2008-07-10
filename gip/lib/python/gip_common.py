@@ -260,9 +260,10 @@ def config_compat(cp):
         "srm_version")
     __write_config(cp, override, gip, "OSG_GIP_SE_HOST", "se", "srm_host")
     __write_config(cp, override, gip, "OSG_GIP_SRM", "se", "srm_present")
-    __write_config(cp, override, gip, "OSG_GIP_DISK", "se", "classic_se")
-    __write_config(cp, override, gip, "OSG_GIP_SE_DISK", "se",
-        "classic_se_host")
+    __write_config(cp, override, gip, "OSG_GIP_DISK", "classic_se",
+        "advertise_se")
+    __write_config(cp, override, gip, "OSG_GIP_SE_DISK", "classic_se",
+        "host")
 
 def __write_config(cp, override, dict_object, key, section, option):
     """

@@ -61,7 +61,8 @@ def print_CE(cp):
         info['app_dir'] = cp.get('osg_dirs', 'app')
         info['data_dir'] = cp.get('osg_dirs', 'data')
         info['default_se'] = cp.get('se', 'name')
-        info['max_waiting'] = 999999
+        if 'max_waiting' not in info:
+            info['max_waiting'] = 999999
         info['max_slots'] = 1
         #info['max_total'] = info['max_running']
         info['max_total'] = info['max_waiting'] + info['max_running']

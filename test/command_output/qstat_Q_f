@@ -1,5 +1,6 @@
 Queue: default
     queue_type = Execution
+    max_queuable = 2000
     Priority = 1
     total_jobs = 7
     state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:7 Exiting:0 Begun

@@ -46,7 +46,6 @@ class TestPbsDynamic(unittest.TestCase):
         cp = config("test_configs/red.conf")
         vo_queues = Set(getVoQueues(cp))
         diff = vo_queues.symmetric_difference(example_queues)
-        print vo_queues
         self.assertEquals(len(diff), 0, msg="The following VO-queues are " \
             "different between the expected and actual: %s" % str(diff))
 
@@ -67,7 +66,6 @@ class TestPbsDynamic(unittest.TestCase):
             gip_testing.commands = old_commands
         for entry in entries:
             if 'GlueCE' in entry.objectClass:
-                #print entry
                 self.assertEquals(entry.glue['CEStateTotalJobs'], '6')
                 self.assertEquals(entry.glue['CEStateRunningJobs'], '6')
                 self.assertEquals(entry.glue['CEStateFreeCPUs'], '51')
@@ -95,6 +93,25 @@ class TestPbsDynamic(unittest.TestCase):
                 self.failUnless(entry.glue['CEStateRunningJobs'] == '203')
                 self.failUnless(entry.glue['CEStateWaitingJobs'] == '1')
                 self.failUnless(entry.glue['CEStateTotalJobs'] == '204')
+
+    def test_max_queuable(self):
+        """
+        Regression test for the max_queuable attribute.  Ticket #10
+        """
+        os.environ['GIP_TESTING'] = '1'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
+            "osg-info-provider-pbs.py")
+        fd = os.popen(path)
+        entries = read_ldap(fd)
+        self.failUnless(fd.close() == None)
+        has_default_ce = False
+        for entry in entries:
+            if 'GlueCE' in entry.objectClass and \
+                    entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
+                    '-pbs-default':
+                self.failUnless(entry.glue['CEPolicyMaxWaitingJobs'] == '2000')
+                has_default_ce = True
+        self.failUnless(has_default_ce, msg="Default queue's CE was not found!")
 
     def make_site_tester(site):
         def test_site_entries(self):

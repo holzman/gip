@@ -306,10 +306,12 @@ def main():
         cp = config("$GIP_LOCATION/etc/dcache_storage.conf", \
             "$GIP_LOCATION/etc/dcache_password.conf", \
             "$GIP_LOCATION/etc/tape_info.conf")
-        print_se(cp)
-        admin = connect_admin(cp)
-        print_access_protocols(cp, admin)
-        print_srm(cp, admin)
+        advertise_se = cp_getBoolean(cp, "se", "advertise_se", True)
+        if advertise_se:
+            print_se(cp)
+            admin = connect_admin(cp)
+            print_access_protocols(cp, admin)
+            print_srm(cp, admin)
     except Exception, e:
         # Make sure we don't feed the error to the BDII stream;
         # fail silently, hopefully someone logs the stderr.

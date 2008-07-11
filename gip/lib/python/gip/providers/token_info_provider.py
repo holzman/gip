@@ -316,14 +316,16 @@ def main():
         cp = config("$GIP_LOCATION/etc/dcache_storage.conf", \
                     "$GIP_LOCATION/etc/dcache_password.conf", \
                     "$GIP_LOCATION/etc/tape_info.conf")
-        try:
-            p=connect(cp)
-            print_VOinfo(p, cp)
-            print_SA(p, cp)
-            p.close()
-        except Exception, e:
-            print >> sys.stderr, e
-        print_SA_compat(cp)
+        advertise_se = cp_getBoolean(cp, "se", "advertise_se", True)
+        if advertise_se:
+            try:
+                p=connect(cp)
+                print_VOinfo(p, cp)
+                print_SA(p, cp)
+                p.close()
+            except Exception, e:
+                print >> sys.stderr, e
+            print_SA_compat(cp)
     except:
         sys.stdout = sys.stderr
         raise

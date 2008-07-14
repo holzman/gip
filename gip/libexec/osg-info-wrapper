@@ -192,12 +192,26 @@ my $dynamic_value;
 my $dynamic_attribute; 
 my $last_dynamic="";
 
+# Feature request: Add custom attributes via alter-attributes.
+# Implementation: Track which attributes of the dynamic entry have been
+# used to replace the static value.  Any unused attributes are then appended
+# at the end of the LDIF entry.
+my $full_attribute;
+my $used_attributes = {};
+
 for(@static){
     if (/^dn:.*/){
 	$static_dn=$_;
+        # If we have some unused dynamic attributes, add them to the stream
+        while (my ($key, $value) = each(%$used_attributes) ) {
+            if ($value==0) {
+                print "$key\n";
+            }
+        }
 	print "\n$static_dn";
 	$static_dn=~s/\s+//g;
-	$last_dynamic="" ; 
+	$last_dynamic="" ;
+        $used_attributes = {};
     }elsif(m/^([^:]*:)(.*)/){
 	if($last_dynamic eq $1 ){
 	    next;
@@ -212,12 +226,22 @@ for(@static){
 	    }elsif(m/^([^:]*:)(.*)/){
 		$dynamic_attribute=$1;
 		$dynamic_value=$2;
+                $full_attribute = "$dynamic_attribute$dynamic_value";
 		if (lc($dynamic_dn) eq lc($static_dn)){
 		    if ($dynamic_attribute eq $static_attribute){
  			print "$dynamic_attribute$dynamic_value\n";
 			$last_dynamic=$dynamic_attribute;
 			undef $static_value;
-		    }
+                        # Record the attribute/value as used.
+                        $used_attributes->{$full_attribute} = 1;
+		    } else {
+                        if (exists $used_attributes->{$full_attribute}) {
+                            # Do nothing, we don't want to change the status.
+                        } else {
+                            # Add the attribute to the hash
+                            $used_attributes->{$full_attribute} = 0;
+                        }
+                    }
 		}
 	    }	       
 	}

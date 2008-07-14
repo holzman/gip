@@ -91,7 +91,7 @@ for(@dynamic, @provider){
 
     if(! -e "$config{temp_dir}/$file[0].ldif.$chksum"){
 	system("touch $config{temp_dir}/$file[0].ldif.$chksum");
-	$file_time = $current_time - 21;
+	$file_time = $current_time - $config{freshness} - 1;
     }
     else{
 	$file_time=stat("$config{temp_dir}/$file[0].ldif.$chksum");

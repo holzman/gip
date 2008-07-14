@@ -23,6 +23,10 @@ if (! exists $ENV{'GIP_LOCATION'}) {
     $ENV{'GIP_LOCATION'} = "$ENV{'VDT_LOCATION'}/gip";
 }
 my $conffile = "$ENV{'GIP_LOCATION'}/etc/osg-info-generic.conf";
+
+# Location of the log files for stderr.
+my $provider_log = "$ENV{'GIP_LOCATION'}/var/logs/modules.log";
+
 my $fh = new FileHandle $conffile
 	or die "Error: Can't open config file: $conffile\n";
 foreach (<$fh>){
@@ -113,7 +117,7 @@ for(@dynamic, @provider){
 	    eval { 
 		local $SIG{ALRM} = sub { die "GOT TIRED OF WAITING" };
 		alarm ($config{timeout});  #Will call alarm after the timeout. 
-		system("$_ > $config{temp_dir}/$file[0].ldif.$chksum.$PGRP");
+		system("$_ > $config{temp_dir}/$file[0].ldif.$chksum.$PGRP 2>> $provider_log");
 		`mv $config{temp_dir}/$file[0].ldif.$chksum.$PGRP $config{temp_dir}/$file[0].ldif.$chksum`;
 		alarm(0);           # Cancel the pending alarm if responds.
 	    };

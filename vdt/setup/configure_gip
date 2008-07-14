@@ -576,6 +576,23 @@ sub create_directories()
         system("chown daemon $gip_location/var/tmp");
     }
 
+    my $log_dir = "$gip_location/var/logs";
+    if (!-d $tmp_dir) {
+        vdt_install_log("Creating var directory for GIP: $log_dir");
+        system("mkdir -p $log_dir");
+    }
+    if ($< == 0) {
+        if (!-d "$log_dir/gip.log") {
+            system("touch $log_dir/gip.log");
+            system("chmod 666 $log_dir/gip.log");
+        }
+        if (!-d "$log_dir/modules.log") {
+            system("touch $log_dir/modules.log");
+            system("chmod 666 $log_dir/modules.log");
+        }
+    }
+
+
     #my $plugin_dir  = "$gip_location/var/gip/plugin";
     #if (!-d $plugin_dir) {
     #    # This will probably create plugin.

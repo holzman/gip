@@ -194,12 +194,32 @@ class GipValidate(unittest.TestCase):
             self.assertEquals(tot, 100, msg="Site sponsorship does not add up "\
                 " to 100: %s" % entry.glue['SiteSponsor'])
 
-    def test_existence(self, name, full=False):
+    def test_existence(self, name, full=False, *others):
         for entry in self.entries:
             if full and entry.dn[0] == name:
-                return
+                idx = 1
+                if len(entry.dn)-1 < len(others):
+                    continue
+                do_return = True
+                for other in others:
+                    if entry.dn[idx] != other:
+                        do_return=False
+                        break
+                    idx += 1
+                if do_return:
+                    return
             if (not full) and entry.dn[0].startswith(name):
-                return
+                idx = 1
+                if len(entry.dn)-1 < len(others):
+                    continue
+                do_return = True
+                for other in others:
+                    if not entry.dn[idx].startswith(other):
+                        do_return = False
+                        break
+                    idx += 1
+                if do_return:
+                    return
         self.assertEquals(0, 1, msg="GLUE Entity %s does not exist." % name)
 
     def test_chunk_keys(self):
@@ -207,7 +227,18 @@ class GipValidate(unittest.TestCase):
             if 'ChunkKey' not in entry.glue:
                 continue
             self.test_existence(entry.glue['ChunkKey'], full=True)
-        
+       
+    def test_foreign_key(self):
+        for entry in self.entries:
+            value = entry.glue.get('ForeignKey', None)
+            if value:
+                continue
+            if isinstance(value, types.TupleType):
+                for val in value:
+                    self.test_existence(entry.glue['ForeignKey'], full=True)
+            else:
+                self.test_existence(entry.glue['ForeignKey'], full=True)
+ 
     def test_egee_site_unique_id(self):
         for entry in self.entries:
             if 'GlueSite' not in entry.objectClass:
@@ -223,4 +254,30 @@ class GipValidate(unittest.TestCase):
             self.assertNotEquals(entry.glue[attribute], value, msg="GLUE " \
                 "attribute %s for entity %s is equal to %s" % (attribute, \
                 objClass, value))
+
+    def _first_val(self, val):
+        if isinstance(val, types.TupleType):
+            return val[0]
+        return val
+
+    def _is_in(self, string, val):
+        if isinstance(val, types.TupleType):
+            return string in val
+        else:
+            return string == val
+
+    def test_cesebind(self):
+        # Make a list of all the CEs in the entries and all the SEs:
+        ses = []
+        ces = []
+        for entry in self.entries:
+            if 'GlueSE' in entry.objectClass:
+                ses.append(self._first_val(entry.glue['SEUniqueID'][0]))
+            if 'GlueCE' in entry.objectClass:
+                ces.append(self._first_val(entry.glue['CEUniqueID'][0]))
+        for ce in ces:
+            for se in ses:
+                self.test_existence('GlueCESEBindSEUniqueID=%s' % se,
+                    'GlueCESEBindGroupCEUniqueID=%s' % ce, full=True)
+            self.test_existence('GlueCESEBindGroupCEUniqueID' % ce, full=True)
 

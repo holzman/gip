@@ -446,13 +446,13 @@ class Attributes(UserDict):
             e.pop()
 
         # Look for lines that match the pattern "key=value"
-        # this will also stip out quotation marks
-        test = re.compile('^(.*)=(.*)')
+        # this will also strip out quotation marks
+        test = re.compile('^(.*)="*(.*?)"*$')
         for line in e:
             valid = test.match(line)
             if valid:
-                grp = line.split("=")
-                self[grp[0]] = grp[1][1:len(grp[1]) - 1]
+                grp = valid.groups()
+                self[grp[0]] = grp[1]
 
 def getTemplate(template, name):
     """
@@ -588,9 +588,9 @@ def cp_getBoolean(cp, section, option, default=True):
         present.
     """
     val = str(cp_get(cp, section, option, default)).lower()
-    if val.find('t') >= 0 or val.find('y') >= 0:
+    if val.find('t') >= 0 or val.find('y') >= 0 or val.find('1') >= 0:
         return True
-    if val.find('f') >= 0 or val.find('n') >= 0:
+    if val.find('f') >= 0 or val.find('n') >= 0 or val.find('0') >= 0:
         return False
     return default
 

@@ -1,7 +1,7 @@
 
 import sys
 
-from gip_common import voList, cp_get
+from gip_common import voList, cp_get, cp_getBoolean
 from pbs_common import getQueueList
 from gip_sections import ce, cesebind, se
 
@@ -28,18 +28,37 @@ def getCEList(cp):
              ce_list.append(ce_name % vo)
     return ce_list
 
-def getSEList(cp):
+def getClassicSEList(cp):
+    """
+    Return a list of all the ClassicSE's at this site
+
+    @param cp: Site configuration
+    @returns: List of all the ClassicSE's unique_ids
+    """
+    if not cp_getBoolean(cp, "classic_se", "advertise_se", False):
+        return []
+    classicSE = cp_get(cp, "classic_se", "host", None)
+    if not classicSE: # len(classicSE) == 0 or classicSE == None
+        return []
+    return [classicSE]
+
+def getSEList(cp, classicSEs=True):
     """
     Return a list of all the SE's at this site.
 
     @param cp: Site configuration.
-    @returns: List of strings containing all the local SE names.
+    @keyword classicSEs: Return list should contain classicSEs; default is True.
+    @returns: List of strings containing all the local SE unique_ids.
     """
     simple = cp.getboolean(cesebind, 'simple')
+    se_list = []
     if simple:
-        return [cp.get(se, 'unique_name')]
+        se_list = [cp.get(se, 'unique_name')]
     else:
-        return eval(cp.get(cesebind, 'se_list'), {})
+        se_list = eval(cp.get(cesebind, 'se_list'), {})
+    if classicSEs:
+        se_list.extend(getClassicSEList(cp))
+    return se_list
 
 def getCESEBindInfo(cp):
     """
@@ -53,15 +72,22 @@ def getCESEBindInfo(cp):
     """
     binds = []
     ce_list = getCEList(cp)
-    se_list = getSEList(cp)
+    se_list = getSEList(cp, classicSEs = False)
+    classicse_list = getClassicSEList(cp)
+    se_list.extend(classicse_list)
     access_point = cp_get(cp, "vo", "default", "/")
     if not access_point:
-        access_point = "/UNAVAILABLE"
+        access_point = "/"
+    classic_access_point = cp_get(cp, "osg_dirs", "data", "/")
     for ce in ce_list:
         for se in se_list:
+            if se in classicse_list:
+                ap = classic_access_point
+            else:
+                ap = access_point
             info = {'ceUniqueID' : ce,
                     'seUniqueID' : se,
-                    'access_point' : access_point,
+                    'access_point' : ap,
                    }
             binds.append(info)
     return binds

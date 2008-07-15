@@ -25,11 +25,14 @@ class TestClassicSE(unittest.TestCase):
         cp.set("classic_se", "unique_name", "red.unl.edu_se")
         cp.set("classic_se", "default", "/opt/osg/data/$VO")
 
-    def setUpLDAP():
+    #def setUpLDAP():
 
-    def test_valid_se_status():
+    #def test_valid_se_status():
 
-    def test_valid_service_status():
+    #def test_valid_service_status():
+
+    #def test_one_sa():
+
 
 def main():
     cp = config()

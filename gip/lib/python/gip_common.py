@@ -244,6 +244,10 @@ def config_compat(cp):
         "srm_version")
     __write_config(cp, override, gip, "OSG_GIP_SE_HOST", "se", "srm_host")
     __write_config(cp, override, gip, "OSG_GIP_SRM", "se", "srm_present")
+    __write_config(cp, override, gip, "OSG_GIP_DISK", "classic_se",
+        "advertise_se")
+    __write_config(cp, override, gip, "OSG_GIP_SE_DISK", "classic_se",
+        "host")
 
 def __write_config(cp, override, dict_object, key, section, option):
     """
@@ -409,13 +413,13 @@ class Attributes(UserDict):
             e.pop()
 
         # Look for lines that match the pattern "key=value"
-        # this will also stip out quotation marks
-        test = re.compile('^(.*)=(.*)')
+        # this will also strip out quotation marks
+        test = re.compile('^(.*)="*(.*?)"*$')
         for line in e:
             valid = test.match(line)
             if valid:
-                grp = line.split("=")
-                self[grp[0]] = grp[1][1:len(grp[1]) - 1]
+                grp = valid.groups()
+                self[grp[0]] = grp[1]
 
 def getTemplate(template, name):
     """

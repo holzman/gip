@@ -3,6 +3,7 @@
 Module for interacting with a dCache storage element.
 """
 
+import os
 import re
 import sys
 import stat
@@ -134,7 +135,7 @@ def voListStorage(cp):
             refined.append(vo)
     return refined
 
-def getPath(cp, vo, section='vo'):
+def getPath(cp, vo, section='vo', classicSE=False):
     """
     Get the storage path for some VO.
 
@@ -142,8 +143,12 @@ def getPath(cp, vo, section='vo'):
     @type cp: ConfigParser
     @param vo: VO name (if vo='', then the default path will be given)
     """
-    path = cp_get(cp, section, vo, cp_get(cp, section, "default",
-        "/UNKNOWN").replace("$VO", vo))
+    if classicSE:
+        fallback1 = cp_get(cp, "osg_dirs", "data", "/UNKNOWN")
+        fallback = cp_get(cp, section, "default", fallback1).replace("$VO", vo)
+    else:
+        fallback = cp_get(cp, section, "default", "/UNKNOWN").replace("$VO", vo)
+    path = cp_get(cp, section, vo, fallback)
     return path
 
 # The next three definitions are taken from the Gratia storage probe
@@ -265,6 +270,18 @@ def getClassicSESpace(cp, gb=False, total=False):
         return the total space.  If C{gb=True}, return the numbers in GB;
         otherwise the numbers are in kilobytes.
     """
+    space_info = cp_get(cp, "classic_se", "space", None)
+    if space_info:
+        # Assume that the space reported is in KB
+        used, free, tot = eval(space_info, {}, {})
+        # Divide by 1000**2 to go from KB to GB
+        if gb:
+            used /= 1000**2
+            free /= 1000**2
+            tot /= 1000**2
+        if total:
+            return used, free, tot
+        return used, free, tot
     used, free, tot = 0, 0, 0
     mount_info = {}
     # First, find out all the storage paths for the supported VOs

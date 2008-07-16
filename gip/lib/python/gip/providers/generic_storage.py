@@ -1,8 +1,10 @@
 
+import sys
+
 from gip_common import cp_get, getLogger, config, getTemplate, printTemplate, \
     cp_getBoolean, cp_getInt
 from gip_storage import voListStorage, getPath, getSESpace, getSETape, \
-    seHasTape, getAccessProtocols
+    seHasTape, getAccessProtocols, getClassicSESpace
 
 log = getLogger("GIP.Storage.Generic")
 
@@ -31,7 +33,8 @@ def print_SA(cp, section="se"):
         info = {"saLocalID"        : vo,
                 "seUniqueID"       : se_unique_id,
                 "root"             : "/",
-                "path"             : getPath(cp, vo, section=section),
+                "path"             : getPath(cp, vo, section=section,
+                                     classicSE=section == 'classic_se'),
                 "filetype"         : "permanent", 
                 "saName"           : "%s_default" % vo,
                 "totalOnline"      : int(round(total/1000**2)),
@@ -51,19 +54,50 @@ def print_SA(cp, section="se"):
                }
         printTemplate(saTemplate, info)
 
-def print_classicSE(cp):
+    # print out the grouped SA
+    if section == 'classic_se':
+        acbr = []
+        for vo in vos:
+            acbr.append("GlueSAAccessControlBaseRule: VO:%s" % vo)
+        acbr = '\n'.join(acbr)
+        path = cp_get(cp, "osg_dirs", "data", "/UNKNOWN")
+        info = {"saLocalID"        : se_unique_id,
+                "seUniqueID"       : se_unique_id,
+                "root"             : "/",
+                "path"             : path,
+                "filetype"         : "permanent",
+                "saName"           : se_unique_id,
+                "totalOnline"      : int(round(total/1000**2)),
+                "usedOnline"       : int(round(used/1000**2)),
+                "freeOnline"       : int(round(available/1000**2)),
+                "reservedOnline"   : 0,
+                "totalNearline"    : 0,
+                "usedNearline"     : 0,
+                "freeNearline"     : 0,
+                "reservedNearline" : 0,
+                "retention"        : "replica",
+                "accessLatency"    : "online",
+                "expiration"       : "neverExpire",
+                "availableSpace"   : available,
+                "usedSpace"        : used,
+                "acbr"             : acbr,
+               }
+        printTemplate(saTemplate, info)
 
+def print_classicSE(cp):
     if not cp_getBoolean(cp, "classic_se", "advertise_se", False):
         log.info("Not advertising a classic SE.")
         return
-    if not cp_getBoolean(cp, "se", "shares_fs_with_ce", False):
+    else:
+        log.info("Advertising a classic SE.")
+    if cp_getBoolean(cp, "se", "shares_fs_with_ce", False):
         log.info("Not advertising a classic SE because the SE shares a FS.")
         return
 
     status = cp_get(cp, "se", "status", "Production")
     version = cp_get(cp, "se", "version", "UNKNOWN")
     try:
-        used, available, total = getClassicSESpace(cp, total=True)
+        used, available, total = getClassicSESpace(cp, total=True, gb=True)
     except:
         used, available, total = 0, 0, 0
 
@@ -71,7 +105,7 @@ def print_classicSE(cp):
     nu, nf, nt = getSETape(cp)
 
     bdiiEndpoint = cp.get("bdii", "endpoint")
-    siteUniqueID = cp.get(cp, "site", "unique_name")
+    siteUniqueID = cp.get("site", "unique_name")
     implementation = cp_get(cp, "classic_se", "implementation", "classicSE")
     arch = 'other'
 
@@ -100,7 +134,7 @@ def print_classicSE(cp):
     printTemplate(seTemplate, info)
 
     print_SA(cp, section="classic_se")
-    print_classic_access(cp)
+    print_classic_access(cp, siteUniqueID)
 
 def print_SE(cp):
     status = cp_get(cp, "se", "status", "Production")
@@ -108,7 +142,7 @@ def print_SE(cp):
 
     # Determine space information
     try:
-        used, available, total = getSESpace(cp, total=True)
+        used, available, total = getSESpace(cp, total=True, gb=True)
     except:
         used, available, total = 0, 0, 0
 
@@ -163,8 +197,11 @@ def print_SRM(cp):
 
     srm_version = cp_get(cp, "se", "srm_version", "2")
     port = cp_getInt(cp, "se", "srm_port", 8443)
-    endpoint = cp_get(cp,"se", "srm_endpoint", "httpg://%s:%i/srm/managerv2" % \
-        (srmname, int(port)))
+    if srm_version.find('2') >= 0:
+        default_endpoint = 'httpg://%s:%i/srm/managerv2' % (srmname, int(port))
+    else:
+        default_endpoint = 'httpg://%s:%i/srm/managerv1' % (srmname, int(port))
+    endpoint = cp_get(cp,"se", "srm_endpoint", default_endpoint)
 
     ServiceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
     ControlTemplate = getTemplate("GlueSE", "GlueSEControlProtocolLocalID")
@@ -244,11 +281,11 @@ def print_access(cp):
             info['version'] = 'UNKNOWN',
         print accessTemplate % info
 
-def print_classic_access(cp):
+def print_classic_access(cp, siteUniqueID):
     fallback_name = siteUniqueID + "_classicSE"
     seName = cp_get(cp, "classic_se", "name", fallback_name)
     seUniqueID = cp_get(cp, "classic_se", "unique_name", fallback_name)
-    host = cp_get(cp, "classic_se", "host")
+    host = cp_get(cp, "classic_se", "host", siteUniqueID)
     port = cp_getInt(cp, "classic_se", "port", "2811")
     accessTemplate = getTemplate("GlueSE", "GlueSEAccessProtocolLocalID")
 
@@ -269,6 +306,9 @@ def print_classic_access(cp):
 def main():
     cp = config()
     print_SE(cp)
-    print_classicSE(cp)
+    try:
+        print_classicSE(cp)
+    except Exception, e:
+        log.exception(e)
     print_SRM(cp)
 

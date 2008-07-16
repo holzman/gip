@@ -264,6 +264,10 @@ def config_compat(cp):
         "advertise_se")
     __write_config(cp, override, gip, "OSG_GIP_SE_DISK", "classic_se",
         "host")
+    __write_config(cp, override, gip, "OSG_GIP_SE_DISK", "classic_se",
+        "unique_name")
+    __write_config(cp, override, gip, "OSG_GIP_SE_DISK", "classic_se",
+        "name")
 
 def __write_config(cp, override, dict_object, key, section, option):
     """

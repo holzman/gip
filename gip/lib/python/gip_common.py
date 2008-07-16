@@ -353,25 +353,25 @@ class VoMapper:
         except KeyError:
             raise ValueError("Unable to map user: %s" % username)
 
-def FakeLogger():
+class FakeLogger:
     """
     Super simple logger for python installs which don't have the logging
     package.
     """
-    def debug(msg, *args):
-        print >> sys.stderr, msg
+    def debug(self, msg, *args):
+        print >> sys.stderr, msg % args
 
-    def info(msg, *args):
-        print >> sys.stderr, msg
+    def info(self, msg, *args):
+        print >> sys.stderr, msg % args
 
-    def warning(msg, *args):
-        print >> sys.stderr, msg
+    def warning(self, msg, *args):
+        print >> sys.stderr, msg % args
 
-    def error(msg, *args):
-        print >> sys.stderr, msg
+    def error(self, msg, *args):
+        print >> sys.stderr, msg % args
 
-    def exception(msg, *args):
-        print >> sys.stderr, msg
+    def exception(self, msg, *args):
+        print >> sys.stderr, msg % args
 
 def add_giplog_handler():
     log = logging.getLogger()

@@ -28,17 +28,16 @@ log = getLogger("GIP.SGE")
 
 sge_version_cmd = "qstat -help"
 sge_queue_info_cmd = 'qstat -f -xml'
-sge_queue_config_cmd = 'qconf -sq %(queue)s'
+sge_queue_config_cmd = 'qconf -sq %s'
 sge_job_info_cmd = 'qstat -xml'
-
+sge_queue_list_cmd = 'qconf -sql'
 
 # h_rt - hard real time limit (max_walltime)
-#sge_queue_list_cmd = 'qconf -sql'
 
 
 def getLrmsInfo(cp):
     for line in runCommand(sge_version_cmd, cp):
-        return line
+        return line.strip('\n')
     raise Exception("Unable to determine LRMS version info.")
 
 def getQueueInfo(cp):
@@ -49,51 +48,58 @@ def getQueueInfo(cp):
     @returns: A dictionary of queue data and a dictionary of job data.
     """
     queue_list = {}
-    sqc = SGEQueueConfig(runCommand(sge_queue_config_cmd, cp))
     xml = runCommand(sge_queue_info_cmd, cp)
     handler = QueueInfoParser()
     parseXmlSax(xml, handler)
     queue_info = handler.getQueueInfo()
     for queue in queue_info:
+        if queue == 'waiting':
+            continue
+
         # get queue name
-        name = queue['name'][:find(name, "@")]
-        if not queue_list[name]:
-            queue_list[name] = {'slots_used': 0, 'slots_total': 0, 'slots_free': 0, 'name' : name}
+        name = queue.split("@")[0]
+        q = queue_list.get(name, {'slots_used': 0, 'slots_total': 0, 'slots_free': 0, 'waiting' : 0, 'name' : name})
+        q['slots_used'] += int(queue_info[queue]['slots_used'])
+        q['slots_total'] += int(queue_info[queue]['slots_total'])
+        q['slots_free'] = q['slots_total'] - q['slots_used']
+        q['arch'] = queue_info[queue]["arch"]
+        q['max_running'] = q['slots_total']
 
-        queue_list[name]['slots_used'] += int(queue['slots_used'])
-        queue_list[name]['slots_total'] += int(queue['slots_total'])
-        queue_list[name]['slots_free'] = queue_list[name]['slots_total'] - queue_list[name]['slots_used']
-        queue_list[name]['arch'] = queue["arch"]
-        queue_list[name]['max_running'] = queue_list[name]['slots_total']
-
-        state = queue["state"]
-        if state == "d":
-            status = "Draining"
-        elif state == "s":
-            status = "Closed"
-        else:
+        try:
+            state = queue_info[queue]["state"]
+            if state == "d":
+                status = "Draining"
+            elif state == "s":
+                status = "Closed"
+            else:
+                status = "Production"
+        except:
             status = "Production"
-        queue_list[name]['status'] = status
-        queue_list[name]['priority'] = 0  # No such thing that I can find for a queue
+
+        q['status'] = status
+        q['priority'] = 0  # No such thing that I can find for a queue
 
         # How do you handle queues with no limit?
+        sqc = SGEQueueConfig(runCommand(sge_queue_config_cmd % queue, cp).read())
         if sqc['s_rt'].lower() == 'infinity': sqc['s_rt'] = '99999'
         if sqc['h_rt'].lower() == 'infinity': sqc['h_rt'] = '99999'
         max_wall = min(sqc['s_rt'], sqc['h_rt'])
 
-        if not queue_list[name]['max_wall']:
-            queue_list[name]['max_wall'] = max_wall
-        else:
-            queue_list[name]['max_wall'] = min(max_wall, queue_list[name]['max_wall'])
+        try:
+            q['max_wall'] = min(max_wall, q['max_wall'])
+        except:
+            q['max_wall'] = max_wall
+
+        queue_list[name] = q
 
     waiting_jobs = 0
     for job in queue_info['waiting']:
         waiting_jobs += 1
-    queue_list['waiting']['waiting'] = waiting_jobs
+    queue_list['waiting'] = waiting_jobs
 
     return queue_list, queue_info
 
-def getJobInfo(sge_queue_job_info, queueInfo, cp):
+def getJobsInfo(sge_queue_job_info, queueInfo, cp):
     xml = runCommand(sge_queue_info_cmd, cp)
     handler = JobInfoParser()
     parseXmlSax(xml, handler)
@@ -130,8 +136,9 @@ class SGEQueueConfig(UserDict):
     def digest(self, configstring):
         configList = configstring.split(self.constants.LF)
         for pair in configList:
-            key_val = pair.split()
-            self[key_val[0].strip()] = key_val[1].strip()
+            if len(pair) > 1:
+                key_val = pair.split()
+                self[key_val[0].strip()] = key_val[1].strip()
 
 def getVoQueues(cp):
     voMap = VoMapper(cp)
@@ -139,9 +146,9 @@ def getVoQueues(cp):
         queue_exclude = [i.strip() for i in cp.get("sge", "queue_exclude").split(',')]
     except:
         queue_exclude = []
-    vo_queues= []
-
-    for queue in getQueueInfo(cp):
+    vo_queues = []
+    queue_list, q = getQueueInfo(cp)
+    for queue in queue_list:
         if queue in queue_exclude:
             continue
 

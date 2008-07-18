@@ -2,8 +2,8 @@ from xml.sax.handler import ContentHandler
 
 class QueueInfoParser(ContentHandler):
     def __init__(self):
-        self.currentQueueInfoElmList = List(['name', 'qtype', 'slots_used', 'slots_total', 'arch'])
-        self.currentJobInfoElmList = List(['JB_job_number', 'JB_job_number', 'JAT_prio', 'JB_name', \
+        self.currentQueueInfoElmList = list(['name', 'qtype', 'slots_used', 'slots_total', 'arch'])
+        self.currentJobInfoElmList = list(['JB_job_number', 'JB_job_number', 'JAT_prio', 'JB_name', \
             'JB_owner', 'state', 'JAT_start_time', 'JB_submission_time', 'slots'])
 
     def startDocument(self):
@@ -11,6 +11,7 @@ class QueueInfoParser(ContentHandler):
         self.QueueList = {}
 
     def startElement(self, name, attrs):
+        self.elmContents = ''
         if name == 'Queue-List':
             self.currentQueueInfo = {}
             self.currentJobList = {}
@@ -61,7 +62,7 @@ class QueueInfoParser(ContentHandler):
 
 class JobInfoParser(ContentHandler):
     def __init__(self):
-        self.currentJobInfoElmList = List(['JB_job_number', 'JAT_prio', 'JB_name', \
+        self.currentJobInfoElmList = list(['JB_job_number', 'JAT_prio', 'JB_name', \
             'JB_owner', 'state', 'JAT_start_time', 'JB_submission_time', 'slots'])
 
     def startDocument(self):

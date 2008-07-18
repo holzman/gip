@@ -332,6 +332,7 @@ def getdCacheSESpace(cp, admin=None, gb=False, total=False):
         return the total space.  If C{gb=True}, return the numbers in GB;
         otherwise the numbers are in kilobytes.
     """
+    global dCacheSpace_cache
     if admin == None:
         admin = connect_admin(cp)
     if not dCacheSpace_cache:

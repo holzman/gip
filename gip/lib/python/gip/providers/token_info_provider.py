@@ -7,7 +7,7 @@ import sys
 import datetime
 import ConfigParser
 
-from gip_common import config, getTemplate, getLogger, cp_get
+from gip_common import config, getTemplate, getLogger, cp_get, cp_getInt
 from gip_storage import execute, connect, connect_admin, voListStorage, \
     getPath, getSESpace, getSETape
 
@@ -327,7 +327,7 @@ def main():
                 print >> sys.stderr, e
             print_SA_compat(cp)
     except:
-        sys.stdout = sys.stderr
+        #sys.stdout = sys.stderr
         raise
 
 if __name__ =='__main__':

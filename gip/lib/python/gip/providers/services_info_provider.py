@@ -316,7 +316,7 @@ def main():
         # Make sure we don't feed the error to the BDII stream;
         # fail silently, hopefully someone logs the stderr.
         print_srm_compat(cp)
-        sys.stdout = sys.stderr
+        #sys.stdout = sys.stderr
         log.exception(e)
         #raise
 

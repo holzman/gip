@@ -22,21 +22,21 @@ def main():
         return
     try:
         services_info_provider.print_se(cp)
-        admin = connect_admin(cp)
+        admin = services_info_provider.connect_admin(cp)
         services_info_provider.print_access_protocols(cp, admin)
-        print_srm(cp, admin)
+        services_info_provider.print_srm(cp, admin)
     except Exception, e:
         # Make sure we don't feed the error to the BDII stream;
         # fail silently, hopefully someone logs the stderr.
         services_info_provider.print_srm_compat(cp)
-        sys.stdout = sys.stderr
+        #sys.stdout = sys.stderr
         log.exception(e)
 
     try:
         # Turn SRMv2 spaces into GLUE
         p=token_info_provider.connect(cp)
         token_info_provider.print_VOinfo(p, cp)
-        print_SA(p, cp)
+        token_info_provider.print_SA(p, cp)
         p.close()
     except Exception, e:
         print >> sys.stderr, e

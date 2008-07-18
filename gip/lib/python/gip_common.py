@@ -165,6 +165,7 @@ def config_compat(cp):
     If VDT_LOCATION is not defined, this function does nothing.
     """
     if "VDT_LOCATION" not in os.environ:
+        log.warning("$VDT_LOCATION not defined; won't pick up OSG attributes.")
         return
 
     try:
@@ -179,6 +180,7 @@ def config_compat(cp):
     except Exception, e:
         log.error("Unable to open OSG attributes: %s" % str(e))
         osg = None
+
 
     info = {1: "ldap://is.grid.iu.edu:2170", 2: "True"}
     __write_config(cp, override, info, 1, "bdii", \
@@ -221,8 +223,6 @@ def config_compat(cp):
         __write_config(cp, override, osg, "GRID3_SITE_INFO", "site",
             "sitepolicy")
         __write_config(cp, override, osg, "GRID3_SPONSOR", "site", "sponsor")
-        __write_config(cp, override, osg, "OSG_GIP_DYNAMIC_DCACHE", "se",
-            "dynamic_dcache")
 
     # Do the same but with the gip stuff.
     try:
@@ -268,6 +268,9 @@ def config_compat(cp):
         "unique_name")
     __write_config(cp, override, gip, "OSG_GIP_SE_DISK", "classic_se",
         "name")
+    __write_config(cp, override, gip, "OSG_GIP_DYNAMIC_DCACHE", "se",
+        "dynamic_dcache")
+
 
 def __write_config(cp, override, dict_object, key, section, option):
     """

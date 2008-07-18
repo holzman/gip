@@ -316,6 +316,7 @@ def getClassicSESpace(cp, gb=False, total=False):
         return used, free, tot
     return used, free
 
+dCacheSpace_cache = None
 def getdCacheSESpace(cp, admin=None, gb=False, total=False):
     """
     Get the total amount of space available in a dCache instance.  By default,
@@ -333,14 +334,18 @@ def getdCacheSESpace(cp, admin=None, gb=False, total=False):
     """
     if admin == None:
         admin = connect_admin(cp)
-    pools = lookupPoolStorageInfo(admin, log)
-    used = 0L # In KB
-    free = 0L # In KB
-    tot  = 0L # In KB
-    for pool in pools:
-        used += pool.usedSpaceKB
-        free += pool.freeSpaceKB
-        tot  += pool.totalSpaceKB
+    if not dCacheSpace_cache:
+        pools = lookupPoolStorageInfo(admin, log)
+        used = 0L # In KB
+        free = 0L # In KB
+        tot  = 0L # In KB
+        for pool in pools:
+            used += pool.usedSpaceKB
+            free += pool.freeSpaceKB
+            tot  += pool.totalSpaceKB
+        dCacheSpace_cache = used, free, tot
+    else:
+        used, free, tot = dCacheSpace_cache
     if gb:
         used /= 1000000L
         free /= 1000000L

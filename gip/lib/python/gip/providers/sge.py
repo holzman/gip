@@ -37,38 +37,38 @@ def print_CE(cp):
                 acbr += 'GlueCEAccessControlBaseRule: VO:%s\n' % vo
 
         info = { \
-            "ceUniqueID" : unique_id
-            "ceName" : ce_name
-            "ceImpl" : 'Globus'
-            "ceImplVersion" : cp_get(cp, ce, 'globus_version', '4.0.6')
-            "clusterUniqueID" : getClusterID(cp)
-            "queue" : queue['name']
-            "priority" : queue['priority']
-            "lrmsType" : 'sge'
-            "lrmsVersion" : SGEVersion
-            "job_manager" : "sge"
-            "job_slots" : queue["slots_total"]
-            "free_slots" : queue["slots_free"]
-            "ert" : 3600
-            "wrt" : 3600
-            "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name)
-            "hostName" : cp_get(cp, ce, 'host_name', ce_name)
-            "contact_string" : unique_id
-            "app_dir" : cp.get('osg_dirs', 'app')
-            "data_dir" : cp.get('osg_dirs', 'data')
-            "default_se" : cp.get('se', 'name')
-            "max_running" : queue["slots_total"]
-            "max_wall" : queue["max_wall"]
-            "max_waiting" : default_max_waiting
-            "max_slots" : 1
-            "max_total" : default_max_waiting + queue["slots_total"]
-            "assigned" : queue["slots_used"]
-            "preemption" : cp_get(cp, 'sge', 'preemption', '0')
-            "acbr" : acbr[:-1]
-            "bdii: " cp.get('bdii', 'endpoint')
-            "gramVersion" : '2.0'
-            "port" : 2119
-            "waiting" : queue['waiting']
+            "ceUniqueID" : unique_id,
+            "ceName" : ce_name,
+            "ceImpl" : 'Globus',
+            "ceImplVersion" : cp_get(cp, ce, 'globus_version', '4.0.6'),
+            "clusterUniqueID" : getClusterID(cp),
+            "queue" : queue['name'],
+            "priority" : queue['priority'],
+            "lrmsType" : 'sge',
+            "lrmsVersion" : SGEVersion,
+            "job_manager" : "sge",
+            "job_slots" : queue["slots_total"],
+            "free_slots" : queue["slots_free"],
+            "ert" : 3600,
+            "wrt" : 3600,
+            "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name),
+            "hostName" : cp_get(cp, ce, 'host_name', ce_name),
+            "contact_string" : unique_id,
+            "app_dir" : cp.get('osg_dirs', 'app'),
+            "data_dir" : cp.get('osg_dirs', 'data'),
+            "default_se" : cp.get('se', 'name'),
+            "max_running" : queue["slots_total"],
+            "max_wall" : queue["max_wall"],
+            "max_waiting" : default_max_waiting,
+            "max_slots" : 1,
+            "max_total" : default_max_waiting + queue["slots_total"],
+            "assigned" : queue["slots_used"],
+            "preemption" : cp_get(cp, 'sge', 'preemption', '0'),
+            "acbr" : acbr[:-1],
+            "bdii": cp.get('bdii', 'endpoint'),
+            "gramVersion" : '2.0',
+            "port" : 2119,
+            "waiting" : queue['waiting'],
         }
         printTemplate(ce_template, info)
     return queueInfo

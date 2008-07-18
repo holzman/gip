@@ -10,7 +10,7 @@ from gip.providers.condor import main as condor_main
 from gip.providers.sge import main as sge_main
 from gip.providers.lsf import main as lsf_main
 
-log = getLogger()
+log = getLogger("GIP.BatchSystem")
 
 def main():
     cp = config()

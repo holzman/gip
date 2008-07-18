@@ -172,6 +172,11 @@ def config_compat(cp):
         override = cp.getboolean("gip", "override")
     except:
         override = False
+
+    config_compat_osg_attributes(override, cp)
+    config_compat_gip_attributes(override, cp)
+
+def config_compat_osg_attributes(override, cp):
     osg = None
     try:
         attributes = cp_get(cp, "gip", "osg_attributes", \
@@ -181,6 +186,8 @@ def config_compat(cp):
         log.error("Unable to open OSG attributes: %s" % str(e))
         osg = None
 
+    if osg == None:
+        return
 
     info = {1: "ldap://is.grid.iu.edu:2170", 2: "True"}
     __write_config(cp, override, info, 1, "bdii", \
@@ -188,43 +195,43 @@ def config_compat(cp):
     __write_config(cp, override, info, 2, "cluster", "simple")
     __write_config(cp, override, info, 2, "cesebind", "simple")
 
-    if osg != None:
-        # Write the attributes from the flat attributes file to the
-        # ConfigParser object, which is organized by sections.
-        __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "name")
-        __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "unique_name")
-        __write_config(cp, override, osg, "OSG_DEFAULT_SE", "se", "name")
-        __write_config(cp, override, osg, "OSG_GIP_SE_HOST", "se", \
-            "unique_name")
-        # No SE at the site; use the disk's SE
-        if cp.has_section("se") and cp.has_option("se", "unique_name") and \
-                cp.get("se", "unique_name") == '':
-            __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
-                "unique_name")
-        __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "name")
-        __write_config(cp, override, osg, "OSG_SITE_NAME", "site",
-            "unique_name")
-        __write_config(cp, override, osg, "OSG_SITE_CITY", "site", "city")
-        __write_config(cp, override, osg, "OSG_SITE_COUNTRY", "site", "country")
-        __write_config(cp, override, osg, "OSG_CONTACT_NAME", "site", "contact")
-        __write_config(cp, override, osg, "OSG_CONTACT_EMAIL", "site", "email")
-        __write_config(cp, override, osg, "OSG_SITE_LONGITUDE", "site",
-                       "longitude")
-        __write_config(cp, override, osg, "OSG_SITE_LATITUDE", "site",
-                       "latitude")
-        __write_config(cp, override, osg, "OSG_APP", "osg_dirs", "app")
-        __write_config(cp, override, osg, "OSG_DATA", "osg_dirs", "data")
-        __write_config(cp, override, osg, "OSG_WN_TMP", "osg_dirs", "wn_tmp")
-        __write_config(cp, override, osg, "OSG_JOB_MANAGER", "ce",
-                       "job_manager")
-        __write_config(cp, override, osg, "OSG_PBS_LOCATION", "pbs", "pbs_path")
-        __write_config(cp, override, osg, "OSG_SGE_LOCATION", "sge", "sge_path")
-        __write_config(cp, override, osg, "OSG_SGE_ROOT", "sge", "sge_root")
-        __write_config(cp, override, osg, "GRID3_SITE_INFO", "site",
-            "sitepolicy")
-        __write_config(cp, override, osg, "GRID3_SPONSOR", "site", "sponsor")
+    # Write the attributes from the flat attributes file to the
+    # ConfigParser object, which is organized by sections.
+    __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "name")
+    __write_config(cp, override, osg, "OSG_HOSTNAME", "ce", "unique_name")
+    __write_config(cp, override, osg, "OSG_DEFAULT_SE", "se", "name")
+    __write_config(cp, override, osg, "OSG_GIP_SE_HOST", "se", \
+                   "unique_name")
+    # No SE at the site; use the disk's SE
+    if cp.has_section("se") and cp.has_option("se", "unique_name") and \
+            cp.get("se", "unique_name") == '':
+        __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
+                       "unique_name")
+    __write_config(cp, override, osg, "OSG_SITE_NAME", "site", "name")
+    __write_config(cp, override, osg, "OSG_SITE_NAME", "site",
+                  "unique_name")
+    __write_config(cp, override, osg, "OSG_SITE_CITY", "site", "city")
+    __write_config(cp, override, osg, "OSG_SITE_COUNTRY", "site", "country")
+    __write_config(cp, override, osg, "OSG_CONTACT_NAME", "site", "contact")
+    __write_config(cp, override, osg, "OSG_CONTACT_EMAIL", "site", "email")
+    __write_config(cp, override, osg, "OSG_SITE_LONGITUDE", "site",
+                   "longitude")
+    __write_config(cp, override, osg, "OSG_SITE_LATITUDE", "site",
+                   "latitude")
+    __write_config(cp, override, osg, "OSG_APP", "osg_dirs", "app")
+    __write_config(cp, override, osg, "OSG_DATA", "osg_dirs", "data")
+    __write_config(cp, override, osg, "OSG_WN_TMP", "osg_dirs", "wn_tmp")
+    __write_config(cp, override, osg, "OSG_JOB_MANAGER", "ce",
+                   "job_manager")
+    __write_config(cp, override, osg, "OSG_PBS_LOCATION", "pbs", "pbs_path")
+    __write_config(cp, override, osg, "OSG_SGE_LOCATION", "sge", "sge_path")
+    __write_config(cp, override, osg, "OSG_SGE_ROOT", "sge", "sge_root")
+    __write_config(cp, override, osg, "GRID3_SITE_INFO", "site",
+                   "sitepolicy")
+    __write_config(cp, override, osg, "GRID3_SPONSOR", "site", "sponsor")
 
-    # Do the same but with the gip stuff.
+def config_compat_gip_attributes(override, cp):
+    # Do the same as osg-attributes but with the gip stuff.
     try:
         attributes = cp_get(cp, "gip", "gip_attributes", \
             "$VDT_LOCATION/monitoring/gip-attributes.conf")
@@ -270,7 +277,49 @@ def config_compat(cp):
         "name")
     __write_config(cp, override, gip, "OSG_GIP_DYNAMIC_DCACHE", "se",
         "dynamic_dcache")
+    
+    config_compat_gip_attributes_subcluster(gip, override, cp)
 
+info_map = {\
+    "name":             "01",
+    "unique_name":      "01",
+    "cpu_vendor":       "02",
+    "cpu_model":        "03",
+    "cpu_speed_mhz":    "04",
+    "cpus_per_node":    "05",
+    "cores_per_node":   "06",
+    "ram_size":         "11",
+    "inbound_network":  "21",
+    "outbound_network": "22",
+    "node_count":       "99",
+}
+
+def config_compat_gip_attributes_subcluster(gip, override, cp):
+    """
+    Load up the GIP subcluster information from gip-attribtues.conf; as this
+    information wins the award of "the biggest hack on the OSG", we'll separate
+    it out into it's own function.
+    """
+    __write_config(cp, override, gip, "OSG_GIP_SC_NUMBER", "cluster",
+                   "num_subclusters")
+    num_subclusters = cp_getInt(cp, "cluster", "num_subclusters", 0)
+    base_num = 1
+    while cp.has_section("subcluster_%i" % base_num):
+        base_num += 1
+    for i in range(num_subclusters):
+        section = "subcluster_%i" % (i + base_num)
+        for key, val in info_map.items():
+            key2 = "OSG_GIP_SC_ARR[%i%s]" % (i+1, val)
+            __write_config(cp, override, gip, key2, section, key)
+        cores_per_node = cp_getInt(cp, section, "cores_per_node", 0)
+        cpus_per_node = cp_getInt(cp, section, "cpus_per_node", 1)
+        if cpus_per_node == 0:
+            cpus_per_node = 1
+            cores_per_node = 0
+        nodes = cp_getInt(cp, section, "node_count", 0)
+        cp.set(section, "cores_per_cpu", "%i" % (cores_per_node/cpus_per_node))
+        cp.set(section, "total_cores", "%i" % (nodes*cores_per_node))
+        cp.set(section, "total_cpus", "%i" % (nodes*cpus_per_node))
 
 def __write_config(cp, override, dict_object, key, section, option):
     """

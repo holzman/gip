@@ -54,13 +54,13 @@ def main(cp = None, return_entries=False):
     if cp == None:
         cp = config()
     temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
-        "$VDT_LOCATION/gip/var/tmp"))
+        "$GIP_LOCATION/var/tmp"))
     plugin_dir = os.path.expandvars(cp_get(cp, "gip", "plugin_dir", \
-        "$VDT_LOCATION/gip/plugins"))
+        "$GIP_LOCATION/plugins"))
     provider_dir = os.path.expandvars(cp_get(cp, "gip", "provider_dir", \
-        "$VDT_LOCATION/gip/providers"))
+        "$GIP_LOCATION/providers"))
     static_dir = os.path.expandvars(cp_get(cp, "gip", "static_dir", \
-        "$VDT_LOCATION/gip/var/ldif"))
+        "$GIP_LOCATION/var/ldif"))
 
     # Make sure that our directories exist.
     create_if_not_exist(temp_dir, plugin_dir, provider_dir, static_dir)
@@ -436,6 +436,7 @@ def run_child(executable, orig_filename, timeout):
             os._exit(os.EX_SOFTWARE)
     log.debug("Set a %.2f second timeout." % timeout)
     t1 = -time.time()
+    sys.stderr = open(os.path.expandvars("$GIP_LOCATION/var/logs/module.logs"), 'a')
     exec_name = executable.split('/')[-1]
     pid = os.spawnl(os.P_NOWAIT, "/bin/sh", exec_name, "-c", "%s > %s" % \
         (executable, filename))
@@ -492,6 +493,8 @@ def read_static(static_dir):
             info = open(filename, 'r').read()
         except:
             log.error("Unable to read %s." % filename)
+        if len(info) == 0:
+            continue
         if info[-1] != "\n":
             info += '\n'
         if info[-2] != "\n":

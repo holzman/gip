@@ -5,7 +5,8 @@ import re
 import sys
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getLogger, getTemplate
+from gip_common import config, getLogger, getTemplate, printTemplate
+from gip_cluster import getApplications, getSubClusterIDs, getClusterID
 
 log = getLogger("GIP.Software")
 
@@ -32,6 +33,15 @@ def print_Locations(cp):
                 'path'         : info[2]
                }
         print template % info
+
+def print_Locations(cp):
+    template = getTemplate("GlueCluster", "GlueLocationLocalID")
+    cluster_id = getClusterID(cp)
+    for subClusterId in getSubClusterIDs(cp):
+        for entry in getApplications(cp):
+            entry['subClusterId'] = subClusterId
+            entry['clusterId'] = cluster_id
+            printTemplate(template, entry)
 
 def main():
     try:

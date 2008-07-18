@@ -179,7 +179,7 @@ class GipValidate(unittest.TestCase):
             parts= urlparse.urlparse(entry.glue['SiteWeb'])
             self.assertNotEquals(parts, '', msg="Invalid website: %s" % \
                 entry.glue['SiteWeb'])
-           
+
     def test_sponsors(self):
         r = re.compile("(\w+):([0-9]+)")
         for entry in self.entries:
@@ -189,8 +189,12 @@ class GipValidate(unittest.TestCase):
             self.assertNotEquals(m, None, msg="Invalid site sponsor: %s" % \
                 entry.glue['SiteSponsor'])
             tot = 0
+            num_sponsors = 0
             for e in m:
+                num_sponsors += 1
                 tot += int(e[1])
+            if num_sponsors == 1 and tot == 0:
+                tot = 100
             self.assertEquals(tot, 100, msg="Site sponsorship does not add up "\
                 " to 100: %s" % entry.glue['SiteSponsor'])
 
@@ -227,7 +231,7 @@ class GipValidate(unittest.TestCase):
             if 'ChunkKey' not in entry.glue:
                 continue
             self.test_existence(entry.glue['ChunkKey'], full=True)
-       
+
     def test_foreign_key(self):
         for entry in self.entries:
             value = entry.glue.get('ForeignKey', None)
@@ -238,7 +242,7 @@ class GipValidate(unittest.TestCase):
                     self.test_existence(entry.glue['ForeignKey'], full=True)
             else:
                 self.test_existence(entry.glue['ForeignKey'], full=True)
- 
+
     def test_egee_site_unique_id(self):
         for entry in self.entries:
             if 'GlueSite' not in entry.objectClass:

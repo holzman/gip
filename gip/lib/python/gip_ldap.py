@@ -7,7 +7,7 @@ __author__ = "Brian Bockelman"
 
 import os
 import re
-
+import sys
 
 class _hdict(dict):
     """
@@ -56,7 +56,7 @@ class LdapData:
             try:
                 attr, val = line.split(': ', 1)
             except:
-                print line.strip()
+                print >> sys.stderr, line.strip()
                 raise
             val = val.strip()
             if attr.startswith('Glue'):

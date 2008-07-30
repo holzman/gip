@@ -57,13 +57,16 @@ def getOSGVersion(cp):
     """
     Returns the running version of the OSG
     """
-    osg_ver = cp_get(cp, "ce", "osg_version", "OSG 1.2.0")
+    osg_ver_backup = cp_get(cp, "ce", "osg_version", "OSG 1.2.0")
     try:
-        if os.environ['VDT_LOCATION'] not in os.environ['PATH']:
+        if os.environ['VDT_LOCATION'] not in os.environ['PATH'].split(':'):
             os.environ['PATH'] += ':' + os.environ['VDT_LOCATION']
         osg_ver = runCommand('osg-version').read().strip()
     except Exception, e:
         log.exception(e)
+        osg_ver = ''
+    if len(osg_ver) == 0:
+        osg_ver = osg_ver_backup
     return osg_ver
 
 def getClusterName(cp):
@@ -133,11 +136,11 @@ def _generateSubClusterHelper(cp, section):
     if notDefined(tmp):
         tmp = default_tmp
 
-    #OSG Version
-    osg_ver = getOSGVersion(cp)
-
-    applications = 'GlueHostApplicationSoftwareRunTimeEnvironment: %s\n' % \
-        osg_ver
+    app_attr = 'GlueHostApplicationSoftwareRunTimeEnvironment'
+    apps = getApplications(cp)
+    applications = '\n'.join(['%s: %s' % (app_attr, i['locationId']) for i in \
+        apps if i['locationId']])
+    applications += '\n'
         
     # BDII stuff
     bdii = cp_get(cp, "bdii", "endpoint", "ldap://is.grid.iu.edu:2170")
@@ -190,5 +193,10 @@ def getApplications(cp):
             info = {'locationName': info[0], 'version': info[1], 'path':info[2]}
             info['locationId'] = info['locationName']
             locations.append(info)
+    osg_ver = getOSGVersion(cp)
+    if osg_ver:
+        info = {'locationId': osg_ver, 'locationName': osg_ver, 'version': \
+            'osg_ver', 'path': os.environ.get('VDT_LOCATION', '/UNKNOWN')}
+        locations.append(info)
     return locations
 

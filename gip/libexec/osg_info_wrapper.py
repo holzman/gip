@@ -138,6 +138,8 @@ def flush_cache(temp_dir):
     """
     files = os.listdir(temp_dir)
     for file in files:
+        if file.startswith('.'):
+            continue
         file = os.path.join(temp_dir, file)
         try:
             os.remove(file)
@@ -401,6 +403,8 @@ def list_modules(dirname):
     info = {}
     for file in os.listdir(dirname):
          if os.path.isdir(file):
+             continue
+         if file.startswith('.'):
              continue
          mod_info = {}
          mod_info['name'] = file

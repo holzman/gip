@@ -5,7 +5,7 @@ import sys
 
 #Standard testing imports:
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config
+from gip_common import config, cp_get
 
 #Add the path with the osg_info_wrapper script:
 sys.path.append(os.path.expandvars("$GIP_LOCATION/libexec"))
@@ -13,8 +13,15 @@ import osg_info_wrapper
 
 def main():
     cp = config()
+    if 'gip' not in cp.sections():
+        cp.add_section('gip')
     cp.set("gip", "flush_cache", "True")
-    osg_info_wrapper.main(cp)
+    try:
+        osg_info_wrapper.main(cp)
+    finally:
+        temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
+            "$GIP_LOCATION/var/tmp"))
+        osg_info_wrapper.flush_cache(temp_dir)
 
 if __name__ == '__main__':
     main()

@@ -10,6 +10,9 @@ It takes advantage of the XML format of the ClassAds in order to make parsing
 easier.
 """
 
+import sets
+import time
+
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler, feature_external_ges
 
@@ -56,7 +59,18 @@ class ClassAdParser(ContentHandler):
         """
         self.attrInfo = ''
         self.caInfo = {}
-    
+        self._starttime = time.time()
+   
+    def endDocument(self):
+        """
+        Print out debugging information from this document parsing.
+        """
+        self._endtime = time.time()
+        self._elapsed = self._endtime - self._starttime
+        myLen = len(self.caInfo)
+        log.info("Processed %i classads in %.2f seconds; %.2f classads/second" % (myLen,
+            self._elapsed, myLen/(self._elapsed+1e-10)))
+
     def startElement(self, name, attrs):
         """
         Open an XML element - take note if its a 'c', for the start of a new
@@ -131,6 +145,7 @@ def condorCommand(command, cp, info={}):
     # must test for empty dict for special cases like the condor_status
     #  command which has -format '%s' arguments.  Python will try to do
     #  the string substitutions regardless of single quotes
+    log.debug("Running command %s." % command)
     if info:
         cmd = command % info
     else:
@@ -149,7 +164,9 @@ def getLrmsInfo(cp):
     """
     for line in condorCommand(condor_version, cp):
         if line.startswith("$CondorVersion:"):
-            return line[15:].strip()
+            version = line[15:].strip()
+            log.info("Running condor version %s." % version)
+            return version
     ve = ValueError("Bad output from condor_version.")
     log.exception(ve)
     raise ve
@@ -166,7 +183,11 @@ def getGroupInfo(vo_map, cp):
     @returns: A dictionary whose keys are VO groups and values are the quota
         and priority of the group.
     """
-    output = condorCommand(condor_group, cp).read().split(',')
+    fp = condorCommand(condor_group, cp)
+    output = fp.read().split(',')
+    if fp.close():
+        log.info("No condor groups found.")
+        return {}
     retval = {}
     if (not (output[0].strip().startswith('Not defined'))) and \
             (len(output[0].strip()) > 0):
@@ -187,6 +208,7 @@ def getGroupInfo(vo_map, cp):
             except:
                 pass
             retval[vo] = curInfo
+    log.debug("The condor groups are %s." % ', '.join(retval.keys()))
     return retval
 
 def getJobsInfo(vo_map, cp):
@@ -217,13 +239,14 @@ def getJobsInfo(vo_map, cp):
             pass
         my_info_dict[my_key] += new_info
 
+    unknown_users = sets.Set()
     for user, info in handler.getClassAds().items():
         # Determine the VO, or skip the entry
         name = user.split("@")[0]
         try:
             vo = vo_map[name].lower()
         except Exception, e:
-            log.exception(e)
+            unknown_users.add(name)
             continue
 
         # Add the information to the current dictionary.
@@ -234,8 +257,13 @@ def getJobsInfo(vo_map, cp):
         addIntInfo(my_info, info, "held", "HeldJobs")
         addIntInfo(my_info, info, "max_running", "MaxJobsRunning")
         vo_jobs[vo] = my_info
+
+    log.warning("The following users are non-grid users: %s" % \
+        ", ".join(unknown_users))
+
     return vo_jobs
 
+_nodes_cache = []
 def parseNodes(cp):
     """
     Parse the condor nodes.
@@ -243,7 +271,11 @@ def parseNodes(cp):
     @param cp: ConfigParser object for the GIP
     @returns: A tuple consisting of the total, claimed, and unclaimed nodes.
     """
+    global _nodes_cache
+    if _nodes_cache:
+        return _nodes_cache
     subtract = cp_getBoolean(cp, "condor", "subtract_owner", True)
+    log.debug("Parsing condor nodes.")
     fp = condorCommand(condor_status, cp)
     handler = ClassAdParser('Name', ['State'])
     parseCondorXml(fp, handler)
@@ -260,5 +292,7 @@ def parseNodes(cp):
             unclaimed += 1
         elif subtract and info['State'] == 'Owner':
             total -= 1
+    log.info("There are %i total; %i claimed and %i unclaimed." % (total, claimed, unclaimed))
+    _nodes_cache = total, claimed, unclaimed
     return total, claimed, unclaimed
 

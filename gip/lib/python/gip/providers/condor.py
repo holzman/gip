@@ -93,17 +93,14 @@ def print_CE(cp):
     groupInfo['default'] = {'prio': 0, 'quota': 0}
     defaultVoList = voList(cp)
     defaultVoList = [i for i in defaultVoList if i not in groupInfo]
-    acbr = 'GlueAccessControlBaseRule: ' + '\nGlueAccessControlBaseRule: '.\
-        join(defaultVoList) + '\n'
-    acbr +='GlueAccessControlBaseRule: ' + '\nGlueAccessControlBaseRule: '.\
-        join(['VO:%s' % i for i in defaultVoList])
+    acbr = '\n'.join(['GlueAccessControlBaseRule: VO:%s' % i for i in \
+        defaultVoList])
     groupInfo['default']['acbr'] = acbr
 
     for group, ginfo in groupInfo.items():
         ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)
         if 'acbr' not in ginfo:
-            ginfo['acbr'] = 'GlueAccessControlBaseRule: %s\n' \
-                'GlueAccessControlBaseRule: VO:%s' % (group, group)
+            ginfo['acbr'] = 'GlueAccessControlBaseRule: VO:%s' % group
         max_running = 0
         if group in jobs_info:
             max_running = jobs_info[group].get('max_running', 0)
@@ -191,8 +188,7 @@ def print_VOViewLocal(cp):
         vos = groupInfo[group].get('vos', [group])
         ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)    
         for vo in vos:
-            acbr = 'GlueAccessControlBaseRule: %s\n' \
-                'GlueAccessControlBaseRule: VO:%s' % (vo, vo)
+            acbr = 'VO:%s' % vo
             info = jobs_info.get(vo, {"running": 0, "idle": 0, "held": 0})
             info = {"vo"      : vo,
                 "acbr"        : acbr,

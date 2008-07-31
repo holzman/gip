@@ -5,7 +5,7 @@ objectClass: GlueKey
 objectClass: GlueSchemaVersion
 GlueSiteUniqueID: %(uniqueID)s
 GlueSiteName: %(siteName)s
-GlueSiteDescription: OSG site
+GlueSiteDescription: OSG Site
 GlueSiteEmailContact: %(emailContact)s
 GlueSiteUserSupportContact: %(contact)s
 GlueSiteSysAdminContact: %(contact)s

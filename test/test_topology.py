@@ -32,7 +32,7 @@ class TestSiteTopology(unittest.TestCase):
             if 'GlueSite' in entry.objectClass:
                 self.failUnless(entry.glue['SiteUniqueID'] == 'Nebraska')
                 self.failUnless(entry.glue['SiteName'] == 'Nebraska')
-                self.failUnless(entry.glue['SiteDescription'] == 'OSG site')
+                self.failUnless(entry.glue['SiteDescription'] == 'OSG Site')
                 self.failUnless(entry.glue['SiteLatitude'] == '40.82')
                 has_site = True
         self.failUnless(has_site, msg="No site LDAP entry present!")

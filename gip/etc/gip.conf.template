@@ -77,7 +77,7 @@ name = red.unl.edu
 
 [subcluster_1]
 name = Dell Opteron nodes
-uniqueID=dellnodes
+unique_name=dellnodes
 
 # All the host stats refer to the worker nodes in this cluster.
 cpus_per_node = 2

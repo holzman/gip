@@ -148,12 +148,11 @@ def print_srm(cp, admin):
 
     # Determine the VOs which are allowed to use this storage element
     # TODO: not GLUE v2.0 safe
-    acbr_tmpl = '\nGlueServiceAccessControlRule: %s' \
-                '\nGlueServiceAccessControlRule: VO:%s'
+    acbr_tmpl = '\nGlueServiceAccessControlRule: VO:%s'
     acbr = ''
     vos = voListStorage(cp)
     for vo in vos:
-        acbr += acbr_tmpl % (vo, vo)
+        acbr += acbr_tmpl % vo
 
     # Use the srm-LoginBroker cell to list all the SRM cells available.
     results = admin.execute("srm-LoginBroker", "ls")
@@ -254,11 +253,10 @@ def print_srm_compat(cp):
     vos = voListStorage(cp) 
     ServiceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
     ControlTemplate = getTemplate("GlueSE", "GlueSEControlProtocolLocalID")
-    acbr_tmpl = '\nGlueServiceAccessControlRule: %s' \
-                '\nGlueServiceAccessControlRule: VO:%s'
+    acbr_tmpl = '\nGlueServiceAccessControlRule: VO:%s'
     acbr = ''   
     for vo in vos:
-        acbr += acbr_tmpl % (vo, vo)
+        acbr += acbr_tmpl % vo
     
     # Maybe dynamic dCache stuff is just broken, and we always want to
     # publish things as in production

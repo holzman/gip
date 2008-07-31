@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import os
+import sys
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 
 from gip.providers.token_info_provider import main

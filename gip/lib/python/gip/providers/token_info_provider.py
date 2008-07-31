@@ -7,8 +7,9 @@ import sys
 import datetime
 import ConfigParser
 
-from gip_common import config, getTemplate, getLogger, cp_get, cp_getInt
-from gip_storage import execute, connect, connect_admin, voListStorage, \
+from gip_common import config, getTemplate, getLogger, cp_get, cp_getInt, \
+    cp_getBoolean
+from gip_storage import execute, connect, voListStorage, \
     getPath, getSESpace, getSETape
 
 log = getLogger("GIP.token_provider")
@@ -133,8 +134,7 @@ def print_SA_compat(cp):
         used = 0
         available = 0
     for vo in vos:
-        acbr = "GlueSAAccessControlBaseRule: %s\n" % vo
-        acbr += "GlueSAAccessControlBaseRule: VO:%s" % vo
+        acbr = "GlueSAAccessControlBaseRule: VO:%s" % vo
         info = {"saLocalID"        : vo,
                 "seUniqueID"       : se_unique_id,
                 "root"             : "/",
@@ -273,7 +273,7 @@ def print_SA(p, cp):
                 if voms_entry not in access_perms:
                     access_perms.append(voms_entry)
         for entry in access_perms:
-            acbr += "GlueSAAccessControlBaseRule: %s\n" % entry
+            acbr += "GlueSAAccessControlBaseRule: VO:%s\n" % entry
         acbr = acbr[:-1]
 
         path = getPath(cp, '')

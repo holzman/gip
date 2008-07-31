@@ -692,3 +692,52 @@ def notDefined(val):
     if val.lower() in ['UNAVAILABLE', 'UNDEFINED', 'UNKNOWN']:
         return True
     return False
+
+def normalizeFQAN(fqan):
+    """
+    Return fqan in the form of /<VO>[/<VO group>/]Role=<VO Role>
+
+    If VO group is not specified, return /<VO>/Role=<VO Role>
+    If the VO Role is not specified, return /VO/Role=*
+    """
+    if fqan.startswith("VOMS:"):
+        fqan = fqan[5:]
+    if fqan.startswith('VO:'):
+        fqan = fqan[3:]
+    if not fqan.startswith('/'):
+        fqan = '/' + fqan
+    if fqan.find('Role=') < 0:
+        fqan += '/Role=*'
+    return fqan
+
+def matchFQAN(fqan1, fqan2):
+    """
+    Return True if fqan1 matches with fqan2, False otherwise
+
+    fqan1 may actually be more specific than fqan2.  So, if fqan1 is /cms/blah
+    and fqan2 is /cms, then there is a match.  If the Role=* for fqan2, the
+    value of the Role for fqan1 is ignored.
+
+    FQANs may be of the form:
+       - VOMS:<FQAN>
+       - VO:<VO Name>
+       - <FQAN>
+       - <VO>
+
+    @param fqan1: The FQAN we are testing for match
+    @param fqan2: The FQAN 
+    """
+    fqan1 = normalizeFQAN(fqan1)
+    fqan2 = normalizeFQAN(fqan2)
+    vog1, vor1 = fqan.split('/Role=')
+    vog2, vor2 = fqan.split('/Role=')
+    vog_matches = False
+    vor_matches = False
+    if vor2 == '*':
+        vor_matches = True
+    elif vor2 == vor1:
+        vor_matches = True
+    if vog1.startswith(vog2):
+        vog_matches = True
+    return vog_matches and vor_matches
+

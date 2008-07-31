@@ -13,44 +13,9 @@ import traceback
 
 from gip_common import getLogger, cp_get, cp_getBoolean
 from gip_sections import se
-import dCacheAdmin
-
+from gip.dcache.admin import connect_admin
+from gip.dcache.pools import convertToKB, lookupPoolStorageInfo
 log = getLogger("GIP.Storage")
-
-def connect_admin(cp):
-    """
-    Connect to the site's admin interface.
-
-    @param cp: Configuration of the site.
-    @type cp: ConfigParser
-    """
-    info = {'Interface':'dCache'}
-    info['AdminHost'] = cp.get("dcache_admin", "hostname")
-    try:
-        info['Username'] = cp.get("dcache_admin", "username")
-    except:
-        pass
-    try:
-        info['Cipher'] = cp.get("dcache_admin", "cipher")
-    except:
-        pass
-    try:
-        info['Port'] = cp.get("dcache_admin", "port")
-    except:
-        pass
-    try:
-        info['Password'] = cp.get("dcache_admin", "password")
-    except:
-        pass
-    try:
-        info['Protocol'] = cp.get("dcache_admin", "protocol")
-    except:
-        pass
-    try:
-        timeout = cp.getint("dcache_admin", "timeout")
-    except:
-        timeout = 5
-    return dCacheAdmin.Admin(info, timeout)
 
 def execute(p, command, bind_vars=None):
     """
@@ -147,109 +112,12 @@ def getPath(cp, vo, section='vo', classicSE=False):
         fallback1 = cp_get(cp, "osg_dirs", "data", "/UNKNOWN")
         fallback = cp_get(cp, section, "default", fallback1).replace("$VO", vo)
     else:
-        fallback = cp_get(cp, section, "default", "/UNKNOWN").replace("$VO", vo)
+        myvo = vo
+        if not myvo:
+            myvo = ''
+        fallback = cp_get(cp, section, "default","/UNKNOWN").replace("$VO",myvo)
     path = cp_get(cp, section, vo, fallback)
     return path
-
-# The next three definitions are taken from the Gratia storage probe
-
-def convertToKB( valueString ) : 
-    """ 
-    This function translates file sizes from the units specified to kilobytes.
-    The unit specifiers can be in uppercase or lowercase. Acceptable unit
-    specifiers are g m k b. If no specifier is provided, bytes is assumed.
-    E.g., 10G is translated to 10485760.
-
-    1048576 is assumed to be in bytes and is translated to 1024.
-
-    @param valueString: Size to be converted to kilobytes.
-    """ 
-    result = re.split( '(\d+)', string.lower( valueString ), 1 )
-    val = long( result[1] )
-    if len( result ) == 2 :
-        # Convert bytes to kilobytes
-        return (val + 1023 )/ 1024
-    if len( result ) == 3 :
-        result[2] = result[2].strip()
-        if result[2] == 'g' : # Convert gigabytes to kilobytes
-            return val * 1024 * 1024
-        if result[2] == 'm' : # Convert megabytes to kilobytes
-            return val * 1024
-        if result[2] == 'k' : # No conversion needed
-            return val
-        if result[2] == 'b' or result[2] == '' :
-            # Convert bytes to kilobytes
-            return ( val + 1023 ) / 1024
-    raise Exception( 'unknown size qualifier "' + str( result[2] ) + '"' )
-
-class Pool :
-    """ 
-    This is a container class that parses a pool info object and caches
-    the information about a dCache Pool that is required by Gratia,
-    until we are ready to send it.
-    """ 
-    def __init__( self, poolName, poolInfo ) :
-
-        data = {}
-        for line in string.split( poolInfo, '\n' ) :
-            y = string.split( line, ':' )
-            if len( y ) > 1 :
-                data[ y[0].strip() ] = y[1].strip()
-        self.poolName = poolName
-        # The total is frequently given as [0-9]+G to signify gigabytes
-        self.totalSpaceKB = convertToKB( data[ 'Total' ] )
-        self.usedSpaceKB = convertToKB( ( data[ 'Used' ].split() )[0] )
-        self.freeSpaceKB = convertToKB( ( data[ 'Free' ].split() )[0] )
-        self.type = string.lower( data[ 'LargeFileStore' ] )
-        self.pnfsRoot = data[ 'Base directory' ]
-
-    def __repr__( self ) :
-        # Make a string representation of the pool data.
-        return self.poolName + \
-               ', totalKB = ' + str( self.totalSpaceKB ) + \
-               ', usedKB = ' + str( self.usedSpaceKB ) + \
-               ', freeKB = ' + str( self.freeSpaceKB ) + \
-               ', type = ' + self.type + \
-               ', pnfs root = ' + self.pnfsRoot
-
-def lookupPoolStorageInfo( connection, log ) :
-    """
-    Get pool storage info for all pools from the admin interface
-
-    @param connection: Connection to the admin interface.
-    @type connection: dCacheAdmin
-    @param log: Log to use for this function.
-    @type log: Logger
-    """
-    listOfPools = []
-    # get a list of pools
-    # If this raises an exception, it will be caught in main.
-    # It is a fatal error...
-    pooldata = connection.execute( 'PoolManager', 'cm ls' )
-                    
-    # for each pool get the vital statistics about capacity and usage
-    defPoolList = pooldata.splitlines()
-    for poolStr in defPoolList :
-        poolName = poolStr.split( '={', 1 )[0]
-        if string.strip( poolName ) == '' :
-            continue # Skip empty lines.
-        log.debug( 'found pool:' + str( poolName ) )
-        try :
-            poolinfo = connection.execute( poolName, 'info -l' )
-            if poolinfo != None :
-                listOfPools.append( Pool( poolName, poolinfo ) )
-            else :
-                log.error( 'Error doing info -l on pool ' + str( poolName ) )
-        except :
-            tblist = traceback.format_exception( sys.exc_type,
-                                                 sys.exc_value,
-                                                 sys.exc_traceback )
-            log.warning( 'Got exception:\n\n' + "".join( tblist ) + \
-                         '\nwhile doing "info -l" for pool ' + \
-                         str( poolName ) + '.\nIgnoring this pool.' )
-    
-    return listOfPools
-
 
 def getSESpace(cp, admin=None, gb=False, total=False):
     if cp_getBoolean(cp, se, "dynamic_dcache", False):
@@ -370,6 +238,8 @@ def seHasTape(cp):
 def getSETape(cp, vo="total"):
     """
     Get the amount of tape available; numbers are in kilobytes.
+
+    If there is no tape information available, everything is 0.
 
     @param cp: Site configuration
     @type cp: ConfigParser

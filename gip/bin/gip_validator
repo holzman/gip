@@ -1,0 +1,20 @@
+#!/usr/bin/python
+
+import os
+import sys
+
+sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+from gip_testing import GipValidate
+
+sys.path.append(os.path.expandvars("$GIP_LOCATION/libexec"))
+
+from osg_info_wrapper import main as wrapper_main
+
+def main():
+    entries = wrapper_main(return_entries=True)
+    validate = GipValidate(entries)
+    validate.run()
+
+if __name__ == '__main__':
+    main()
+

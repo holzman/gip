@@ -15,6 +15,46 @@ import time
 import resource
 import ConfigParser
 
+from gip_common import getLogger, cp_get
+
+log = getLogger("GIP.dCache.Admin")
+
+def connect_admin(cp):
+    """
+    Connect to the site's admin interface.
+
+    @param cp: Configuration of the site.
+    @type cp: ConfigParser
+    """
+    info = {'Interface':'dCache'}
+    info['AdminHost'] = cp_get(cp, "dcache_admin", "hostname", "localhost")
+    try:
+        info['Username'] = cp.get("dcache_admin", "username")
+    except:
+        pass
+    try:
+        info['Cipher'] = cp.get("dcache_admin", "cipher")
+    except:
+        pass
+    try:
+        info['Port'] = cp.get("dcache_admin", "port")
+    except:
+        pass
+    try:
+        info['Password'] = cp.get("dcache_admin", "password")
+    except:
+        pass
+    try:
+        info['Protocol'] = cp.get("dcache_admin", "protocol")
+    except:
+        pass
+    try:
+        timeout = cp.getint("dcache_admin", "timeout")
+    except:
+        timeout = 5
+    return Admin(info, timeout)
+
+
 ssh_extra_args = []
 
 err_msg = """

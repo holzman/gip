@@ -3,8 +3,6 @@
 """
 osg-info-wrapper: Configure the generic information provider
 
-THIS IMPLEMENTATION IS NOT YET COMPLETE.
-
 Original version by Laurence.Field@cern.ch
 Complete rewrite by Brian Bockelman
 """

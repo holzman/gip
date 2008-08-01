@@ -10,19 +10,21 @@ It takes advantage of the XML format of the ClassAds in order to make parsing
 easier.
 """
 
+import sys
 import sets
 import time
 
 from xml.sax import make_parser
 from xml.sax.handler import ContentHandler, feature_external_ges
 
-from gip_common import voList, cp_getBoolean, getLogger
+from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
+    VoMapper
 from gip_testing import runCommand
 
 condor_version = "condor_version"
 condor_group = "condor_config_val GROUP_NAMES"
-condor_quota = "condor_config_val GROUP_QUOTA_group_%(group)s"
-condor_prio = "condor_config_val GROUP_PRIO_FACTOR_group_%(group)s"
+condor_quota = "condor_config_val GROUP_QUOTA_%(group)s"
+condor_prio = "condor_config_val GROUP_PRIO_FACTOR_%(group)s"
 condor_status = "condor_status -xml"
 condor_job_status = "condor_status -submitter -xml"
 
@@ -145,11 +147,11 @@ def condorCommand(command, cp, info={}):
     # must test for empty dict for special cases like the condor_status
     #  command which has -format '%s' arguments.  Python will try to do
     #  the string substitutions regardless of single quotes
-    log.debug("Running command %s." % command)
     if info:
         cmd = command % info
     else:
         cmd = command
+    log.debug("Running command %s." % cmd)
 
     return runCommand(cmd)
 
@@ -197,8 +199,10 @@ def getGroupInfo(vo_map, cp):
                 {'group': group}).read().strip()
             prio = condorCommand(condor_prio, cp, \
                 {'group': group}).read().strip()
-            vo = vo_map[group]
-            curInfo = retval.get(vo, {'quota': 0, 'prio': 0})
+            vos = guessVO(cp, group)
+            if not vos:
+                continue
+            curInfo = {'quota': 0, 'prio': 0, 'vos': vos}
             try:
                 curInfo['quota'] += int(quota)
             except:
@@ -207,9 +211,37 @@ def getGroupInfo(vo_map, cp):
                 curInfo['prio'] += int(prio)
             except:
                 pass
-            retval[vo] = curInfo
+            retval[group] = curInfo
     log.debug("The condor groups are %s." % ', '.join(retval.keys()))
     return retval
+
+def guessVO(cp, group):
+    """
+    From the group name, guess my VO name
+    """
+    bycp = cp_get(cp, "condor", "%s_vos", None)
+    mapper = VoMapper(cp)
+    vos = voList(cp, vo_map=mapper)
+    byname = sets.Set()
+    for vo in vos:
+        if group.find(vo) >= 0:
+            byname.add(vo)
+    altname = group.replace('group', '')
+    altname = altname.replace('-', '')
+    altname = altname.replace('_', '')
+    altname = altname.strip()
+    try:
+        bymapper = mapper[altname]
+    except:
+        bymapper = None
+    if bycp:
+        return [i.strip() for i in bycp.split(',')]
+    elif bymapper:
+        return [bymapper]
+    elif byname:
+        return byname
+    else:
+        return [altname]
 
 def getJobsInfo(vo_map, cp):
     """
@@ -225,7 +257,7 @@ def getJobsInfo(vo_map, cp):
     @param cp: A ConfigParser object with the GIP config information.
     @returns: A dictionary containing job information.
     """
-    vo_jobs = {}
+    group_jobs = {}
     fp = condorCommand(condor_job_status, cp)
     handler = ClassAdParser('Name', ['RunningJobs', 'IdleJobs', 'HeldJobs', \
         'MaxJobsRunning'])
@@ -243,11 +275,20 @@ def getJobsInfo(vo_map, cp):
     for user, info in handler.getClassAds().items():
         # Determine the VO, or skip the entry
         name = user.split("@")[0]
+        name_info = name.split('.')
+        if len(name_info) == 2:
+            group, name = name_info
+        else:
+            group = 'default'
         try:
             vo = vo_map[name].lower()
         except Exception, e:
             unknown_users.add(name)
             continue
+
+        if group not in group_jobs:
+            group_jobs[group] = {}
+        vo_jobs = group_jobs[group]
 
         # Add the information to the current dictionary.
         my_info = vo_jobs.get(vo, {"running":0, "idle":0, "held":0, \
@@ -261,7 +302,9 @@ def getJobsInfo(vo_map, cp):
     log.warning("The following users are non-grid users: %s" % \
         ", ".join(unknown_users))
 
-    return vo_jobs
+    log.info("Job information: %s." % group_jobs)
+
+    return group_jobs
 
 _nodes_cache = []
 def parseNodes(cp):

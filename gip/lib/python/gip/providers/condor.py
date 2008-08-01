@@ -10,6 +10,7 @@ https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/GipCeInfo
 import os
 import re
 import sys
+import sets
 import unittest
 
 # Standard GIP imports
@@ -70,8 +71,8 @@ def print_CE(cp):
         jobs_info = getJobsInfo(vo_map, cp)
     except Exception, e:
         log.exception(e)
-        jobs_info = dict([(vo, {'running': 0, 'idle': 0, 'held': 0}) for vo in \
-            voList(cp)])
+        jobs_info = {'default': dict([(vo, {'running': 0, 'idle': 0,
+            'held': 0}) for vo in voList(cp)])}
 
     # Determine the group information, if there are any Condor groups
     try:
@@ -83,29 +84,42 @@ def print_CE(cp):
 
     # Accumulate the entire statistics, instead of breaking down by VO.
     running, idle, held = 0, 0, 0
-    for vo, info in jobs_info.items():
-        running += info.get('running', 0)
-        idle += info.get('idle', 0)
-        held += info.get('held')
+    for group, ginfo in jobs_info.items():
+        for vo, info in ginfo.items():
+            running += info.get('running', 0)
+            idle += info.get('idle', 0)
+            held += info.get('held')
 
     # Set up the "default" group with all the VOs which aren't already in a 
     # group
-    groupInfo['default'] = {'prio': 0, 'quota': 0}
+    groupInfo['default'] = {'prio': 999999, 'quota': 999999, 'vos': sets.Set()}
+    all_group_vos = []
+    for val in groupInfo.values():
+        all_group_vos.extend(val['vos'])
     defaultVoList = voList(cp)
-    defaultVoList = [i for i in defaultVoList if i not in groupInfo]
+    defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
+    groupInfo['default']['vos'] = defaultVoList
     acbr = '\n'.join(['GlueAccessControlBaseRule: VO:%s' % i for i in \
         defaultVoList])
     groupInfo['default']['acbr'] = acbr
+    if not groupInfo['default']['vos']:
+        del groupInfo['default']
 
     for group, ginfo in groupInfo.items():
+        jinfo = jobs_info.get(group, {})
         ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)
         if 'acbr' not in ginfo:
-            ginfo['acbr'] = 'GlueAccessControlBaseRule: VO:%s' % group
+            ginfo['acbr'] = '\n'.join(['GlueAccessControlBaseRule: VO:%s' % \
+                vo for vo in ginfo['vos']])
         max_running = 0
         if group in jobs_info:
             max_running = jobs_info[group].get('max_running', 0)
         max_running = max(max_running, ginfo.get('quota', 0))
         assigned = max(ginfo.get("quota", 0), total_nodes)
+
+        myrunning = sum([i.get('running', 0) for i in jinfo.values()], 0)
+        myidle = sum([i.get('idle', 0) for i in jinfo.values()], 0)
+        myheld = sum([i.get('held', 0) for i in jinfo.values()], 0)
 
         # Build all the GLUE CE entity information.
         info = { \
@@ -118,9 +132,9 @@ def print_CE(cp):
             "gramVersion" : '2.0',
             "lrmsType"    : "condor",
             "port"        : 2119,
-            "running"     : running,
-            "idle"        : idle,
-            "held"        : held,
+            "running"     : myrunning,
+            "idle"        : myidle,
+            "held"        : myheld,
             "ce_name"     : ce_name,
             "ert"         : 3600,
             "wrt"         : 3600,
@@ -131,9 +145,9 @@ def print_CE(cp):
             "free_slots"  : int(unclaimed),
             # Held jobs are included as "waiting" since the definition is:
             #    Number of jobs that are in a state different than running
-            "waiting"     : idle + held,
-            "running"     : running,
-            "total"       : running + idle + held,
+            "waiting"     : myidle + myheld,
+            "running"     : myrunning,
+            "total"       : myrunning + myidle + myheld,
             "priority"    : ginfo.get('prio', 0),
             "assigned"    : assigned,
             "max_slots"   : 1,
@@ -181,15 +195,19 @@ def print_VOViewLocal(cp):
     groupInfo = getGroupInfo(vo_map, cp)
 
     # Add in the default group
-    defaultVoList = [i for i in voList(cp) if i not in groupInfo]
+    all_group_vos = []    
+    for val in groupInfo.values():
+        all_group_vos.extend(val['vos'])
+    defaultVoList = [i for i in voList(cp) if i not in all_group_vos]
     groupInfo = {'default': {'vos': defaultVoList}}
 
     for group in groupInfo:
         vos = groupInfo[group].get('vos', [group])
         ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)    
+        jinfo = jobs_info.get(group, {})
         for vo in vos:
             acbr = 'VO:%s' % vo
-            info = jobs_info.get(vo, {"running": 0, "idle": 0, "held": 0})
+            info = jinfo.get(vo, {"running": 0, "idle": 0, "held": 0})
             info = {"vo"      : vo,
                 "acbr"        : acbr,
                 "ceUniqueID"  : ce_unique_id,

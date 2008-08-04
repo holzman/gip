@@ -311,8 +311,8 @@ def config_compat_gip_attributes_subcluster(gip, override, cp):
         for key, val in info_map.items():
             key2 = "OSG_GIP_SC_ARR[%i%s]" % (i+1, val)
             __write_config(cp, override, gip, key2, section, key)
-        cores_per_node = cp_getInt(cp, section, "cores_per_node", 0)
-        cpus_per_node = cp_getInt(cp, section, "cpus_per_node", 1)
+        cores_per_node = cp_getInt(cp, section, "cores_per_node", 4)
+        cpus_per_node = cp_getInt(cp, section, "cpus_per_node", 2)
         if cpus_per_node == 0:
             cpus_per_node = 1
             cores_per_node = 0

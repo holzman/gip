@@ -71,30 +71,6 @@ def print_clusters(cp):
     template = getTemplate("GlueCluster", "GlueClusterUniqueID")
     printTemplate(template, info)
     
-def print_subcluster(cp, cluster, section):
-    # Names
-    name = cp_get(cp, section, "name", cluster)
-    uniqueID = cp_get(cp, section, "unique_id", name)
-
-    # Host statistics
-    cpu_count = cp_getInt(section, "cpus_per_node", 2)
-    cores_per_cpu = cp_getInt(section, "cores_per_cpu", 2)
-    si2k = cp_getInt(cp, section, "SI00", 2000)
-    sf2k = cp_getInt(cp, section, "SF00", 2000)
-    ram = cp_getInt(cp, section, "ram_size", 1000*cpu_count*cores_per_cpu)
-    virtualMem = cp_getInt(cp, section, "swap_size", 0)
-    inboundIP = cp_getBoolean(cp, section, "inbound_network", False)
-    outboundIP = cp_getBoolean(cp, section, "outbound_network", True)
-    
-
-    # Temp directories
-    default_tmp = cp_get(cp, "osg_dirs", "tmp", cp_get(cp, "osg_dirs", "data", \
-             "/tmp"))
-    default_wn_tmp = cp_get(cp, "osg_dirs", "wn_tmp", "/tmp")
-    tmp = cp_get(cp, section, "tmp", default_tmp)
-    if notDefined(tmp):
-        tmp = default_tmp
-
 def print_subclusters(cp):
     subclusters = gip_cluster.generateSubClusters(cp)
     template = getTemplate("GlueCluster", "GlueSubClusterUniqueID")

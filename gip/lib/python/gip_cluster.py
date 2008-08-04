@@ -114,9 +114,9 @@ def _generateSubClusterHelper(cp, section):
     si2k = cp_getInt(cp, section, "SI00", 2000)
     sf2k = cp_getInt(cp, section, "SF00", 2000)
     ram = cp_getInt(cp, section, "ram_size", 1000*cpuCount*cores_per_cpu)
-    cores = cp_getInt(cp, section, "cores", 999999999)
+    cores = cp_getInt(cp, section, "total_cores", 999999999)
     if cores_per_cpu != 0:
-        cpus = cp_getInt(cp, section, "cores", cores/cores_per_cpu)
+        cpus = cp_getInt(cp, section, "total_cpus", cores/cores_per_cpu)
     else:
         cpus = 0
     virtualMem = ram + cp_getInt(cp, section, "swap_size", 0)

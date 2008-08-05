@@ -6,6 +6,10 @@ Module for interacting with PBS.
 import re
 import os
 import sys
+import grp
+import pwd
+import sets
+
 from gip_common import HMSToMin, getLogger, VoMapper, voList
 from gip_testing import runCommand
 
@@ -206,6 +210,14 @@ def getQueueInfo(cp):
                 queue_data["max_waiting"] = int(val)
             except: 
                 log.warning("Invalid input for max_queuable: %s" % str(val))
+        elif attr == "acl_group_enable" and val.lower() == 'true':
+            queue_data["groups"] = sets.Set()
+        elif attr == "acl_groups" and 'groups' in queue_data:
+            queue_data["groups"].update(val.split(','))
+        elif attr == "acl_user_enable" and val.lower() == 'true':
+            queue_data["users"] = sets.Set()
+        elif attr == "acl_users" and 'users' in queue_data:
+            queue_data["users"].update(val.split(','))
     if queue_data != None:
         if queue_data["started"] and queue_data["enabled"]:
             queue_data["status"] = "Production"
@@ -322,23 +334,72 @@ def getVoQueues(cp):
     except:
         queue_exclude = []
     vo_queues= []
-    for queue in getQueueInfo(cp):
+    queueInfo = getQueueInfo(cp)
+    for queue, qinfo in queueInfo.items():
         if queue in queue_exclude:
             continue
+        volist = sets.Set(voList(cp, voMap))
         try:
             whitelist = [i.strip() for i in cp.get("pbs", "%s_whitelist" % \
                 queue).split(',')]
         except:
             whitelist = []
+        whitelist = sets.Set(whitelist)
         try:
             blacklist = [i.strip() for i in cp.get("pbs", "%s_blacklist" % \
                 queue).split(',')]
         except:
             blacklist = []
-        for vo in voList(cp, voMap):
+        blacklist = sets.Set(blacklist)
+        if 'users' in qinfo or 'groups' in qinfo:
+            acl_vos = parseAclInfo(queue, qinfo, voMap)
+            volist.intersection_update(acl_vos)
+            if not volist:
+                continue
+        for vo in volist:
             if (vo in blacklist or "*" in blacklist) and ((len(whitelist) == 0)\
                     or vo not in whitelist):
                 continue
             vo_queues.append((vo, queue))
     return vo_queues
+
+def parseAclInfo(queue, qinfo, vo_mapper):
+    """
+    Take a queue information dictionary and determine which VOs are in the ACL
+    list.  The used keys are:
+
+       - users: A set of all user names allowed to access this queue.
+       - groups: A set of all group names allowed to access this queue.
+
+    @param queue: Queue name (for logging purposes).
+    @param qinfo: Queue info dictionary
+    @param vo_mapper: VO mapper object
+    @returns: A set of allowed VOs
+    """
+    users = qinfo.get('users', sets.Set())
+    if 'groups' in qinfo:
+        all_groups = grp.getgrall()
+        all_users = pwd.getpwall()
+        group_dict = {}
+        for group in all_groups:
+            if group[0] in qinfo['groups'] or group[2] in qinfo['groups']:
+                users.add(group[0])
+            group_dict[group[2]] = group[0]
+        for user in all_users:
+            try:
+                group = group_dict[user[3]]
+            except:
+                continue
+            if group[0] in qinfo['groups'] or user[3] in qinfo['groups']:
+                users.add(group[0])
+    vos = sets.Set()
+    for user in users:
+        try:
+            vos.add(vo_mapper[user])
+        except:
+            pass
+    log.info("The acl info for queue %s (users %s, groups %s) mapped to %s." % \
+        (queue, ', '.join(qinfo.get('users', [])),
+        ', '.join(qinfo.get('groups', [])), ', '.join(vos)))
+    return vos
 

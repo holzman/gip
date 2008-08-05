@@ -69,9 +69,13 @@ def print_CE(cp):
         info['lrmsType'] = 'pbs'
         info['preemption'] = cp_get(cp, 'pbs', 'preemption', '0')
         acbr = ''
+        has_vo = False
         for vo, queue2 in vo_queues:
             if queue == queue2:
                 acbr += 'GlueCEAccessControlBaseRule: VO:%s\n' % vo
+                has_vo = True
+        if not has_vo:
+            continue
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
         info['gramVersion'] = '2.0'

@@ -2,6 +2,7 @@
 import sys
 
 from gip_common import voList, cp_get, cp_getBoolean
+from gip_storage import getPath
 from pbs_common import getQueueList
 from gip_sections import ce, cesebind, se
 
@@ -75,7 +76,8 @@ def getCESEBindInfo(cp):
     se_list = getSEList(cp, classicSEs = False)
     classicse_list = getClassicSEList(cp)
     se_list.extend(classicse_list)
-    access_point = cp_get(cp, "vo", "default", "/")
+    #access_point = cp_get(cp, "vo", "default", "/")
+    access_point = getPath(cp)
     if not access_point:
         access_point = "/"
     classic_access_point = cp_get(cp, "osg_dirs", "data", "/")

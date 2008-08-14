@@ -19,6 +19,8 @@ import ConfigParser
 
 from UserDict import UserDict
 
+from gip_osg import configOsg
+
 # This evaluates to true if Python 2.3 or higher is
 # available.
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
@@ -147,7 +149,9 @@ def config(*args):
 
     # Set up the config object to be compatible with the OSG attributes
     # file.
-    config_compat(cp)
+    #config_compat(cp)
+    configOsg(cp)
+
     return cp
 
 def config_compat(cp):

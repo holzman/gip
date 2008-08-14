@@ -100,7 +100,7 @@ def voListStorage(cp):
             refined.append(vo)
     return refined
 
-def getPath(cp, vo, section='vo', classicSE=False):
+def getPath(cp, vo='', section='vo', classicSE=False):
     """
     Get the storage path for some VO.
 

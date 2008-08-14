@@ -2,6 +2,8 @@
 Populate the GIP based upon the values from the OSG configuration
 """
 
+import os
+import sys
 import ConfigParser
 
 from gip_sections import *
@@ -12,6 +14,23 @@ condor_sec = "Condor"
 sge_sec = 'SGE'
 storage_sec = 'Storage'
 gip_sec = 'GIP'
+
+def cp_getInt(cp, section, option, default):
+    """
+    Helper function for ConfigParser objects which allows setting the default.
+    Returns an integer, or the default if it can't make one.
+
+    @param cp: ConfigParser object
+    @param section: Section of the config parser to read
+    @param option: Option in section to retrieve
+    @param default: Default value if the section/option is not present.
+    @returns: Value stored in the CP for section/option, or default if it is
+        not present.
+    """
+    try:
+        return int(str(cp_get(cp, section, option, default)).strip())
+    except:
+        return default
 
 def cp_get(cp, section, option, default):
     """
@@ -88,6 +107,7 @@ def configOsg(cp):
     __write_config(site_sec, "city", site, "city")
     __write_config(site_sec, "country", site, "country")
     __write_config(site_sec, "longitude", "site", "longitude")
+    __write_config(site_sec, "latitude", "site", "latitude")
     
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
@@ -122,10 +142,10 @@ def configOsg(cp):
     __write_config(gip_sec, "advertise_gsiftp", "classic_se", "advertise_se")
 
     # Calculate the default path for each VO
-    root_path = cp_get(cp, gip_sec, "se_root_path", "/")
-    vo_dir = cp_get(cp, gip_sec, "vo_dir", "VONAME").replace("VONAME", "$VO")
+    root_path = cp_get(cp2, gip_sec, "se_root_path", "/")
+    vo_dir = cp_get(cp2, gip_sec, "vo_dir", "VONAME").replace("VONAME", "$VO")
     default = os.path.join(root_path, vo_dir)
-    cp.set(gip_sec, "default_path", default)
+    cp2.set(gip_sec, "default_path", default)
     __write_config(gip_sec, "default_path", "vo", "default")
 
     # Override the default path with any specific paths.
@@ -136,7 +156,7 @@ def configOsg(cp):
                 vo, dir = path.split(',')
             except:
                 continue
-            cp.set(gip_sec, "%s_path" % vo, dir)
+            cp2.set(gip_sec, "%s_path" % vo, dir)
             __write_config(gip_sec, "%s_path" % vo, "vo", vo)
 
     # Handle the subclusters.
@@ -152,21 +172,28 @@ def configOsg(cp):
         "model":    "cpu_model",
         "inbound":  "inbound_network",
     }
-    sc_number = cp_getInt(cp, gip_sec, "sc_number", "0")
-    if not sc_number:
+    sc_number = cp_getInt(cp2, gip_sec, "sc_number", "0")
+    if sc_number == 0:
         sc_number = 0
-        for option in cp.options(gip_sec):
+        for option in cp2.options(gip_sec):
             if option.startswith("sc_name"):
                 sc_number += 1
-    for idx in range(sc_number):
+    for idx in range(1, sc_number+1):
         sec = "subcluster_%i" % idx
         for key, val in sc_naming.items():
             __write_config(gip_sec, "sc_%s_%i" % (key, idx), sec, val)
-        if not cp2.has_section(sec):
+        if not cp.has_section(sec):
             continue
-        nodes = cp_getInt(cp2, sec, "node_count", "0")
-        cpus_per_node = cp_getInt(cp2, sec, "cpus_per_node",2)
-        cores_per_node = cp_getInt(cp2, sec, "cores_per_node", cpus_per_node*2)
-        cp2.set(sec, "cores_per_cpu", "%i" % (cores_per_node/cpus_per_node))
-        cp2.set(sec, "total_cores", "%i" % (nodes*cores_per_node))
-        cp2.set(sec, "total_cpus", "%i" % (nodes*cpus_per_node))
+        nodes = cp_getInt(cp, sec, "node_count", "0")
+        cpus_per_node = cp_getInt(cp, sec, "cpus_per_node",2)
+        cores_per_node = cp_getInt(cp, sec, "cores_per_node", cpus_per_node*2)
+        cp.set(sec, "cores_per_cpu", "%i" % (cores_per_node/cpus_per_node))
+        cp.set(sec, "total_cores", "%i" % (nodes*cores_per_node))
+        cp.set(sec, "total_cpus", "%i" % (nodes*cpus_per_node))
+
+    cp2.set(gip_sec, "bdii", "ldap://is.grid.iu.edu:2170")
+    cp2.set(gip_sec, "tmp_var", "True")
+    __write_config(gip_sec, "bdii", "bdii", "endpoint")
+    __write_config(gip_sec, "tmp_var", "cluster", "simple")
+    __write_config(gip_sec, "tmp_var", "cesebind", "simple")
+

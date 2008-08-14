@@ -92,9 +92,13 @@ def configOsg(cp):
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
     __write_config(pbs_sec, "wsgram", pbs, "wsgram")
+    __write_config(pbs_sec, "enabled", pbs, "enabled")
+    __write_config(pbs_sec, "job_contact", pbs, "contact_string")
+
     # [Condor]
     __write_config(condor_sec, "condor_location", condor, "condor_location")
     __write_config(condor_sec, "wsgram", condor, "wsgram")
+
     # [SGE]
     __write_config(sge_sec, "sge_location", sge, "sge_path")
     __write_config(sge_sec, "sge_location", sge, "sge_root")
@@ -108,4 +112,61 @@ def configOsg(cp):
     # [GIP]
     __write_config(gip_sec, "se_name", "se", "name")
     __write_config(gip_sec, "se_host", "se", "unique_name")
+    __write_config(gip_sec, "dynamic_dcache", "se", "dynamic_dcache")
+    __write_config(gip_sec, "srm", "se", "srm_present")
+    __write_config(gip_sec, "batch", "ce", "job_manager")
 
+    # Storage stuff 
+    __write_config(gip_sec, "se_control_version", "se", "srm_version")
+    __write_config(gip_sec, "srm_version", "se", "srm_version")
+    __write_config(gip_sec, "advertise_gsiftp", "classic_se", "advertise_se")
+
+    # Calculate the default path for each VO
+    root_path = cp_get(cp, gip_sec, "se_root_path", "/")
+    vo_dir = cp_get(cp, gip_sec, "vo_dir", "VONAME").replace("VONAME", "$VO")
+    default = os.path.join(root_path, vo_dir)
+    cp.set(gip_sec, "default_path", default)
+    __write_config(gip_sec, "default_path", "vo", "default")
+
+    # Override the default path with any specific paths.
+    vo_dirs = cp_get(cp, gip_sec, 'special_vo_dir', 'UNAVAILABLE')
+    if vo_dirs.lower().strip() != "unavailable":
+        for path in vo_dirs.split(';'):
+            try:
+                vo, dir = path.split(',')
+            except:
+                continue
+            cp.set(gip_sec, "%s_path" % vo, dir)
+            __write_config(gip_sec, "%s_path" % vo, "vo", vo)
+
+    # Handle the subclusters.
+    sc_naming = {\
+        "outbound": "outbound_network",
+        "name":     "name",
+        "numlcpus": "cores_per_node",
+        "nodes":    "node_count",
+        "numcpus":  "cpus_per_node",
+        "clock":    "cpu_speed_mhz",
+        "ramsize":  "ram_size",
+        "vendor":   "cpu_vendor",
+        "model":    "cpu_model",
+        "inbound":  "inbound_network",
+    }
+    sc_number = cp_getInt(cp, gip_sec, "sc_number", "0")
+    if not sc_number:
+        sc_number = 0
+        for option in cp.options(gip_sec):
+            if option.startswith("sc_name"):
+                sc_number += 1
+    for idx in range(sc_number):
+        sec = "subcluster_%i" % idx
+        for key, val in sc_naming.items():
+            __write_config(gip_sec, "sc_%s_%i" % (key, idx), sec, val)
+        if not cp2.has_section(sec):
+            continue
+        nodes = cp_getInt(cp2, sec, "node_count", "0")
+        cpus_per_node = cp_getInt(cp2, sec, "cpus_per_node",2)
+        cores_per_node = cp_getInt(cp2, sec, "cores_per_node", cpus_per_node*2)
+        cp2.set(sec, "cores_per_cpu", "%i" % (cores_per_node/cpus_per_node))
+        cp2.set(sec, "total_cores", "%i" % (nodes*cores_per_node))
+        cp2.set(sec, "total_cpus", "%i" % (nodes*cpus_per_node))

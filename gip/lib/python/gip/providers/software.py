@@ -11,30 +11,6 @@ from gip_cluster import getApplications, getSubClusterIDs, getClusterID
 log = getLogger("GIP.Software")
 
 def print_Locations(cp):
-    app_dir = cp.get("osg_dirs", "app")
-    ce_name = cp.get('ce', 'name')
-    template = getTemplate("GlueCluster", "GlueLocationLocalID")
-    path = "%s/etc/grid3-locations.txt" % app_dir
-    if not os.path.exists(path):
-        path = '%s/etc/osg-locations.txt' % app_dir
-    fp = open(path, 'r')
-    for line in fp:
-        line = line.strip()
-        info = line.split()
-        if len(info) != 3 or info[0].startswith('#'):
-            continue
-        if info[1].startswith('#') or info[1].startswith('$'):
-            info[1] = 'UNDEFINED'
-        info = {'locationId'   : info[0],
-                'subClusterId' : ce_name,
-                'clusterId'    : ce_name,
-                'locationName' : info[0],
-                'version'      : info[1],
-                'path'         : info[2]
-               }
-        print template % info
-
-def print_Locations(cp):
     template = getTemplate("GlueCluster", "GlueLocationLocalID")
     cluster_id = getClusterID(cp)
     for subClusterId in getSubClusterIDs(cp):

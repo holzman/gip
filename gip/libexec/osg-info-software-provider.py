@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+"""
+The original python software provider.
+
+This is now obsolete.  To see what will really be used beyond version 1.0,
+look at gip/lib/python/gip/providers/software.py
+"""
+
 import os
 import re
 import sys

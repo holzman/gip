@@ -840,10 +840,11 @@ sub fix_for_pbs_queues{
 sub fix_for_lsf_queues(){
 my @bqueues;
 
-@bqueues=`bqueues -w | awk '{print \$1}'`;
+@bqueues=split(' ',`sed -n '/Attribute: queue/{n;p;}' \$VDT_LOCATION/globus/share/globus_gram_job_manager/lsf.rvf`); 
 foreach my $item (@bqueues) {
    chomp($item);
-   if($item ne 'QUEUE_NAME' and $item ne '') {
+   if($item ne 'Values:' and $item ne '') {
+      print " ... Adding queue $item \n"; 
       push(@lsfQueues,$item);
    }
 }

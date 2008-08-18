@@ -10,7 +10,7 @@ import grp
 import pwd
 import sets
 
-from gip_common import HMSToMin, getLogger, VoMapper, voList
+from gip_common import HMSToMin, getLogger, VoMapper, voList, parseRvf
 from gip_testing import runCommand
 
 log = getLogger("GIP.PBS")
@@ -335,7 +335,15 @@ def getVoQueues(cp):
         queue_exclude = []
     vo_queues= []
     queueInfo = getQueueInfo(cp)
+    rvf_info = parseRvf('pbs.rvf')
+    rvf_queue_list = rvf_info.get('queue', {}).get('Values', None)
+    if rvf_queue_list:
+        rvf_queue_list = rvf_queue_list.split()
+        log.info("The RVF lists the following queues: %s." % ', '.join( \
+            rvf_queue_list))
     for queue, qinfo in queueInfo.items():
+        if rvf_queue_list and queue not in rvf_queue_list:
+            continue
         if queue in queue_exclude:
             continue
         volist = sets.Set(voList(cp, voMap))

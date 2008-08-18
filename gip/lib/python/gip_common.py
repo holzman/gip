@@ -745,3 +745,30 @@ def matchFQAN(fqan1, fqan2):
         vog_matches = True
     return vog_matches and vor_matches
 
+rvf_parse = re.compile('(.+?): (?:(.*?)\n)')
+def parseRvf(name):
+    if 'GLOBUS_LOCATION' in os.environ:
+        basepath = os.environ['GLOBUS_LOCATION']
+    else:
+        basepath = os.environ.get('VDT_LOCATION', '/UNKNOWN')
+        basepath = os.path.join(basepath, 'globus')
+    fullname = os.path.join(basepath, 'share/globus_gram_job_manager', name)
+    if not os.path.exists(fullname):
+        return {}
+    try:
+        rvf = open(fullname, 'r').read()
+    except:
+        return  {}
+    pairs = rvf_parse.findall(rvf)
+    curAttr = None
+    results = {}
+    for key, val in pairs:
+        if key == 'Attribute':
+            curAttr = val
+            results[curAttr] = {}
+            continue
+        if curAttr == None:
+            continue
+        results[curAttr][key] = val
+    return results
+

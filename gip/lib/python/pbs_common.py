@@ -310,6 +310,7 @@ def getQueueList(cp):
             split(',')]
     except:         
         queue_exclude = []
+    rvf_info = parseRvf('pbs.rvf')
     rvf_queue_list = rvf_info.get('queue', {}).get('Values', None)
     if rvf_queue_list: 
         rvf_queue_list = rvf_queue_list.split()

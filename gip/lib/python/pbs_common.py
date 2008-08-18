@@ -310,9 +310,16 @@ def getQueueList(cp):
             split(',')]
     except:         
         queue_exclude = []
+    rvf_queue_list = rvf_info.get('queue', {}).get('Values', None)
+    if rvf_queue_list: 
+        rvf_queue_list = rvf_queue_list.split()
+        log.info("The RVF lists the following queues: %s." % ', '.join( \
+            rvf_queue_list))
     for queue in getQueueInfo(cp):
         if queue not in queue_exclude:
             queues.append(queue)
+        if rvf_queue_list and queue not in rvf_queue_list:
+            continue
     return queues
 
 def getVoQueues(cp):

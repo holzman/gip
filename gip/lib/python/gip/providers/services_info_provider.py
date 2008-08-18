@@ -137,11 +137,12 @@ def print_srm(cp, admin):
     # print out the admin-specified hostname instead of looking it up.  This
     # is for sites where the SRM host is a CNAME instead of the A name.
     srm_host = cp_get(cp, "se", "srm_host", None)
+    srm_ip = None
     if srm_host:
         try:
             srm_ip = socket.gethostbyname(srm_host)
         except:
-            srm_ip = None
+            pass
     #vos = [i.strip() for i in cp.get("vo", "vos").split(',')]
     ServiceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
     ControlTemplate = getTemplate("GlueSE", "GlueSEControlProtocolLocalID")

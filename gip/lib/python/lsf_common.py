@@ -316,9 +316,17 @@ def getQueueList(queueInfo, cp):
             split(',')]
     except:
         queue_exclude = []
+    rvf_info = parseRvf('lsf.rvf')
+    rvf_queue_list = rvf_info.get('queue', {}).get('Values', None)
+    if rvf_queue_list:
+        rvf_queue_list = rvf_queue_list.split()
+        log.info("The RVF lists the following queues: %s." % ', '.join( \
+            rvf_queue_list))
     for queue in queueInfo:
         if queue not in queue_exclude:
             queues.append(queue)
+        if rvf_queue_list and queue not in rvf_queue_list:
+            continue
     return queues
 
 def getVoQueues(queueInfo, cp):
@@ -339,9 +347,17 @@ def getVoQueues(queueInfo, cp):
             split(',')]
     except:
         queue_exclude = []
+    rvf_info = parseRvf('lsf.rvf')
+    rvf_queue_list = rvf_info.get('queue', {}).get('Values', None)
+    if rvf_queue_list:
+        rvf_queue_list = rvf_queue_list.split()
+        log.info("The RVF lists the following queues: %s." % ', '.join( \
+            rvf_queue_list))
     vo_queues= []
     for queue in queueInfo:
         if queue in queue_exclude:
+            continue
+        if rvf_queue_list and queue not in rvf_queue_list:
             continue
         try:
             whitelist = [i.strip() for i in cp.get("lsf", "%s_whitelist" % \

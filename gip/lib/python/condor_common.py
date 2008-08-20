@@ -222,6 +222,36 @@ def getGroupInfo(vo_map, cp):
     log.debug("The condor groups are %s." % ', '.join(retval.keys()))
     return retval
 
+def getQueueList(cp):
+    """
+    Returns a list of all the queue names that are supported.
+
+    @param cp: Site configuration
+    @returns: List of strings containing the queue names.
+    """
+    vo_map = VoMapper(cp)
+    # Determine the group information, if there are any Condor groups
+    try:
+        groupInfo = getGroupInfo(vo_map, cp)
+    except Exception, e:
+        log.exception(e)
+        # Default to no groups.
+        groupInfo = {}
+
+    # Set up the "default" group with all the VOs which aren't already in a 
+    # group
+    groupInfo['default'] = {'prio': 999999, 'quota': 999999, 'vos': sets.Set()}
+    all_group_vos = []
+    for val in groupInfo.values():
+        all_group_vos.extend(val['vos'])
+    defaultVoList = voList(cp, vo_map=vo_map)
+    defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
+    groupInfo['default']['vos'] = defaultVoList
+    if not groupInfo['default']['vos']:
+        del groupInfo['default']
+
+    return groupInfo.keys()
+
 def guessVO(cp, group):
     """
     From the group name, guess my VO name

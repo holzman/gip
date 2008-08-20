@@ -3,7 +3,9 @@ import sys
 
 from gip_common import voList, cp_get, cp_getBoolean
 from gip_storage import getPath
-from pbs_common import getQueueList
+from pbs_common import getQueueList as getPBSQueueList
+from lsf_common import getQueueList as getLSFQueueList
+from condor_common import getQueueList as getCondorQueueList
 from gip_sections import ce, cesebind, se
 
 def getCEList(cp):
@@ -21,12 +23,15 @@ def getCEList(cp):
     ce_name = '%s:2119/jobmanager-%s-%%s' % (hostname, jobman)
     ce_list = []
     if jobman == 'pbs':
-        queue_entries = getQueueList(cp)
-        for queue in queue_entries:
-            ce_list.append(ce_name % queue)
+        queue_entries = getPBSQueueList(cp)
+    elif jobman == 'lsf':
+        queue_entries = getLSFQueueList(cp)
+    elif jobman == 'condor':
+        queue_entries = getCondorQueueList(cp)
     else:
-        for vo in voList(cp):
-             ce_list.append(ce_name % vo)
+        raise ValueError("Unknown job manager %s." % jobman)
+    for queue in queue_entries:
+        ce_list.append(ce_name % queue)
     return ce_list
 
 def getClassicSEList(cp):

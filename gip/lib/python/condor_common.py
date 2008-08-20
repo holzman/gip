@@ -14,7 +14,7 @@ import sys
 import sets
 import time
 
-from xml.sax import make_parser
+from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges
 
 from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
@@ -54,6 +54,7 @@ class ClassAdParser(ContentHandler):
         if self.attrlist and idx not in self.attrlist:
             self.attrlist.append(idx)
         self.idxAttr = idx
+        self.caInfo = {}
 
     def startDocument(self):
         """
@@ -128,7 +129,13 @@ def parseCondorXml(fp, handler):
     parser = make_parser()
     parser.setContentHandler(handler)
     parser.setFeature(feature_external_ges, False)
-    parser.parse(fp)
+    try:
+        parser.parse(fp)
+    except SAXParseException, e:
+        if e.getMessage() == 'no element found':
+            pass
+        else:
+            raise
 
 def condorCommand(command, cp, info={}):
     """
@@ -261,7 +268,12 @@ def getJobsInfo(vo_map, cp):
     fp = condorCommand(condor_job_status, cp)
     handler = ClassAdParser('Name', ['RunningJobs', 'IdleJobs', 'HeldJobs', \
         'MaxJobsRunning'])
-    parseCondorXml(fp, handler)
+    try:
+        parseCondorXml(fp, handler)
+    except Exception, e:
+        log.error("Unable to parse condor output!")
+        log.exception(e)
+        pass
     def addIntInfo(my_info_dict, classad_dict, my_key, classad_key):
         if my_key not in my_info_dict or classad_key not in classad_dict:
             return

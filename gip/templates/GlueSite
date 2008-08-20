@@ -15,6 +15,7 @@ GlueSiteLatitude: %(latitude)s
 GlueSiteLongitude: %(longitude)s
 GlueSiteWeb: %(website)s
 GlueSiteSponsor: %(sponsor)s
+GlueForeignKey: GlueSiteUniqueID=%(uniqueID)s
 GlueSiteOtherInfo: UNDEFINED
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3

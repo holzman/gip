@@ -397,7 +397,7 @@ sub read_osg_attributes_info
     if (-e $gip_conf){
         my $output = `echo $gip_conf; . $gip_conf; echo \$OSG_GIP_BATCH; echo \$OSG_GIP_SRM; echo \$OSG_GIP_DISK; echo \$OSG_GIP_SE_NAME; echo \$OSG_GIP_SE_HOST; echo \$OSG_GIP_SA_PATH; echo \$OSG_GIP_SE_DISK; echo \$OSG_GIP_DATA; echo \$OSG_GIP_GUMS; echo \$OSG_GIP_SIMPLIFIED_SRM; echo \$OSG_GIP_SIMPLIFIED_SRM_PATH; echo \$OSG_GIP_SRM_IMPLEMENTATION_NAME; echo \$OSG_GIP_SRM_IMPLEMENTATION_VERSION; echo \$OSG_GIP_SE_ACCESS_VERSION; echo \$OSG_GIP_SE_CONTROL_VERSION; echo \$OSG_GIP_SE_ACCESS_NUMBER; echo \$OSG_GIP_DYNAMIC_DCACHE`;
         my @outList = split /\n/, $output;
-        $batch   = &remove_quotes($outList[1]);
+        $batch   = lc(&remove_quotes($outList[1]));
         $srm     = &remove_quotes($outList[2]);
         $disk    = &remove_quotes($outList[3]);
         $se_name = &remove_quotes($outList[4]);

@@ -99,7 +99,7 @@ def print_CE(cp):
     defaultVoList = voList(cp)
     defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
     groupInfo['default']['vos'] = defaultVoList
-    acbr = '\n'.join(['GlueAccessControlBaseRule: VO:%s' % i for i in \
+    acbr = '\n'.join(['GlueCEAccessControlBaseRule: VO:%s' % i for i in \
         defaultVoList])
     groupInfo['default']['acbr'] = acbr
     if not groupInfo['default']['vos']:
@@ -109,12 +109,16 @@ def print_CE(cp):
         jinfo = jobs_info.get(group, {})
         ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)
         if 'acbr' not in ginfo:
-            ginfo['acbr'] = '\n'.join(['GlueAccessControlBaseRule: VO:%s' % \
+            ginfo['acbr'] = '\n'.join(['GlueCEAccessControlBaseRule: VO:%s' % \
                 vo for vo in ginfo['vos']])
         max_running = 0
         if group in jobs_info:
-            max_running = jobs_info[group].get('max_running', 0)
-        max_running = max(max_running, ginfo.get('quota', 0))
+            max_runnings = [i.get('max_running', 0) for i in jobs_info[group].values()]
+            print >> sys.stderr, max_runnings
+            if max_runnings:
+                max_running = max(max_runnings)
+        if ginfo.get('quota', 0) != 999999:
+            max_running = max(max_running, ginfo.get('quota', 0))
         assigned = max(ginfo.get("quota", 0), total_nodes)
 
         myrunning = sum([i.get('running', 0) for i in jinfo.values()], 0)
@@ -151,8 +155,8 @@ def print_CE(cp):
             "priority"    : ginfo.get('prio', 0),
             "assigned"    : assigned,
             "max_slots"   : 1,
-            "preemption"  : ldap_boolean(cp_getBoolean(cp, "condor", \
-                "preemption", False)),
+            "preemption"  : str(int(cp_getBoolean(cp, "condor", \
+                "preemption", False))),
             "max_running" : max_running,
             "max_waiting" : 99999,
             "max_total"   : 99999,

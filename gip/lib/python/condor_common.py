@@ -297,7 +297,7 @@ def getJobsInfo(vo_map, cp):
     group_jobs = {}
     fp = condorCommand(condor_job_status, cp)
     handler = ClassAdParser('Name', ['RunningJobs', 'IdleJobs', 'HeldJobs', \
-        'MaxJobsRunning'])
+        'MaxJobsRunning', 'FlockedJobs'])
     try:
         parseCondorXml(fp, handler)
     except Exception, e:
@@ -336,6 +336,8 @@ def getJobsInfo(vo_map, cp):
         my_info = vo_jobs.get(vo, {"running":0, "idle":0, "held":0, \
             'max_running':0})
         addIntInfo(my_info, info, "running", "RunningJobs")
+        if cp_getBoolean(cp, "condor", "count_flocked", False):
+            addIntInfo(my_info, info, "running", "FlockedJobs")
         addIntInfo(my_info, info, "idle", "IdleJobs")
         addIntInfo(my_info, info, "held", "HeldJobs")
         addIntInfo(my_info, info, "max_running", "MaxJobsRunning")

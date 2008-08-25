@@ -300,7 +300,7 @@ def parseNodes(queueInfo, cp):
         queueCpu[queue] = {'max': max, 'njobs': njobs}
     return totalCpu, freeCpu, queueCpu
 
-def getQueueList(queueInfo, cp):
+def getQueueList(cp):
     """
     Returns a list of all the queue names that are supported.
 
@@ -322,7 +322,7 @@ def getQueueList(queueInfo, cp):
         rvf_queue_list = rvf_queue_list.split()
         log.info("The RVF lists the following queues: %s." % ', '.join( \
             rvf_queue_list))
-    for queue in queueInfo:
+    for queue in getQueueInfo(cp):
         if queue not in queue_exclude:
             queues.append(queue)
         if rvf_queue_list and queue not in rvf_queue_list:

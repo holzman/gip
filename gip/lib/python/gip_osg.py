@@ -145,6 +145,8 @@ def configOsg(cp):
     root_path = cp_get(cp2, gip_sec, "se_root_path", "/")
     vo_dir = cp_get(cp2, gip_sec, "vo_dir", "VONAME").replace("VONAME", "$VO")
     default = os.path.join(root_path, vo_dir)
+    if not gip_sec in cp2.sections():
+        cp2.add_section(gip_sec)
     cp2.set(gip_sec, "default_path", default)
     __write_config(gip_sec, "default_path", "vo", "default")
 

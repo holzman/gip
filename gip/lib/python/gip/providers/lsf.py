@@ -93,7 +93,7 @@ def print_CE(cp):
                 acbr += 'GlueCEAccessControlBaseRule: VO:%s\n' % vo.lower()
         if not acbr:
             continue
-        print info
+        #print info
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
         info['gramVersion'] = '2.0'

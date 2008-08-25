@@ -132,6 +132,7 @@ def configOsg(cp):
     # [GIP]
     __write_config(gip_sec, "se_name", "se", "name")
     __write_config(gip_sec, "se_host", "se", "unique_name")
+    __write_config(gip_sec, "se_host", "se", "srm_host")
     __write_config(gip_sec, "dynamic_dcache", "se", "dynamic_dcache")
     __write_config(gip_sec, "srm", "se", "srm_present")
     __write_config(gip_sec, "batch", "ce", "job_manager")

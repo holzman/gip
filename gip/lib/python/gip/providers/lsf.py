@@ -6,7 +6,7 @@ import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    printTemplate, cp_get, ldap_boolean
+    printTemplate, cp_get, cp_getInt
 from gip_cluster import getClusterID
 from lsf_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
@@ -86,7 +86,7 @@ def print_CE(cp):
         info['max_total'] = info['max_waiting'] + info['max_running']
         info['assigned'] = info['job_slots']
         info['lrmsType'] = 'lsf'
-        info['preemption'] = ldap_boolean(cp_get(cp, 'lsf', 'preemption', '0'))
+        info['preemption'] = str(cp_getInt(cp, 'lsf', 'preemption', '0'))
         acbr = ''
         for vo, queue2 in vo_queues:
             if queue == queue2:

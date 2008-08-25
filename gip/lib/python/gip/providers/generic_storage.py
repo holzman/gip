@@ -193,7 +193,7 @@ def print_SRM(cp):
 
     sename = cp.get("se", "unique_name")
     sitename = cp.get("site", "unique_name")
-    srmname = cp.get("se", "srm_host")
+    srmname = cp.get("se", "srm_host", "UNKNOWN.example.com")
 
     srm_version = cp_get(cp, "se", "srm_version", "2")
     port = cp_getInt(cp, "se", "srm_port", 8443)

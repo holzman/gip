@@ -54,7 +54,14 @@ class LdapData:
                 dn = [i.strip() for i in dn]
                 continue
             try:
-                attr, val = line.split(': ', 1)
+                # changed so we can handle the case where val is none
+                #attr, val = line.split(': ', 1)
+                p = line.split(': ', 1)
+                attr = p[0]
+                try:
+                    val = p[1]
+                except:
+                    val = ""
             except:
                 print >> sys.stderr, line.strip()
                 raise
@@ -141,7 +148,7 @@ def read_ldap(fp, multi=False):
             pass
         else: # len(line) > 0
             if not entry_started:
-                entry_started = True 
+                entry_started = True
             if origline.startswith(' '):
                 buffer += origline[1:-1]
             else:
@@ -165,7 +172,7 @@ def query_bdii(cp, query="(objectClass=GlueCE)", base="o=grid"):
     endpoint = cp.get('bdii', 'endpoint')
     r = re.compile('ldap://(.*):([0-9]*)')
     m = r.match(endpoint)
-    if not m: 
+    if not m:
         raise Exception("Improperly formatted endpoint: %s." % endpoint)
     info = {}
     info['hostname'], info['port'] = m.groups()
@@ -237,7 +244,7 @@ def getSiteList(cp):
         "(!(objectClass=GlueSchemaVersion)))")
     entries = read_ldap(fp)
     sitenames = []
-    for entry in entries: 
+    for entry in entries:
         dummy, sitename = entry.dn[0].split('=')
         sitenames.append(sitename)
     return sitenames

@@ -16,10 +16,9 @@ import sys
 import socket
 import traceback
 import ConfigParser
+import urllib
 
 from UserDict import UserDict
-
-from gip_osg import configOsg
 
 # This evaluates to true if Python 2.3 or higher is
 # available.
@@ -149,9 +148,7 @@ def config(*args):
 
     # Set up the config object to be compatible with the OSG attributes
     # file.
-    #config_compat(cp)
-    configOsg(cp)
-
+    config_compat(cp)
     return cp
 
 def config_compat(cp):
@@ -233,8 +230,18 @@ def config_compat_osg_attributes(override, cp):
     __write_config(cp, override, osg, "GRID3_SITE_INFO", "site",
                    "sitepolicy")
     __write_config(cp, override, osg, "GRID3_SPONSOR", "site", "sponsor")
+    __write_config(cp, override, osg, "OSG_GROUP", "site", "group")
 
 def config_compat_gip_attributes(override, cp):
+    osg = None
+    try:
+        attributes = cp_get(cp, "gip", "osg_attributes", \
+            "$VDT_LOCATION/monitoring/osg-attributes.conf")
+        osg = Attributes(attributes)
+    except Exception, e:
+        log.error("Unable to open OSG attributes: %s" % str(e))
+        return
+
     # Do the same as osg-attributes but with the gip stuff.
     try:
         attributes = cp_get(cp, "gip", "gip_attributes", \
@@ -281,7 +288,7 @@ def config_compat_gip_attributes(override, cp):
         "name")
     __write_config(cp, override, gip, "OSG_GIP_DYNAMIC_DCACHE", "se",
         "dynamic_dcache")
-    
+
     config_compat_gip_attributes_subcluster(gip, override, cp)
 
 info_map = {\
@@ -637,7 +644,7 @@ def cp_getBoolean(cp, section, option, default=True):
     If the cp object has a section/option of the proper name, and if that value
     has a 'y' or 't', we assume it's supposed to be true.  Otherwise, if it
     contains a 'n' or 'f', we assume it's supposed to be true.
-    
+
     If neither applies - or the option doesn't exist, return the default
 
     @param cp: ConfigParser object
@@ -729,7 +736,7 @@ def matchFQAN(fqan1, fqan2):
        - <VO>
 
     @param fqan1: The FQAN we are testing for match
-    @param fqan2: The FQAN 
+    @param fqan2: The FQAN
     """
     fqan1 = normalizeFQAN(fqan1)
     fqan2 = normalizeFQAN(fqan2)
@@ -745,30 +752,23 @@ def matchFQAN(fqan1, fqan2):
         vog_matches = True
     return vog_matches and vor_matches
 
-rvf_parse = re.compile('(.+?): (?:(.*?)\n)')
-def parseRvf(name):
-    if 'GLOBUS_LOCATION' in os.environ:
-        basepath = os.environ['GLOBUS_LOCATION']
+def getURLData(some_url, lines=False):
+    data = None
+    filehandle = urllib.urlopen(some_url)
+    if lines:
+        data = filehandle.readlines()
     else:
-        basepath = os.environ.get('VDT_LOCATION', '/UNKNOWN')
-        basepath = os.path.join(basepath, 'globus')
-    fullname = os.path.join(basepath, 'share/globus_gram_job_manager', name)
-    if not os.path.exists(fullname):
-        return {}
-    try:
-        rvf = open(fullname, 'r').read()
-    except:
-        return  {}
-    pairs = rvf_parse.findall(rvf)
-    curAttr = None
-    results = {}
-    for key, val in pairs:
-        if key == 'Attribute':
-            curAttr = val
-            results[curAttr] = {}
-            continue
-        if curAttr == None:
-            continue
-        results[curAttr][key] = val
-    return results
+        data = filehandle.read()
 
+    return data
+
+def getUrlFd(some_url):
+    return urllib.urlopen(some_url)
+
+def compare_by (fieldname):
+    def compare_two_dicts (a, b):
+        return cmp(a[fieldname], b[fieldname])
+    return compare_two_dicts
+
+def ls(directory):
+    return os.listdir(directory)

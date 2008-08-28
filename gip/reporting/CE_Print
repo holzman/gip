@@ -1,0 +1,70 @@
+#!/usr/bin/env python
+
+import os
+import sys
+
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
+import GipUnittest
+from gip_ldap import read_bdii
+from gip_common import getLogger
+from gip_testing import runTest, getTestConfig
+
+log = getLogger("GIP.Print.CE")
+
+class TestPrintCe(GipUnittest.GipTestCase):
+
+    def __init__(self, site, cp):
+        GipUnittest.GipTestCase.__init__(self, 'testCeAds', 'testCeAds_%s' % site, cp)
+        self.site = site
+
+    def testCeAds(self):
+        """
+        Print out the following information for each CE at a site:
+          - LRMS and version
+          - Free batch slots
+          - Running jobs and waiting jobs
+          - Total batch slots
+          - Max wall clock time
+
+        For each attached VO view, print:
+          - VO
+          - Running jobs
+          - Waiting jobs
+        """
+        entries = read_bdii(self.cp, base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site)
+        ce_entries = []
+        vo_entries = []
+        ce_vo = {}
+        for entry in entries:
+            if 'GlueCE' in entry.objectClass:
+                ce_entries.append(entry)
+                ce_vo[entry] = []
+            if 'GlueVOView' in entry.objectClass and 'GlueCETop' in entry.objectClass:
+                vo_entries.append(entry)
+        for entry in vo_entries:
+            for entry2 in ce_entries:
+                desired_ck = 'GlueCEUniqueID=%s' % entry2.glue['CEUniqueID']
+                if entry.glue['ChunkKey'] == desired_ck:
+                    ce_vo[entry2].append(entry)
+
+        for entry in ce_entries:
+            out = '\t* CE: %s\n' % entry.glue['CEUniqueID']
+            out += '\t\tLRMS type: %s, Version: %s\n' % (entry.glue['CEInfoLRMSType'], entry.glue['CEInfoLRMSVersion'])
+            out += '\t\tSlots used %s, Free %s\n' % (entry.glue['CEStateFreeJobSlots'], entry.glue['CEStateRunningJobs'])
+            out += '\t\tTotal batch slots: %s\n' % entry.glue['CEPolicyAssignedJobSlots']
+            out += '\t\tMax wall time: %s\n' % entry.glue['CEPolicyMaxWallClockTime']
+            for vo in ce_vo[entry]:
+                out += '\t\t- VO: %s\n' % vo.glue['VOViewLocalID']
+                out += '\t\t\tRunning %s, Waiting %s\n' % (vo.glue['CEStateRunningJobs'], vo.glue['CEStateWaitingJobs'])
+            self.expectEquals(0, 1, msg=out[:-1])
+
+def main(args):
+    """
+    The main entry point for when ce_print is run in standalone mode.
+    """
+    cp = getTestConfig(args)
+    runTest(cp, TestPrintCe)
+
+if __name__ == '__main__':
+    main(sys.argv)
+

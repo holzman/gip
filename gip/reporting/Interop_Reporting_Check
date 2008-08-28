@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+
+import sys
+import os
+
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
+import GipUnittest
+from gip_ldap import read_bdii
+from gip_common import cp_get, getURLData
+from gip_testing import runTest, getTestConfig
+
+class InteropCheck(GipUnittest.GipTestCase):
+    def __init__(self, site, cp):
+        GipUnittest.GipTestCase.__init__(self, 'testInteropInfo', 'testInteropInfo_%s' % site, cp)
+        self.site = site
+
+        self.bdii_conf_url = cp_get(self.cp, "gip_tests", "egee_bdii_conf_url", "")
+        self.osg_bdii = cp_get(self.cp, "gip_tests", "bdii_addr", "")
+        self.osg_port = cp_get(self.cp, "gip_tests", "bdii_port", "2170")
+        self.egee_bdii = cp_get(self.cp, "gip_tests", "egee_bdii", "")
+        self.egee_port = self.osg_port
+
+    def testInteropInfo(self):
+        """
+Interop Reporting Check
+
+Checks to see if the site is registered for interoperability with the WLCG.
+If the site is, then checks both the OSG BDII and the WLCG BDII to make
+sure that the site has entries in both.
+        """
+
+        isInterop = self.checkIsInterop()
+        if isInterop:
+            query="(objectClass=GlueSite)"
+            base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site
+            try:
+                # try the OSG BDII
+                self.cp.set('bdii', 'endpoint', "ldap://%s:%s" % (self.osg_bdii, self.osg_port))
+                data = read_bdii(self.cp, query, base)
+            except:
+                self.failUnless(False, msg="%s does not exist in the OSG BDII" % self.site)
+
+            try:
+                # try the WLCG BDII
+                self.cp.set('bdii', 'endpoint', "ldap://%s:%s" % (self.egee_bdii, self.egee_port))
+                data = read_bdii(self.cp, query, base)
+            except:
+                self.failUnless(False, msg="%s does not exist in the WLCG BDII" % self.site)
+
+    def checkIsInterop(self):
+        ret = False
+        interop = getURLData(self.bdii_conf_url, True)
+        for line in interop:
+            l = line.split()
+            try:
+                siteName = l[0].lower()
+                endpoint = l[1]
+                if siteName == self.site.lower():
+                    ret = True
+                    self.endpoint = endpoint
+                    break
+            except:
+                continue
+
+        return ret
+
+def main(args):
+    """
+    The main entry point for when dn_check is run in standalone mode.
+    """
+    cp = getTestConfig(args)
+    runTest(cp, InteropCheck)
+
+if __name__ == '__main__':
+    main(sys.argv)

@@ -1,0 +1,56 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import os
+
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
+import GipUnittest
+from gip_common import getLogger, cp_get
+from gip_testing import runTest, getTestConfig, runlcginfo
+
+class LcgInfoCEList(GipUnittest.GipTestCase):
+    def __init__(self, cp):
+        GipUnittest.GipTestCase.__init__(self, 'testLcgInfoCEList', 'testLcgInfoCEList', cp)
+        self.bdii = cp_get(self.cp, "gip_tests", "bdii_addr", "")
+        self.port = cp_get(self.cp, "gip_tests", "bdii_port", "")
+        print >> sys.stderr, self.bdii + ":" + self.port
+        self.opt = "--list-ce"
+
+    def testLcgInfoCEList(self):
+        """
+LCG Info Query
+
+lcg-info --list-ce --vo ops --bdii is.grid.iu.edu:2170
+
+Prints out a list of CE's configured for the following vo's:
+MIS, OPS, CMS, and ATLAS.  .  NOTE: This test is not really intended for
+a site adminitstrators other than to see if their site's CE is
+configured properly and is visible to VO's using the lcg tools.
+        """
+        vo_sep = ""
+        for i in range(0, 70): vo_sep += "="
+        vos = ['mis', 'ops', 'cms', 'atlas']
+        for vo in vos:
+            output = "VO: %s\n" % vo
+            output += vo_sep + "\n"
+            output += self.getInfoForVO(vo)
+            self.expectTrue(False, output)
+
+    def getInfoForVO(self, vo):
+        pout = runlcginfo(self.opt, self.bdii, self.port, vo).readlines()
+        template = "%s\n"
+        se_list = "CE:\n"
+        for line in pout:
+            if len(line.strip()) > 0:
+                se_list += template % line.split(":")[1].strip()
+
+        return se_list
+
+def main(args):
+    cp = getTestConfig(args)
+    runTest(cp, LcgInfoCEList, per_site=False)
+
+if __name__ == '__main__':
+    main(sys.argv)
+

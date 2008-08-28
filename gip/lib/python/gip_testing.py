@@ -13,8 +13,9 @@ import types
 import unittest
 import datetime
 import urlparse
+import GipUnittest
 
-from gip_common import cp_get, pathFormatter, parseOpts
+from gip_common import cp_get, cp_getBoolean, pathFormatter, parseOpts, config
 from gip_ldap import getSiteList, prettyDN
 
 replace_command = False
@@ -66,7 +67,12 @@ def generateTests(cp, cls, args=[]):
     @keyword args: List of sites; if it is not empty, then tests will only be
         generated for the given sites.
     """
-    sites = getSiteList(cp)
+    try:
+        sites = cp_get(cp, "gip_tests", "site_names", "")
+        sites = [i.strip() for i in sites.split(',')]
+    except:
+        sites = getSiteList(cp)
+
     kw, passed, args = parseOpts(sys.argv[1:])
     tests = []
     for site in sites:
@@ -113,175 +119,96 @@ def runTest(cp, cls, out=None, per_site=True):
     @param out: A stream where the output from the test suite is logged
     @type out: stream
     """
+    usexml = cp_getBoolean(cp, "gip_tests", "use_xml")
     if per_site:
         testSuite = generateTests(cp, cls, sys.argv[1:])
     else:
         testSuite = suite = unittest.TestLoader().loadTestsFromTestCase(cls)
+        try:
+            for test in testSuite:
+                try:
+                    test.__init__(cp)
+                except:
+                    continue
+        except:
+            pass
 
-    if out is None:
-        testRunner = unittest.TextTestRunner(verbosity=2)
+    if usexml:
+        testRunner = GipUnittest.GipXmlTestRunner()
     else:
-        testRunner = unittest.TextTestRunner(stream=out, verbosity=2)
+        if out is None:
+            #testRunner = unittest.TextTestRunner(verbosity=2)
+            testRunner = GipUnittest.GipTextTestRunner(verbosity=2)
+        else:
+            #testRunner = unittest.TextTestRunner(stream=out, verbosity=2)
+            testRunner = GipUnittest.GipTextTestRunner(stream=out, verbosity=2)
     result = testRunner.run(testSuite)
     sys.exit(not result.wasSuccessful())
 
-class GipValidate(unittest.TestCase):
+def runlcginfo(opt, bdii="is.grid.iu.edu", port="2170", VO="ops"):
+    cmd = "lcg-info " + opt + " --vo " + VO + " --bdii " + bdii + ":" + port
+    print >> sys.stderr, cmd
+    return runCommand(cmd)
 
-    def __init__(self, entries):
-        self.entries = entries
+def runlcginfosites(bdii="is.grid.iu.edu", VO="ops", opts_list=[]):
+    cmd = "lcg-infosites --is " + bdii + " --vo " + VO + " "
+    for opt in opts_list:
+        cmd += opt + " "
+    return runCommand(cmd)
 
-    def run(self):
-        self.test_existence_all()
-        self.test_egee_site_unique_id()
-        self.test_ce()
-        self.test_site()
-        self.test_missing_newlines()
+def interpolateConfig(cp):
+    if cp_get(cp, "gip_tests", "site_names", "") == "":
+        cp.set("gip_tests", "site_names", cp_get(cp, "site", "name", ""))
 
-    def test_missing_newlines(self):
-        r = re.compile("Glue\w*:\s")
-        for entry in self.entries:
-            for key, val in entry.glue.items():
-                if not isinstance(val, types.StringType):
-                    continue
-                m = r.search(val)
-                self.assertEquals(m, None, msg="Entry %s, key %s is missing" \
-                    " the newline character." % (prettyDN(entry.dn), key))
+    if cp_get(cp, "gip_tests", "site_dns", "") == "":
+        host_parts = cp_get(cp, "ce", "name", "").split('.')
+        site_dns = "%s.%s" % (host_parts[:-2], host_parts[:-1])
+        cp.set("gip_tests", "site_dns", site_dns)
 
-    def test_existence_all(self):
-        self.test_existence("GlueCEUniqueID")
-        self.test_existence("GlueVOViewLocalID")
-        self.test_existence("GlueSubClusterUniqueID")
-        self.test_existence("GlueClusterUniqueID")
-        self.test_existence("GlueCESEBindSEUniqueID")
-        self.test_existence("GlueCESEBindGroupCEUniqueID")
-        self.test_existence("GlueLocationLocalID")
-        self.test_existence("GlueServiceUniqueID")
-        self.test_existence("GlueSEUniqueID")
-        self.test_existence("GlueSEAccessProtocolLocalID")
-        self.test_existence("GlueSEControlProtocolLocalID")
-        self.test_existence("GlueSALocalID")
+    if cp_get(cp, "gip_tests", "required_site", "") == "":
+        cp.set("gip_tests", "required_sites", cp_get(cp, "gip_tests", "site_names", ""))
 
-    def test_ce(self):
-        self.test_value_not_equal("GlueCE", "CEInfoDefaultSE", "UNAVAILABLE")
-        self.test_value_not_equal("GlueCE", "CEPolicyMaxCPUTime", "0")
-        self.test_value_not_equal("GlueCE", "CEInfoTotalCPUs", "0")
-        self.test_value_not_equal("GlueCE", "CEStateEstimatedResponseTime", "0")
-        self.test_value_not_equal("GlueCE", "CEStateWorstResponseTime", "0")
+    grid = cp_get(cp, "site", "group", "")
+    cp.set("gip_tests", "bdii_port", "2170")
+    cp.set("gip_tests", "egee_port", "2170")
+    cp.set("gip_tests", "interop_url", "http://oim.grid.iu.edu/publisher/get_osg_interop_bdii_ldap_list.php?grid=%s&format=html" % grid)
+    if "ITB" in grid:
+        cp.set("gip_tests", "bdii_addr", "is-itb2.grid.iu.edu")
+        cp.set("gip_tests", "egee_bdii", "pps-bdii.cern.ch")
+        cp.set("gip_tests", "egee_bdii_conf_url", "http://egee-pre-production-service.web.cern.ch/egee-pre-production-service/bdii/pps-all-sites.conf")
+        web_server = "http://is-itb2.grid.iu.edu/cgi-bin/"
+    else:
+        cp.set("gip_tests", "bdii_addr", "is.grid.iu.edu")
+        cp.set("gip_tests", "egee_bdii", "lcg-bdii.cern.ch")
+        cp.set("gip_tests", "egee_bdii_conf_url", "http://lcg-bdii-conf.cern.ch/bdii-conf/bdii.conf")
+        web_server = "http://is.grid.iu.edu/cgi-bin/"
 
-    def test_site(self):
-        self.test_url()
-        self.test_sponsors()
+    cp.set("gip_tests", "update_url", web_server + "status.cgi")
+    cp.set("gip_tests", "schema_check_url", web_server + "show_source_data?which=%s&source=cemon")
+    cp.set("gip_tests", "validator_url", web_server + "show_source_data?which=%s&source=served")
 
-    def test_url(self):
-        for entry in self.entries:
-            if 'GlueSite' not in entry.objectClass:
-                continue
-            parts= urlparse.urlparse(entry.glue['SiteWeb'])
-            self.assertNotEquals(parts, '', msg="Invalid website: %s" % \
-                entry.glue['SiteWeb'])
 
-    def test_sponsors(self):
-        r = re.compile("(\w+):([0-9]+)")
-        for entry in self.entries:
-            if 'GlueSite' not in entry.objectClass:
-                continue
-            m = r.findall(entry.glue['SiteSponsor'])
-            self.assertNotEquals(m, None, msg="Invalid site sponsor: %s" % \
-                entry.glue['SiteSponsor'])
-            tot = 0
-            num_sponsors = 0
-            for e in m:
-                num_sponsors += 1
-                tot += int(e[1])
-            if num_sponsors == 1 and tot == 0:
-                tot = 100
-            self.assertEquals(tot, 100, msg="Site sponsorship does not add up "\
-                " to 100: %s" % entry.glue['SiteSponsor'])
+def getTestConfig(args):
+    cp = config()
+    try:
+        cp.readfp(open(os.path.expandvars('$GIP_LOCATION/etc/gip_tests.conf')))
+    except:
+        pass
 
-    def test_existence(self, name, full=False, *others):
-        for entry in self.entries:
-            if full and entry.dn[0] == name:
-                idx = 1
-                if len(entry.dn)-1 < len(others):
-                    continue
-                do_return = True
-                for other in others:
-                    if entry.dn[idx] != other:
-                        do_return=False
-                        break
-                    idx += 1
-                if do_return:
-                    return
-            if (not full) and entry.dn[0].startswith(name):
-                idx = 1
-                if len(entry.dn)-1 < len(others):
-                    continue
-                do_return = True
-                for other in others:
-                    if not entry.dn[idx].startswith(other):
-                        do_return = False
-                        break
-                    idx += 1
-                if do_return:
-                    return
-        self.assertEquals(0, 1, msg="GLUE Entity %s does not exist." % name)
+    interpolateConfig(cp)
 
-    def test_chunk_keys(self):
-        for entry in self.entries:
-            if 'ChunkKey' not in entry.glue:
-                continue
-            self.test_existence(entry.glue['ChunkKey'], full=True)
+    section = "gip_tests"
+    if not cp.has_section(section):
+        cp.add_section(section)
 
-    def test_foreign_key(self):
-        for entry in self.entries:
-            value = entry.glue.get('ForeignKey', None)
-            if value:
-                continue
-            if isinstance(value, types.TupleType):
-                for val in value:
-                    self.test_existence(entry.glue['ForeignKey'], full=True)
-            else:
-                self.test_existence(entry.glue['ForeignKey'], full=True)
-
-    def test_egee_site_unique_id(self):
-        for entry in self.entries:
-            if 'GlueSite' not in entry.objectClass:
-                continue
-            self.assertEquals(entry.glue['SiteName'], \
-                entry.glue['SiteUniqueID'], msg="For EGEE compat., must have " \
-                "GlueSiteName == GlueSiteUniqueID")
-
-    def test_value_not_equal(self, objClass, attribute, value):
-        for entry in self.entries:
-            if objClass not in entry.objectClass:
-                continue
-            self.assertNotEquals(entry.glue[attribute], value, msg="GLUE " \
-                "attribute %s for entity %s is equal to %s" % (attribute, \
-                objClass, value))
-
-    def _first_val(self, val):
-        if isinstance(val, types.TupleType):
-            return val[0]
-        return val
-
-    def _is_in(self, string, val):
-        if isinstance(val, types.TupleType):
-            return string in val
+    try:
+        xml = args[1]
+        if xml == "xml":
+            args.pop(1)
+            cp.set(section, "use_xml", "True")
         else:
-            return string == val
+            cp.set(section, "use_xml", "False")
+    except:
+        cp.set(section, "use_xml", "False")
 
-    def test_cesebind(self):
-        # Make a list of all the CEs in the entries and all the SEs:
-        ses = []
-        ces = []
-        for entry in self.entries:
-            if 'GlueSE' in entry.objectClass:
-                ses.append(self._first_val(entry.glue['SEUniqueID'][0]))
-            if 'GlueCE' in entry.objectClass:
-                ces.append(self._first_val(entry.glue['CEUniqueID'][0]))
-        for ce in ces:
-            for se in ses:
-                self.test_existence('GlueCESEBindSEUniqueID=%s' % se,
-                    'GlueCESEBindGroupCEUniqueID=%s' % ce, full=True)
-            self.test_existence('GlueCESEBindGroupCEUniqueID' % ce, full=True)
-
+    return cp

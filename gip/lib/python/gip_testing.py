@@ -67,9 +67,13 @@ def generateTests(cp, cls, args=[]):
     @keyword args: List of sites; if it is not empty, then tests will only be
         generated for the given sites.
     """
+    #sites = getSiteList(cp)
     try:
         sites = cp_get(cp, "gip_tests", "site_names", "")
-        sites = [i.strip() for i in sites.split(',')]
+        if len(sites) > 0:
+            sites = [i.strip() for i in sites.split(',')]
+        else:
+            sites = getSiteList(cp)
     except:
         sites = getSiteList(cp)
 

@@ -176,6 +176,10 @@ admin_password = """
 What is the admin password?
 """
 
+admin_identity = """
+What is the path to the admin identity file?
+"""
+
 db_start = """
 We will now begin the configuration of the Postgres DB connection.
 """

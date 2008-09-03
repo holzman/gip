@@ -30,11 +30,15 @@ def print_SA(cp, section="se"):
         total = 0
     for vo in vos:
         acbr = "GlueSAAccessControlBaseRule: VO:%s" % vo
+        if section == 'se':
+            path_section = 'vo'
+        else:
+            path_section = section
         info = {"saLocalID"        : vo,
                 "seUniqueID"       : se_unique_id,
                 "root"             : "/",
-                "path"             : getPath(cp, vo, section=section,
-                                     classicSE=section == 'classic_se'),
+                "path"             : getPath(cp, vo, section=path_section,
+                                     classicSE=path_section == 'classic_se'),
                 "filetype"         : "permanent", 
                 "saName"           : "%s_default" % vo,
                 "totalOnline"      : int(round(total/1000**2)),

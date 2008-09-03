@@ -121,6 +121,7 @@ class Admin:
         except OSError:
           pass
       try:
+        args.append('-x')
         os.execvp( '/usr/bin/ssh', ['ssh'] + args )
       except Exception, e:
         print e

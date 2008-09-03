@@ -45,6 +45,10 @@ def connect_admin(cp):
     except:
         pass
     try:
+        info['Identity'] = cp.get("dcache_admin", "identity")
+    except:
+        pass
+    try:
         info['Protocol'] = cp.get("dcache_admin", "protocol")
     except:
         pass
@@ -157,6 +161,8 @@ class Admin:
       ssh_args += ['-p', str(info['Port'])]
     if 'Cipher' in info:
       ssh_args += ['-c', str(info['Cipher'])]
+    if 'Identity' in info:
+      ssh_args += ['-i', str(info['Identity'])]
     if 'Protocol' in info:
       ssh_args += ['-%s' % str(info['Protocol'])]
     self.fork_ssh( ssh_args )

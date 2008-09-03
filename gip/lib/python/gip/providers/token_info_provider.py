@@ -134,7 +134,8 @@ def print_SA_compat(cp):
         used = 0
         available = 0
     for vo in vos:
-        acbr = "GlueSAAccessControlBaseRule: VO:%s" % vo
+        acbr = "GlueSAAccessControlBaseRule: VO:%s\nGlueSAAccessControlBaseRule: %s" % (vo, vo)
+        acbr = "GlueSAAccessControlBaseRule: VO:%s\nGlueSAAccessControlBaseRule: %s" % (vo, vo)
         info = {"saLocalID"        : vo,
                 "seUniqueID"       : se_unique_id,
                 "root"             : "/",

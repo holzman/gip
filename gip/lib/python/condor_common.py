@@ -317,11 +317,12 @@ def getJobsInfo(vo_map, cp):
     for user, info in handler.getClassAds().items():
         # Determine the VO, or skip the entry
         name = user.split("@")[0]
-        name_info = name.split('.')
+        name_info = name.split('.', 1)
         if len(name_info) == 2:
             group, name = name_info
         else:
             group = 'default'
+        log.debug("Examining jobs for group %s, user %s." % (group, name))
         try:
             vo = vo_map[name].lower()
         except Exception, e:

@@ -82,6 +82,8 @@ def print_CE(cp):
         # Default to no groups.
         groupInfo = {}
 
+    log.debug("Group Info: %s" % str(groupInfo))
+
     # Accumulate the entire statistics, instead of breaking down by VO.
     running, idle, held = 0, 0, 0
     for group, ginfo in jobs_info.items():
@@ -96,25 +98,33 @@ def print_CE(cp):
     all_group_vos = []
     for val in groupInfo.values():
         all_group_vos.extend(val['vos'])
-    defaultVoList = voList(cp)
-    defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
+    all_vos = voList(cp)
+    defaultVoList = [i for i in all_vos if i not in all_group_vos]
     groupInfo['default']['vos'] = defaultVoList
-    acbr = '\n'.join(['GlueCEAccessControlBaseRule: VO:%s' % i for i in \
-        defaultVoList])
-    groupInfo['default']['acbr'] = acbr
+    #acbr = '\n'.join(['GlueCEAccessControlBaseRule: VO:%s' % i for i in \
+    #    defaultVoList])
+    #groupInfo['default']['acbr'] = acbr
     if not groupInfo['default']['vos']:
         del groupInfo['default']
 
     for group, ginfo in groupInfo.items():
         jinfo = jobs_info.get(group, {})
         ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)
+        vos = ginfo['vos']
+        if not isinstance(vos, sets.Set):
+            vos = sets.Set(vos)
+        vos.update(jinfo.keys())
+        vos.intersection_update(sets.Set(all_vos))
+        log.debug("CE %s, post-filtering VOs: %s." % (ce_unique_id, ", ".join(\
+            vos)))
+        if not vos:
+            continue
         if 'acbr' not in ginfo:
             ginfo['acbr'] = '\n'.join(['GlueCEAccessControlBaseRule: VO:%s' % \
-                vo for vo in ginfo['vos']])
+                vo for vo in vos])
         max_running = 0
         if group in jobs_info:
             max_runnings = [i.get('max_running', 0) for i in jobs_info[group].values()]
-            print >> sys.stderr, max_runnings
             if max_runnings:
                 max_running = max(max_runnings)
         if ginfo.get('quota', 0) != 999999:
@@ -202,13 +212,19 @@ def print_VOViewLocal(cp):
     all_group_vos = []    
     for val in groupInfo.values():
         all_group_vos.extend(val['vos'])
-    defaultVoList = [i for i in voList(cp) if i not in all_group_vos]
-    groupInfo = {'default': {'vos': defaultVoList}}
+    all_vos = sets.Set(voList(cp))
+    defaultVoList = [i for i in all_vos if i not in all_group_vos]
+    if 'default' not in groupInfo:
+        groupInfo['default'] = {}
+    groupInfo['default']['vos'] = defaultVoList
 
     for group in groupInfo:
-        vos = groupInfo[group].get('vos', [group])
-        ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)    
         jinfo = jobs_info.get(group, {})
+        vos = sets.Set(groupInfo[group].get('vos', [group]))
+        vos.update(jinfo.keys())
+        vos.intersection_update(all_vos)
+        log.debug("All VOs for %s: %s" % (group, ", ".join(vos)))
+        ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)    
         for vo in vos:
             acbr = 'VO:%s' % vo
             info = jinfo.get(vo, {"running": 0, "idle": 0, "held": 0})

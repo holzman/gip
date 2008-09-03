@@ -81,7 +81,11 @@ class LdapData:
                 raise ValueError("Invalid data:\n%s" % data)
         objectClass.sort()
         self.objectClass = tuple(objectClass)
-        self.dn = tuple(dn)
+        try:
+            self.dn = tuple(dn)
+        except:
+            print >> sys.stderr, "Invalid GLUE:\n%s" % data
+            raise
         for entry in glue:
             if multi:
                 glue[entry] = tuple(glue[entry])
@@ -93,7 +97,15 @@ class LdapData:
         for obj in self.objectClass:
             ldif += 'objectClass: %s\n' % obj
         for entry, values in self.glue.items():
-            if not self.multi:
+            if entry == 'SiteLocation':
+                if self.multi:
+                    for value in values:
+                        ldif += 'GlueSiteLocation: %s\n' % \
+                            ', '.join(list(value))
+                else:
+                    ldif += 'GlueSiteLocation: %s\n' % \
+                        ', '.join(list(values))
+            elif not self.multi:
                 ldif += 'Glue%s: %s\n' % (entry, values)
             else:
                 for value in values:

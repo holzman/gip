@@ -30,6 +30,7 @@ def config_admin_interface(ask):
     ask(q.admin_host, "dcache_admin", "hostname", validHostname)
     ask(q.admin_port, "dcache_admin", "port", validPort)
     ask(q.admin_user, "dcache_admin", "username")
+    ask(q.admin_user, "dcache_admin", "identity")
     ask.password(q.admin_password, "dcache_admin", "password")
     if not ask.cp.has_option("dcache_admin", "cipher"):
         ask.cp.set("dcache_admin", "cipher", "blowfish")

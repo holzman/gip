@@ -29,7 +29,8 @@ def print_SA(cp, section="se"):
         available = 0
         total = 0
     for vo in vos:
-        acbr = "GlueSAAccessControlBaseRule: VO:%s" % vo
+        acbr = "GlueSAAccessControlBaseRule: %s\nGlueSAAccessControlBase" \
+            "Rule: VO:%s" % (vo, vo)
         if section == 'se':
             path_section = 'vo'
         else:

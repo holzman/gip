@@ -9,7 +9,7 @@ from gip.dcache.admin import connect_admin
 from gip.dcache.space_calculator import calculate_spaces
 
 def main():
-    cp = config()
+    cp = config("$GIP_LOCATION/etc/dcache_storage.conf")
     admin = connect_admin(cp)
     sas, vos = calculate_spaces(cp, admin)
     saTemplate = getTemplate("GlueSE", "GlueSALocalID")

@@ -1,4 +1,9 @@
 
+"""
+Interact with the SrmSpaceManager and the PoolManager to calculate the 
+important info about available space in dCache
+"""
+
 import re
 import sets
 
@@ -17,8 +22,27 @@ PoolManager = 'PoolManager'
 SrmSpaceManager = 'SrmSpaceManager'
 
 def calculate_spaces(cp, admin):
-    space_output = admin.execute(SrmSpaceManager, 'ls')
-    resv, lg = parsers.parse_srm_space_manager(space_output)
+    """
+    Determine the storage areas attached to this dCache.
+
+    This returns two lists.  The first list, sas, is a list of dictionaries
+    which contain the key-value pairs needed to fill out the GlueSA object.
+
+    The second list, vos, is a list of dictionaries which contain the key-value
+    pairs needd to fill in the GlueVOInfo object.
+
+    @param cp: ConfigParser object
+    @param admin: Admin interface to dCache
+    @returns: sas, vos (see above description of return values.
+    """
+    # If SrmSpaceManager isn't running, this will cause an exception.
+    # Catch it and pretend we just have no reservations or link groups
+    try:
+        space_output = admin.execute(SrmSpaceManager, 'ls')
+        resv, lg = parsers.parse_srm_space_manager(space_output)
+    except:
+        resv = []
+        lg = []
 
     # Get the pool information
     psu_output = admin.execute(PoolManager, 'psu dump setup')
@@ -366,6 +390,22 @@ def getLGAllowedVOs(cp, vos):
     return allowed
 
 def getReservationACBR(cp, vog, vor):
+    """
+    Given a VO group and VO role for a space reservation, return the ACBR,
+    composed of either a FQAN or other string of form ACBR_t in GLUE 1.3.
+
+    If vog does not start with '/', then it usually means that SRM saved the
+    unix username instead of the VO name; in this case, we try to use the 
+    VoMapper object to determine the correct VO name.
+
+    This will return None if the ACBR can't be determined.
+
+    @param cp: Site config object
+    @param vog: VO group string
+    @param vor: VO role string
+    @returns: A GLUE 1.3 complain ACBR; not necessarily a trivial one.  If no
+       VO can be determined, this MAY return None.
+    """
     if vog.startswith('/'):
         if vor:
             return 'VOMS:%s/Role=%s' % (vog, vor)
@@ -393,6 +433,33 @@ def getAllowedVOs(cp, space):
     return list(['VO:%s' % i for i in allowed_vos])
 
 def getPath(cp, space, vo=None, return_default=True):
+    """
+    Return a path appropriate for a VO and space.
+
+    Based upon the configuration info and the VO/space requested, determine
+    a path they should use.
+
+    This function tries to find option dcache.space_<space>_path; it parses
+    this as a comma-separated list of VO:path pairs; i.e., 
+        space_CMS_path=cms:/dev/null, atlas:/pnfs/blah
+
+    If that does not provide a match and return_default is true, then it will
+    look for dcache.space_<space>_default_path and return that.
+
+    If that is not there and return_default is true, it will use the standard
+    getPath from gip_storage.
+
+    If return_default is true, this is guaranteed to return a non-empty string;
+    if return_default is false, then this might through a ValueError exception.
+
+    @param cp: Site config object
+    @param space: The name of the space to determine the path for.
+    @param vo: The name of the VO which will be using this space; None for
+        the default information.
+    @kw return_default: Set to True if you want this function to return the
+        default path if it cannot find a VO-specific one.
+    @returns: A path string; raises a ValueError if return_default=False
+    """
     default_path = cp_get(cp, "dcache", "space_%s_default_path" % space, None)
     if not default_path:
         default_path = getStoragePath(cp, vo)

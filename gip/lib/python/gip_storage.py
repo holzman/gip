@@ -6,12 +6,13 @@ Module for interacting with a dCache storage element.
 import os
 import re
 import sys
+import sets
 import stat
 import string
 import statvfs
 import traceback
 
-from gip_common import getLogger, cp_get, cp_getBoolean
+from gip_common import getLogger, cp_get, cp_getBoolean, cp_getInt
 from gip_sections import se
 from gip.dcache.admin import connect_admin
 from gip.dcache.pools import convertToKB, lookupPoolStorageInfo
@@ -322,4 +323,252 @@ def getAccessProtocols(cp):
     Currently, this just returns []
     """
     return []
+
+class StorageElement(object):
+
+    def __init__(self, cp):
+        self._cp = cp
+
+    def run(self):
+        pass
+
+    def getServiceVOs(self):
+        return voListStorage(self._cp)
+
+    def getServiceVersions(self):
+        return [2]
+
+    def getAccessProtocols(cp):
+        """
+        Stub function for providing access protocol information.
+
+        Eventually, this will return a list of dictionaries. Each dictionary will
+        have the following keys with reference to an access endpoint:
+       
+           - protocol
+           - hostname
+           - port
+    
+        Optionally, the following keys may be included (default in parenthesis):
+       
+           - capability (file transfer)
+           - maxStreams (1)
+           - securityinfo (none)
+           - version (UNKNOWN)
+           - endpoint (<protocol>://<hostname>:<port>)
+
+        Currently, this just returns []
+        """
+        return []
+
+    def hasSRM(self):
+        return cp_getBoolean(self._cp, "se", "srm_present", True)
+
+    def getSRMs(self):
+
+        srmname = cp_get(self._cp, "se", "srm_host", "UNKNOWN.example.com")
+        version = cp_get(self._cp, "se", "srm_version", "2")
+        port = cp_getInt(self._cp, "se", "srm_port", 8443)
+        if version.find('2') >= 0:
+            default_endpoint = 'httpg://%s:%i/srm/managerv2' % \
+                (srmname, int(port))
+        else:
+            default_endpoint = 'httpg://%s:%i/srm/managerv1' % \
+                (srmname, int(port))
+        endpoint = cp_get(self._cp,"se", "srm_endpoint", default_endpoint)
+
+        acbr_tmpl = '\nGlueServiceAccessControlRule: %s\n' \
+            'nGlueServiceAccessControlRule: VO:%s'
+        acbr = ''
+        vos = voListStorage(self._cp)
+        for vo in vos:
+            acbr += acbr_tmpl % (vo, vo)
+       
+        info = {'acbr': acbr[1:],
+                'status': 'OK',
+                'version': version,
+                'endpoint': endpoint,
+                'name': srmname,
+               }
+
+        return [info]
+ 
+    def getName(self):
+        return cp_get(self._cp, 'se', 'name', 'UNKNOWN')
+
+    def getUniqueID(self):
+        return cp_get(self._cp, 'se', 'unique_name', 'UNKNOWN')
+
+    def getStatus(self):
+        return cp_get(self._cp, "se", "status", "Production")
+
+    def getImplementation(self):
+        return cp_get(self._cp, "se", "implementation", "UNKNOWN")
+
+    def getVersion(self):
+        version = cp_get(self._cp, "se", "version", "UNKNOWN")
+        return version
+
+    def getSESpace(self, gb=False, total=False):
+        return getSESpace(self._cp, total=total, gb=gb)
+
+    def hasTape(self):
+        return seHasTape(self._cp)
+
+    def getSETape(self):
+        return getSETape(self._cp)
+
+    def getSEArch(self):
+        implementation = self.getImplementation()
+        if self.hasTape():
+            arch = "tape"
+        elif implementation=='dcache' or \
+                implementation.lower() == 'bestman/xrootd':
+            arch = 'multi-disk'
+        elif implementation.lower() == 'bestman':
+            arch = 'disk'
+        else:
+            arch = 'other'
+        return arch
+
+    def getSAs(self):
+        """
+        Return a list of storage areas at this site.
+
+        For each storage area, we have a dictionary with the following keys:
+
+        Required:
+           - saLocalID
+           - path
+           - acbr
+
+        Optional (default):
+           - root (/)
+           - filetype (permanent)
+           - saName (saLocalID)
+           - totalOnline; in GB (0)
+           - usedOnline; in GB (0)
+           - freeOnline; in GB (0)
+           - reservedOnline; in GB (0)
+           - totalNearline; in GB (0)
+           - usedNearline; in GB (0)
+           - freeNearline; in GB (0)
+           - reservedNearline; in GB (0)
+           - retention (replica)
+           - accessLatency (online)
+           - expiration (neverExpire)
+           - availableSpace; in KB (0)
+           - usedSpace; in KB (0)
+
+        @returns: List of dictionaries containing SA info.
+        """
+        path = self.getPathForSA(space=None)
+        vos = self.getVOsForSpace(None)
+        sa_vos = sets.Set()
+        for vo in vos:
+            sa_vos.add(vo)
+            if not vo.startswith('VO'):
+                sa_vos.add('VO: %s' % vo)
+        sa_vos = list(sa_vos)
+        sa_vos.sort()
+        acbr = '\n'.join(['GlueSAAccessControlBaseRule: %s' % i \
+            for i in sa_vos])
+        try:
+            used, available, total = getSESpace(self._cp, total=True)
+        except Exception, e:
+            log.error("Unable to get SE space: %s" % str(e))
+            used = 0
+            available = 0
+            total = 0
+        info = {'saLocalID': 'default',
+                'path': path,
+                'saName': 'Default Storage Area',
+                "totalOnline"      : int(round(total/1000**2)),
+                "usedOnline"       : int(round(used/1000**2)),
+                "freeOnline"       : int(round(available/1000**2)),
+                "availableSpace"   : available,
+                "usedSpace"        : used,
+                "vos"              : vos,
+                'acbr'             : acbr,
+               }
+        return [info]
+
+    def getVOInfos(self):
+        voinfos = []
+        for sa_info in self.getSAs():
+            vos = sa_info.get("vos", sa_info.get('name', None))
+            if not vos:
+                continue
+            for vo in vos:
+                id = '%s:default' % vo
+                path = self.getPathForSA(space=None, vo=vo)
+                acbr = 'GlueVOInfoAccessControlBaseRule: %s' % vo
+                info = {'voInfoID': id,
+                        'name': id,
+                        'path': path,
+                        'tag': 'Not A Space Reservation',
+                        'acbr': acbr,
+                        'saLocalID': sa_info.get('saLocalID', 'UNKNOWN'),
+                       }
+                voinfos.append(info)
+        return voinfos
+
+    def getVOsForSpace(self, space):
+        return voListStorage(self._cp)
+
+    def getPathForSA(self, space=None, vo=None, return_default=True,
+            section='se'):
+        """
+        Return a path appropriate for a VO and space.
+
+        Based upon the configuration info and the VO/space requested, determine
+        a path they should use.
+
+        This function tries to find option dcache.space_<space>_path; it parses
+        this as a comma-separated list of VO:path pairs; i.e., 
+            space_CMS_path=cms:/dev/null, atlas:/pnfs/blah
+
+        If that does not provide a match and return_default is true, then it will
+        look for dcache.space_<space>_default_path and return that.
+
+        If that is not there and return_default is true, it will use the standard
+        getPath from gip_storage.
+
+        If return_default is true, this is guaranteed to return a non-empty
+        string; if return_default is false, then this might through a ValueError
+        exception.
+        
+        @param cp: Site config object
+        @param space: The name of the space to determine the path for.
+        @param vo: The name of the VO which will be using this space; None for
+            the default information.
+        @kw return_default: Set to True if you want this function to return the
+            default path if it cannot find a VO-specific one.
+        @returns: A path string; raises a ValueError if return_default=False
+        """
+        default_path = cp_get(self._cp, section, "space_%s_default_path" % space,
+            None)
+        if not default_path:
+            default_path = getPath(self._cp, vo)
+        if not vo:
+            return default_path
+        vo_specific_paths = cp_get(self._cp, section, "space_%s_path" % space,
+           None)
+        vo_specific_path = None
+        if vo_specific_paths:
+            for value in vo_specific_paths.split(','):
+                value = value.strip()
+                info = value.split(':')
+                if len(info) != 2:
+                    continue
+                fqan, path = info
+                if matchFQAN(vo, fqan):
+                    vo_specific_path = path
+                    break
+        if not vo_specific_path and return_default:
+            return default_path
+        elif not vo_specific_path:
+            raise ValueError("Unable to determine path for %s!" % vo)
+        return vo_specific_path
+
 

@@ -1,0 +1,7 @@
+subject  : /DC=org/DC=doegrids/OU=Services/CN=http/red.unl.edu/CN=953393322
+issuer   : /DC=org/DC=doegrids/OU=Services/CN=http/red.unl.edu
+identity : /DC=org/DC=doegrids/OU=Services/CN=http/red.unl.edu
+type     : Proxy draft (pre-RFC) compliant impersonation proxy
+strength : 512 bits
+path     : /tmp/http_proxy
+timeleft : 0:03:26

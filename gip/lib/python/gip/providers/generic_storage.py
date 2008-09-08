@@ -6,6 +6,7 @@ from gip_common import cp_get, getLogger, config, getTemplate, printTemplate, \
 from gip_storage import voListStorage, getPath, getSESpace, getSETape, \
     seHasTape, getAccessProtocols, getClassicSESpace, StorageElement
 from gip.bestman.BestmanInfo import BestmanInfo
+from gip.dcache.DCacheInfo import DCacheInfo
 
 log = getLogger("GIP.Storage.Generic")
 
@@ -307,6 +308,9 @@ def main():
     impl = cp_get(cp, "se", "implementation", "UNKNOWN")
     if impl.lower().find('bestman') >= 0:
         se = BestmanInfo(cp)
+    elif impl.lower().find('dcache') >= 0:
+        cp = config("$GIP_LOCATION/etc/dcache_storage.conf")
+        se = DCacheInfo(cp)
     else:
         se = StorageElement(cp)
     try:

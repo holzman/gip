@@ -251,6 +251,8 @@ def calculate_voinfo_from_pgroup(cp, pgroup):
     voinfos = []
     seUniqueID = cp.get("se", "unique_name")
     for vo in getAllowedVOs(cp, pgroup):
+        if vo.startswith('VO:'):
+            vo = vo[3:]
         path = getPath(cp, pgroup, vo)
         id = '%s:%s:poolgroup' % (vo, pgroup)
         acbr = 'GlueVOInfoAccessControlBaseRule: %s' % vo

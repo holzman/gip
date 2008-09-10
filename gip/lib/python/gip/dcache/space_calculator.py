@@ -89,7 +89,16 @@ def calculate_spaces(cp, admin):
                sum([pool_info[i] for i in pgroups[y]])
 
     pgroup_list = pgroups.keys()
-    pgroup_list.sort(cmp=cmp)
+    
+    # Python 2.4 and 2.5 support named parameters, but python 2.3 
+    #  does not.  Trying the named parameter first for future 
+    #  compatibility reasons, if it fails (i.e. on python 2.3) then
+    #  resort to the python 2.3 method
+    try:
+        pgroup_list.sort(cmp=cmp)
+    except:
+        pgroup_list.sort(cmp)
+        
 
     sas = []
     vos = []

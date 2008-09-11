@@ -201,8 +201,8 @@ This check tests the ldif as reported by cemon for:
             self.expectNotEquals(entry.glue[attribute], value, msg="GLUE attribute %s for entity %s in\n %s \n is equal to %s" % (attribute, objClass, prettyDN(entry.dn), value))
 
     def test_srm(self):
-        valid_versions = ['1.1.0', '2.2.0', '1.1', '2.2']
-        deprecated_versions = ['1.1.0', '2.2.0']
+        valid_versions = ['1.1.0', '2.2.0']
+        deprecated_versions = ['1.1', '2.2']
         fk_re = re.compile("GlueSiteUniqueID=(.*)")
 
         for entry in self.entries:

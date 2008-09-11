@@ -44,6 +44,7 @@ This check tests the ldif as reported by cemon for:
         o CEInfoTotalCPUs != 0
         o CEStateEstimatedResponseTime != 0
         o CEStateWorstResponseTime != 0
+        o CEPolicyMaxWallClockTime != 0
     * The ldiff must have newlines appended after every key value combination
     * The all foriegn keys and chunk keys must have corresponding stanzas
     * All entries must conform to the attribute:value format
@@ -119,6 +120,7 @@ This check tests the ldif as reported by cemon for:
         self.test_value_not_equal("GlueCE", "CEInfoDefaultSE", "UNAVAILABLE")
         self.test_value_not_equal("GlueCE", "CEPolicyMaxCPUTime", "0")
         self.test_value_not_equal("GlueCE", "CEInfoTotalCPUs", "0")
+        self.test_value_not_equal("GlueCE", "CEPolicyMaxWallClockTime", "0")
         #self.test_value_not_equal("GlueCE", "CEStateEstimatedResponseTime", "0")
         #self.test_value_not_equal("GlueCE", "CEStateWorstResponseTime", "0")
 

@@ -68,7 +68,7 @@ def print_CE(cp):
         elif not info['max_running'] or info['max_running'] == '-':
             info['max_running'] = 999999
         if "max_wall" not in info:
-            info["max_wall"] = 0
+            info["max_wall"] = 1440
         info["job_slots"] = min(totalCpu, info["job_slots"])
         info['ert'] = 3600
         info['wrt'] = 3600

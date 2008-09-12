@@ -91,15 +91,20 @@ def getClusterID(cp):
     else:
         return cp.get(cluster, 'name')
 
-def generateGlueCluster(cp):
-    """
-    Generate cluster information from the site's configuration.
-    """
+#def generateGlueCluster(cp):
+#    """
+#    Generate cluster information from the site's configuration.
+#    """
 
 def _generateSubClusterHelper(cp, section):
     """
     Private helper function for generateSubClusters; do not use.
+    
+    Implementation note: We create a bunch of variables but never
+       appear to use them - we actually do return the local dictionary
+       at the end of the function.  Just being syntactically lazy.
     """
+    #pylint: disable-msg=W0612
     # Names
     subCluster = cp_get(cp, section, "name", cluster)
     subClusterUniqueID = cp_get(cp, section, "unique_name", subCluster)
@@ -170,6 +175,20 @@ def getSubClusterIDs(cp):
     return subclusters
 
 def getApplications(cp):
+    """
+    Return a list of dictionaries containing the application info for each
+    application installed at this site.
+    
+    Each returned dictionary should have the following keys:
+        - locationId
+        - locationName
+        - version
+        - path
+        
+    @param cp: Site configuration
+    @return: List of dictionaries; each dictionary contains the information
+    about a specific installed application.
+    """
     app_dir = cp_get(cp, "osg_dirs", "app", "/UNKNOWN")
     path1 = '%s/etc/grid3-locations.txt' % app_dir
     path2 = '%s/etc/osg-locations.txt' % app_dir

@@ -1,7 +1,10 @@
 
-import sys
+"""
+Provide information about the CEs of this site, the SEs, and
+the bindings between the two.
+"""
 
-from gip_common import voList, cp_get, cp_getBoolean
+from gip_common import cp_get, cp_getBoolean
 from gip_storage import getPath
 from pbs_common import getQueueList as getPBSQueueList
 from lsf_common import getQueueList as getLSFQueueList
@@ -86,14 +89,14 @@ def getCESEBindInfo(cp):
     if not access_point:
         access_point = "/"
     classic_access_point = cp_get(cp, "osg_dirs", "data", "/")
-    for ce in ce_list:
-        for se in se_list:
-            if se in classicse_list:
+    for myce in ce_list:
+        for myse in se_list:
+            if myse in classicse_list:
                 ap = classic_access_point
             else:
                 ap = access_point
-            info = {'ceUniqueID' : ce,
-                    'seUniqueID' : se,
+            info = {'ceUniqueID' : myce,
+                    'seUniqueID' : myse,
                     'access_point' : ap,
                    }
             binds.append(info)

@@ -22,6 +22,8 @@ from UserDict import UserDict
 
 from gip_osg import configOsg
 
+#pylint: disable-msg=W0105
+
 # This evaluates to true if Python 2.3 or higher is
 # available.
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
@@ -81,6 +83,22 @@ def check_testing_environment():
         __import__('gip_testing').replace_command = True
 
 def parseOpts( args ):
+    """
+    Parse the passed command line options.
+    
+    Does not expect the first element of argv; if you pass this directly, use
+    parseOpts(sys.argv[1:]).
+    
+    There are three objects returned:
+       - keywordOpts: Options of the form --key=val or -key=val or -key val;
+          this is the dictionary of the key: val pairs.
+       - passedOpts: Options of the form -name1 or --name2.  List of strings.
+       - givenOpts: Options which aren't associated with any flags.  List of 
+          strings.
+    
+    @param args: A list of strings which are the command line options.
+    @return: keywordOpts, passedOpts, givenOpts.  See the docstring.
+    """
     # Stupid python 2.2 on SLC3 doesn't have optparser...
     keywordOpts = {}
     passedOpts = []
@@ -138,13 +156,13 @@ def config(*args):
 
     # Try to read all the files; toss a warning if a config file can't be
     # read:
-    for file in files:
+    for myfile in files:
         try:
-            open(file, 'r')
+            open(myfile, 'r')
         except IOError, ie:
             if ie.errno == 13:
                 log.warning("Could not read config file %s due to permissions"%\
-                    file)
+                    myfile)
 
     cp.read(files)
 
@@ -182,6 +200,14 @@ def config_compat(cp):
     config_compat_gip_attributes(override, cp)
 
 def config_compat_osg_attributes(override, cp):
+    """
+    Load up configuration options from osg-attributes.conf into the
+    passed config object; translate between the two formats.
+    
+    @param override: If true, then options in gip.conf will override the
+       options in osg-attributes.conf
+    @param cp: Site configuration
+    """
     osg = None
     try:
         attributes = cp_get(cp, "gip", "osg_attributes", \
@@ -236,6 +262,15 @@ def config_compat_osg_attributes(override, cp):
     __write_config(cp, override, osg, "GRID3_SPONSOR", "site", "sponsor")
 
 def config_compat_gip_attributes(override, cp):
+    """
+    Load up configuration options from gip-attributes.conf into the
+    passed config object; translate between the two formats.
+    
+    @param override: If true, then options in gip.conf will override the
+       options in osg-attributes.conf
+    @param cp: Site configuration
+    """
+
     # Do the same as osg-attributes but with the gip stuff.
     try:
         attributes = cp_get(cp, "gip", "gip_attributes", \
@@ -249,12 +284,12 @@ def config_compat_gip_attributes(override, cp):
     # No SE at the site; use the disk's SE
     if cp.has_section("se") and cp.has_option('se', "unique_name") and \
             cp.get("se", "unique_name") == '':
-        __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
+        __write_config(cp, override, gip, "OSG_GIP_SE_DISK", "se", \
             "unique_name")
     __write_config(cp, override, gip, "OSG_GIP_SE_NAME", "se", "name")
     # No SE at the site; use the disk's SE
     if cp.get("se", "name") == '':
-        __write_config(cp, override, osg, "OSG_GIP_SE_DISK", "se", \
+        __write_config(cp, override, gip, "OSG_GIP_SE_DISK", "se", \
             "name")
     # BUGFIX: always set vo.default, no matter what.
     #if gip.get("OSG_GIP_SIMPLIFIED_SRM", "n").lower() in ["1", "y"]:
@@ -263,8 +298,11 @@ def config_compat_gip_attributes(override, cp):
     __write_config(cp, override, {1: simple_path}, 1, "vo", "default")
     for key in gip.keys():
         if key.startswith("OSG_GIP_VO_DIR"):
-            vo, dir = gip[key].split(',')
-            __write_config(cp, override, {1: dir}, 1, "vo", vo)
+            try:
+                vo, vodir = gip[key].split(',')
+            except:
+                continue
+            __write_config(cp, override, {1: vodir}, 1, "vo", vo)
 
     # Always report the SE Control version and the SRM host, even in the case
     # of dynamic information
@@ -326,7 +364,8 @@ def config_compat_gip_attributes_subcluster(gip, override, cp):
         cp.set(section, "total_cores", "%i" % (nodes*cores_per_node))
         cp.set(section, "total_cpus", "%i" % (nodes*cpus_per_node))
 
-def __write_config(cp, override, dict_object, key, section, option):
+def __write_config(cp, override, dict_object, key, section, option): \
+        #pylint: disable-msg=C0103
     """
     Helper function for config_compat; should not be called directly.
     """
@@ -415,23 +454,60 @@ class FakeLogger:
     Super simple logger for python installs which don't have the logging
     package.
     """
+    
+    def __init__(self):
+        pass
+    
     def debug(self, msg, *args):
+        """
+        Pass a debug message to stderr.
+        
+        Prints out msg % args.
+        
+        @param msg: A message string.
+        @param args: Arguments which should be evaluated into the message.
+        """
         print >> sys.stderr, msg % args
 
     def info(self, msg, *args):
+        """
+        Pass an info-level message to stderr.
+        
+        @see: debug
+        """
         print >> sys.stderr, msg % args
 
     def warning(self, msg, *args):
+        """
+        Pass a warning-level message to stderr.
+
+        @see: debug
+        """
         print >> sys.stderr, msg % args
 
     def error(self, msg, *args):
+        """
+        Pass an error message to stderr.
+
+        @see: debug
+        """
         print >> sys.stderr, msg % args
 
     def exception(self, msg, *args):
+        """
+        Pass an exception message to stderr.
+
+        @see: debug
+        """
         print >> sys.stderr, msg % args
 
 def add_giplog_handler():
-    log = logging.getLogger()
+    """
+    Add a log file to the default root logger.
+    
+    Uses a rotating logfile of 10MB, with 5 backups.
+    """
+    mylog = logging.getLogger()
     try:
         os.makedirs(os.path.expandvars('$GIP_LOCATION/var/logs'))
     except OSError, oe:
@@ -445,7 +521,7 @@ def add_giplog_handler():
         maxBytes=1024*1024*10, backupCount=5)
     handler.setFormatter(formatter)
     handler.setLevel(logging.DEBUG)
-    log.addHandler(handler)
+    mylog.addHandler(handler)
 
 if py23:
     try:
@@ -476,7 +552,7 @@ def addToPath(new_element):
     path = "%s:%s" % (str(new_element), path)
     os.environ["PATH"] = path
 
-def HMSToMin(hms):
+def HMSToMin(hms): #pylint: disable-msg=C0103
     """
     Helper function to convert something of the form HH:MM:SS to number of
     minutes.
@@ -484,7 +560,11 @@ def HMSToMin(hms):
     h, m, s = hms.split(':')
     return int(h)*60 + int(m) + int(round(int(s)/60.0))
 
-class _Constants:
+class _Constants: #pylint: disable-msg=C0103
+    """
+    A convenience class for important constants.
+    """
+    
     def __init__(self):
         self.CR = '\r'
         self.LF = '\n'
@@ -500,6 +580,20 @@ class Attributes(UserDict):
         self.load_attributes(attribute_file)
 
     def load_attributes(self, attribute_file):
+        """
+        Load up the attribtues of the form:
+        Name=Value
+        or
+        Name="Value"
+        from a specificied attribute file
+        
+        This loads the Name: Value pairs into the class, which is 
+        dictionary-like.
+        
+        @param attribute_file: Name of the file to parse
+        @raise IOError: Will throw an IOError if there is a problem reading the 
+            attribute_file
+        """
         f = open(os.path.expandvars(attribute_file))
         s = f.read()
         e = s.split(self.constants.LF)
@@ -527,18 +621,18 @@ def getTemplate(template, name):
     """
     fp = open(os.path.expandvars("$GIP_LOCATION/templates/%s" % template))
     start_str = "dn: %s" % name
-    buffer = ''
+    mybuffer = ''
     recording = False
     for line in fp:
         if line.startswith(start_str):
             recording = True
         if recording:
-            buffer += line
+            mybuffer += line
             if line == '\n':
                 break
     if not recording:
         raise ValueError("Unable to find %s in template %s" % (name, template))
-    return buffer[:-1]
+    return mybuffer[:-1]
 
 def printTemplate(template, info):
     """
@@ -595,18 +689,43 @@ def voList(cp, vo_map=None):
     return vos
 
 def getHostname():
-   return socket.gethostbyaddr(socket.gethostname())
+    """
+    Convenience function for retrieving the local hostname.
+    """
+    return socket.gethostbyaddr(socket.gethostname())
 
 def fileRead(path):
+    """
+    Return the contents of the file on a given path
+    
+    @param path: Path to file for reading
+    @raise IOError: When file can't be read (doesn't exist, permission errors)
+    @return: File contents.
+    """
     rFile = open(path)
     return rFile.read()
 
 def fileWrite(path, contents):
+    """
+    Append some contents to a given path
+    
+    @param path: Path to file we will append.
+    @param contents: Additional contents for file.
+    @raise IOError: When file can't be appended.
+    """
     wFile = open(path,"a")
     wFile.write(contents)
     wFile.close()
 
 def fileOverWrite(path, contents):
+    """
+    Overwrite a file with a contents.
+    If file doesn't exist, create and write as usual.
+    
+    @param path: Path to file we will [over]write.
+    @param contents: Contents for file.
+    @raise IOError: When file can't be [over]written.
+    """
     owFile = open(path,"w")
     owFile.write(contents)
     owFile.close()
@@ -673,6 +792,15 @@ def cp_getInt(cp, section, option, default):
         return default
 
 def pathFormatter(path, slash=False):
+    """
+    Convience function to format a path.
+    
+    @param path: Path to format
+    @keyword slash: Add a trailing (on the right) slash to the path if
+      it is not present.
+    @return: right-strip the path of all the '/'; if slash=True, then add
+      a slash to the end.
+    """
     if slash:
         if not (path[-1] == "/"):
             path = path + '/'
@@ -734,8 +862,8 @@ def matchFQAN(fqan1, fqan2):
     """
     fqan1 = normalizeFQAN(fqan1)
     fqan2 = normalizeFQAN(fqan2)
-    vog1, vor1 = fqan.split('/Role=')
-    vog2, vor2 = fqan.split('/Role=')
+    vog1, vor1 = fqan1.split('/Role=')
+    vog2, vor2 = fqan2.split('/Role=')
     vog_matches = False
     vor_matches = False
     if vor2 == '*':
@@ -748,6 +876,23 @@ def matchFQAN(fqan1, fqan2):
 
 rvf_parse = re.compile('(.+?): (?:(.*?)\n)')
 def parseRvf(name):
+    """
+    Parse the Globus RVF for a specific file.
+    
+    Retrieves the file from $GLOBUS_LOCATION/share/globus_gram_job_manager/name
+    
+    See an example RVF file for the patterns this matches.  Returns a 
+    dictionary of dictionaries; the keys are attributes, and the values are a 
+    dictionary of key: value pairs for all the associated information for an
+    attribute.
+    
+    In the case of an exception, this just returns {}
+    
+    @param name:  Name of RVF file to parse.
+    @return: Dictionary of dictionaries containing information about the 
+      attributes in the RVF file; returns an empty dict in case if there is an
+      error.
+    """
     if 'GLOBUS_LOCATION' in os.environ:
         basepath = os.environ['GLOBUS_LOCATION']
     else:
@@ -774,6 +919,14 @@ def parseRvf(name):
     return results
 
 def getURLData(some_url, lines=False):
+    """
+    Return the data from a URL.
+    
+    @param some_url: URL to retrieve
+    @keyword lines: True to split the content by lines, False otherwise.
+    @return: The data of the URL; a string if lines=False and a list of
+      lines if lines=True
+    """
     data = None
     filehandle = urllib.urlopen(some_url)
     if lines:
@@ -784,12 +937,30 @@ def getURLData(some_url, lines=False):
     return data
 
 def getUrlFd(some_url):
+    """
+    Return a file descriptor to a URL.
+    """
     return urllib.urlopen(some_url)
 
-def compare_by (fieldname):
+def compare_by(fieldname):
+    """
+    Returns a function which can be used to compare two dictionaries.
+    
+    @param fieldname: The dictionaries will be compared by applying cmp
+      to this particular keyname.
+    @return: A function which can be used to compare two dictionaries.
+    """
     def compare_two_dicts (a, b):
+        """
+        Compare two dictionaries, a and b based on a set field.
+        
+        @return: cmp(a[fieldname], b[fieldname])
+        """
         return cmp(a[fieldname], b[fieldname])
     return compare_two_dicts
 
 def ls(directory):
+    """
+    Convenience function for os.listdir; returns a directory listing.
+    """
     return os.listdir(directory)

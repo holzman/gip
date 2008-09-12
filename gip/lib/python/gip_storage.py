@@ -5,17 +5,14 @@ Module for interacting with a dCache storage element.
 
 import os
 import re
-import sys
 import sets
 import stat
-import string
 import statvfs
-import traceback
 
 from gip_common import getLogger, cp_get, cp_getBoolean, cp_getInt
 from gip_sections import se
 from gip.dcache.admin import connect_admin
-from gip.dcache.pools import convertToKB, lookupPoolStorageInfo
+from gip.dcache.pools import lookupPoolStorageInfo
 log = getLogger("GIP.Storage")
 
 def execute(p, command, bind_vars=None):
@@ -166,7 +163,7 @@ def getClassicSESpace(cp, gb=False, total=False):
         mount_info[device] = vfs_info
     # For each unique device, determine the free/total information from statvfs
     # results.
-    for dev, vfs in mount_info.items():
+    for vfs in mount_info.values():
         dev_free = vfs[statvfs.F_FRSIZE] * vfs[statvfs.F_BAVAIL]
         dev_total = vfs[statvfs.F_FRSIZE] * vfs[statvfs.F_BLOCKS]
         dev_used = dev_total - dev_free
@@ -338,7 +335,7 @@ class StorageElement(object):
     def getServiceVersions(self):
         return [2]
 
-    def getAccessProtocols(cp):
+    def getAccessProtocols(self, cp):
         """
         Stub function for providing access protocol information.
 

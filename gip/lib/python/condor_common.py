@@ -10,7 +10,6 @@ It takes advantage of the XML format of the ClassAds in order to make parsing
 easier.
 """
 
-import sys
 import sets
 import time
 
@@ -44,18 +43,28 @@ class ClassAdParser(ContentHandler):
     the attribute list passed to the constructor.
     """
 
-    def __init__(self, idx, attrlist=[]):
+    def __init__(self, idx, attrlist=None): #pylint: disable-msg=W0231
         """
         @param idx: The attribute name used to index the classads with.
         @keyword attrlist: A list of attributes to record; if it is empty, then
            parse all attributes.
         """
-        self.attrlist = list(attrlist)
+        if not attrlist:
+            self.attrlist = []
+        else:
+            self.attrlist = list(attrlist)
         if self.attrlist and idx not in self.attrlist:
             self.attrlist.append(idx)
         self.idxAttr = idx
         self.caInfo = {}
-
+        self.attrInfo = ''
+        # Initialize some used class variables.
+        self._starttime = time.time()
+        self._endtime = time.time()
+        self._elapsed = 0
+        self.curCaInfo = {}
+        self.attrName = ''
+        
     def startDocument(self):
         """
         Start up a parsing sequence; initialize myself.
@@ -71,8 +80,9 @@ class ClassAdParser(ContentHandler):
         self._endtime = time.time()
         self._elapsed = self._endtime - self._starttime
         myLen = len(self.caInfo)
-        log.info("Processed %i classads in %.2f seconds; %.2f classads/second" % (myLen,
-            self._elapsed, myLen/(self._elapsed+1e-10)))
+        log.info("Processed %i classads in %.2f seconds; %.2f classads/" \
+                 "second" % (myLen,
+                             self._elapsed, myLen/(self._elapsed+1e-10)))
 
     def startElement(self, name, attrs):
         """
@@ -114,7 +124,7 @@ class ClassAdParser(ContentHandler):
         """
         return self.caInfo
 
-def parseCondorXml(fp, handler):
+def parseCondorXml(fp, handler): #pylint: disable-msg=C0103
     """
     Parse XML from Condor.
 
@@ -137,7 +147,7 @@ def parseCondorXml(fp, handler):
         else:
             raise
 
-def condorCommand(command, cp, info={}):
+def condorCommand(command, cp, info=None): #pylint: disable-msg=W0613
     """
     Execute a command in the shell.  Returns a file-like object
     containing the stdout of the command
@@ -162,7 +172,7 @@ def condorCommand(command, cp, info={}):
 
     return runCommand(cmd)
 
-def getLrmsInfo(cp):
+def getLrmsInfo(cp): #pylint: disable-msg=C0103
     """
     Get information from the LRMS (batch system).
 
@@ -180,7 +190,7 @@ def getLrmsInfo(cp):
     log.exception(ve)
     raise ve
 
-def getGroupInfo(vo_map, cp):
+def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
     """
     Get the group info from condor
 
@@ -222,7 +232,7 @@ def getGroupInfo(vo_map, cp):
     log.debug("The condor groups are %s." % ', '.join(retval.keys()))
     return retval
 
-def getQueueList(cp):
+def getQueueList(cp): #pylint: disable-msg=C0103
     """
     Returns a list of all the queue names that are supported.
 
@@ -303,14 +313,19 @@ def getJobsInfo(vo_map, cp):
     except Exception, e:
         log.error("Unable to parse condor output!")
         log.exception(e)
-        pass
     def addIntInfo(my_info_dict, classad_dict, my_key, classad_key):
+        """
+        Add some integer info contained in classad_dict[classad_key] to 
+        my_info_dict[my_key]; protect against any thrown exceptions.
+        If classad_dict[classad_key] cannot be converted to a number,
+        default to 0.
+        """
         if my_key not in my_info_dict or classad_key not in classad_dict:
             return
         try:
             new_info = int(classad_dict[classad_key])
         except:
-            pass
+            new_info = 0
         my_info_dict[my_key] += new_info
 
     unknown_users = sets.Set()
@@ -359,7 +374,7 @@ def parseNodes(cp):
     @param cp: ConfigParser object for the GIP
     @returns: A tuple consisting of the total, claimed, and unclaimed nodes.
     """
-    global _nodes_cache
+    global _nodes_cache #pylint: disable-msg=W0603
     if _nodes_cache:
         return _nodes_cache
     subtract = cp_getBoolean(cp, "condor", "subtract_owner", True)
@@ -370,7 +385,7 @@ def parseNodes(cp):
     total = 0
     claimed = 0
     unclaimed = 0
-    for machine, info in handler.getClassAds().items():
+    for info in handler.getClassAds().values():
         total += 1
         if 'State' not in info:
             continue
@@ -380,7 +395,8 @@ def parseNodes(cp):
             unclaimed += 1
         elif subtract and info['State'] == 'Owner':
             total -= 1
-    log.info("There are %i total; %i claimed and %i unclaimed." % (total, claimed, unclaimed))
+    log.info("There are %i total; %i claimed and %i unclaimed." % \
+             (total, claimed, unclaimed))
     _nodes_cache = total, claimed, unclaimed
     return total, claimed, unclaimed
 

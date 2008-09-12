@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
-import re
+"""
+Print out GLUE describing the local LSF batch system.
+"""
+
 import sys
 import os
 
@@ -15,6 +18,9 @@ from gip_sections import ce
 log = getLogger("GIP.LSF")
 
 def print_CE(cp):
+    """
+    Print out the GlueCE objects for LSF; one GlueCE per grid queue.
+    """
     try:
         lsfVersion = getLrmsInfo(cp)
     except:
@@ -23,7 +29,7 @@ def print_CE(cp):
     try:
         totalCpu, freeCpu, queueCpus = parseNodes(queueInfo, cp)
     except:
-        raise
+        #raise
         totalCpu, freeCpu, queueCpus = 0, 0, {}
     ce_name = cp.get(ce, "name")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
@@ -104,6 +110,12 @@ def print_CE(cp):
     return queueInfo, totalCpu, freeCpu, queueCpus
 
 def print_VOViewLocal(queue_info, cp):
+    """
+    Print out the VOView objects for the LSF batch system.
+    
+    One VOView per VO per queue, for each VO which has access
+    to the queue.
+    """
     ce_name = cp.get(ce, "name")
     vo_map = VoMapper(cp)
     queue_jobs = getJobsInfo(vo_map, cp)
@@ -138,13 +150,16 @@ def print_VOViewLocal(queue_info, cp):
         printTemplate(VOView, info)
 
 def main():
+    """
+    Wrapper for printing out the LSF-related GLUE objects.
+    """
     try:
         cp = config()
         lsf_path = cp_get(cp, "lsf", "lsf_path", None)
         if lsf_path:
             addToPath(lsf_path)
-        vo_map = VoMapper(cp)
-        queueInfo, totalCpu, freeCpu, queueCpus = print_CE(cp)
+        #vo_map = VoMapper(cp)
+        queueInfo, _, _, _ = print_CE(cp)
         print_VOViewLocal(queueInfo, cp)
     except Exception, e:
         sys.stdout = sys.stderr

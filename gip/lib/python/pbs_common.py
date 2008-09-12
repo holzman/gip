@@ -4,8 +4,6 @@ Module for interacting with PBS.
 """
 
 import re
-import os
-import sys
 import grp
 import pwd
 import sets
@@ -46,6 +44,10 @@ def pbsOutputFilter(fp):
     This function uses iterators
     """
     class PBSIter:
+        """
+        An iterator for PBS output; this allows us to easily parse over 
+        PBS-style line continuations.
+        """
 
         def __init__(self, fp):
             self.fp = fp
@@ -54,6 +56,9 @@ def pbsOutputFilter(fp):
             self.done = False
 
         def next(self):
+            """
+            Return the next full line of output for the iterator.
+            """
             if self.prevline == None:
                 line = self.fp_iter.next()
                 if line.startswith('\t'):
@@ -78,9 +83,12 @@ def pbsOutputFilter(fp):
                 return self.prevline
 
     class PBSFilter:
-
-        def __init__(self, iter):
-            self.iter = iter
+        """
+        An iterable object based upon the PBSIter iterator.
+        """
+        
+        def __init__(self, myiter):
+            self.iter = myiter
 
         def __iter__(self):
             return self.iter
@@ -88,6 +96,13 @@ def pbsOutputFilter(fp):
     return PBSFilter(PBSIter(fp))
 
 def pbsCommand(command, cp):
+    """
+    Run a command against the PBS batch system.
+    
+    Use this when talking to PBS; not only does it allow for integration into
+    the GIP test framework, but it also filters and expands PBS-style line
+    continuations.
+    """
     try:
         pbsHost = cp.get("pbs", "host")
     except:
@@ -102,6 +117,9 @@ def pbsCommand(command, cp):
     return pbsOutputFilter(fp)
 
 def getLrmsInfo(cp):
+    """
+    Return the version string from the PBS batch system.
+    """
     version_re = re.compile("pbs_version = (.*)\n")
     for line in pbsCommand(batch_system_info_cmd, cp):
         m = version_re.search(line)
@@ -110,10 +128,26 @@ def getLrmsInfo(cp):
     raise Exception("Unable to determine LRMS version info.")
 
 def getJobsInfo(vo_map, cp):
+    """
+    Return information about the jobs currently running in PBS
+    
+    The return value is a dictionary of dictionaries; the keys for the
+    top-level dictionary are queue names; the values are queuedata dictionaries
+    
+    The queuedata dicts have key:val pairs of voname: voinfo, where voinfo is
+    a dictionary with the following keys:
+       - running: Number of VO running jobs in this queue.
+       - wait: Number of VO waiting jobs in this queue.
+       - total: Number of VO total jobs in this queue.
+    
+    @param vo_map: A VoMapper object which is used to map user names to VOs.
+    @param cp: Site configuration object
+    @return: A dictionary containing queue job information.
+    """
     queue_jobs = {}
     for orig_line in pbsCommand(jobs_cmd, cp):
         try:
-            job, name, user, time, status, queue = orig_line.split()
+            job, _, user, _, status, queue = orig_line.split()
         except (KeyboardInterrupt, SystemExit):
             raise
         except:
@@ -341,7 +375,7 @@ def getVoQueues(cp):
             split(',')]
     except:
         queue_exclude = []
-    vo_queues= []
+    vo_queues = []
     queueInfo = getQueueInfo(cp)
     rvf_info = parseRvf('pbs.rvf')
     rvf_queue_list = rvf_info.get('queue', {}).get('Values', None)

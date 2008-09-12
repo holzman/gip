@@ -9,7 +9,7 @@ import os
 import re
 import sys
 
-class _hdict(dict):
+class _hdict(dict): #pylint: disable-msg=C0103
     """
     Hashable dictionary; used to make LdapData objects hashable.
     """
@@ -26,6 +26,7 @@ class LdapData:
 
     """
 
+    #pylint: disable-msg=W0105
     glue = {}
     """
     Dictionary representing the GLUE attributes.  The keys are the GLUE entries,
@@ -93,6 +94,9 @@ class LdapData:
         self.multi = multi
 
     def to_ldif(self):
+        """
+        Convert the LdapData back into LDIF.
+        """
         ldif = 'dn: ' + ','.join(self.dn) + '\n'
         for obj in self.objectClass:
             ldif += 'objectClass: %s\n' % obj
@@ -123,7 +127,7 @@ class LdapData:
             output += ' - %s: %s\n' % (key, val)
         return output
 
-    def __eq__(ldif1, ldif2):
+    def __eq__(self, ldif1, ldif2):
         if not compareDN(ldif1, ldif2):
             return False
         if not compareObjectClass(ldif1, ldif2):
@@ -146,29 +150,29 @@ def read_ldap(fp, multi=False):
     @returns: List containing one LdapData object per LDIF entry.
     """
     entry_started = False
-    buffer = ''
+    mybuffer = ''
     entries = []
     counter = 0
     for origline in fp.readlines():
         counter += 1
         line = origline.strip()
         if len(line) == 0 and entry_started == True:
-            entries.append(LdapData(buffer[1:], multi=multi))
+            entries.append(LdapData(mybuffer[1:], multi=multi))
             entry_started = False
-            buffer = ''
+            mybuffer = ''
         elif len(line) == 0 and entry_started == False:
             pass
         else: # len(line) > 0
             if not entry_started:
                 entry_started = True
             if origline.startswith(' '):
-                buffer += origline[1:-1]
+                mybuffer += origline[1:-1]
             else:
-                buffer += '\n' + line
+                mybuffer += '\n' + line
     #Catch the case where we started the entry and got to the end of the file
     #stream
     if entry_started == True:
-        entries.append(LdapData(buffer[1:], multi=multi))
+        entries.append(LdapData(mybuffer[1:], multi=multi))
     return entries
 
 def query_bdii(cp, query="(objectClass=GlueCE)", base="o=grid"):
@@ -201,6 +205,10 @@ def query_bdii(cp, query="(objectClass=GlueCE)", base="o=grid"):
     return fp
 
 def compareLists(l1, l2):
+    """
+    Compare two lists of items; turn them into sets and then look at the
+    symmetric differences.
+    """
     s1 = set(l1)
     s2 = set(l2)
     if len(s1.symmetric_difference(s2)) == 0:
@@ -208,6 +216,10 @@ def compareLists(l1, l2):
     return False
 
 def normalizeDN(dn_tuple):
+    """
+    Normalize a DN; because there are so many problems with mds-vo-name
+    and presence/lack of o=grid, just remove those entries.
+    """
     dn = ''
     for entry in dn_tuple:
         if entry.lower().find("mds-vo-name") >= 0 or \
@@ -216,17 +228,26 @@ def normalizeDN(dn_tuple):
         dn += entry + ','
 
 def compareDN(ldif1, ldif2):
-   for idx in range(len(ldif1.dn)):
-       dn1 = ldif1.dn[idx]
-       dn2 = ldif2.dn[idx]
-       if dn1.lower().find("mds-vo-name") >= 0 or \
-               dn1.lower().find("o=grid") >=0:
-           break
-       if dn1 != dn2:
-           return False
-   return True
+    """
+    Compare two DNs of LdapData objects.
+    
+    Returns true if both objects have the same LDAP DN.
+    """
+    for idx in range(len(ldif1.dn)):
+        dn1 = ldif1.dn[idx]
+        dn2 = ldif2.dn[idx]
+        if dn1.lower().find("mds-vo-name") >= 0 or \
+                dn1.lower().find("o=grid") >=0:
+            break
+        if dn1 != dn2:
+            return False
+    return True
 
 def compareObjectClass(ldif1, ldif2):
+    """
+    Compare the object classes of two LdapData objects.
+    Returns true if the lists of data match.
+    """
     return compareLists(ldif1.objectClass, ldif2.objectClass)
 
 def read_bdii(cp, query="", base="o=grid", multi=False):

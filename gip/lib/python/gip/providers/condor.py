@@ -7,15 +7,11 @@ outline of how this is computed is given here:
 https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/GipCeInfo
 """
 
-import os
-import re
-import sys
 import sets
-import unittest
 
 # Standard GIP imports
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    voList, printTemplate, cp_get, ldap_boolean, cp_getBoolean, cp_getInt
+    voList, printTemplate, cp_get, cp_getBoolean, cp_getInt
 from gip_cluster import getClusterID
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
 
@@ -124,7 +120,8 @@ def print_CE(cp):
                 vo for vo in vos])
         max_running = 0
         if group in jobs_info:
-            max_runnings = [i.get('max_running', 0) for i in jobs_info[group].values()]
+            max_runnings = [i.get('max_running', 0) for i in \
+                            jobs_info[group].values()]
             if max_runnings:
                 max_running = max(max_runnings)
         if ginfo.get('quota', 0) != 999999:
@@ -200,9 +197,9 @@ def print_VOViewLocal(cp):
     VOView = getTemplate("GlueCE", "GlueVOViewLocalID")
     ce_name = cp_get(cp, "ce", "name", "")
     
-    status = cp_get(cp, "condor", "status", "Production")
-    condorVersion = getLrmsInfo(cp) 
-    total_nodes, claimed, unclaimed = parseNodes(cp)
+    #status = cp_get(cp, "condor", "status", "Production")
+    #condorVersion = getLrmsInfo(cp) 
+    total_nodes, _, unclaimed = parseNodes(cp)
     
     vo_map = VoMapper(cp)
     jobs_info = getJobsInfo(vo_map, cp)
@@ -251,14 +248,17 @@ def print_VOViewLocal(cp):
             printTemplate(VOView, info)
 
 def main():
+    """
+    Main wrapper for the Condor batch system GIP information.
+    """
     try:
         cp = config()
         condor_path = cp_get(cp, "condor", "condor_path", None)
         if condor_path != None:
             addToPath(condor_path)
-        vo_map = VoMapper(cp)
-        condorVersion = getLrmsInfo(cp) 
-        total_nodes, claimed, unclaimed = print_CE(cp)
+        #vo_map = VoMapper(cp)
+        getLrmsInfo(cp) 
+        print_CE(cp)
         print_VOViewLocal(cp)
     except Exception, e:
         log.error(e)

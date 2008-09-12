@@ -3,10 +3,9 @@ Populate the GIP based upon the values from the OSG configuration
 """
 
 import os
-import sys
 import ConfigParser
 
-from gip_sections import *
+from gip_sections import ce, site, pbs, condor, sge, se
 
 site_sec = "Site Information"
 pbs_sec = "PBS"
@@ -75,7 +74,8 @@ def configOsg(cp):
     cp2.read(loc)
 
     # The write_config helper function
-    def __write_config(section2, option2, section, option):
+    def __write_config(section2, option2, section, option): \
+            #pylint: disable-msg=C0103
         """
         Helper function for config_compat; should not be called directly.
 
@@ -106,8 +106,8 @@ def configOsg(cp):
     __write_config(site_sec, "email", site, "email")
     __write_config(site_sec, "city", site, "city")
     __write_config(site_sec, "country", site, "country")
-    __write_config(site_sec, "longitude", "site", "longitude")
-    __write_config(site_sec, "latitude", "site", "latitude")
+    __write_config(site_sec, "longitude", site, "longitude")
+    __write_config(site_sec, "latitude", site, "latitude")
     
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
@@ -130,17 +130,17 @@ def configOsg(cp):
     __write_config(storage_sec, "worker_node_temp", "osg_dirs", "wn_tmp")
 
     # [GIP]
-    __write_config(gip_sec, "se_name", "se", "name")
-    __write_config(gip_sec, "se_host", "se", "unique_name")
-    __write_config(gip_sec, "se_host", "se", "srm_host")
-    __write_config(gip_sec, "srm_implementation", "se", "implementation")
-    __write_config(gip_sec, "dynamic_dcache", "se", "dynamic_dcache")
-    __write_config(gip_sec, "srm", "se", "srm_present")
-    __write_config(gip_sec, "batch", "ce", "job_manager")
+    __write_config(gip_sec, "se_name", se, "name")
+    __write_config(gip_sec, "se_host", se, "unique_name")
+    __write_config(gip_sec, "se_host", se, "srm_host")
+    __write_config(gip_sec, "srm_implementation", se, "implementation")
+    __write_config(gip_sec, "dynamic_dcache", se, "dynamic_dcache")
+    __write_config(gip_sec, "srm", se, "srm_present")
+    __write_config(gip_sec, "batch", ce, "job_manager")
 
     # Storage stuff 
-    __write_config(gip_sec, "se_control_version", "se", "srm_version")
-    __write_config(gip_sec, "srm_version", "se", "srm_version")
+    __write_config(gip_sec, "se_control_version", se, "srm_version")
+    __write_config(gip_sec, "srm_version", se, "srm_version")
     __write_config(gip_sec, "advertise_gsiftp", "classic_se", "advertise_se")
 
     # Calculate the default path for each VO
@@ -157,10 +157,10 @@ def configOsg(cp):
     if vo_dirs.lower().strip() != "unavailable":
         for path in vo_dirs.split(';'):
             try:
-                vo, dir = path.split(',')
+                vo, mydir = path.split(',')
             except:
                 continue
-            cp2.set(gip_sec, "%s_path" % vo, dir)
+            cp2.set(gip_sec, "%s_path" % vo, mydir)
             __write_config(gip_sec, "%s_path" % vo, "vo", vo)
 
     # Handle the subclusters.
@@ -189,7 +189,7 @@ def configOsg(cp):
         if not cp.has_section(sec):
             continue
         nodes = cp_getInt(cp, sec, "node_count", "0")
-        cpus_per_node = cp_getInt(cp, sec, "cpus_per_node",2)
+        cpus_per_node = cp_getInt(cp, sec, "cpus_per_node", 2)
         cores_per_node = cp_getInt(cp, sec, "cores_per_node", cpus_per_node*2)
         cp.set(sec, "cores_per_cpu", "%i" % (cores_per_node/cpus_per_node))
         cp.set(sec, "total_cores", "%i" % (nodes*cores_per_node))

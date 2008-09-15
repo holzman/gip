@@ -1,16 +1,19 @@
 
-import sys
+"""
+A generic provider for storage elements; written for the StorageElement class 
+in gip_storage.
+"""
 
 from gip_common import cp_get, getLogger, config, getTemplate, printTemplate, \
     cp_getBoolean, cp_getInt
-from gip_storage import voListStorage, getPath, getSESpace, getSETape, \
-    seHasTape, getAccessProtocols, getClassicSESpace, StorageElement
+from gip_storage import voListStorage, getSETape, \
+    getClassicSESpace, StorageElement
 from gip.bestman.BestmanInfo import BestmanInfo
 from gip.dcache.DCacheInfo import DCacheInfo
 
 log = getLogger("GIP.Storage.Generic")
 
-def print_SA(se, cp, section="se"):
+def print_SA(se, cp, section="se"): #pylint: disable-msg=W0613
     """
     Print out the SALocal information for GLUE 1.3.
     """ 
@@ -20,9 +23,11 @@ def print_SA(se, cp, section="se"):
         except Exception, e:
             log.exception(e)
 
-def print_single_SA(info, se, cp):
+def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
+    """
+    Print out the GLUE for a single SA.
+    """
     se_unique_id = se.getUniqueID()
-    se_name = se.getName()
     saTemplate = getTemplate("GlueSE", "GlueSALocalID")
 
     info.setdefault('seUniqueID', se_unique_id)
@@ -47,14 +52,20 @@ def print_single_SA(info, se, cp):
     printTemplate(saTemplate, info)
 
 def print_VOInfo(se, cp):
+    """
+    Print out the VOInfo GLUE information for all the VOInfo
+    objects in the SE.
+    """
     for voinfo in se.getVOInfos():
         try:
             print_single_VOInfo(voinfo, se, cp)
         except Exception, e:
             log.exception(e)
 
-def print_single_VOInfo(voinfo, se, cp):
-
+def print_single_VOInfo(voinfo, se, cp): #pylint: disable-msg=W0613
+    """
+    Emit the GLUE entity for a single VOInfo dictionary.
+    """
     voinfoTemplate = getTemplate('GlueSE', 'GlueVOInfoLocalID')
     voinfo.setdefault('acbr', 'GlueVOInfoAccessControlBaseRule: UNKNOWN')
     voinfo.setdefault('path', '/UNKNOWN')
@@ -63,6 +74,9 @@ def print_single_VOInfo(voinfo, se, cp):
     printTemplate(voinfoTemplate, voinfo)
 
 def print_classicSE(cp):
+    """
+    Emit the relevant GLUE entities for a ClassicSE.
+    """
     if not cp_getBoolean(cp, "classic_se", "advertise_se", False):
         log.info("Not advertising a classic SE.")
         return
@@ -81,7 +95,7 @@ def print_classicSE(cp):
         used, available, total = 0, 0, 0
 
     # Tape information, if we have it...
-    nu, nf, nt = getSETape(cp)
+    nu, _, nt = getSETape(cp)
 
     bdiiEndpoint = cp.get("bdii", "endpoint")
     siteUniqueID = cp.get("site", "unique_name")
@@ -99,7 +113,7 @@ def print_classicSE(cp):
              "status"         : status,
              "port"           : 2811,
              "onlineTotal"    : 0,
-             "nearlineTotal"  : 0,
+             "nearlineTotal"  : nt,
              "onlineUsed"     : used,
              "nearlineUsed"   : nu,
              "architecture"   : arch,
@@ -151,6 +165,9 @@ def print_classicSE(cp):
     print_classic_access(cp, siteUniqueID)
 
 def print_SE(se, cp):
+    """
+    Emit the GLUE entities for the SE, based upon the StorageElement class.
+    """
     status = se.getStatus()
     version = se.getVersion()
 
@@ -161,7 +178,7 @@ def print_SE(se, cp):
         used, available, total = 0, 0, 0
 
     # Tape information, if we have it...
-    nu, nf, nt = se.getSETape()
+    nu, _, nt = se.getSETape()
 
     bdiiEndpoint = cp.get("bdii", "endpoint")
     siteUniqueID = cp.get("site", "unique_name")
@@ -206,6 +223,10 @@ def print_SE(se, cp):
         log.exception(e)
 
 def print_SRM(se, cp):
+    """
+    Print out the GLUE service and control protocol entities for the
+    SRM endpoints in the SE.
+    """
     if not se.hasSRM():
         return
 
@@ -216,7 +237,9 @@ def print_SRM(se, cp):
             pass
 
 def print_single_SRM(info, se, cp):
-
+    """
+    Print out the GLUE service and CP entities for a single SRM dictionary.
+    """
     sitename = cp.get("site", "unique_name")
     sename = se.getUniqueID()
     version = info.setdefault('version', '2.2.0')
@@ -252,15 +275,19 @@ def print_single_SRM(info, se, cp):
     printTemplate(ServiceTemplate, info)
 
 
-def print_access(se, cp):
+def print_access(se, cp): #pylint: disable-msg=W0613
+    """
+    Emit the GLUE entities for a StorageElement's access protocols.
+    """
     sename = se.getUniqueID()
     accessTemplate = getTemplate("GlueSE", "GlueSEAccessProtocolLocalID")
 
     for info in se.getAccessProtocols():
         protocol = info.setdefault('protocol', 'gsiftp')
         if 'endpoint' not in info:
-            info['endpoint'] = "%s://%s:%i"%(info['protocol'], info['hostname'],
-                int(info['port']))
+            info['endpoint'] = "%s://%s:%i"% (info['protocol'], 
+                                              info['hostname'],
+                                              int(info['port']))
         if 'securityinfo' not in info:
             if protocol == 'gsiftp':
                 securityinfo = "gsiftp"
@@ -282,8 +309,10 @@ def print_access(se, cp):
         print accessTemplate % info
 
 def print_classic_access(cp, siteUniqueID):
+    """
+    Emit the GLUE entity for a classic SE's access protocol.
+    """
     fallback_name = siteUniqueID + "_classicSE"
-    seName = cp_get(cp, "classic_se", "name", fallback_name)
     seUniqueID = cp_get(cp, "classic_se", "unique_name", fallback_name)
     host = cp_get(cp, "classic_se", "host", siteUniqueID)
     port = cp_getInt(cp, "classic_se", "port", "2811")
@@ -304,6 +333,9 @@ def print_classic_access(cp, siteUniqueID):
     print accessTemplate % info
 
 def main():
+    """
+    The primary wrapper function for emitting GLUE for storage elements.
+    """
     cp = config()
     impl = cp_get(cp, "se", "implementation", "UNKNOWN")
     if impl.lower().find('bestman') >= 0:
@@ -326,4 +358,6 @@ def main():
         print_SRM(se, cp)
     except Exception, e:
         log.exception(e)
-
+        
+if __name__ == '__main__':
+    main()

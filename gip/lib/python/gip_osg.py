@@ -54,6 +54,25 @@ def cp_get(cp, section, option, default):
     except:
         return default
 
+def checkOsgConfigured(cp):
+    """
+    Make sure that the OSG has been configured when this is run.
+    
+    Checks for the presence of the file
+      - In the config object, gip.osg_attribtues, if the attribute exists; else,
+      - $VDT_LOCATION/monitoring/osg-attributes.conf
+      
+    @param cp: Site config object
+    @return: True
+    @raise ValueError: If the specified file does not exist.
+    """
+    osg_attributes = cp_get(cp, "gip", "osg_attributes",
+        "$VDT_LOCATION/monitoring/osg-attributes.conf")
+    osg_attributes = os.path.expandvars(osg_attributes)
+    if not os.path.exists(osg_attributes):
+        raise ValueError("osg-attributes.conf does not exists; we may be "
+                         "running in an unconfigured OSG install!")
+    return True
 
 def configOsg(cp):
     """
@@ -66,6 +85,13 @@ def configOsg(cp):
     except:
         override = False
 
+    try:
+        check_osg = cp.getboolean("gip", "check_osg")
+    except:
+        check_osg = True
+    if check_osg:
+        checkOsgConfigured(cp)
+        
     # See if we have a special config.ini location
     loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
     loc = os.path.expandvars(loc)

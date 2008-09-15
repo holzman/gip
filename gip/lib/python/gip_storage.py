@@ -9,7 +9,7 @@ import sets
 import stat
 import statvfs
 
-from gip_common import getLogger, cp_get, cp_getBoolean, cp_getInt
+from gip_common import getLogger, cp_get, cp_getBoolean, cp_getInt, matchFQAN
 from gip_sections import se
 from gip.dcache.admin import connect_admin
 from gip.dcache.pools import lookupPoolStorageInfo
@@ -26,7 +26,7 @@ def execute(p, command, bind_vars=None):
     @returns: All resulting rows.
     """
     try:
-        from psycopg2.extras import DictCursor
+        from psycopg2.extras import DictCursor #pylint: disable-msg=F0401
         curs = p.cursor(cursor_factory=DictCursor)
     except:
         curs = p.cursor()
@@ -56,16 +56,16 @@ def connect(cp):
         pgport = cp.get("dcache_config", "pgport")
         connectstring = "dbname=%s user=%s password=%s host=%s port=%s" % \
             (database, dbuser, dbpasswd, pghost, pgport)
-        p=psycopg2.connect(connectstring)
-    except Exception, e:
+        p = psycopg2.connect(connectstring)
+    except Exception:
         pgdb = __import__("pgdb")
         database = cp.get("dcache_config", "database")
         dbuser = cp.get("dcache_config", "dbuser")
         dbpasswd = cp.get("dcache_config", "dbpasswd")
         pghost = cp.get("dcache_config", "pghost")
         pgport = cp.get("dcache_config", "pgport")
-        p=pgdb.connect(user=dbuser, password=dbpasswd, host='%s:%s' % \
-            (pghost, pgport), database=database)
+        p = pgdb.connect(user = dbuser, password = dbpasswd, host='%s:%s' % \
+            (pghost, pgport), database = database)
 
     return p
 
@@ -113,11 +113,25 @@ def getPath(cp, vo='', section='vo', classicSE=False):
         myvo = vo
         if not myvo:
             myvo = ''
-        fallback = cp_get(cp, section, "default","/UNKNOWN").replace("$VO",myvo)
+        fallback = cp_get(cp, section, "default","/UNKNOWN").\
+            replace("$VO", myvo)
     path = cp_get(cp, section, vo, fallback)
     return path
 
 def getSESpace(cp, admin=None, gb=False, total=False):
+    """
+    Return the amount of space available at the SE.
+    
+    If se.dynamic_dcache=True, use dCache-based methods.
+    Otherwise, use classic SE methods (do a df on the SE mounts).
+    
+    @param cp: Site configuration object
+    @keyword admin: If a dCache provider, the dCache admin objects
+    @keyword gb: Set to true to retun values in GB.
+    @keyword total: Also return totals
+    @return: used, free, total if total is True; otherwise, used, free.
+      In GB if GB=True; otherwise, in KB.
+    """
     if cp_getBoolean(cp, se, "dynamic_dcache", False):
         return getdCacheSESpace(cp, admin, gb, total)
     else:
@@ -198,7 +212,7 @@ def getdCacheSESpace(cp, admin=None, gb=False, total=False):
         return the total space.  If C{gb=True}, return the numbers in GB;
         otherwise the numbers are in kilobytes.
     """
-    global dCacheSpace_cache
+    global dCacheSpace_cache # pylint: disable-msg=W0603
     if admin == None:
         admin = connect_admin(cp)
     if not dCacheSpace_cache:
@@ -298,7 +312,7 @@ def getSEVersion(cp, admin=None):
     else:
         return version
 
-def getAccessProtocols(cp):
+def getAccessProtocols(cp): #pylint: disable-msg=W0613
     """
     Stub function for providing access protocol information.
 
@@ -323,23 +337,42 @@ def getAccessProtocols(cp):
 
 class StorageElement(object):
 
+    """
+    This class represents a logical StorageElement.
+    
+    The class implements the necessary functions for a generic SRM v2.2
+    based storage element - however, it leaves many things blank as there's
+    no way to determine space available, etc.  Provider implementors for SEs
+    should subclass this and implement SE-specific functions. 
+    """
+
     def __init__(self, cp):
         self._cp = cp
 
     def run(self):
-        pass
+        """
+        Run whatever data-gathering activities which need to be done.
+        
+        For the base class, this is a no-op.
+        """
 
     def getServiceVOs(self):
+        """
+        Return the list of VOs which are allowed to access this service.
+        """
         return voListStorage(self._cp)
 
     def getServiceVersions(self):
+        """
+        Return the list of supported SRM versions.
+        """
         return [2]
 
-    def getAccessProtocols(self, cp):
+    def getAccessProtocols(self):
         """
         Stub function for providing access protocol information.
 
-        Eventually, this will return a list of dictionaries. Each dictionary will
+        Return a list of dictionaries. Each dictionary will
         have the following keys with reference to an access endpoint:
        
            - protocol
@@ -354,15 +387,36 @@ class StorageElement(object):
            - version (UNKNOWN)
            - endpoint (<protocol>://<hostname>:<port>)
 
-        Currently, this just returns []
+        For the base class, this just returns [].
         """
         return []
 
     def hasSRM(self):
+        """
+        Return True if there is a SRM endpoint present on this SE.
+        """
         return cp_getBoolean(self._cp, "se", "srm_present", True)
 
     def getSRMs(self):
-
+        """
+        Return a list of dictionaries containing information about the SRM
+        endpoints.
+        
+        Each dictionary must have the following keys:
+           - acbr
+           - status
+           - version
+           - endptoin
+           - name
+           
+        The base class implementation uses the following configuration entries
+        (default value in parenthesis)
+           - se.srm_host (default: UNKNOWN.example.com)
+           - se.srm_version (2.2.0)
+           - se.srm_port (8443)
+           - se.srm_endpoint 
+             (httpg://(se.srm_host):(se.srm_port)/srm/managerv2)
+        """
         srmname = cp_get(self._cp, "se", "srm_host", "UNKNOWN.example.com")
         version = cp_get(self._cp, "se", "srm_version", "2")
         port = cp_getInt(self._cp, "se", "srm_port", 8443)
@@ -372,7 +426,7 @@ class StorageElement(object):
         else:
             default_endpoint = 'httpg://%s:%i/srm/managerv1' % \
                 (srmname, int(port))
-        endpoint = cp_get(self._cp,"se", "srm_endpoint", default_endpoint)
+        endpoint = cp_get(self._cp, "se", "srm_endpoint", default_endpoint)
 
         acbr_tmpl = '\nGlueServiceAccessControlRule: %s\n' \
             'nGlueServiceAccessControlRule: VO:%s'
@@ -391,31 +445,83 @@ class StorageElement(object):
         return [info]
  
     def getName(self):
+        """
+        Return the name of the SE.
+        
+        The base class uses the value of se.name in the configuration object.
+        """
         return cp_get(self._cp, 'se', 'name', 'UNKNOWN')
 
     def getUniqueID(self):
-        return cp_get(self._cp, 'se', 'unique_name', 'UNKNOWN')
+        """
+        Return the unique ID of the SE.
+        
+        The base class uses the value of se.unique_name (defaults to se.name)
+        in the configuraiton object.
+        """
+        return cp_get(self._cp, 'se', 'unique_name', 
+            cp_get(self._cp, 'se', 'name', 'UNKNOWN'))
 
     def getStatus(self):
+        """
+        Return the status of the SE.
+        
+        The base classes uses the value of se.status (defaults to Production)
+        in the configuration object.
+        """
         return cp_get(self._cp, "se", "status", "Production")
 
     def getImplementation(self):
+        """
+        Return the implementation name for this SE.
+        
+        The base class uses the value of se.implementation (defaults to 
+        UNKNOWN) in the configuration object.
+        """
         return cp_get(self._cp, "se", "implementation", "UNKNOWN")
 
     def getVersion(self):
+        """
+        Return a version string for this SE.
+        
+        The base class uses the value of se.version (defaults to UNKNOWN)
+        in the configuration object.
+        """
         version = cp_get(self._cp, "se", "version", "UNKNOWN")
         return version
 
     def getSESpace(self, gb=False, total=False):
+        """
+        Returns information about the SE disk space.
+        
+        @see: getSESpace (module-level implementation)
+        """
         return getSESpace(self._cp, total=total, gb=gb)
 
     def hasTape(self):
+        """
+        Returns true if the SE has an attached tape system.
+        """
         return seHasTape(self._cp)
 
     def getSETape(self):
+        """
+        Retrieve the freespace information from the tape systems.
+        
+        @see: getSETape (module level implementation)
+        """
         return getSETape(self._cp)
 
     def getSEArch(self):
+        """
+        Returns the SE architecture.
+        
+        This is an enumeration; the possible values are "tape",
+        "multi-disk", "disk", or "other".
+        
+        The base class makes an educated guess based upon the implementation
+        name and the return value of hasTape. 
+        """
         implementation = self.getImplementation()
         if self.hasTape():
             arch = "tape"
@@ -491,17 +597,29 @@ class StorageElement(object):
         return [info]
 
     def getVOInfos(self):
+        """
+        Return a list of VOInfo dictionaries.
+        
+        Each dictionary must have the following keys:
+           - voInfoID
+           - name
+           - path
+           - tag
+           - acbr
+           - saLocalID
+        
+        """
         voinfos = []
         for sa_info in self.getSAs():
             vos = sa_info.get("vos", sa_info.get('name', None))
             if not vos:
                 continue
             for vo in vos:
-                id = '%s:default' % vo
+                myid = '%s:default' % vo
                 path = self.getPathForSA(space=None, vo=vo)
                 acbr = 'GlueVOInfoAccessControlBaseRule: %s' % vo
-                info = {'voInfoID': id,
-                        'name': id,
+                info = {'voInfoID': myid,
+                        'name': myid,
                         'path': path,
                         'tag': 'Not A Space Reservation',
                         'acbr': acbr,
@@ -510,7 +628,10 @@ class StorageElement(object):
                 voinfos.append(info)
         return voinfos
 
-    def getVOsForSpace(self, space):
+    def getVOsForSpace(self, space): #pylint: disable-msg=W0613
+        """
+        Given a certain space, return a list of 
+        """
         return voListStorage(self._cp)
 
     def getPathForSA(self, space=None, vo=None, return_default=True,
@@ -543,8 +664,8 @@ class StorageElement(object):
             default path if it cannot find a VO-specific one.
         @returns: A path string; raises a ValueError if return_default=False
         """
-        default_path = cp_get(self._cp, section, "space_%s_default_path" % space,
-            None)
+        default_path = cp_get(self._cp, section, "space_%s_default_path" % \
+                              space, None)
         if not default_path:
             default_path = getPath(self._cp, vo)
         if not vo:

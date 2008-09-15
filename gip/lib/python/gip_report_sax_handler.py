@@ -1,8 +1,22 @@
+
+"""
+Parser for GIP results which will help us convert test results into XML.
+"""
+
 from xml.sax.handler import ContentHandler
 
 class GipResultsParser(ContentHandler):
+    
+    """
+    A SAX handler which allows us to create an XML version of the GIP results
+    report. 
+    """
+    
     def __init__(self):
-        self.Test = {"name" : "", "description" : "", "runtime" : "", "timetaken" : "", "cases" : []}
+        ContentHandler.__init__(self)
+        self.Test = {"name" : "", "description" : "", "runtime" : "",
+                     "timetaken" : "", "cases" : []}
+        self.elmContents = ''
 
     def startDocument(self):
         self.elmContents = ''
@@ -18,7 +32,8 @@ class GipResultsParser(ContentHandler):
                     break
         if not found:
             # the TestCase was not in the list
-            tc = {"site" : sitename, "result" : "", "failure_count" : 0, "error_count" : 0, "info_count" : 0}
+            tc = {"site" : sitename, "result" : "", "failure_count" : 0,
+                  "error_count" : 0, "info_count" : 0}
             self.Test["cases"].append(tc)
 
         return tc

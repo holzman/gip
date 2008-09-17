@@ -128,7 +128,7 @@ class DCacheInfo(StorageElement):
                 # From the SRM info, build the information for the GLUE entity.
                 info = {
                     "serviceType"  : "SRM",
-                    "acbr"         : acbr[1:],
+                    "acbr"         : acbr,
                     "cpLocalID"    : doorname,
                     "protocolType" : "SRM",
                     "capability"   : "control",

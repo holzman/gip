@@ -50,7 +50,7 @@ This check tests the ldif as reported by cemon for:
     * All entries must conform to the attribute:value format
     * Test SRM ads for the following:
         o endpoint type is SRM
-        o Version is 1.1 or 2.2 (1.1.0 or 2.2.0 generate warnings)
+        o Version is 1.1.0 or 2.2.0 (1.1 or 2.2 generate warnings)
         o Site unique ID is not blank
         o Site unique ID is actual unique ID used for this site.
         o If dCache, make sure that the /srm/managervX string is correct.
@@ -267,7 +267,7 @@ This check tests the ldif as reported by cemon for:
 
 def main(args):
     """
-    The main entry point for when dn_check is run in standalone mode.
+    The main entry point for when gip_validate is run in standalone mode.
     """
     cp = getTestConfig(args)
     try:

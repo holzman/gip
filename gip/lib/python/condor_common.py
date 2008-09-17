@@ -24,7 +24,7 @@ condor_version = "condor_version"
 condor_group = "condor_config_val GROUP_NAMES"
 condor_quota = "condor_config_val GROUP_QUOTA_%(group)s"
 condor_prio = "condor_config_val GROUP_PRIO_FACTOR_%(group)s"
-condor_status = "condor_status -xml"
+condor_status = "condor_status -xml -constraint '%(constraint)s'"
 condor_job_status = "condor_status -submitter -xml"
 
 log = getLogger("GIP.Condor")
@@ -379,7 +379,8 @@ def parseNodes(cp):
         return _nodes_cache
     subtract = cp_getBoolean(cp, "condor", "subtract_owner", True)
     log.debug("Parsing condor nodes.")
-    fp = condorCommand(condor_status, cp)
+    constraint = cp_get(cp, "condor", "status_constraint", "TRUE")
+    fp = condorCommand(condor_status, cp, {'constraint': constraint})
     handler = ClassAdParser('Name', ['State'])
     parseCondorXml(fp, handler)
     total = 0

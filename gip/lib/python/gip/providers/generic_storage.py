@@ -4,6 +4,8 @@ A generic provider for storage elements; written for the StorageElement class
 in gip_storage.
 """
 
+import socket
+
 from gip_common import cp_get, getLogger, config, getTemplate, printTemplate, \
     cp_getBoolean, cp_getInt
 from gip_storage import voListStorage, getSETape, \
@@ -314,7 +316,11 @@ def print_classic_access(cp, siteUniqueID):
     """
     fallback_name = siteUniqueID + "_classicSE"
     seUniqueID = cp_get(cp, "classic_se", "unique_name", fallback_name)
-    host = cp_get(cp, "classic_se", "host", siteUniqueID)
+    try:
+        default_host = socket.gethostname()
+    except:
+        default_host = 'UNKNOWN.example.org'
+    host = cp_get(cp, "classic_se", "host", default_host)
     port = cp_getInt(cp, "classic_se", "port", "2811")
     accessTemplate = getTemplate("GlueSE", "GlueSEAccessProtocolLocalID")
 

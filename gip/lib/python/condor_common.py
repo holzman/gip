@@ -294,7 +294,7 @@ def guessVO(cp, group):
 def _getJobsInfoInternal(cp):
     constraint = cp_get(cp, "condor", "jobs_constraint", "TRUE")
     fp = condorCommand(condor_job_status, cp, {'constraint': constraint})
-    handler = ClassAdParser('GlobalJobId', ['JobStatus', 'Owner', 'AccountingGroup']);
+    handler = ClassAdParser('GlobalJobId', ['JobStatus', 'Owner', 'AccountingGroup', 'FlockFrom']);
     fp2 = condorCommand(condor_job_status, cp)
     handler2 = ClassAdParser('Name', ['MaxJobsRunning'])
     try:
@@ -309,9 +309,29 @@ def _getJobsInfoInternal(cp):
         log.error("Unable to parse condor output!")
         log.exception(e)
         return {}
-    results = {}
+    info = handler2.items()
     for item, values in handler.items():
-        pass
+        owner = values.get('AccountingGroup', values.get('Owner', None))
+        if not owner:
+            continue
+        owner_info = info.setdefault(owner, {})
+        status = values.get('JobStatus', -1)
+        is_flocked = values.get('FlockFrom', False) != False
+        # We ignore states Unexpanded (U, 0), Removed (R, 2), Completed (C, 4), Held (H, 5), and Submission_err (E, 6)
+        if status == 1: # Idle
+            owner_info.setdefault('IdleJobs', 0)
+            owner_info['IdleJobs'] += 1
+        elif status == 2: # Running
+            if is_flocked:
+                owner_info.setdefault('FlockedJobs', 0)
+                owner_info['FlockedJobs'] += 1
+            else:
+                owner_info.setdefault('RunningJobs', 0)
+                owner_info['RunningJobs'] += 1
+        elif status == 5: # Held
+            owner_info.setdefault('HeldJobs', 0)
+            owner_info['HeldJobs'] += 1
+    return info
 
 def getJobsInfo(vo_map, cp):
     """
@@ -352,7 +372,7 @@ def getJobsInfo(vo_map, cp):
         my_info_dict[my_key] += new_info
 
     unknown_users = sets.Set()
-    for user, info in handler.getClassAds().items():
+    for user, info in _getJobsInfoInternal().items():
         # Determine the VO, or skip the entry
         name = user.split("@")[0]
         name_info = name.split('.', 1)

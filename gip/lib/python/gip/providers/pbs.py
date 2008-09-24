@@ -6,7 +6,7 @@ import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    printTemplate, cp_get
+    printTemplate, cp_get, responseTimes
 from gip_cluster import getClusterID
 from pbs_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
@@ -49,10 +49,14 @@ def print_CE(cp):
         if "max_running" not in info:
             info["max_running"] = info["job_slots"]
         if "max_wall" not in info:
-            info["max_wall"] = 0
+            info["max_wall"] = 1440
+
+        ert, wrt = responseTimes(cp, info.get("running", 0),
+            info.get("wait", 0), max_job_time=info["max_wall"])
+
         info["job_slots"] = min(totalCpu, info["job_slots"])
-        info['ert'] = 3600
-        info['wrt'] = 3600
+        info['ert'] = ert
+        info['wrt'] = wrt
         info['hostingCluster'] = cp_get(cp, ce, 'hosting_cluster', ce_name)
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
         info['ceImpl'] = 'Globus'
@@ -95,10 +99,16 @@ def print_VOViewLocal(queue_info, cp):
         vo_info = queue_jobs.get(queue, {})
         info2 = vo_info.get(vo, {})
         ce_unique_id = '%s:2119/jobmanager-pbs-%s' % (ce_name, queue)
+
+        my_queue_info = queue_info.setdefault(queue, {})
+        ert, wrt = responseTimes(cp, info2.get("running", 0),
+            info2.get("wait", 0),
+            max_job_time=my_queue_info.get("max_wall", 0))
+
         info = {
             'ceUniqueID'  : ce_unique_id,
-            'job_slots'   : queue_info.get(queue, {}).get('job_slots', 0),
-            'free_slots'  : queue_info.get(queue, {}).get('free_slots', 0),
+            'job_slots'   : my_queue_info.get('job_slots', 0),
+            'free_slots'  : my_queue_info.get('free_slots', 0),
             'ce_name'     : ce_name,
             'queue'       : queue,
             'vo'          : vo,

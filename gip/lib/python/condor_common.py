@@ -17,7 +17,7 @@ from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges
 
 from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
-    VoMapper
+    VoMapper, cp_getInt
 from gip_testing import runCommand
 
 condor_version = "condor_version"
@@ -25,7 +25,7 @@ condor_group = "condor_config_val GROUP_NAMES"
 condor_quota = "condor_config_val GROUP_QUOTA_%(group)s"
 condor_prio = "condor_config_val GROUP_PRIO_FACTOR_%(group)s"
 condor_status = "condor_status -xml -constraint '%(constraint)s'"
-#condor_job_status = "condor_status -submitter -xml"
+condor_status_submitter = "condor_status -submitter -xml"
 condor_job_status = "condor_q -xml -constraint '%(constraint)s'"
 
 log = getLogger("GIP.Condor")
@@ -291,13 +291,27 @@ def guessVO(cp, group):
     else:
         return [altname]
 
+_results_cache = {}
 def _getJobsInfoInternal(cp):
+    """
+    The "alternate" way of building the jobs info; this allows for sites to
+    filter jobs based upon an arbitrary condor_q constraint.
+
+    This is not the default as large sites can have particularly bad performance
+    for condor_q.
+    """
+    global _results_cache
+    if _results_cache:
+        return dict(_results_cache)
     constraint = cp_get(cp, "condor", "jobs_constraint", "TRUE")
     fp = condorCommand(condor_job_status, cp, {'constraint': constraint})
-    handler = ClassAdParser('GlobalJobId', ['JobStatus', 'Owner', 'AccountingGroup', 'FlockFrom']);
-    fp2 = condorCommand(condor_job_status, cp)
+    handler = ClassAdParser('GlobalJobId', ['JobStatus', 'Owner',
+        'AccountingGroup', 'FlockFrom']);
+    fp2 = condorCommand(condor_status_submitter, cp)
     handler2 = ClassAdParser('Name', ['MaxJobsRunning'])
     try:
+        for i in range(cp_getInt(cp, "condor", "condor_q_header_lines", 3)):
+            fp.readline()
         parseCondorXml(fp, handler)
     except Exception, e:
         log.error("Unable to parse condor output!")
@@ -309,15 +323,20 @@ def _getJobsInfoInternal(cp):
         log.error("Unable to parse condor output!")
         log.exception(e)
         return {}
-    info = handler2.items()
-    for item, values in handler.items():
+    info = handler2.getClassAds()
+    for item, values in handler.getClassAds().items():
         owner = values.get('AccountingGroup', values.get('Owner', None))
         if not owner:
             continue
         owner_info = info.setdefault(owner, {})
         status = values.get('JobStatus', -1)
+        try:
+            status = int(status)
+        except:
+            continue
         is_flocked = values.get('FlockFrom', False) != False
-        # We ignore states Unexpanded (U, 0), Removed (R, 2), Completed (C, 4), Held (H, 5), and Submission_err (E, 6)
+        # We ignore states Unexpanded (U, 0), Removed (R, 2), Completed (C, 4),
+        # Held (H, 5), and Submission_err (E, 6)
         if status == 1: # Idle
             owner_info.setdefault('IdleJobs', 0)
             owner_info['IdleJobs'] += 1
@@ -331,6 +350,7 @@ def _getJobsInfoInternal(cp):
         elif status == 5: # Held
             owner_info.setdefault('HeldJobs', 0)
             owner_info['HeldJobs'] += 1
+    _results_cache = dict(info)
     return info
 
 def getJobsInfo(vo_map, cp):
@@ -348,14 +368,19 @@ def getJobsInfo(vo_map, cp):
     @returns: A dictionary containing job information.
     """
     group_jobs = {}
-    fp = condorCommand(condor_job_status, cp)
-    handler = ClassAdParser('Name', ['RunningJobs', 'IdleJobs', 'HeldJobs', \
-        'MaxJobsRunning', 'FlockedJobs'])
-    try:
-        parseCondorXml(fp, handler)
-    except Exception, e:
-        log.error("Unable to parse condor output!")
-        log.exception(e)
+    queue_constraint = cp_get(cp, "condor", "jobs_constraint", "TRUE")
+    if queue_constraint == 'TRUE':
+        fp = condorCommand(condor_status_submitter, cp)
+        handler = ClassAdParser('Name', ['RunningJobs', 'IdleJobs', 'HeldJobs',\
+            'MaxJobsRunning', 'FlockedJobs'])
+        try:
+            parseCondorXml(fp, handler)
+        except Exception, e:
+            log.error("Unable to parse condor output!")
+            log.exception(e)
+        results = handler.getClassAds()
+    else:
+        results = _getJobsInfoInternal(cp)
     def addIntInfo(my_info_dict, classad_dict, my_key, classad_key):
         """
         Add some integer info contained in classad_dict[classad_key] to 
@@ -372,7 +397,7 @@ def getJobsInfo(vo_map, cp):
         my_info_dict[my_key] += new_info
 
     unknown_users = sets.Set()
-    for user, info in _getJobsInfoInternal().items():
+    for user, info in results.items():
         # Determine the VO, or skip the entry
         name = user.split("@")[0]
         name_info = name.split('.', 1)

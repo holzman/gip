@@ -11,7 +11,7 @@ import sets
 
 # Standard GIP imports
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    voList, printTemplate, cp_get, cp_getBoolean, cp_getInt
+    voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes
 from gip_cluster import getClusterID
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
 
@@ -132,6 +132,10 @@ def print_CE(cp):
         myidle = sum([i.get('idle', 0) for i in jinfo.values()], 0)
         myheld = sum([i.get('held', 0) for i in jinfo.values()], 0)
 
+        max_wall = cp_getInt(cp, "condor", "max_wall", 1440)
+        ert, wrt = responseTimes(cp, myrunning, myidle+myheld,
+            max_job_time=max_wall*60)
+
         # Build all the GLUE CE entity information.
         info = { \
             "ceUniqueID"  : ce_unique_id,
@@ -147,8 +151,8 @@ def print_CE(cp):
             "idle"        : myidle,
             "held"        : myheld,
             "ce_name"     : ce_name,
-            "ert"         : 3600,
-            "wrt"         : 3600,
+            "ert"         : ert,
+            "wrt"         : wrt,
             "job_manager" : 'condor',
             "queue"       : group,
             "lrmsVersion" : condorVersion,
@@ -222,9 +226,13 @@ def print_VOViewLocal(cp):
         vos.intersection_update(all_vos)
         log.debug("All VOs for %s: %s" % (group, ", ".join(vos)))
         ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)    
+        max_wall = cp_getInt(cp, "condor", "max_wall", 1440)
         for vo in vos:
             acbr = 'VO:%s' % vo
             info = jinfo.get(vo, {"running": 0, "idle": 0, "held": 0})
+            ert, wrt = responseTimes(cp, info["running"], info["idle"] + \
+                info["held"], max_job_time=max_wall*60)
+
             info = {"vo"      : vo,
                 "acbr"        : acbr,
                 "ceUniqueID"  : ce_unique_id,
@@ -239,8 +247,8 @@ def print_VOViewLocal(cp):
                 "total"       : info["running"] + info["idle"] + info["held"],
                 "free_slots"  : int(unclaimed),
                 "job_slots"   : int(total_nodes),
-                "ert"         : 3600,
-                "wrt"         : 3600,
+                "ert"         : ert,
+                "wrt"         : wrt,
                 "default_se"  : cp_get(cp, se, "name", "UNAVAILABLE"),
                 'app'     : cp_get(cp, 'osg_dirs', 'app', '/Unknown'),
                 "data"    : cp_get(cp, "osg_dirs", "data", "/Unknown"),

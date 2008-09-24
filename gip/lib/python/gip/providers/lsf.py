@@ -9,7 +9,7 @@ import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    printTemplate, cp_get, cp_getInt
+    printTemplate, cp_get, cp_getInt, responseTimes
 from gip_cluster import getClusterID
 from lsf_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
@@ -76,8 +76,12 @@ def print_CE(cp):
         if "max_wall" not in info:
             info["max_wall"] = 1440
         info["job_slots"] = min(totalCpu, info["job_slots"])
-        info['ert'] = 3600
-        info['wrt'] = 3600
+
+        ert, wrt = responseTimes(cp, info["running"], info["wait"],
+            max_job_time=info["max_wall"])
+
+        info['ert'] = ert
+        info['wrt'] = wrt
         info['hostingCluster'] = cp_get(cp, ce, 'hosting_cluster', ce_name)
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
         info['ceImpl'] = 'Globus'
@@ -126,10 +130,18 @@ def print_VOViewLocal(queue_info, cp):
         vo_info = queue_jobs.get(queue, {})
         info2 = vo_info.get(vo, {})
         ce_unique_id = '%s:2119/jobmanager-lsf-%s' % (ce_name, queue)
+
+        my_queue_info = queue_info.setdefault(queue, {})
+        if "max_wall" not in my_queue_info:
+            my_queue_info["max_wall"] = 1440
+        ert, wrt = responseTimes(cp, info2.get("running", 0),
+            info2.get("waiting", 0),
+            max_job_time=my_queue_info.get("max_wall", 0))
+
         info = {
             'ceUniqueID'  : ce_unique_id,
-            'job_slots'   : queue_info.get(queue, {}).get('job_slots', 0),
-            'free_slots'  : queue_info.get(queue, {}).get('free_slots', 0),
+            'job_slots'   : my_queue_info.get('job_slots', 0),
+            'free_slots'  : my_queue_info.get('free_slots', 0),
             'ce_name'     : ce_name,
             'queue'       : queue,
             'vo'          : vo,
@@ -142,8 +154,8 @@ def print_VOViewLocal(queue_info, cp):
             'data'        : cp.get("osg_dirs", "data"),
             'app'         : cp.get("osg_dirs", "app"),
             'default_se'  : cp.get("se", "name"),
-            'ert'         : 3600,
-            'wrt'         : 3600,
+            'ert'         : ert,
+            'wrt'         : wrt,
             'acbr'        : 'VO:%s' % vo
         }
         info['total'] = info['waiting'] + info['running']

@@ -25,7 +25,8 @@ condor_group = "condor_config_val GROUP_NAMES"
 condor_quota = "condor_config_val GROUP_QUOTA_%(group)s"
 condor_prio = "condor_config_val GROUP_PRIO_FACTOR_%(group)s"
 condor_status = "condor_status -xml -constraint '%(constraint)s'"
-condor_job_status = "condor_status -submitter -xml"
+#condor_job_status = "condor_status -submitter -xml"
+condor_job_status = "condor_q -xml -constraint '%(constraint)s'"
 
 log = getLogger("GIP.Condor")
 
@@ -289,6 +290,28 @@ def guessVO(cp, group):
         return byname
     else:
         return [altname]
+
+def _getJobsInfoInternal(cp):
+    constraint = cp_get(cp, "condor", "jobs_constraint", "TRUE")
+    fp = condorCommand(condor_job_status, cp, {'constraint': constraint})
+    handler = ClassAdParser('GlobalJobId', ['JobStatus', 'Owner', 'AccountingGroup']);
+    fp2 = condorCommand(condor_job_status, cp)
+    handler2 = ClassAdParser('Name', ['MaxJobsRunning'])
+    try:
+        parseCondorXml(fp, handler)
+    except Exception, e:
+        log.error("Unable to parse condor output!")
+        log.exception(e)
+        return {}
+    try:
+        parseCondorXml(fp2, handler2)
+    except Exception, e:
+        log.error("Unable to parse condor output!")
+        log.exception(e)
+        return {}
+    results = {}
+    for item, values in handler.items():
+        pass
 
 def getJobsInfo(vo_map, cp):
     """

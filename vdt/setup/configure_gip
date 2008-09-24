@@ -1478,7 +1478,7 @@ sub create_se_config_file
 
             $contents=$contents."dn: GlueVOInfoLocalID=$vo,GlueSALocalID=$vo,GlueSEUniqueID=$se_disk\n"
                                ."GlueChunkKey: GlueSALocalID=$vo\n"
-                               ."GlueChunkKey: GlueSEUniqueID=$vo\n"
+                               ."GlueChunkKey: GlueSEUniqueID=$se_disk\n"
                                ."GlueVOInfoLocalID: $vo\n"
                                ."GlueVOInfoName: $vo\n"
                                ."GlueVOInfoPath: $se_data\n"

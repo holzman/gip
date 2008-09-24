@@ -1435,8 +1435,9 @@ sub create_se_config_file
                            ."GlueSAStateAvailableSpace: 1\n"
                            ."GlueSAStateUsedSpace: 1\n\n";
 
-        $contents=$contents."dn: GlueVOInfoLocalID=$se_disk,GlueSALocalID=$se_disk\n"
+        $contents=$contents."dn: GlueVOInfoLocalID=$se_disk,GlueSALocalID=$se_disk,GlueSEUniqueID=$se_disk\n"
                            ."GlueChunkKey: GlueSALocalID=$se_disk\n"
+                           ."GlueChunkKey: GlueSEUniqueID=$se_disk\n"
                            ."GlueVOInfoLocalID: $se_disk\n"
                            ."GlueVOInfoName: $se_disk\n"
                            ."GlueVOInfoPath: $se_data\n";
@@ -1475,8 +1476,9 @@ sub create_se_config_file
                                ."GlueSAStateAvailableSpace: 1\n"
                                ."GlueSAStateUsedSpace: 1\n\n";
 
-            $contents=$contents."dn: GlueVOInfoLocalID=$vo,GlueSALocalID=$vo\n"
+            $contents=$contents."dn: GlueVOInfoLocalID=$vo,GlueSALocalID=$vo,GlueSEUniqueID=$se_disk\n"
                                ."GlueChunkKey: GlueSALocalID=$vo\n"
+                               ."GlueChunkKey: GlueSEUniqueID=$vo\n"
                                ."GlueVOInfoLocalID: $vo\n"
                                ."GlueVOInfoName: $vo\n"
                                ."GlueVOInfoPath: $se_data\n"

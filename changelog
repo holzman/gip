@@ -1,0 +1,56 @@
+hangelog
+
+== 1.0.4 ==
+* Bugfix for GlueVOInfoLocalID, which needs to include GlueSEUniqueID.
+
+== 1.0.3 ==
+* Sets reasonable defaults for GlueCEPolicyMaxObtainableWallClockTime, GlueCEPolicyMaxObtainableCPUTime, GlueCEStateWorstResponseTime
+
+== 1.0.2 ==
+
+Bugs fixed:
+* Respect max_queueable for PBS (10)
+* Multiple SE per CESE bindgroup (11)
+* Schema compliance for GlueServiceStatusInfo?, GlueSARetentionPolicy, 
+  GlueSAAccessLatency, GlueSAExpirationMode,GlueSACapability, 
+  GlueSEImplementationName,GlueSEStatus (9,12)
+* Custom attributes via alter-attributes (14)
+* PBS Default wallclock set to 6000 instead of 0
+
+Features added:
+* Logging (13)
+* LSF queues parsed from RVF instead of bqueues (thanks Alan Sill) 
+
+== 1.0.1 ==
+
+Bugs fixed (references to GIP ticket numbers in [])
+  - The dynamic providers were parsing the VO list differently than in
+    previous cases [1]
+  - For an SRM SE, GlueSEArchitecture is changed from "disk" to "other".
+    This avoids the classicSE script trying to execute df in the wrong
+    places [2, 8]
+  - $GIP_LOCATION/etc/gip.conf was not being read in some cases due to
+    invalid path expansion [3]
+  - Multiple collector hosts were not getting parsed correctly (GIP
+    ticket [4]
+  - OSG Version is now published along with the software tags [5]
+  - PBS dynamic provider was not parsing waiting jobs correctly (GIP
+    ticket [6]
+  - For non-PBS sites using dynamic dcache, GlueSEUniqueID was not being
+    correctly generated [7]
+  - GlueCESEBindCEAccessPoint will not double-count the GlueSAPath now
+  - Wrong permissions and ownership were generated for
+    dcache_storage.conf, gip.conf
+  - CESEBind now advertises /UNAVAILABLE instead of dropping the
+    attribute if the access point is not set
+  - SRM hostname was being advertised based on reverse DNS, which is a
+    problem for sites where the SRM host is a CNAME instead of an A
+    name.  We now print out the admin-specified hostname if the IP
+    matches.
+
+== 1.0.0_rc1 ==
+
+* Fixes: Unique name for SE Control protocol; VO view of SA now
+  matches SA unique ID.
+* Bugfix: Don't assume OSG_GIP_SIMPLIFIED_PATH exists
+

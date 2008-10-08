@@ -1,5 +1,8 @@
-hangelog
+Changelog
 
+== 1.0.5 ==
+* Fix syntax error (spurious backticks) in configure_gip
+	
 == 1.0.4 ==
 * Bugfix for GlueVOInfoLocalID, which needs to include GlueSEUniqueID.
 

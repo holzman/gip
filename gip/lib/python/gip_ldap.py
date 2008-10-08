@@ -181,7 +181,8 @@ def query_bdii(cp, query="(objectClass=GlueCE)", base="o=grid"):
     @param cp: Site configuration; will read the bdii.endpoint entry to find
         the LDAP endpoint
     @type cp: ConfigParser
-    @keyword query: Query string for the LDAP server.
+    @keyword query: Query string for the LDAP server.  Defaults to 
+        (objectClass=GlueCE)
     @keyword base: Base DN for the LDAP server.
     @returns: File stream of data returned by the BDII.
     """

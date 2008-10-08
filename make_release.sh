@@ -23,7 +23,7 @@ if [ ! -d "$tagdir/$releasename" ] ; then
     exit 3
 fi
 
-excludelist="--exclude */.svn --exclude *~ --exclude #*# --exclude *.tar.gz --exclude *.tgz"
+excludelist="--exclude */.svn --exclude *~ --exclude #*# --exclude *.tar.gz --exclude *.tgz --exclude changelog"
 
 tar cfvz /tmp/$releasename.tgz -C $tagdir $releasename $excludelist
 

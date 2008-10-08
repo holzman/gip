@@ -1463,10 +1463,10 @@ sub create_se_config_file
                                ."GlueSAUsedNearlineSize: 0\n"
                                ."GlueSAFreeNearlineSize: 0\n"
                                ."GlueSAReservedNearlineSize: 0\n"
-                               ."GlueSARetentionPolicy: replica`\n"
+                               ."GlueSARetentionPolicy: replica\n"
                                ."GlueSAAccessLatency: online\n"
                                ."GlueSAExpirationMode: neverExpire\n"
-                               ."GlueSACapability: file transfer\n"`
+                               ."GlueSACapability: file transfer\n"
                                ."GlueSAPolicyMaxFileSize: 10000\n"
                                ."GlueSAPolicyMinFileSize: 1\n"
                                ."GlueSAPolicyMaxData: 100\n"

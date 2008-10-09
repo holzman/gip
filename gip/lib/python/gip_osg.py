@@ -72,6 +72,16 @@ def checkOsgConfigured(cp):
     if not os.path.exists(osg_attributes):
         raise ValueError("osg-attributes.conf does not exists; we may be "
                          "running in an unconfigured OSG install!")
+    # Check to see if the osg-user-vo-map.txt exists and that its size is > 0
+    osg_user_vo_map = "$VDT_LOCATION/monitoring/osg-user-vo-map.txt"
+    osg_user_vo_map = os.path.expandvars(osg_user_vo_map)
+    if not os.path.exists(osg_user_vo_map):
+        raise ValueError("osg-user-vo-map.txt does not exists; we may be "
+                         "running in an unconfigured OSG install!")
+    if os.path.getsize(osg_user_vo_map) == 0:
+        raise ValueError("osg-user-vo-map.txt is a 0 length file; we may be "
+                         "running in an unconfigured OSG install!")
+    
     return True
 
 def configOsg(cp):

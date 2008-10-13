@@ -27,8 +27,8 @@ class LastBDIIUpdate(GipUnittest.GipTestCase):
         site_dict = {}
 
         # compile some regex's to examine url's
-        re_wanted_href = re.compile('(.*)source=served(.*)')
-        re_site = re.compile('(.*)which=(.*)&')
+        re_wanted_href = re.compile('(.*)cemon_processed_osg(.*)')
+        re_site = re.compile('(.*)which=(.*)')
 
         s = getURLData(self.url)
         soup = BeautifulSoup(s)

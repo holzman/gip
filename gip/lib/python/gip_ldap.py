@@ -78,6 +78,8 @@ class LdapData:
                     glue[attr[4:]] = val
             elif attr == 'objectClass':
                 objectClass.append(val)
+            elif attr.lower() == 'mds-vo-name':
+                continue
             else:
                 raise ValueError("Invalid data:\n%s" % data)
         objectClass.sort()
@@ -175,7 +177,7 @@ def read_ldap(fp, multi=False):
         entries.append(LdapData(mybuffer[1:], multi=multi))
     return entries
 
-def query_bdii(cp, query="(objectClass=GlueCE)", base="o=grid"):
+def query_bdii(cp, query="(objectClass=GlueCE)", base="o=grid", filter=""):
     """
     Query a BDII for data.
     @param cp: Site configuration; will read the bdii.endpoint entry to find
@@ -184,6 +186,7 @@ def query_bdii(cp, query="(objectClass=GlueCE)", base="o=grid"):
     @keyword query: Query string for the LDAP server.  Defaults to 
         (objectClass=GlueCE)
     @keyword base: Base DN for the LDAP server.
+    @keyword filter: Attribute filter to narrow return results.
     @returns: File stream of data returned by the BDII.
     """
     endpoint = cp.get('bdii', 'endpoint')
@@ -195,12 +198,14 @@ def query_bdii(cp, query="(objectClass=GlueCE)", base="o=grid"):
     info['hostname'], info['port'] = m.groups()
     info['query'] = query
     info['base'] = base
+    info['filter'] = filter
+    
     if query == '':
         cmd = 'ldapsearch -h %(hostname)s -p %(port)s -xLLL -b %(base)s' \
             " " % info
     else:
         cmd = 'ldapsearch -h %(hostname)s -p %(port)s -xLLL -b %(base)s' \
-            " '%(query)s'" % info
+            " '%(query)s' %(filter)s" % info
     #print cmd
     fp = os.popen(cmd)
     return fp

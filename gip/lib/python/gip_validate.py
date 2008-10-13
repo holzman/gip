@@ -10,7 +10,7 @@ import urlparse
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 import GipUnittest
 from gip_ldap import query_bdii, read_ldap, read_bdii, prettyDN
-from gip_common import cp_get
+from gip_common import cp_get, getFQDNBySiteName
 from gip_testing import getTestConfig, runTest
 
 class GipValidate(GipUnittest.GipTestCase):
@@ -18,6 +18,8 @@ class GipValidate(GipUnittest.GipTestCase):
         GipUnittest.GipTestCase.__init__(self, 'testGipOutput', 'testGipOutput_%s' % site, cp)
         self.type = cp_get(self.cp, "gip_tests", "validate_type", "")
         self.site = site
+        self.entries = None
+        self.site_id = None
 
     def testGipOutput(self):
         """
@@ -61,7 +63,8 @@ This check tests the ldif as reported by cemon for:
         o they appear in the correct order
         """
         if self.type.lower() == "url": # we want info from the web status page
-            url = cp_get(self.cp, "gip_tests", "validator_url", "%s") % self.site
+            fqdn = getFQDNBySiteName(self.cp, self.site)
+            url = cp_get(self.cp, "gip_tests", "validator_url", "") % (fqdn, self.site)
             fd = urllib2.urlopen(url)
 #            line = fd.readline()
 #            if "html" in fd.readline():
@@ -71,10 +74,9 @@ This check tests the ldif as reported by cemon for:
             path = os.path.expandvars("$GIP_LOCATION/bin/gip_info")
             fd = os.popen(path)
         else: # assume we want to read from the bdii
-            fd = query_bdii(self.cp, base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site)
+            fd = query_bdii(self.cp, query="", base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site)
 
         self.entries = read_ldap(fd)
-
         self.site_id = self.getSiteUniqueID()
 
         self.test_existence_all()
@@ -256,14 +258,14 @@ This check tests the ldif as reported by cemon for:
     def test_dn(self):
         for entry in self.entries:
             dn = list(entry.dn)
-            self.expectEquals(dn.pop(), "o=grid", msg="DN %s does not end with o=grid" % prettyDN(entry.dn))
-            if not (self.type.lower() == "url"): # the served page does not have the mds-vo-name=local
-                self.expectEquals(dn.pop(), "mds-vo-name=local", msg="DN %s does not end with mds-vo-name=local,o=grid" % prettyDN(entry.dn))
-            if not (self.type.lower() == "gipinfo"): # the gip_info does not have the mds-vo-name=site
-                self.expectEquals(dn.pop(), "mds-vo-name=%s" % self.site, msg="DN %s does not end with mds-vo-name=%s,mds-vo-name=local,o=grid" % (prettyDN(entry.dn), self.site))
+            fulldn = prettyDN(entry.dn)
+            self.expectEquals(dn.pop(), "o=grid", msg="DN %s does not end with o=grid" % fulldn)
+            self.expectEquals(dn.pop().lower(), "mds-vo-name=local", msg="DN %s does not end with mds-vo-name=local,o=grid" % fulldn)
+            if (self.type.lower() == "url"): # the gip_info does not have the mds-vo-name=site
+                self.expectEquals(dn.pop().lower(), ("mds-vo-name=%s" % self.site).lower(), msg="DN %s does not end with mds-vo-name=%s,mds-vo-name=local,o=grid" % (fulldn, self.site))
             for d in dn:
-                self.expectTrue(d.find("o=grid") < 0, msg="There is an extra o=grid entry in DN %s" % prettyDN(entry.dn))
-                self.expectTrue(d.startswith("mds-vo-name") == False, "There is an extra mds-vo-name entry in DN %s" % prettyDN(entry.dn))
+                self.expectTrue(d.find("o=grid") < 0, msg="There is an extra o=grid entry in DN %s" % fulldn)
+                self.expectTrue(d.startswith("mds-vo-name") == False, "There is an extra mds-vo-name entry in DN %s" % fulldn)
 
 def main(args):
     """

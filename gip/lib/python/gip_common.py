@@ -21,6 +21,7 @@ import urllib
 from UserDict import UserDict
 
 from gip_osg import configOsg
+from gip_ldap import read_bdii
 
 #pylint: disable-msg=W0105
 
@@ -1019,3 +1020,15 @@ def responseTimes(cp, running, waiting, average_job_time=None,
     ERT = max(min(ERT, 86400), 0)
     WRT = max(min(WRT, 30*86400), 2*ERT)
     return ERT, WRT
+
+def getFQDNBySiteName(cp, sitename):
+    fqdn = ""
+    entries = read_bdii(cp, query="(objectClass=GlueCE)", base="mds-vo-name=%s,mds-vo-name=local,o=grid" % sitename)
+    for entry in entries:
+        if 'GlueCE' in entry.objectClass:
+            fqdn = entry.glue['CEHostingCluster']
+            break
+    return fqdn
+    
+    
+    

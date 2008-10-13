@@ -180,16 +180,16 @@ def interpolateConfig(cp):
         cp.set("gip_tests", "bdii_addr", "is-itb2.grid.iu.edu")
         cp.set("gip_tests", "egee_bdii", "pps-bdii.cern.ch")
         cp.set("gip_tests", "egee_bdii_conf_url", "http://egee-pre-production-service.web.cern.ch/egee-pre-production-service/bdii/pps-all-sites.conf")
-        web_server = "http://is-itb2.grid.iu.edu/cgi-bin/"
+        web_server = "http://is-itb2.grid.iu.edu"
     else:
         cp.set("gip_tests", "bdii_addr", "is.grid.iu.edu")
         cp.set("gip_tests", "egee_bdii", "lcg-bdii.cern.ch")
         cp.set("gip_tests", "egee_bdii_conf_url", "http://lcg-bdii-conf.cern.ch/bdii-conf/bdii.conf")
-        web_server = "http://is.grid.iu.edu/cgi-bin/"
+        web_server = "http://is.grid.iu.edu"
 
-    cp.set("gip_tests", "update_url", web_server + "status.cgi")
-    cp.set("gip_tests", "schema_check_url", web_server + "show_source_data?which=%s&source=cemon")
-    cp.set("gip_tests", "validator_url", web_server + "show_source_data?which=%s&source=served")
+    cp.set("gip_tests", "update_url", web_server + "/cgi-bin/status.cgi")
+    cp.set("gip_tests", "schema_check_url", web_server + "/data/cemon_processed_osg/%s.processed?which=%s")
+    cp.set("gip_tests", "validator_url", web_server + "/data/cemon_processed_osg/%s.processed?which=%s")
 
 
 def getTestConfig(args):

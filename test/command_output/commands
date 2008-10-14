@@ -6,6 +6,7 @@ qstat: qstat
 pbsnodes_a: pbsnodes -a
 wsrf_query: wsrf-query -a -s https://osg-gw-5.t2.ucsd.edu:9443/wsrf/services/ManagedJobFactoryService --key '{http://www.globus.org/namespaces/2004/10/gram/job}ResourceID' Fork "//*[local-name()='version']"
 condor_status_xml: condor_status -xml
+condor_status_xml: condor_status -xml -constraint 'TRUE'
 condor_status_submitter_xml: condor_status -submitter -xml
 condor_version: condor_version
 condor_group: condor_config_val GROUP_NAMES

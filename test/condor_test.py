@@ -24,7 +24,7 @@ class TestCondorProvider(unittest.TestCase):
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
             "condor.py")
-        fd = os.popen(path)
+        fd = os.popen(path + " --config=test_configs/condor_test.conf")
         fd.read()
         self.assertEquals(fd.close(), None)
 
@@ -35,7 +35,7 @@ class TestCondorProvider(unittest.TestCase):
         """
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
-            "condor.py")
+            "condor.py --config=test_configs/condor_test.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.assertEquals(fd.close(), None)
@@ -49,8 +49,13 @@ class TestCondorProvider(unittest.TestCase):
                 self.assertEquals(entry.glue['CEStateFreeCPUs'], '77')
                 self.assertEquals(entry.glue['CEPolicyAssignedJobSlots'], '81')
                 self.assertEquals(entry.glue['CEUniqueID'], \
-                    'red.unl.edu:2119/jobmanager-condor-default')
+                    'prairiefire.unl.edu:2119/jobmanager-condor-default')
         self.assertEquals(has_ce, True)
+
+    def test_collector_host(self):
+        """
+        Make sure that we can parse non-trivial COLLECTOR_HOST entries.
+        """
 
 def main():
     """
@@ -58,7 +63,7 @@ def main():
     """
     cp = config()
     stream = streamHandler(cp)
-    runTest(cp, TestCondorProvider, stream, per_site=False)
+    runTest(cp, TestCondorProvider, stream, per_site=False, usexml=False)
 
 if __name__ == '__main__':
     main()

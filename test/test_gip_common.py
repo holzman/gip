@@ -10,6 +10,7 @@ from sets import Set
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, cp_getBoolean, voList
+from gip_cluster import getOSGVersion, getApplications
 from gip_testing import runTest, streamHandler
 import gip_testing
 
@@ -76,10 +77,30 @@ class TestGipCommon(unittest.TestCase):
         self.failIf(diff, msg="Difference between voList output and desired " \
             "output: %s." % ', '.join(diff))
 
+    def test_osg_version(self):
+        """
+        Test the osg-version function and test for the contents in the software.
+        """
+        my_version = 'OSG-magic-version'
+        cp = config("test_configs/red.conf")
+        version = getOSGVersion(cp)
+        self.failUnless(version == my_version, msg="Computed OSG version does"\
+            " not match the test case's OSG version.")
+        found_osg = False
+        locations = getApplications(cp)
+        for loc in locations:
+            if loc['locationId'] == my_version:
+                self.failUnless(loc['locationName'] == my_version)
+                self.failUnless(loc['version'] == my_version)
+                found_osg = True
+        if found_osg == False:
+            self.fail(msg="OSG version not in software list!")
+        
+
 def main():
     cp = config()
     stream = streamHandler(cp)
-    runTest(cp, TestGipCommon, stream, per_site=False)
+    runTest(cp, TestGipCommon, stream, per_site=False, usexml=False)
 
 if __name__ == '__main__':
     main()

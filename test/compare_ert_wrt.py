@@ -20,6 +20,8 @@ def compare_CE(cp):
             waiting = int(entry.glue['CEStateWaitingJobs'])
         except:
             continue
+        if actual_ert == 0 and waiting > 0:
+            print "Bad ERT: CE %s, ERT=0, %i waiting." % (ceName, waiting)
         if running + waiting <= 100: # Ignore the small case
             continue
         if actual_ert > 1e6: # Nasty huge values

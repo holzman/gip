@@ -14,8 +14,9 @@ log = getLogger("GIP.Print.Site")
 class TestPrintSite(GipUnittest.GipTestCase):
 
     def __init__(self, site, cp):
-        GipUnittest.GipTestCase.__init__(self, 'testSiteAds', 'testSiteAds_%s' % site, cp)
+        GipUnittest.GipTestCase.__init__(self, 'testSiteAds')
         self.site = site
+        self.name = 'testSiteAds_%s' % site
 
     def testSiteAds(self):
         """

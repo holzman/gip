@@ -44,8 +44,9 @@ def makeSafe(site):
 
 class TestSchema(GipUnittest.GipTestCase):
     def __init__(self, site, cp):
-        GipUnittest.GipTestCase.__init__(self, 'testSchema', 'testSchema_%s' % site, cp)
+        GipUnittest.GipTestCase.__init__(self, 'testSchema')
         self.site = site
+        self.name = 'testSchema_%s' % site
         self.slap_conf = createSlapConf()
 
     def testSchema(self):

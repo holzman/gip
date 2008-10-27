@@ -12,8 +12,9 @@ from gip_testing import runTest, getTestConfig
 
 class AuditJobs(GipUnittest.GipTestCase):
     def __init__(self, site, cp):
-        GipUnittest.GipTestCase.__init__(self, 'testJobs', 'testJobs_%s' % site, cp)
+        GipUnittest.GipTestCase.__init__(self, 'testJobs')
         self.site = site
+        self.name = 'testJobs_%s' % site
 
     def testJobs(self):
         """
@@ -34,7 +35,8 @@ This is a report that displays the following information:
     def getJobInfo(self):
         results_list = []
 
-        url = cp_get(self.cp, "gip_tests", "schema_check_url", "") % self.site
+        fqdn = getFQDNBySiteName(self.cp, self.site)
+        url = cp_get(self.cp, "gip_tests", "schema_check_url") % (fqdn, self.site)
         entries = read_ldap(getUrlFd(url))
         for entry in entries:
             entry_details = {}

@@ -11,11 +11,11 @@ from gip_testing import runTest, getTestConfig, runlcginfo
 
 class LcgInfoCEList(GipUnittest.GipTestCase):
     def __init__(self, cp):
-        GipUnittest.GipTestCase.__init__(self, 'testLcgInfoCEList', 'testLcgInfoCEList', cp)
-        self.bdii = cp_get(self.cp, "gip_tests", "bdii_addr", "")
-        self.port = cp_get(self.cp, "gip_tests", "bdii_port", "")
-        print >> sys.stderr, self.bdii + ":" + self.port
+        GipUnittest.GipTestCase.__init__(self, 'testLcgInfoCEList', cp)
+        self.bdii = cp_get(cp, "gip_tests", "bdii_addr", "is.grid.iu.edu")
+        self.port = cp_get(cp, "gip_tests", "bdii_port", "2170")
         self.opt = "--list-ce"
+        self.name = 'testLcgInfoCEList'
 
     def testLcgInfoCEList(self):
         """

@@ -9,7 +9,7 @@ import datetime
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 import GipUnittest
 from gip_ldap import read_bdii, prettyDN
-from gip_common import getLogger, config, cp_get, getURLData
+from gip_common import getLogger, config, cp_get, getURLData, getFQDNBySiteName
 from gip_testing import runTest, getTestConfig, runCommand
 
 # Globals
@@ -17,47 +17,50 @@ CR = '\r'
 LF = '\n'
 html_lf = '<br>'
 
-class CompareDataSources:
-    def __init__(self, base_path):
-        self.cp = getTestConfig(config())
-        self.site_list = self.get_sites()
+class CompareDataSources(GipUnittest.GipTestCase):
+    def __init__(self, site, cp):
+        GipUnittest.GipTestCase.__init__(self, 'testCompare')
+        self.site = site
+        self.name = 'testCompare_%s' % site
+
         self.bdii = cp_get(self.cp, "gip_tests", "bdii_addr", "")
         self.port = cp_get(self.cp, "gip_tests", "bdii_port", "")
         self.excludes = self.get_excludes()
-        self.source = cp_get(self.cp, "gip_tests", "compare_source", "cemon")
-        self.url = 'http://%s/cgi-bin/show_source_data?which=%s&source=%s'
-
-    def get_sites(self):
-        sites = cp_get(self.cp, "gip_tests", "site_names", "")
-        sites = [i.strip() for i in sites.split(',')]
-        return sites
+        self.source = cp_get(self.cp, "gip_tests", "compare_source", "OSG")
+        if self.source == "OSG":
+            url_info['source_directory'] = "cemon_processed_osg"
+        elif self.source == "RAW":
+            url_info['source_directory'] = "cemon_raw_incoming"
+        elif self.source == "INTEROP":
+            url_info['source_directory'] = "cemon_processed_wlcg_interop"
+        else:
+            # need to raise an error here
+            pass
+        url_info['webserver'] = self.bdii
+        url_info['fqdn'] = getFQDNBySiteName(self.cp, site)
+        url_info['sitename'] = self.site
+        self.url = 'http://%(webserver)s/data/%(source_directory)s/%(fqdn)s.processed?which=%(sitename)s' % url_info
+#http://is.grid.iu.edu/data/cemon_processed_osg/cmsosgce.fnal.gov.processed?which=USCMS-FNAL-WC1-CE
 
     def get_excludes(self):
         excludes = cp_get(self.cp, "gip_tests", "compare_excludes", "")
         excludes = [i.strip() for i in excludes.split(',')]
         return excludes
 
-    def main(self):
-        site_html = ""
-        for site in self.site_list:
-            ldap_data = self.get_ldap_data(site)
-            if len(ldap_data) < 20:  # arbitrary number
-                print >> sys.stderr, "Site: %s is missing from BDII" % site
-                continue  # Skip this site
+    def testCompare(self):
+        ldap_data = self.get_ldap_data(site)
+        if len(ldap_data) < 20:  # arbitrary number
+            print >> sys.stderr, "Site: %s is missing from BDII" % site
+            continue  # Skip this site
 
-            ldap_parsed = self.parse_ldap_data(ldap_data)
+        ldap_parsed = self.parse_ldap_data(ldap_data)
 
-            sUrl = self.url % (self.bdii, site, self.source)
-            cemon_data = self.get_cemon_data(sUrl)
-            cemon_parsed = self.parse_cemon_data(cemon_data, site)
+        cemon_data = self.get_cemon_data(self.url)
+        cemon_parsed = self.parse_cemon_data(cemon_data, site)
 
-            results = self.comparedata(cemon_parsed, ldap_parsed, self.excludes)
-
-            site_html += self.print_list(results, site)
+        results = self.comparedata(cemon_parsed, ldap_parsed, self.excludes)
 
         updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
-        html = "<h1>Comparison of CEMon data to BDII data by site</h1><h2>Last Updated on: %s </h2>" % updateDateTime
-        html += site_html
         return html
 
     def get_cemon_data(self, some_url):
@@ -85,9 +88,9 @@ class CompareDataSources:
                 unwrapped_list.append(l.rstrip())
         return unwrapped_list
 
-    def parse_cemon_data(self, data, site):
+    def parse_cemon_data(self, data):
         d = {}
-        served_search_string = 'mds-vo-name=' + site.lower()
+        served_search_string = 'mds-vo-name=' + self.site.lower()
         cemon_search_string = 'mds-vo-name=local'
         stanza_list = data.split(LF + LF)
         for stanza in stanza_list:
@@ -129,7 +132,7 @@ class CompareDataSources:
                     if (not detail.endswith(LF)) and (not (detail == "")): d[key] += LF
         return d
 
-    def comparedata(self, cemon_data, ldap_data, excludes_list):
+    def comparedata(self, cemon_data, ldap_data):
         ldap_keys = ldap_data.keys()
         cemon_keys = cemon_data.keys()
 
@@ -151,7 +154,7 @@ class CompareDataSources:
 
             # if the ord sum does not match compare, the the specifics of the data to find what is different
             if (ldet_sum <> cdet_sum):
-                compare_results.extend(self.sub_compare(cdet, ldet, key, excludes_list))
+                compare_results.extend(self.sub_compare(cdet, ldet, key, self.excludes))
                 compare_results.append(LF)
                 no_match_list.append(key)
 
@@ -172,7 +175,7 @@ class CompareDataSources:
 
                 # if the ord sum does not match compare, the the specifics of the data to find what is different
                 if (ldet_sum <> cdet_sum):
-                    compare_results.extend(self.sub_compare(cdet, ldet, key, excludes_list))
+                    compare_results.extend(self.sub_compare(cdet, ldet, key, self.excludes))
                     compare_results.append(LF)
                     no_match_list.append(key)
 
@@ -191,7 +194,7 @@ class CompareDataSources:
 
         return n
 
-    def sub_compare(self, cemon_stanza, ldap_stanza, key, excludes_list):
+    def sub_compare(self, cemon_stanza, ldap_stanza, key):
         sub_compare_results = []
         results = []
         add = False
@@ -203,7 +206,7 @@ class CompareDataSources:
         search_results = re.findall(search_exp, diff)
         for result in search_results:
             result = result[1:][:-1]
-            if not(result in excludes_list):
+            if not(result in self.excludes):
                 add = True
                 break
 
@@ -215,27 +218,7 @@ class CompareDataSources:
 
         return results
 
-    def print_list(self, results, site):
-        html = self.getHeader(site)
-        html += "<tr><td><pre>"
-        for line in results:
-            if len(line.strip()) > 1:
-                html += line.strip()
-        html += "</pre></td></tr>"
-        html += self.getFooter()
-        return html
-
-    def getHeader(self, site):
-        html = """
-            <h2>%s</h2>
-            <table rules='all' frame='border'>
-        """
-        return html % site
-
-    def getFooter(self):
-        html = """</table>"""
-        return html
-
 if __name__ == "__main__":
-    c = CompareDataSources(sys.argv[1])
-    print c.main()
+    cp = getTestConfig(args)
+    runTest(cp, CompareDataSources)
+

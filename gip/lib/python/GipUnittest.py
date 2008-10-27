@@ -10,10 +10,15 @@ import unittest
 from gip_common import cp_getBoolean
 
 class GipTestCase(unittest.TestCase):
-    def __init__(self, methodName, testname, cp):
+    def __init__(self, methodName):
         unittest.TestCase.__init__(self, methodName)
-        self.name = testname
         self.methodName = methodName
+        self.name = ""
+        self.cp = None
+        self.result_ref = None
+        self.override = False
+
+    def setCp(self, cp):
         self.cp = cp
         self.override = cp_getBoolean(self.cp, "gip_tests", "use_xml")
 

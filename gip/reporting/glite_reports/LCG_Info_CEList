@@ -11,7 +11,7 @@ from gip_testing import runTest, getTestConfig, runlcginfo
 
 class LcgInfoCEList(GipUnittest.GipTestCase):
     def __init__(self, cp):
-        GipUnittest.GipTestCase.__init__(self, 'testLcgInfoCEList', cp)
+        GipUnittest.GipTestCase.__init__(self, 'testLcgInfoCEList')
         self.bdii = cp_get(cp, "gip_tests", "bdii_addr", "is.grid.iu.edu")
         self.port = cp_get(cp, "gip_tests", "bdii_port", "2170")
         self.opt = "--list-ce"

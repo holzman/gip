@@ -48,14 +48,16 @@ class TestSchema(GipUnittest.GipTestCase):
         self.site = site
         self.name = 'testSchema_%s' % site
         self.slap_conf = createSlapConf()
-
+        
     def testSchema(self):
         """
 Test schema of site
         """
+        url = self.cp.get('test', 'goc') % self.site
+        fqdn = getFQDNBySiteName(self.cp, self.site)
+        url = self.cp.get("gip_tests", "schema_check_url") % (fqdn, self.site)
         info_file = getTempFilename()
         fp2 = open(info_file, 'w')
-        url = self.cp.get('test', 'goc') % self.site
         fp = urllib2.urlopen(url)
         ctr = 0
         for line in fp:

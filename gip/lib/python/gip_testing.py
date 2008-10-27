@@ -123,19 +123,20 @@ def runTest(cp, cls, out=None, per_site=True):
     @param out: A stream where the output from the test suite is logged
     @type out: stream
     """
-    usexml = cp_getBoolean(cp, "gip_tests", "use_xml")
+    usexml = cp_getBoolean(cp, "gip_tests", "use_xml", default=False)
     if per_site:
         testSuite = generateTests(cp, cls, sys.argv[1:])
     else:
-        testSuite = suite = unittest.TestLoader().loadTestsFromTestCase(cls)
-        try:
-            for test in testSuite:
-                try:
-                    test.__init__(cp)
-                except:
-                    continue
-        except:
-            pass
+        testSuite = unittest.TestLoader().loadTestsFromTestCase(cls)
+    try:
+        for test in testSuite:
+            try:
+#                test.__init__(cp)
+                test.setCp(cp)
+            except:
+                continue
+    except:
+        pass
 
     if usexml:
         testRunner = GipUnittest.GipXmlTestRunner()

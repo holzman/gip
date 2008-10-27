@@ -1,0 +1,170 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import copy
+import datetime
+from test_common import *
+
+CR = '\r'
+LF = '\n'
+CRLF = CR+LF
+
+def get_sites(cp):
+    sites = cp.get("gip", "site_names")
+    sites = [i.strip() for i in sites.split(',')]
+    return sites
+
+def getCMSJobInfo(cp):
+    results_list = []
+    site_list = get_sites(cp)
+    bdii = cp.get("gip", "bdii_addr")
+
+    re_GlueCEAccessControlBaseRule = re.compile('GlueCEAccessControlBaseRule: VO:cms')
+    re_chunkkey = re.compile('^GlueChunkKey: GlueCEUniqueID=(.*)')
+    re_foreignkey = re.compile('^GlueForeignKey: GlueClusterUniqueID=(.*)')
+    re_waitingjobs = re.compile('^GlueCEStateWaitingJobs: (.*)')
+    re_runningjobs = re.compile('^GlueCEStateRunningJobs: (.*)')
+    re_totaljobs = re.compile('^GlueCEStateTotalJobs: (.*)')
+    re_freeslots = re.compile('^GlueCEStateFreeJobSlots: (.*)')
+    re_CEkey = re.compile('^GlueCEUniqueID: (.*)')
+    re_HTMLResults = re.compile('^\<html\>(.*)')
+
+    for site in site_list:
+        url = 'http://' + bdii + '/cgi-bin/show_source_data?which=' + site + '&source=cemon'
+        results = getURLData(url)
+        h = re_HTMLResults.match(results)
+        if h:
+            continue
+
+        re_GlueCEAccessControlBaseRule.match(results)
+        if re_GlueCEAccessControlBaseRule:
+            stanzas = results.split(LF + LF)
+            for stanza in stanzas:
+                m = re_GlueCEAccessControlBaseRule.findall(stanza)
+                if m:
+                    sitejob = {}
+                    cekey_found = False
+                    chunkkeycount = 0
+                    waitingjobscount = 0
+                    runningjobscount = 0
+                    totaljobscount = 0
+                    freeslotscount = 0
+
+                    details = stanza.split(LF)
+                    for detail in details:
+                        chunkkey = re_chunkkey.match(detail)
+                        waitingjobs = re_waitingjobs.match(detail)
+                        runningjobs = re_runningjobs.match(detail)
+                        totaljobs = re_totaljobs.match(detail)
+                        freeslots = re_freeslots.match(detail)
+                        foreignkey = re_foreignkey.match(detail)
+                        cekey = re_CEkey.match(detail)
+
+                        if cekey:
+                            # we are replacing the foreign key with the ce unique id so that the queues show up
+                            sitejob["CEQueue"] = cekey.groups()[0]
+                            sitejob["CEQueue_source"] = "GlueCEUniqueID"
+                            chunkkeycount += 1
+                            cekey_found = True
+                        if chunkkey:
+                            sitejob["CEQueue_source"] = "GlueVOViewLocalID"
+                            sitejob["CEQueue"] = chunkkey.groups()[0]
+                            chunkkeycount += 1
+                        if waitingjobs:
+                            sitejob["waiting"] = waitingjobs.groups()[0]
+                            waitingjobscount += 1
+                        if runningjobs:
+                            sitejob["running"] = runningjobs.groups()[0]
+                            runningjobscount += 1
+                        if totaljobs:
+                            sitejob["total"] = totaljobs.groups()[0]
+                            totaljobscount += 1
+                        if freeslots:
+                            sitejob["free"] = freeslots.groups()[0]
+                            freeslotscount += 1
+
+                    sitejob["chunkkeycount"] = chunkkeycount
+                    sitejob["waitingjobscount"] = waitingjobscount
+                    sitejob["runningjobscount"] = runningjobscount
+                    sitejob["totaljobscount"] = totaljobscount
+                    sitejob["freeslotscount"] = freeslotscount
+                    if cekey_found:
+                        results_list.append(copy.deepcopy(sitejob))
+
+    return results_list
+
+def getHeader():
+    updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+
+    html = """
+        <h1>Audit Jobs</h1>
+        <h2>Last Updated on: %s </h2>
+        <table rules='all' frame='border'>
+        <tr>
+            <th>Computing Element / Queue</th>
+            <th>Stanza Source</th>
+            <th>State Waiting Jobs</th>
+            <th>State Running Jobs</th>
+            <th>State Total Jobs</th>
+            <th>State Free Job Slots</th>
+            <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+            <th>Chunk Key Count</th>
+            <th>Waiting Jobs Count</th>
+            <th>Running Jobs Count</th>
+            <th>Total Jobs Count</th>
+            <th>Free Slots Count</th>
+        </tr>
+    """
+
+    return html % updateDateTime
+
+def getDetail(job, colorize):
+    if (colorize == -1):
+        html = "      <tr style='background-color:#99ccff'>"
+    else:
+        html = "      <tr>"
+
+    detail = """
+            <td>%(CEQueue)s</td>
+            <td>%(CEQueue_source)s</td>
+            <td>%(waiting)s</td>
+            <td>%(running)s</td>
+            <td>%(total)s</td>
+            <td>%(free)s</td>
+            <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td>%(chunkkeycount)d</td>
+            <td>%(waitingjobscount)d</td>
+            <td>%(runningjobscount)d</td>
+            <td>%(totaljobscount)d</td>
+            <td>%(freeslotscount)d</td>
+        </tr>
+        """
+
+    return html + (detail % job)
+
+def getFooter():
+    html =  """
+        </table>
+    """
+    return html
+
+def createReport(cp):
+    colorize = 1
+    report = getHeader()
+
+    results = getCMSJobInfo(cp)
+    results.sort(compare_by ("CEQueue"))
+    for each in results:
+        line = getDetail(each, colorize)
+        report += line
+        colorize = colorize * -1
+
+    report += getFooter()
+
+    return report
+
+if __name__ == '__main__':
+    cp = getConfig(sys.argv[1])
+    print createReport(cp)
+

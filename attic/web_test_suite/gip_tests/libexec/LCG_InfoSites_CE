@@ -1,0 +1,94 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import datetime
+
+from test_common import *
+
+CR = '\r'
+LF = '\n'
+CRLF = CR+LF
+
+class LCG_InfoSites_closeSE:
+    def __init__(self, base_path):
+        self.cp = getConfig(base_path)
+        self.bdii = self.cp.get("gip", "bdii_addr")
+        self.opts = ['ce']
+        try:
+            self.vo = self.cp.get("gip", "vo")
+        except:
+            self.vo = "ops"
+
+    def runquery(self):
+        return runlcginfosites(self.bdii, self.vo, self.opts)
+
+    def main(self):
+        pout = self.runquery().readlines()
+        colorize = -1
+
+        pout.pop(0) # Pop Some stupid comment about bdii
+        pout.pop(0) # Pop the header
+        pout.pop(0) # Pop the separator line
+
+        html = self.getHeader()
+        for line in pout:
+            items = line.split()
+            cpus = items[0]
+            free = items[1]
+            total = items[2]
+            running = items[3]
+            waiting = items[4]
+            ce = items[5]
+            html += self.getDetail(ce, cpus, free, running, waiting, total, colorize)
+
+            colorize = colorize * -1
+
+        html += self.getFooter()
+
+        return html
+
+    def getHeader(self):
+        updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+
+        html = """
+            <h1>LCG InfoSites Query: 'lcg-infosites --is is.grid.iu.edu --vo ops ce'</h1>
+            <h2>Last Updated on: %s </h2>
+            <table rules='all' frame='border'>
+            <tr>
+                <th>CE</th>
+                <th># CPU's</th>
+                <th>Free</th>
+                <th>Running Jobs</th>
+                <th>Waiting Jobs</th>
+                <th>Total Jobs</th>
+            </tr>
+        """
+
+        return html % updateDateTime
+
+    def getDetail(self, ce, cpus, free, running, waiting, total, colorize):
+        if (colorize == -1):
+            html = "      <tr style='background-color:#99ccff'>"
+        else:
+            html = "      <tr>"
+
+
+        detail = """
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+            </tr>
+        """
+        return html + (detail % (ce, cpus, free, running, waiting, total))
+
+    def getFooter(self):
+        return "</table>"
+
+if __name__ == '__main__':
+    l = LCG_InfoSites_closeSE(sys.argv[1])
+    print l.main()
+

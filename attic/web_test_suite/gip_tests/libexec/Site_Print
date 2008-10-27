@@ -1,0 +1,110 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import datetime
+
+from gip_ldap import read_bdii
+from test_common import getConfig
+
+class TestPrintSite:
+    def __init__(self, base_path):
+        self.cp = getConfig(base_path)
+        self.site_list = self.get_sites()
+        self.ce_entries = []
+        self.cese_entries = []
+        self.se_entries = []
+        self.vo_entries = []
+        self.ce_se = {}
+        self.ce_vo = {}
+
+    def get_sites(self):
+        sites = self.cp.get("gip", "site_names")
+        sites = [i.strip() for i in sites.split(',')]
+        return sites
+
+    def main(self):
+        html = self.getTitle()
+        for s in self.site_list:
+            self.testSiteAds(s)
+            html += self.formatResults(s)
+        return html
+
+    def testSiteAds(self, site):
+        entries = read_bdii(self.cp, base="mds-vo-name=%s,mds-vo-name=local,o=grid" % site)
+        self.ce_entries = []
+        self.cese_entries = []
+        self.se_entries = []
+        self.vo_entries = []
+        self.ce_se = {}
+        self.ce_vo = {}
+        for entry in entries:
+            if 'GlueCE' in entry.objectClass:
+                self.ce_entries.append(entry)
+                self.ce_se[entry] = []
+                self.ce_vo[entry] = []
+            if 'GlueVOView' in entry.objectClass and 'GlueCETop' in entry.objectClass:
+                self.vo_entries.append(entry)
+            if 'GlueSE' in entry.objectClass:
+                self.se_entries.append(entry)
+            if 'GlueCESEBind' in entry.objectClass:
+                self.cese_entries.append(entry)
+
+        for entry in self.cese_entries:
+            for entry2 in self.se_entries:
+                if entry.glue['CESEBindSEUniqueID'] == entry2.glue['SEUniqueID']:
+                    for entry3 in self.ce_entries:
+                        if entry.glue['CESEBindCEUniqueID'] == entry3.glue['CEUniqueID']:
+                            self.ce_se[entry3].append(entry2)
+
+        for entry in self.vo_entries:
+            for entry2 in self.ce_entries:
+                desired_ck = 'GlueCEUniqueID=%s' % entry2.glue['CEUniqueID']
+                if entry.glue['ChunkKey'] == desired_ck:
+                    self.ce_vo[entry2].append(entry)
+
+    def formatResults(self, site):
+        html = self.getHeader(site)
+        out = ""
+        for entry in self.ce_entries:
+            out += '<tr><td><ul><li>CE: %s' % entry.glue['CEUniqueID']
+            if len(self.ce_se) > 0:
+                for se in self.ce_se[entry]:
+                    out += '<br>Close SE: %s' % se.glue['SEUniqueID']
+            out += '<ul>'
+            for vo in self.ce_vo[entry]:
+                out += '<li>VO: %s </li>' % vo.glue['VOViewLocalID']
+            out += '</ul></li></td></tr>'
+        html += out
+        html += self.getFooter()
+        return html
+
+    def getTitle(self):
+        updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+        html = """
+            <h1>Site Print</h1>
+            <h2>This check prints the following information for each site:
+                <ul>
+                    <li>CE names</li>
+                    <li>Close SE</li>
+                    <li>VOView for each CE</li>
+                </ul>
+            </h2>
+            <h2>Last Updated on: %s </h2>
+        """
+        return html % updateDateTime
+
+    def getHeader(self, site):
+        html = """
+            <h2>Test results for %s</h2>
+            <table>
+        """
+        return html % site
+
+    def getFooter(self):
+        return "</table>"
+
+if __name__ == '__main__':
+    s = TestPrintSite(sys.argv[1])
+    print s.main()
+

@@ -1,0 +1,110 @@
+GIPToolKit DESCRIPTION:
+
+The GIPToolKit is a set of tests that query the BDII to validate a
+site(s) GIP output.  The toolkit is desirned to be "self-contained" as
+much as possible.  Therefore, the basic tests included here can be
+"automated" via cron jobs.  However, I do not want to distribute nor
+support external binaries.  So, at the moment there are two external
+dependencies.  wget and ldapsearch must be available for the tests to
+run.
+
+INSTALLATION:
+
+To "install" the toolkit place the gip_tests directory in your desired
+location.  Edit the $BASE_PATH/bin/setup.sh file to reflect your
+environment:
+
+    1. The $BASE_PATH variable should be set to /your/path/to/gip_tests
+    2. If you are automating the test runs via cron, then wget and
+       ldapsearch must be set in the path.  Just because I was being
+       lazy, I sourced the system's barshrc to set the environment.
+    3. Modify values in the $BASE_PATH/etc/tests.conf file
+
+GIPToolKit OUTPUT:
+
+The output of the tests are html pages.  The location for the output is
+determined by "results_dir" set in tests.conf.  Modifications can
+be easily made to the output.  The tests directly control the output to
+the body of the page.  The header and footer of the page can be changed
+by modifying the template.py file.
+
+
+EXTENDING THE TOOLKIT:
+
+The toolkit can very easily be extended to include custom tests.  If
+the new tests follow a few simple guidelines, then they can be copied
+to the libexec directory.  Once there, they will be automatically run
+when the toolkit is run next.
+
+    1. Each new test should accept one and only one argument.  That
+       argument is the $BASE_PATH.
+    2. The output of the test should be the body of an html document.
+       The header and footer of the html document are contained in
+       template.py
+
+
+TODO LIST:
+    1. Better packaging of the results
+    2. Currently, no tests which require a proy can be run, maybe fix?
+
+
+TEST LIST:
+
+CE Check
+    Print out the following information for each CE at a site:
+        * LRMS and version
+        * Free batch slots
+        * Running jobs and waiting jobs
+        * Total batch slots
+        * Max wall clock time
+    For each attached VO view, print:
+        * VO
+        * Running jobs
+        * Waiting jobs
+
+SRM Check
+    Test SRM ads for the following:
+        * endpoint type is SRM
+        * Version is 1.1 or 2.2 (1.1.0 or 2.2.0 generate warnings)
+        * Site unique ID is not blank
+        * Site unique ID is actual unique ID used for this site.
+        * If dCache, make sure that the /srm/managervX string is correct.
+
+Site Check
+    Print out the following information for each site:
+        * CE names
+        * Close SE
+        * VOView for each CE
+
+DN Check
+    Test DN ads for the following:
+        * o=grid appears once
+        * mds-vo-name=local appears once
+        * mds-vo-name=<site> appears once
+        * they appear in the correct order
+
+SD_Query
+    Prints a table listing whether or not a site passed a lcg sdquery
+    query.
+
+AuditCMSJobs
+    This test came about because some sites were improperly reporting
+    job information resulting in multiple Glue attributes.  This check
+    displays the current information report about jobs and the number
+    of times in a stanza it gets reported.
+
+Compare BDII CEMon
+    This will take the output from the BDII for a site and compare it
+    to what is being reported via CEMon.  This will allow site
+    administrators to determine if stanzas are being dropped.  Dropped
+    stanzas may be a result of malformed data or bad attributes added
+    in the add_attributes.conf file.
+
+Check CERN BDII Config
+    This is a global check for all sites currently configured to report
+    to the WLCG.  It checks the CERN BDII Configuration file to make
+    sure that each site exists.
+
+lcg-info
+
+lcginfosites

@@ -15,8 +15,9 @@ from gip_testing import getTestConfig, runTest
 
 class GipValidate(GipUnittest.GipTestCase):
     def __init__(self, site, cp):
-        GipUnittest.GipTestCase.__init__(self, 'testGipOutput', 'testGipOutput_%s' % site, cp)
+        GipUnittest.GipTestCase.__init__(self, 'testGipOutput')
         self.type = cp_get(self.cp, "gip_tests", "validate_type", "")
+        self.name = 'testGipOutput_%s' % site
         self.site = site
         self.entries = None
         self.site_id = None

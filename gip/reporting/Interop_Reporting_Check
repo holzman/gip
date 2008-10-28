@@ -15,10 +15,10 @@ class InteropCheck(GipUnittest.GipTestCase):
         self.site = site
         self.name = 'testInteropInfo_%s' % site
 
-        self.bdii_conf_url = cp_get(self.cp, "gip_tests", "egee_bdii_conf_url", "")
-        self.osg_bdii = cp_get(self.cp, "gip_tests", "bdii_addr", "")
-        self.osg_port = cp_get(self.cp, "gip_tests", "bdii_port", "2170")
-        self.egee_bdii = cp_get(self.cp, "gip_tests", "egee_bdii", "")
+        self.bdii_conf_url = cp_get(cp, "gip_tests", "egee_bdii_conf_url", "")
+        self.osg_bdii = cp_get(cp, "gip_tests", "bdii_addr", "")
+        self.osg_port = cp_get(cp, "gip_tests", "bdii_port", "2170")
+        self.egee_bdii = cp_get(cp, "gip_tests", "egee_bdii", "")
         self.egee_port = self.osg_port
 
     def testInteropInfo(self):

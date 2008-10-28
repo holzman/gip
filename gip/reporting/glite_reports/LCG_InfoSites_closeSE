@@ -11,9 +11,10 @@ from gip_testing import runTest, getTestConfig, runlcginfosites
 
 class LcgInfoSitesCloseSE(GipUnittest.GipTestCase):
     def __init__(self, cp):
-        GipUnittest.GipTestCase.__init__(self, 'testLcgInfoSitesCloseSE', 'testLcgInfoSitesCloseSE', cp)
+        GipUnittest.GipTestCase.__init__(self, 'testLcgInfoSitesCloseSE')
         self.bdii = cp_get(self.cp, "gip_tests", "bdii_addr", "")
         self.opts = ['closeSE']
+        self.name = 'testLcgInfoSitesCloseSE'
 
     def testLcgInfoSitesCloseSE(self):
         """
@@ -33,7 +34,7 @@ configured properly and is visible to VO's using the lcg tools.
     def getInfoForVO(self, vo):
         pout = runlcginfosites(self.bdii, vo, self.opts).readlines()
         pout.pop(0) # Pop the header
-
+        ce = " "
         results = {}
         template = "%-30s\t%-30s\n"
         output = "\n" + template % ("CE", "SE")

@@ -11,9 +11,10 @@ from gip_testing import runTest, getTestConfig, runlcginfosites
 
 class LcgInfoSitesSE(GipUnittest.GipTestCase):
     def __init__(self, cp):
-        GipUnittest.GipTestCase.__init__(self, 'testLcgInfoSitesSE', 'testLcgInfoSitesSE', cp)
+        GipUnittest.GipTestCase.__init__(self, 'testLcgInfoSitesSE')
         self.bdii = cp_get(self.cp, "gip_tests", "bdii_addr", "")
         self.opts = ['se']
+        self.name = 'testLcgInfoSitesSE'
 
     def testLcgInfoSitesSE(self):
         """

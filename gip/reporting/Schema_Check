@@ -8,7 +8,7 @@ import datetime
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 import GipUnittest
 from gip_ldap import read_ldap, query_bdii, getSiteList
-from gip_common import config, addToPath
+from gip_common import config, addToPath, getFQDNBySiteName
 from gip_testing import runTest, getTestConfig
 
 slap_conf = """
@@ -53,7 +53,6 @@ class TestSchema(GipUnittest.GipTestCase):
         """
 Test schema of site
         """
-        url = self.cp.get('test', 'goc') % self.site
         fqdn = getFQDNBySiteName(self.cp, self.site)
         url = self.cp.get("gip_tests", "schema_check_url") % (fqdn, self.site)
         info_file = getTempFilename()

@@ -85,6 +85,14 @@ def generateTests(cp, cls, args=[]):
         if site == 'local' or site == 'grid':
             continue
         case = cls(site, cp)
+        
+        # try to set the cp object for GipUnittest children.
+        #  if not a GipUnittest child, then fail out and continue as normal
+        try:
+            case.setCp(cp)
+        except:
+            pass
+
         tests.append(case)
     return unittest.TestSuite(tests)
 
@@ -128,15 +136,6 @@ def runTest(cp, cls, out=None, per_site=True):
         testSuite = generateTests(cp, cls, sys.argv[1:])
     else:
         testSuite = unittest.TestLoader().loadTestsFromTestCase(cls)
-    try:
-        for test in testSuite:
-            try:
-#                test.__init__(cp)
-                test.setCp(cp)
-            except:
-                continue
-    except:
-        pass
 
     if usexml:
         testRunner = GipUnittest.GipXmlTestRunner()

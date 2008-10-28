@@ -7,7 +7,7 @@ import os
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 import GipUnittest
 from gip_ldap import read_ldap
-from gip_common import cp_get, getUrlFd
+from gip_common import cp_get, getUrlFd, getFQDNBySiteName
 from gip_testing import runTest, getTestConfig
 
 class AuditJobs(GipUnittest.GipTestCase):
@@ -36,7 +36,7 @@ This is a report that displays the following information:
         results_list = []
 
         fqdn = getFQDNBySiteName(self.cp, self.site)
-        url = cp_get(self.cp, "gip_tests", "schema_check_url") % (fqdn, self.site)
+        url = cp_get(self.cp, "gip_tests", "schema_check_url", "%s %s") % (fqdn, self.site)
         entries = read_ldap(getUrlFd(url))
         for entry in entries:
             entry_details = {}

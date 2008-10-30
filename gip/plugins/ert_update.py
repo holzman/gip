@@ -7,6 +7,10 @@ import glob
 import sets
 import cStringIO
 
+if 'GIP_LOCATION' not in os.environ and 'GLOBUS_LOCATION' in os.environ:
+    os.environ['GIP_LOCATION'] = os.path.expandvars("$GLOBUS_LOCATION/../gip")
+    os.environ['VDT_LOCATION'] = os.path.expandvars("$GLOBUS_LOCATION/..")
+
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 
 from gip_common import cp_get, getLogger, config
@@ -27,7 +31,10 @@ def fix_crappy_wrapper_output(fp):
         elif len(line.strip()) == 0:
             continue
         cur_ldif += line
-    return cStringIO.StringIO("\n".join(stanzas))
+    output_stanzas = []
+    for i in stanzas:
+        output_stanzas.append(cStringIO.StringIO(i+"\n"))
+    return output_stanzas
 
 def load_static_ldif(cp, static_dir):
     ldap = []
@@ -38,10 +45,15 @@ def load_static_ldif(cp, static_dir):
             continue
         log.debug("Reading static file %s" % filename)
         try:
+            my_ldap = []
             try:
                 sys.stdout = dev_null
-                my_ldap = read_ldap(fix_crappy_wrapper_output(open(filename,
-                    'r')))
+                for i in fix_crappy_wrapper_output(open(filename, 'r')):
+                    try:
+                        my_ldap += read_ldap(i)
+                    except Exception, e:
+                        print >> sys.stderr, e
+                        continue
             finally:
                 sys.stdout = old_stdout
         except SystemExit, KeyboardInterrupt:

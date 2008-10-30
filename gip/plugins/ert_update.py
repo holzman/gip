@@ -1,8 +1,11 @@
+#!/usr/bin/python
 
 import os
+import re
 import sys
 import glob
 import sets
+import cStringIO
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 
@@ -11,16 +14,62 @@ from gip_ldap import read_ldap, prettyDN
 
 log = getLogger("GIP.ERT")
 
+bad_file_re = re.compile('.*\.ldif\.[0-9]+\.')
+
+def fix_crappy_wrapper_output(fp):
+    stanzas = []
+    cur_ldif = ''
+    for line in fp:
+        if line.startswith('dn:'):
+            if cur_ldif:
+                stanzas.append(cur_ldif)
+                cur_ldif = ''
+        elif len(line.strip()) == 0:
+            continue
+        cur_ldif += line
+    return cStringIO.StringIO("\n".join(stanzas))
+
 def load_static_ldif(cp, static_dir):
-    ldap = sets.Set()
-    for filename in glob.glob("%s/*.ldif" % static_dir):
+    ldap = []
+    old_stdout = sys.stdout
+    dev_null = open('/dev/null', 'w')
+    for filename in glob.glob("%s/*.ldif.*" % static_dir):
+        if bad_file_re.match(filename):
+            continue
         log.debug("Reading static file %s" % filename)
         try:
-            my_ldap = read_ldap(open(filename, 'r').read())
-        except:
+            try:
+                sys.stdout = dev_null
+                my_ldap = read_ldap(fix_crappy_wrapper_output(open(filename,
+                    'r')))
+            finally:
+                sys.stdout = old_stdout
+        except SystemExit, KeyboardInterrupt:
+            raise
+        except Exception, e:
             log.error("Unable to read %s." % filename)
-        ldap.union(my_ldap)
+            log.exception(e)
+            print >> sys.stderr, e
+            continue
+        ldap += my_ldap
     return ldap
+
+def cp_getInt(cp, section, option, default):
+    """
+    Helper function for ConfigParser objects which allows setting the default.
+    Returns an integer, or the default if it can't make one.
+
+    @param cp: ConfigParser object
+    @param section: Section of the config parser to read
+    @param option: Option in section to retrieve
+    @param default: Default value if the section/option is not present.
+    @returns: Value stored in the CP for section/option, or default if it is
+        not present.
+    """
+    try:
+        return int(str(cp_get(cp, section, option, default)).strip())
+    except:
+        return default
 
 def responseTimes(cp, running, waiting, average_job_time=None,
         max_job_time=None):
@@ -79,18 +128,25 @@ def responseTimes(cp, running, waiting, average_job_time=None,
 
 def main():
     cp = config()
-    static_directory = os.path.expandvars(cp_get(cp, "gip", "static_dir", \
-        "$GIP_LOCATION/var/ldif"))
+    static_directory = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
+        "$GIP_LOCATION/var/tmp"))
     static_ldif = load_static_ldif(cp, static_directory)
     for entry in static_ldif:
-        if 'GlueCEState' not in entry.objectClass:
+        if 'CEStateRunningJobs' not in entry.glue or \
+                'CEStateWaitingJobs' not in entry.glue:
             continue
-        ert, wrt = responseTimes(cp, entry['CEStateRunningJobs'],
-            entry['CEStateWaitingJobs'])
-        print prettyDN(entry)
+        running = entry.glue['CEStateRunningJobs']
+        waiting = entry.glue['CEStateWaitingJobs']
+        ert, wrt = responseTimes(cp, running, waiting)
+        dn = "dn: " + ",".join(entry.dn)
+        msg = "For DN %s, running %s, waiting %s, ert %i, wrt %i." % \
+            (dn, running, waiting, ert, wrt)
+        log.info(msg)
+        print >> sys.stderr, msg
+        print dn
         print "GlueCEStateEstimatedResponseTime: " + str(ert)
         print "GlueCEStateWorstResponseTime: " + str(wrt)
-        print "\n"
+        print ""
 
 if __name__ == '__main__':
     main()

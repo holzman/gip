@@ -4,10 +4,11 @@ A generic provider for storage elements; written for the StorageElement class
 in gip_storage.
 """
 
+import sets
 import socket
 
 from gip_common import cp_get, getLogger, config, getTemplate, printTemplate, \
-    cp_getBoolean, cp_getInt
+    cp_getBoolean, cp_getInt, normalizeFQAN
 from gip_storage import voListStorage, getSETape, \
     getClassicSESpace, StorageElement
 from gip.bestman.BestmanInfo import BestmanInfo
@@ -53,12 +54,71 @@ def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
     info.setdefault('usedSpace', 0)
     printTemplate(saTemplate, info)
 
+def get_vos_from_acbr(acbr):
+    acbr_lines = acbr.splitlines()
+    vos = sets.Set()
+    for line in acbr_lines:
+        acbr = line.split()[-1]
+        try:
+            acbr = normalizeFQAN(acbr)
+            acbr = acbr.split('/')
+            if len(acbr) == 1 or len(acbr[0]) > 0:
+                continue
+            acbr = acbr[1]
+        except:
+            continue
+        vos.add(acbr)
+    return vos
+
 def print_VOInfo(se, cp):
     """
     Print out the VOInfo GLUE information for all the VOInfo
     objects in the SE.
+
+    This will optionally alter the VOInfo object to limit the total available
+    space for a given VO.
     """
+    vo_limit_str = cp_get(cp, "se", "vo_limits", "")
+    vo_limit = {}
+    cumulative_total = {}
+    for vo_str in vo_limit_str.split(','):
+        vo_str = vo_str.strip()
+        info = vo_str.split(":")
+        if len(info) != 2:
+            continue
+        vo = info[0].strip()
+        try:
+            limit = float(info[1].strip())
+        except:
+            continue
+        vo_limit[vo] = limit
+        cumulative_total.setdefault(vo, 0)
     for voinfo in se.getVOInfos():
+        do_continue = False
+        reduce_by_amount = 0
+        try:
+            totalOnline = float(voinfo.get("totalOnline", 0))
+        except:
+            continue
+        for vo in get_vos_from_acbr(voinfo.get("acbr", "")):
+            if vo in vo_limit:
+                try:
+                    cumulative_total[vo] += totalOnline
+                except:
+                    pass
+                reduce_by_amount = max(reduce_by_amount,
+                    cumulative_total.get(vo, 0) - vo_limit[vo])
+        if reduce_by_amount > totalOnline:
+            continue
+        elif reduce_by_amount > 0:
+            voinfo['totalOnline'] = str(totalOnline - reduce_by_amount)
+            try:
+                voinfo['availableSpace'] = str(max(0,
+                    float(voinfo['availableSpace']) - reduce_by_amount*1024**2))
+                voinfo['freeOnline'] = str(max(0, float(voinfo['freeOnline']) \
+                    - reduce_by_amount))
+            except:
+                pass
         try:
             print_single_VOInfo(voinfo, se, cp)
         except Exception, e:

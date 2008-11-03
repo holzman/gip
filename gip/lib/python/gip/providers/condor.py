@@ -92,8 +92,22 @@ def print_CE(cp):
     # group
     groupInfo['default'] = {'prio': 999999, 'quota': 999999, 'vos': sets.Set()}
     all_group_vos = []
-    for val in groupInfo.values():
+    total_assigned = 0
+    for key, val in groupInfo.items():
+        if key == 'default':
+            continue
         all_group_vos.extend(val['vos'])
+        try:
+            total_assigned += val['quota']
+        except:
+            pass
+    if total_nodes > total_assigned:
+        log.info("There are %i assigned job slots out of %i total; assigning" \
+            " the rest to the default group." % (total_assigned, total_nodes))
+        groupInfo['default']['quota'] = total_nodes-total_assigned
+    else:
+        log.warning("More assigned nodes (%i) than actual nodes (%i)!" % \
+            (total_assigned, total_nodes))
     all_vos = voList(cp)
     defaultVoList = [i for i in all_vos if i not in all_group_vos]
     groupInfo['default']['vos'] = defaultVoList

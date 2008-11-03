@@ -170,7 +170,9 @@ def config(*args):
     # Set up the config object to be compatible with the OSG attributes
     # file.
     #config_compat(cp)
-    configOsg(cp)
+    readOsg = cp_getBoolean(cp, "gip", "read_osg", "True")
+    if readOsg:
+        configOsg(cp)
 
     return cp
 
@@ -1006,7 +1008,7 @@ def responseTimes(cp, running, waiting, average_job_time=None,
     except:
         max_job_time = None
     if average_job_time == None:
-        average_job_time = cp_getInt(cp, 'gip', 'average_job_time', 12*3600)
+        average_job_time = cp_getInt(cp, 'gip', 'average_job_time', 4*3600)
     if max_job_time == None:
         max_job_time = cp_getInt(cp, 'gip', 'max_job_time', 24*3600)
     if max_job_time < average_job_time:
@@ -1015,7 +1017,7 @@ def responseTimes(cp, running, waiting, average_job_time=None,
         if abs(running) == 0 or abs(waiting) == 0:
             return 60, 86400
         return 3600, 86400
-    ERT = int(average_job_time/float(running+1)*waiting)
+    ERT = int(average_job_time/float(running+10)*waiting)
     WRT = int(max_job_time/float(running+1)*waiting)
     ERT = max(min(ERT, 86400), 0)
     WRT = max(min(WRT, 30*86400), 2*ERT)

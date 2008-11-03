@@ -58,10 +58,11 @@ def getOSGVersion(cp):
     Returns the running version of the OSG
     """
     osg_ver_backup = cp_get(cp, "ce", "osg_version", "OSG 1.2.0")
+    osg_version_script = cp_get(cp, "gip", "osg_version_script",
+        "$VDT_LOCATION/osg-version")
+    osg_version_script = os.path.expandvars(osg_version_script)
     try:
-        if os.environ['VDT_LOCATION'] not in os.environ['PATH'].split(':'):
-            os.environ['PATH'] += ':' + os.environ['VDT_LOCATION']
-        osg_ver = runCommand('osg-version').read().strip()
+        osg_ver = runCommand(osg_version_script).read().strip()
     except Exception, e:
         log.exception(e)
         osg_ver = ''
@@ -215,7 +216,7 @@ def getApplications(cp):
     osg_ver = getOSGVersion(cp)
     if osg_ver:
         info = {'locationId': osg_ver, 'locationName': osg_ver, 'version': \
-            'osg_ver', 'path': os.environ.get('VDT_LOCATION', '/UNKNOWN')}
+            osg_ver, 'path': os.environ.get('VDT_LOCATION', '/UNKNOWN')}
         locations.append(info)
     return locations
 

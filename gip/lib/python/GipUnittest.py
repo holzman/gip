@@ -76,7 +76,8 @@ class GipXmlTestRunner:
         self.stream = stream
 
     def writeUpdate(self, message):
-        self.stream.write(message)
+        if message:
+            self.stream.write(message)
 
     def run(self, test):
         updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
@@ -96,6 +97,9 @@ class GipXmlTestRunner:
         # Write out the description for the test
         self.writeUpdate("<TestDescription>\n")
         self.writeUpdate('<' + '![CDATA[')
+        short_description = test._tests[0].shortDescription()
+        if not short_description:
+            short_description = "(No description available)"
         self.writeUpdate(test._tests[0].shortDescription())
         self.writeUpdate(']]' + '>\n')
         self.writeUpdate("</TestDescription>\n")
@@ -134,8 +138,12 @@ class GipXmlTestResult(unittest.TestResult):
 
     def startTest(self, test):
         unittest.TestResult.startTest(self, test)
-        # we should escape quotes here
-        self.runner.writeUpdate('<TestCase name="%s" ' % test.getname())
+        # TODO: we should escape quotes here
+        try:
+            name = test.getname()
+        except:
+            name = "Unknown"
+        self.runner.writeUpdate('<TestCase name="%s" ' % name)
 
     def addSuccess(self, test):
         unittest.TestResult.addSuccess(self, test)

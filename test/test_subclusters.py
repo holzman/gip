@@ -22,7 +22,9 @@ class TestSubclusterConfigs(unittest.TestCase):
         providers_path = os.path.expandvars(providers_path)
         subcluster_provider_path = os.path.join(providers_path,
             'site_topology.py')
-        fd = os.popen(subcluster_provider_path + " --config %s" % cfg_name)
+        cmd = subcluster_provider_path + " --config %s" % cfg_name
+        print cmd
+        fd = os.popen(cmd)
         entries = read_ldap(fd, multi=True)
         self.failIf(fd.close(), msg="Run of subcluster provider failed!")
         return entries
@@ -39,15 +41,18 @@ class TestSubclusterConfigs(unittest.TestCase):
             self.failUnless(entry.glue['SubClusterWNTmpDir'][0] == '/scratch')
             self.failUnless(entry.glue['HostNetworkAdapterOutboundIP'][0] == \
                 'TRUE')
-            self.failUnless(entry.glue['HostProcessorModel'][0] == 'Opteron 275')
+            self.failUnless(entry.glue['HostProcessorModel'][0] == \
+                'Opteron 275')
             self.failUnless(entry.glue['SubClusterLogicalCPUs'][0] == '240')
             self.failUnless(entry.glue['HostNetworkAdapterInboundIP'][0] == \
                 'FALSE')
-            self.failUnless(entry.glue['SubClusterTmpDir'][0] == '/opt/osg/data')
+            self.failUnless(entry.glue['SubClusterTmpDir'][0] == \
+                '/opt/osg/data')
             self.failUnless(entry.glue['HostBenchmarkSI00'][0] == '2000')
             self.failUnless(entry.glue['HostProcessorVendor'][0] == 'AMD')
             self.failUnless(entry.glue['HostMainMemoryRAMSize'][0] == '4000')
-            self.failUnless(entry.glue['HostMainMemoryVirtualSize'][0] == '4000')
+            self.failUnless(entry.glue['HostMainMemoryVirtualSize'][0] == \
+                '4000')
             self.failUnless(entry.glue['HostBenchmarkSF00'][0] == '2000')
             self.failUnless(entry.glue['HostArchitectureSMPSize'][0] == '2')
             self.failUnless(entry.glue['HostProcessorClockSpeed'][0] == '2200')

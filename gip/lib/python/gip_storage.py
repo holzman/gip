@@ -69,13 +69,24 @@ def connect(cp):
 
     return p
 
-def voListStorage(cp):
+split_re = re.compile("\s*,?\s*")
+def voListStorage(cp, section=None):
     """
     List of VOs which are allowed to access this storage element.
 
     @param cp: Configuration for this site
     @type cp: ConfigParser
     """
+    if section and section in cp.section():
+        if "allowed_vos" in cp.options():
+            gip_common = __import__("gip_common")
+            real_list = gip_common.voList(cp)
+            lookup_vo = dict([(vo.lower, vo) for vo in real_list])
+            vo_set = sets.Set()
+            for vo in split_re.split(cp.get(section, "allowed_vos")):
+                if vo in lookup_vo:
+                    vo_set.add(lookup_vo[vo])
+            return vo_set
     try:
         autodetect = cp.getboolean("vo", "autodetect_storage_vos")
     except:
@@ -118,7 +129,7 @@ def getPath(cp, vo='', section='vo', classicSE=False):
     path = cp_get(cp, section, vo, fallback)
     return path
 
-def getSESpace(cp, admin=None, gb=False, total=False):
+def getSESpace(cp, admin=None, gb=False, total=False, section=se):
     """
     Return the amount of space available at the SE.
     
@@ -132,7 +143,7 @@ def getSESpace(cp, admin=None, gb=False, total=False):
     @return: used, free, total if total is True; otherwise, used, free.
       In GB if GB=True; otherwise, in KB.
     """
-    if cp_getBoolean(cp, se, "dynamic_dcache", False):
+    if cp_getBoolean(cp, section, "dynamic_dcache", False):
         return getdCacheSESpace(cp, admin, gb, total)
     else:
         return getClassicSESpace(cp, gb=gb, total=total)
@@ -346,8 +357,9 @@ class StorageElement(object):
     should subclass this and implement SE-specific functions. 
     """
 
-    def __init__(self, cp):
+    def __init__(self, cp, section="se"):
         self._cp = cp
+        self._section = section
 
     def run(self):
         """
@@ -395,7 +407,7 @@ class StorageElement(object):
         """
         Return True if there is a SRM endpoint present on this SE.
         """
-        return cp_getBoolean(self._cp, "se", "srm_present", True)
+        return cp_getBoolean(self._cp, self._section, "srm_present", True)
 
     def getSRMs(self):
         """
@@ -417,16 +429,18 @@ class StorageElement(object):
            - se.srm_endpoint 
              (httpg://(se.srm_host):(se.srm_port)/srm/managerv2)
         """
-        srmname = cp_get(self._cp, "se", "srm_host", "UNKNOWN.example.com")
-        version = cp_get(self._cp, "se", "srm_version", "2")
-        port = cp_getInt(self._cp, "se", "srm_port", 8443)
+        srmname = cp_get(self._cp, self._section, "srm_host",
+            "UNKNOWN.example.com")
+        version = cp_get(self._cp, self._section, "srm_version", "2")
+        port = cp_getInt(self._cp, self._section, "srm_port", 8443)
         if version.find('2') >= 0:
             default_endpoint = 'httpg://%s:%i/srm/managerv2' % \
                 (srmname, int(port))
         else:
             default_endpoint = 'httpg://%s:%i/srm/managerv1' % \
                 (srmname, int(port))
-        endpoint = cp_get(self._cp, "se", "srm_endpoint", default_endpoint)
+        endpoint = cp_get(self._cp, self._section, "srm_endpoint",
+            default_endpoint)
 
         acbr_tmpl = '\nGlueServiceAccessControlRule: %s\n' \
             'nGlueServiceAccessControlRule: VO:%s'
@@ -450,7 +464,7 @@ class StorageElement(object):
         
         The base class uses the value of se.name in the configuration object.
         """
-        return cp_get(self._cp, 'se', 'name', 'UNKNOWN')
+        return cp_get(self._cp, self._section, 'name', 'UNKNOWN')
 
     def getUniqueID(self):
         """
@@ -459,8 +473,8 @@ class StorageElement(object):
         The base class uses the value of se.unique_name (defaults to se.name)
         in the configuraiton object.
         """
-        return cp_get(self._cp, 'se', 'unique_name', 
-            cp_get(self._cp, 'se', 'name', 'UNKNOWN'))
+        return cp_get(self._cp, self._section, 'unique_name', 
+            cp_get(self._cp, self._section, 'name', 'UNKNOWN'))
 
     def getStatus(self):
         """
@@ -469,7 +483,7 @@ class StorageElement(object):
         The base classes uses the value of se.status (defaults to Production)
         in the configuration object.
         """
-        return cp_get(self._cp, "se", "status", "Production")
+        return cp_get(self._cp, self._section, "status", "Production")
 
     def getImplementation(self):
         """
@@ -478,7 +492,7 @@ class StorageElement(object):
         The base class uses the value of se.implementation (defaults to 
         UNKNOWN) in the configuration object.
         """
-        return cp_get(self._cp, "se", "implementation", "UNKNOWN")
+        return cp_get(self._cp, self._section, "implementation", "UNKNOWN")
 
     def getVersion(self):
         """
@@ -487,7 +501,7 @@ class StorageElement(object):
         The base class uses the value of se.version (defaults to UNKNOWN)
         in the configuration object.
         """
-        version = cp_get(self._cp, "se", "version", "UNKNOWN")
+        version = cp_get(self._cp, self._section, "version", "UNKNOWN")
         return version
 
     def getSESpace(self, gb=False, total=False):

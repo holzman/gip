@@ -398,32 +398,71 @@ def print_classic_access(cp, siteUniqueID):
            }
     print accessTemplate % info
 
+def determine_provider(provider_implementation, implementation, cp):
+    """
+    Determine which provider class to use based upon the requested provider
+    implementation and the actual SE implementation
+    """
+    provider_implementation = provider_implementation.strip().lower()
+    implementation = implementation.strip().lower()
+    if provider_implementation == 'static':
+        se_class = StorageElement
+    elif provider_implementation == 'bestman':
+        se_class = BestmanInfo
+    elif provider_implementation == 'dcache':
+        cp = config("$GIP_LOCATION/etc/dcache_storage.conf")
+        se_class = DCacheInfo
+    elif implementation.find('bestman') >= 0:
+        se_class = BestmanInfo
+    elif implementation.find('dcache') >= 0:
+        cp = config("$GIP_LOCATION/etc/dcache_storage.conf")
+        se_class = DCacheInfo
+    else:
+        se_class = StorageElement
+    return se_class, cp
+
+def handle_SE(cp, section):
+    """
+    Run a provider for one SE.
+    """
+    impl = cp_get(cp, section, "implementation", "UNKNOWN")
+    provider_impl = cp_get(cp, section, "provider_implementation", "UNKNOWN")
+    se_class, cp = determine_provider(provider_impl, impl, cp)
+    se = se_class(cp)
+    try:
+        se.run()
+    except Exception, e:
+        log.exception(e)
+
+    # Print out the SE-related portions
+    try:
+        print_SE(se, cp)
+    except Exception, e:
+        log.exception(e)
+
+    # Print out the SRM-related portions
+    try:
+        print_SRM(se, cp)
+    except Exception, e:
+        log.exception(e)
+
 def main():
     """
     The primary wrapper function for emitting GLUE for storage elements.
     """
     cp = config()
-    impl = cp_get(cp, "se", "implementation", "UNKNOWN")
-    if impl.lower().find('bestman') >= 0:
-        se = BestmanInfo(cp)
-    elif impl.lower().find('dcache') >= 0:
-        cp = config("$GIP_LOCATION/etc/dcache_storage.conf")
-        se = DCacheInfo(cp)
-    else:
-        se = StorageElement(cp)
-    try:
-        se.run()
-    except Exception, e:
-        log.exception(e)
-    print_SE(se, cp)
+
+    # Handle full-fledged SEs
+    for section in cp.section():
+        if section.lower().startswith("se"):
+            handle_SE(cp, section)
+
+    # Handle the "classic" SE.
     try:
         print_classicSE(cp)
     except Exception, e:
         log.exception(e)
-    try:
-        print_SRM(se, cp)
-    except Exception, e:
-        log.exception(e)
-        
+    
 if __name__ == '__main__':
     main()
+

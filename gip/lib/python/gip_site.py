@@ -1,6 +1,35 @@
 
+import re
+
 import gip_sections
 sec = gip_sections.site
+
+from gip_common import cp_get, voList, getLogger
+
+log = getLogger("GIP.Site")
+
+split_re = re.compile('\s*;?,?\s*')
+def filter_sponsor(cp, text):
+    vo_list = voList(cp)
+    vo_map = dict([(i.lower(), i) for i in vo_list])
+    text = text.replace('"', '').replace("'", '')
+    entries = split_re.split(text)
+    results = []
+    for entry in entries:
+        try:
+            vo, number = entry.split(":")
+            number = float(number)
+        except:
+            log.warning("Entry for sponsor, `%s`, is not in <vo>:<value>" \
+                "format." % str(entry))
+            continue
+        if vo in vo_map:
+            vo = vo_map[vo]
+        else:
+            log.warning("VO named `%s` does not match any VO in" \
+                " osg-user-vo-map.txt." % str(vo))
+        results.append("%s:%i" % (vo, int(number)))
+    return " ".join(results)
 
 def generateGlueSite(cp):
     """
@@ -8,14 +37,17 @@ def generateGlueSite(cp):
     """
 
     info = {}
-    info['uniqueID'] = cp.get(sec, "unique_name")
-    info['siteName'] = cp.get(sec, "name")
-    info['emailContact'] = cp.get(sec, "email")
-    info['contact'] = cp.get(sec, "contact")
-    info['location'] = '%s, %s' % (cp.get(sec, "city"), cp.get(sec, "country"))
-    info['latitude'] = cp.get(sec, 'latitude')
-    info['longitude'] = cp.get(sec, 'longitude')
-    info['website'] = cp.get(sec, 'sitepolicy')
-    info['sponsor'] = cp.get(sec, 'sponsor')
+    info['siteName'] = cp_get(cp, sec, "name", "UNKNOWN")
+    info['uniqueID'] = cp_get(cp, sec, "unique_name", info['siteName'])
+    info['emailContact'] = cp_get(cp, sec, "email", "UNKNOWN@example.com")
+    info['contact'] = cp_get(cp, sec, "contact", "UNKNOWN admin")
+    info['location'] = '%s, %s' % (cp_get(cp, sec, "city", "UNKNOWN city"),
+        cp_get(cp, sec, "country", "UNKNOWN country"))
+    info['latitude'] = cp_get(cp, sec, 'latitude', "0.00")
+    info['longitude'] = cp_get(cp, sec, 'longitude', "0.00")
+    info['website'] = cp_get(cp, sec, 'sitepolicy', "http://example.com/" \
+        "site_policy")
+    info['sponsor'] = cp_get(cp, sec, 'sponsor', "UNKNOWN:100")
+    info['sponsor'] = filter_sponsor(cp, info['sponsor'])
     return info
 

@@ -85,7 +85,7 @@ def getClusterID(cp):
     """
     Return the unique ID of the associated cluster.
     """
-    ce_name = cp.get(ce, 'unique_name')
+    ce_name = cp_get(cp, ce, 'unique_name', cp.get(ce, 'name'))
     simple = cp.getboolean(cluster, 'simple')
     if simple:
         return ce_name
@@ -156,6 +156,22 @@ def _generateSubClusterHelper(cp, section):
 def generateSubClusters(cp):
     """
     Generate subcluster information from the site's configuration.
+
+    The following attributes are used:
+       - name
+       - unique_name
+       - cores_per_cpu
+       - SI00
+       - SF00
+       - cpu_speed_mhz
+       - cpu_model
+       - cpu_vendor
+       - swap_size
+       - inbound_network
+       - outbound_network
+       - total_cores
+       - total_cpus
+
     """
     subclusters = []
     for sect in cp.sections():

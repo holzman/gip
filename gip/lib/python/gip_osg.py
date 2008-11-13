@@ -3,6 +3,8 @@ Populate the GIP based upon the values from the OSG configuration
 """
 
 import os
+import re
+import sys
 import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, se
@@ -108,6 +110,20 @@ def configOsg(cp):
     # Load config.ini values
     cp2 = ConfigParser.ConfigParser()
     cp2.read(loc)
+
+    try:
+        configSEs(cp, cp2)
+    except SystemExit, KeyboardInterrupt:
+        raise
+    except Exception, e:
+        print >> sys.stderr, str(e)
+    try:
+        configSubclusters(cp, cp2)
+    except SystemExit, KeyboardInterrupt:
+        raise
+    except Exception, e:
+        #log.exception(e)
+        print >> sys.stderr, str(e)
 
     # The write_config helper function
     def __write_config(section2, option2, section, option): \
@@ -236,4 +252,100 @@ def configOsg(cp):
     __write_config(gip_sec, "bdii", "bdii", "endpoint")
     __write_config(gip_sec, "tmp_var", "cluster", "simple")
     __write_config(gip_sec, "tmp_var", "cesebind", "simple")
+
+def configSubclusters(cp, cp2):
+    """
+    Configure the subclusters using the new version of the subclusters config.
+
+    Looks for the following attributes (* indicates required option):
+      - name *
+      - cores_per_node *
+      - node_count *
+      - cpus_per_node *
+      - cpu_speed_mhz *
+      - ram_mb *
+      - cpu_vendor *
+      - cpu_model *
+      - inbound_network *
+      - outbound_network *
+      - swap_mb
+      - SI00
+      - SF00
+
+    Looks for the above attributes in any section starting with the prefix
+    "subcluster"
+    """
+    translation = { \
+        "swap_mb": "swap_size",
+        "ram_mb":  "ram_size",
+    }
+    for section in cp.sections():
+        try:
+            cp2.add_section(section)
+        except ConfigParser.DuplicateSectionError:
+            pass
+        for option in cp.options(section):
+            gip_option = translation.get(option, option)
+            cp2.set(section, gip_option, cp.get(section, option))
+        
+    
+url_re = re.compile('([A-Za-z]+)://([A-Za-z-\.]+):([0-9]+)/(.+)')
+split_re = re.compile("\s*,?\s*")
+def configSEs(cp, cp2):
+    """
+    Configure all of the SEs listed in the config file.
+
+    Looks for the following attributes (* indicates required option):
+      - name *
+      - unique_name
+      - srm_endpoint *
+      - srm_version
+      - transfer_endpoints
+      - provider_implementation *
+      - implementation *
+      - version *
+      - default_path *
+      - vo_paths
+      - allowed_vos
+
+    Looks for the above attributes in any section starting with the prefix
+    "se"
+    """
+    for section in cp.sections():
+        if not section.startswith("se") and not section.startswith("SE"):
+            continue
+        name = cp_get(cp, section, "name", "UNKNOWN")
+        my_sect = "se_%s" % name
+        try:
+            cp2.add_section(my_sect)
+        except ConfigParser.DuplicateSectionError:
+            pass
+        # Copy over entire section
+        for name, value in cp.items(section):
+            cp2.set(my_sect, name, value)
+        cp2.set(my_sect, "name", name)
+        endpoint = cp_get(cp, section, "srm_endpoint",
+            "httpg://UNKNOWN.example.com:8443/srm/v2/server")
+        m = url_re.match(endpoint)
+        if not m:
+            continue
+        format, host, port, endpoint = m.groups()
+        cp2.set(my_sect, "srm_host", host)
+        cp2.set(my_sect, "srm_port", port)
+        cp2.set(my_sect, "srm_endpoint", "httpg://%s:%s/%s" % (host, port,
+            endpoint))
+        cp2.set(my_sect, "srm_version", cp_get(cp, section, "srm_version", "2"))
+        cp2.set(my_sect, "implementation", cp_get(cp, section, "implementation",
+            "UNKNOWN"))
+        cp2.set(my_sect, "version", cp_get(cp, section, "version", "UNKNOWN"))
+        cp2.set(my_sect, "provider_implementation", cp_get(cp, section,
+            "provider_implementation", "static"))
+        vo_paths = split_re.split(cp_get(cp, section, "vo_paths"))
+        for voinfo in vo_paths:
+            try:
+                vo, path = voinfo.split(':')
+            except:
+                continue
+            vo, path = vo.strip(), path.strip()
+            cp2.set(my_sect, vo, path)
 

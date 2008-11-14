@@ -7,7 +7,7 @@ import re
 import sys
 import ConfigParser
 
-from gip_sections import ce, site, pbs, condor, sge, se
+from gip_sections import ce, site, pbs, condor, sge, se, subcluster
 
 site_sec = "Site Information"
 pbs_sec = "PBS"
@@ -112,13 +112,13 @@ def configOsg(cp):
     cp2.read(loc)
 
     try:
-        configSEs(cp, cp2)
+        configSEs(cp2, cp)
     except SystemExit, KeyboardInterrupt:
         raise
     except Exception, e:
         print >> sys.stderr, str(e)
     try:
-        configSubclusters(cp, cp2)
+        configSubclusters(cp2, cp)
     except SystemExit, KeyboardInterrupt:
         raise
     except Exception, e:
@@ -192,7 +192,14 @@ def configOsg(cp):
 
     # Storage stuff 
     __write_config(gip_sec, "se_control_version", se, "srm_version")
-    __write_config(gip_sec, "srm_version", se, "srm_version")
+    # Force version string of 2.2.0 or 1.1.0
+    if "se" in cp.sections() and "srm_version" in cp.options("se") and \
+            cp.get("se", "srm_version").find("2") >= 0:
+        cp.set("se", "srm_version", "2.2.0")
+    if "se" in cp.sections() and "srm_version" in cp.options("se") and \
+            cp.get("se", "srm_version").find("1") >= 0:
+        cp.set("se", "srm_version", "1.1.0")
+    __write_config(gip_sec, "srm_version", se, "version")
     __write_config(gip_sec, "advertise_gsiftp", "classic_se", "advertise_se")
 
     # Calculate the default path for each VO
@@ -280,13 +287,44 @@ def configSubclusters(cp, cp2):
         "ram_mb":  "ram_size",
     }
     for section in cp.sections():
+        my_sect = section.lower()
+        if not my_sect.startswith(subcluster):
+            continue
         try:
-            cp2.add_section(section)
+            cp2.add_section(my_sect)
         except ConfigParser.DuplicateSectionError:
             pass
         for option in cp.options(section):
             gip_option = translation.get(option, option)
-            cp2.set(section, gip_option, cp.get(section, option))
+            cp2.set(my_sect, gip_option, cp.get(section, option))
+        options = cp2.options(my_sect)
+        if 'node_count' in options and 'cpus_per_node':
+            try:
+                cp2.set(my_sect, "total_cpus", str(int(float(cp2.get(my_sect,
+                    'node_count'))*float(cp2.get(my_sect, 'cpus_per_node')))))
+            except SystemExit, KeyboardInterrupt:
+                raise
+            except Exception, e:
+                pass
+        if 'cores_per_node' in options and 'cpus_per_node':
+            try:
+                cp2.set(my_sect, "cores_per_cpu", str(int(float(cp2.get(my_sect,
+                    'cores_per_node'))/float(cp2.get(my_sect,
+                    'cpus_per_node')))))
+            except SystemExit, KeyboardInterrupt:
+                raise
+            except Exception, e:
+                pass
+        if 'node_count' in options and 'cores_per_node':
+            try:
+                cp2.set(my_sect, "total_cores", str(int(float(cp2.get(my_sect,
+                    'node_count'))*float(cp2.get(my_sect, 'cores_per_node')))))
+            except SystemExit, KeyboardInterrupt:
+                raise
+            except Exception, e:
+                pass
+
+            
         
     
 url_re = re.compile('([A-Za-z]+)://([A-Za-z-\.]+):([0-9]+)/(.+)')
@@ -320,10 +358,10 @@ def configSEs(cp, cp2):
             cp2.add_section(my_sect)
         except ConfigParser.DuplicateSectionError:
             pass
+        cp2.set(my_sect, "name", name)
         # Copy over entire section
         for name, value in cp.items(section):
             cp2.set(my_sect, name, value)
-        cp2.set(my_sect, "name", name)
         endpoint = cp_get(cp, section, "srm_endpoint",
             "httpg://UNKNOWN.example.com:8443/srm/v2/server")
         m = url_re.match(endpoint)
@@ -332,6 +370,7 @@ def configSEs(cp, cp2):
         format, host, port, endpoint = m.groups()
         cp2.set(my_sect, "srm_host", host)
         cp2.set(my_sect, "srm_port", port)
+        cp2.set(my_sect, "unique_name", host)
         cp2.set(my_sect, "srm_endpoint", "httpg://%s:%s/%s" % (host, port,
             endpoint))
         cp2.set(my_sect, "srm_version", cp_get(cp, section, "srm_version", "2"))
@@ -340,7 +379,7 @@ def configSEs(cp, cp2):
         cp2.set(my_sect, "version", cp_get(cp, section, "version", "UNKNOWN"))
         cp2.set(my_sect, "provider_implementation", cp_get(cp, section,
             "provider_implementation", "static"))
-        vo_paths = split_re.split(cp_get(cp, section, "vo_paths"))
+        vo_paths = split_re.split(cp_get(cp, section, "vo_paths", ""))
         for voinfo in vo_paths:
             try:
                 vo, path = voinfo.split(':')

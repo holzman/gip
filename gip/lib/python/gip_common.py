@@ -311,6 +311,13 @@ def config_compat_gip_attributes(override, cp):
     # of dynamic information
     __write_config(cp, override, gip, "OSG_GIP_SE_CONTROL_VERSION", "se", \
         "srm_version")
+    # Force version string of 2.2.0 or 1.1.0
+    if "se" in cp.sections() and "srm_version" in cp.options("se") and \
+            cp.get("se", "srm_version").find("2") >= 0:
+        cp.set("se", "srm_version", "2.2.0")
+    if "se" in cp.sections() and "srm_version" in cp.options("se") and \
+            cp.get("se", "srm_version").find("1") >= 0:
+        cp.set("se", "srm_version", "1.1.0")
     __write_config(cp, override, gip, "OSG_GIP_SE_HOST", "se", "srm_host")
     __write_config(cp, override, gip, "OSG_GIP_SRM", "se", "srm_present")
     __write_config(cp, override, gip, "OSG_GIP_DISK", "classic_se",

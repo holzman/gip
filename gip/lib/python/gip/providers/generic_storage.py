@@ -295,8 +295,8 @@ def print_SRM(se, cp):
     for info in se.getSRMs():
         try:
             print_single_SRM(info, se, cp)
-        except:
-            pass
+        except Exception, e:
+            log.exception(e)
 
 def print_single_SRM(info, se, cp):
     """
@@ -308,7 +308,11 @@ def print_single_SRM(info, se, cp):
     info.setdefault('siteID', sitename)
     info.setdefault('seUniqueID', sename)
     info.setdefault('startTime', '1970-01-01T00:00:00Z')
+    info.setdefault('statusInfo', 'OK')
     endpoint = info.get('endpoint', 'httpg://example.org:8443/srm/managerv2')
+    info['protocolType'] = 'SRM'
+    info['serviceType'] = 'SRM'
+    info['capability'] = 'control'
     if version.find('2') >= 0:
         info['version'] = "2.2.0"
         info['endpoint'] = endpoint
@@ -328,6 +332,8 @@ def print_single_SRM(info, se, cp):
         info['uri'] = endpoint
         info['url'] = endpoint
         info['serviceName'] = endpoint
+        info["wsdl"] = "http://sdm.lbl.gov/srm-wg/srm.v1.1.wsdl"
+        info["semantics"] = "http://sdm.lbl.gov/srm-wg/srm.v1.1.wsdl"
         info['cpLocalID'] = info.get('name', sename) + '_srmv1'
 
     ServiceTemplate = getTemplate("GlueService", "GlueServiceUniqueID")
@@ -427,8 +433,11 @@ def handle_SE(cp, section):
     """
     impl = cp_get(cp, section, "implementation", "UNKNOWN")
     provider_impl = cp_get(cp, section, "provider_implementation", "UNKNOWN")
+    if provider_impl == "UNKNOWN" and not cp_getBoolean(cp, section,
+            "dynamic_dcache", False):
+        provider_impl = 'static'
     se_class, cp = determine_provider(provider_impl, impl, cp)
-    se = se_class(cp)
+    se = se_class(cp, section=section)
     try:
         se.run()
     except Exception, e:
@@ -453,7 +462,7 @@ def main():
     cp = config()
 
     # Handle full-fledged SEs
-    for section in cp.section():
+    for section in cp.sections():
         if section.lower().startswith("se"):
             handle_SE(cp, section)
 

@@ -81,7 +81,8 @@ class LdapData:
             elif attr.lower() == 'mds-vo-name':
                 continue
             else:
-                raise ValueError("Invalid data:\n%s" % data)
+                raise ValueError("Invalid data:\n%s\nBad attribute: %s" % (data,
+                    attr))
         objectClass.sort()
         self.objectClass = tuple(objectClass)
         try:

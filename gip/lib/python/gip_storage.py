@@ -119,13 +119,17 @@ def getPath(cp, vo='', section='vo', classicSE=False):
     """
     if classicSE:
         fallback1 = cp_get(cp, "osg_dirs", "data", "/UNKNOWN")
-        fallback = cp_get(cp, section, "default", fallback1).replace("$VO", vo)
+        fallback = cp_get(cp, section, "default", fallback1).replace("$VO", vo)\
+            .replace("VONAME", vo)
     else:
         myvo = vo
         if not myvo:
             myvo = ''
         fallback = cp_get(cp, section, "default","/UNKNOWN").\
-            replace("$VO", myvo)
+            replace("$VO", myvo).replace("VONAME", myvo)
+        if fallback == "/UNKNOWN":
+            fallback = cp_get(cp, section, "default_path","/UNKNOWN").\
+                replace("$VO", myvo).replace("VONAME", myvo)
     path = cp_get(cp, section, vo, fallback)
     return path
 
@@ -443,7 +447,7 @@ class StorageElement(object):
             default_endpoint)
 
         acbr_tmpl = '\nGlueServiceAccessControlRule: %s\n' \
-            'nGlueServiceAccessControlRule: VO:%s'
+            'GlueServiceAccessControlRule: VO:%s'
         acbr = ''
         vos = voListStorage(self._cp)
         for vo in vos:
@@ -579,7 +583,7 @@ class StorageElement(object):
 
         @returns: List of dictionaries containing SA info.
         """
-        path = self.getPathForSA(space=None)
+        path = self.getPathForSA(space=None, section=self._section)
         vos = self.getVOsForSpace(None)
         sa_vos = sets.Set()
         for vo in vos:
@@ -678,10 +682,13 @@ class StorageElement(object):
             default path if it cannot find a VO-specific one.
         @returns: A path string; raises a ValueError if return_default=False
         """
-        default_path = cp_get(self._cp, section, "space_%s_default_path" % \
-                              space, None)
+        default_path = cp_get(self._cp, self._section, 
+            "space_%s_default_path" % space, None)
         if not default_path:
-            default_path = getPath(self._cp, vo)
+            if self._section == 'se':
+                default_path = getPath(self._cp, vo)
+            else:
+                default_path = getPath(self._cp, vo, section=self._section)
         if not vo:
             return default_path
         vo_specific_paths = cp_get(self._cp, section, "space_%s_path" % space,

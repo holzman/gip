@@ -14,7 +14,7 @@ import re
 import os
 
 from gip_common import cp_get, cp_getInt, ldap_boolean, cp_getBoolean, \
-    notDefined, getLogger
+    notDefined, getLogger, voList
 from gip_testing import runCommand
 from gip_sections import cluster, subcluster, ce
 
@@ -223,7 +223,11 @@ def getApplications(cp):
         for line in fp:
             line = line.strip()
             info = line.split()
-            if len(info) != 3 or info[0].startswith('#'):
+            # Skip blank lines and comments
+            if len(line) == 0 or info[0].startswith('#'):
+                continue
+            if len(info) != 3:
+                log.warning("Invalid line: %s" % line)
                 continue
             if info[1].startswith('#') or info[1].startswith('$'):
                 info[1] = 'UNDEFINED'
@@ -235,5 +239,59 @@ def getApplications(cp):
         info = {'locationId': osg_ver, 'locationName': osg_ver, 'version': \
             osg_ver, 'path': os.environ.get('VDT_LOCATION', '/UNKNOWN')}
         locations.append(info)
-    return locations
+    try:
+        locations += getApplicationsV1(cp)
+    except Exception, e:
+        log.exception(e)
+    if not locations:
+        locations = [{'locationId': "UNKNOWN", 'locationName': "UNKNOWN",
+            'version': "UNKNOWN", 'path': '/UNKNOWN'}]
+    return locations 
 
+def getApplicationsV1(cp):
+    """
+    Retrieves the applications in the new "v1" format; it looks in
+
+       - $OSG_APP/etc/grid3-locations.txt
+       - $OSG_APP/etc/<vo>/locations-v1.txt
+
+    Here, $OSG_APP/etc may be overridden by the config variable
+    gip.software_dir.
+
+    One directory is created per VO, owned by root, world-writable, and set to 
+    sticky.  The VO names will be determined by the current methods (using 
+    voList).  GIP will then scan the directory $OSG_APP/etc/<vo> for all the 
+    VO names known to GIP, and read only a file named locations-v1.txt.  It is 
+    assumed that locations-v1.txt is the same format as the grid3-locations.txt.
+    """
+    app_dir = cp_get(cp, "osg_dirs", "app", "/UNKNOWN")
+    base_path = os.path.join(app_dir, "etc")
+    base_path = cp_get(cp, "gip", "software_dir", base_path)
+    locations = []
+    for vo in voList(cp):
+        vo_dir = os.path.join(base_path, vo)
+        vo_dir = os.path.expandvars(vo_dir)
+        vo_path = os.path.join(vo_dir, 'locations-v1.txt')
+        if not os.path.exists(vo_path):
+            continue
+        try:
+            fp = open(vo_path, 'r')
+        except:
+            log.warning("Unable to read VO application file: %s" % vo_path)
+            continue
+        for line in fp:
+            line = line.strip()
+            info = line.split()
+            # Skip blank lines and comments
+            if len(line) == 0 or info[0].startswith('#'):
+                continue
+            if len(info) != 3:
+                log.warning("Invalid line: %s" % line)
+                continue
+            if info[1].startswith('#') or info[1].startswith('$'):
+                info[1] = 'UNDEFINED'
+            info = {'locationName': info[0], 'version': info[1], 'path':info[2]}
+            info['locationId'] = info['locationName']
+            locations.append(info)
+    return locations
+            

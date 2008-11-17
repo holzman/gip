@@ -1,0 +1,9 @@
+
+# Applications/users are supposed to modify this file to publish their locations
+MountPoints
+SAMPLE_LOCATION default /SAMPLE-path
+SAMPLE_SCRATCH devel /SAMPLE-path
+#
+CMS_PATH ORCA_8_7_5 /opt/osg/app/cmssoft/cms
+CMS_PATH ORCA_8_9_3 /opt/osg/app/cmssoft/cms
+

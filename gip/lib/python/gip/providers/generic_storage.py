@@ -268,6 +268,7 @@ def print_SE(se, cp):
              "arch"           : arch,
            }
     seTemplate = getTemplate("GlueSE", "GlueSEUniqueID")
+    log.info(str(info))
     printTemplate(seTemplate, info)
 
     try:
@@ -438,6 +439,8 @@ def handle_SE(cp, section):
         provider_impl = 'static'
     se_class, cp = determine_provider(provider_impl, impl, cp)
     se = se_class(cp, section=section)
+    log.info("Outputting SE %s; implementation %s; provider %s" % (se.getName(),
+        impl, provider_impl))
     try:
         se.run()
     except Exception, e:

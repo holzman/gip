@@ -103,7 +103,6 @@ class TestSEConfigs(unittest.TestCase):
                     entry.glue['ServiceName']:
                 continue
             found_srm = True
-            print entry
             for vo in vos:
                 self.failIf(vo not in entry.glue['ServiceAccessControlRule'])
                 self.failIf("VO:%s" % vo not in \
@@ -121,6 +120,39 @@ class TestSEConfigs(unittest.TestCase):
             self.failUnless(entry.glue["ServiceType"][0] == 'SRM')
             self.failUnless(entry.glue["ServiceVersion"][0] == '2.2.0')
         self.failUnless(found_srm, msg="Could not find the SRM entity.")
+
+    def check_srmcp_1_ldif(self, entries):
+        found_cp = False
+        for entry in entries:
+            if 'GlueSEControlProtocol' not in entry.objectClass:
+                continue
+            if entry.glue['SEControlProtocolLocalID'][0] != 'srm.unl.edu_srmv2':
+                continue
+            found_cp = True
+            self.failUnless('httpg://srm.unl.edu:8443/srm/managerv2' in \
+                entry.glue['SEControlProtocolEndpoint'])
+            self.failUnless('2.2.0' in entry.glue['SEControlProtocolVersion'])
+            self.failUnless('SRM' in entry.glue['SEControlProtocolType'])
+            self.failUnless('GlueSEUniqueID=srm.unl.edu' in \
+                entry.glue['ChunkKey'])
+        self.failUnless(found_cp, msg="Could not find the SRM Control Prot.")
+
+    def check_srmcp_2_ldif(self, entries):
+        found_cp = False
+        for entry in entries:
+            if 'GlueSEControlProtocol' not in entry.objectClass:
+                continue
+            if entry.glue['SEControlProtocolLocalID'][0] != \
+                    'dcache07.unl.edu_srmv2':
+                continue
+            found_cp = True
+            self.failUnless('httpg://dcache07.unl.edu:8443/srm/v2/server' in \
+                entry.glue['SEControlProtocolEndpoint'])
+            self.failUnless('2.2.0' in entry.glue['SEControlProtocolVersion'])
+            self.failUnless('SRM' in entry.glue['SEControlProtocolType'])
+            self.failUnless('GlueSEUniqueID=dcache07.unl.edu' in \
+                entry.glue['ChunkKey'])
+        self.failUnless(found_cp, msg="Could not find the SRM Control Prot.")
 
     def check_se_2_ldif(self, entries):
         found_se = False
@@ -199,7 +231,6 @@ class TestSEConfigs(unittest.TestCase):
                     entry.glue['ServiceName']:
                 continue
             found_srm = True
-            print entry
             for vo in vos:
                 self.failIf(vo not in entry.glue['ServiceAccessControlRule'])
                 self.failIf("VO:%s" % vo not in \
@@ -224,6 +255,7 @@ class TestSEConfigs(unittest.TestCase):
         self.check_voview_1_ldif(entries, cp)
         #self.check_aps_1_ldif(entries)
         self.check_srm_1_ldif(entries, cp)
+        self.check_srmcp_1_ldif(entries)
 
     def check_se_2(self, entries, cp):
         pass
@@ -231,15 +263,17 @@ class TestSEConfigs(unittest.TestCase):
         self.check_sa_2_ldif(entries, cp)
         #self.check_aps_2_ldif(entries)
         self.check_srm_2_ldif(entries)
+        self.check_srmcp_2_ldif(entries)
 
     def test_old_se_config(self):
         entries, cp = self.run_test_config("red-se-test.conf")
         self.check_se_1(entries, cp)
+        self.check_srmcp_1_ldif(entries)
 
     def test_new_se_config(self):
         entries, cp = self.run_test_config("red-se-test2.conf")
         self.check_se_1(entries, cp)
-        self.check_se_2(entries, cp)
+        #self.check_se_2(entries, cp)
 
 def main():
     cp = config("test_configs/red-se-test.conf")

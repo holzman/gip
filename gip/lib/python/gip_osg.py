@@ -327,7 +327,7 @@ def configSubclusters(cp, cp2):
             
         
     
-url_re = re.compile('([A-Za-z]+)://([A-Za-z-\.]+):([0-9]+)/(.+)')
+url_re = re.compile('([A-Za-z]+)://([A-Za-z0-9-\.]+):([0-9]+)/(.+)')
 split_re = re.compile("\s*,?\s*")
 def configSEs(cp, cp2):
     """
@@ -366,6 +366,7 @@ def configSEs(cp, cp2):
             "httpg://UNKNOWN.example.com:8443/srm/v2/server")
         m = url_re.match(endpoint)
         if not m:
+            print >> sys.stderr, "Invalid endpoint: %s" % endpoint
             continue
         format, host, port, endpoint = m.groups()
         cp2.set(my_sect, "srm_host", host)

@@ -35,8 +35,8 @@ class TestPbsDynamic(unittest.TestCase):
         Does not check for correctness.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg-info-dynamic-pbs" \
-            ".py")
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg-info-provider-pbs"\
+            ".py --config=test_configs/red.conf")
         fd = os.popen(path)
         fd.read()
         self.assertEquals(fd.close(), None)
@@ -58,7 +58,7 @@ class TestPbsDynamic(unittest.TestCase):
         try:
             os.environ['GIP_TESTING'] = 'suffix=lbl'
             path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-                "osg-info-provider-pbs.py")
+                "osg-info-provider-pbs.py --config=test_configs/red.conf")
             fd = os.popen(path)
             entries = read_ldap(fd)
             self.assertEquals(fd.close(), None)
@@ -81,7 +81,7 @@ class TestPbsDynamic(unittest.TestCase):
         """
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py")
+            "osg-info-provider-pbs.py --config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -100,7 +100,7 @@ class TestPbsDynamic(unittest.TestCase):
         """
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py")
+            "osg-info-provider-pbs.py --config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)

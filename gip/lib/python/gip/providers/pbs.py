@@ -18,7 +18,7 @@ def print_CE(cp):
     pbsVersion = getLrmsInfo(cp)
     queueInfo = getQueueInfo(cp)
     totalCpu, freeCpu, queueCpus = parseNodes(cp, pbsVersion)
-    ce_name = cp.get(ce, "name")
+    ce_name = cp_get(cp, ce, "name", "UNKNOWN_CE")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
     try:
         excludeQueues = [i.strip() for i in cp.get("pbs", \
@@ -62,9 +62,9 @@ def print_CE(cp):
         info['ceImpl'] = 'Globus'
         info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')
         info['contact_string'] = cp_get(cp, "pbs", 'contact_string', unique_id)
-        info['app_dir'] = cp.get('osg_dirs', 'app')
-        info['data_dir'] = cp.get('osg_dirs', 'data')
-        info['default_se'] = cp.get('se', 'name')
+        info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP")
+        info['data_dir'] = cp_get(cp, 'osg_dirs', 'data', "/UNKNOWN_DATA")
+        info['default_se'] = cp_get(cp, 'se', 'name', "UNKNOWN_SE")
         info['max_waiting'] = 999999
         info['max_slots'] = 1
         #info['max_total'] = info['max_running']
@@ -90,7 +90,7 @@ def print_CE(cp):
     return queueInfo, totalCpu, freeCpu, queueCpus
 
 def print_VOViewLocal(queue_info, cp):
-    ce_name = cp.get(ce, "name")
+    ce_name = cp_get(cp, ce, "name", "UNKNOWN_CE")
     vo_map = VoMapper(cp)
     queue_jobs = getJobsInfo(vo_map, cp)
     VOView = getTemplate("GlueCE", "GlueVOViewLocalID")
@@ -118,9 +118,9 @@ def print_VOViewLocal(queue_info, cp):
             'max_running' : info2.get('max_running', 0),
             'priority'    : queue_info.get(queue, {}).get('priority', 0),
             'waiting'     : info2.get('wait', 0),
-            'data'        : cp.get("osg_dirs", "data"),
-            'app'         : cp.get("osg_dirs", "app"),
-            'default_se'  : cp.get("se", "name"),
+            'data'        : cp_get(cp, "osg_dirs", "data", "UNKNOWN_DATA"),
+            'app'         : cp_get(cp, "osg_dirs", "app", "UNKNOWN_APP"),
+            'default_se'  : cp_get(cp, "se", "name", "UNKNOWN_SE"),
             'ert'         : 3600,
             'wrt'         : 3600,
             'acbr'        : 'VO:%s' % vo

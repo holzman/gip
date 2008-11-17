@@ -85,12 +85,13 @@ def getClusterID(cp):
     """
     Return the unique ID of the associated cluster.
     """
-    ce_name = cp_get(cp, ce, 'unique_name', cp.get(ce, 'name'))
+    ce_name = cp_get(cp, ce, 'unique_name', \
+        cp_get(cp, ce, 'name', "UNKNOWN_CE"))
     simple = cp.getboolean(cluster, 'simple')
     if simple:
         return ce_name
     else:
-        return cp.get(cluster, 'name')
+        return cp_get(cp, cluster, 'name', ce_name)
 
 #def generateGlueCluster(cp):
 #    """

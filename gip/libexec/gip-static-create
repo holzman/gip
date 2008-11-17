@@ -91,7 +91,8 @@ for(@template){
 		#Get node type and value from dn;    		
 		$config_param=$dn;
 		$config_param=~s/dn://;
-		$config_param=~s/\s//g;
+		$config_param=~s/^\s//g;
+		$config_param=~s/\s$//g;
 		$config_param=~s/,.*//;
 		$config_value=$config_param;
 		$config_value=~s/^[^=]*=//;

@@ -33,6 +33,30 @@ def cp_getInt(cp, section, option, default):
     except:
         return default
 
+def cp_getBoolean(cp, section, option, default=True):
+    """
+    Helper function for ConfigParser objects which allows setting the default.
+
+    If the cp object has a section/option of the proper name, and if that value
+    has a 'y' or 't', we assume it's supposed to be true.  Otherwise, if it
+    contains a 'n' or 'f', we assume it's supposed to be true.
+    
+    If neither applies - or the option doesn't exist, return the default
+
+    @param cp: ConfigParser object
+    @param section: Section of config parser to read
+    @param option: Option in section to retrieve
+    @param default: Default value if the section/option is not present.
+    @returns: Value stored in CP for section/option, or default if it is not
+        present.
+    """
+    val = str(cp_get(cp, section, option, default)).lower()
+    if val.find('t') >= 0 or val.find('y') >= 0 or val.find('1') >= 0:
+        return True
+    if val.find('f') >= 0 or val.find('n') >= 0 or val.find('0') >= 0:
+        return False
+    return default
+
 def cp_get(cp, section, option, default):
     """
     Helper function for ConfigParser objects which allows setting the default.
@@ -188,6 +212,14 @@ def configOsg(cp):
     __write_config(gip_sec, "srm_implementation", se, "implementation")
     __write_config(gip_sec, "dynamic_dcache", se, "dynamic_dcache")
     __write_config(gip_sec, "srm", se, "srm_present")
+
+    # Try to auto-detect the batch manager.
+    mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge'}
+    for section, gip_name in mappings.items():
+        if cp_getBoolean(cp2, section, 'enabled', False):
+            if ce not in cp.sections():
+                cp.add_section(ce)
+            cp.set(ce, "job_manager", gip_name)
     __write_config(gip_sec, "batch", ce, "job_manager")
 
     # Storage stuff 

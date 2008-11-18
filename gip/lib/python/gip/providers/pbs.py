@@ -11,6 +11,7 @@ from gip_cluster import getClusterID
 from pbs_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
 from gip_sections import ce
+from gip_storage import getDefaultSE
 
 log = getLogger("GIP.PBS")
 
@@ -64,7 +65,7 @@ def print_CE(cp):
         info['contact_string'] = cp_get(cp, "pbs", 'contact_string', unique_id)
         info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP")
         info['data_dir'] = cp_get(cp, 'osg_dirs', 'data', "/UNKNOWN_DATA")
-        info['default_se'] = cp_get(cp, 'se', 'name', "UNKNOWN_SE")
+        info['default_se'] = getDefaultSE(cp)
         info['max_waiting'] = 999999
         info['max_slots'] = 1
         #info['max_total'] = info['max_running']
@@ -120,7 +121,7 @@ def print_VOViewLocal(queue_info, cp):
             'waiting'     : info2.get('wait', 0),
             'data'        : cp_get(cp, "osg_dirs", "data", "UNKNOWN_DATA"),
             'app'         : cp_get(cp, "osg_dirs", "app", "UNKNOWN_APP"),
-            'default_se'  : cp_get(cp, "se", "name", "UNKNOWN_SE"),
+            'default_se'  : getDefaultSE(cp),
             'ert'         : 3600,
             'wrt'         : 3600,
             'acbr'        : 'VO:%s' % vo

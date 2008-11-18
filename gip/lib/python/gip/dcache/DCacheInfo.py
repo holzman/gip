@@ -10,8 +10,8 @@ log = getLogger("GIP.Storage.dCache")
 
 class DCacheInfo(StorageElement):
 
-    def __init__(self, cp):
-        super(DCacheInfo, self).__init__(cp)
+    def __init__(self, cp, **kw):
+        super(DCacheInfo, self).__init__(cp, **kw)
         self.status = 'Production'
 
     def run(self):
@@ -21,7 +21,8 @@ class DCacheInfo(StorageElement):
             log.exception(e)
             self.status = 'Closed'
         try:
-            self.sas, self.vos = calculate_spaces(self._cp, self.admin)
+            self.sas, self.vos = calculate_spaces(self._cp, self.admin,
+                section=self._section)
         except Exception, e:
             log.exception(e)
     
@@ -84,7 +85,7 @@ class DCacheInfo(StorageElement):
             # dCache, then we will print out the admin-specified hostname 
             # instead of looking it up.  This is for sites where the SRM host 
             # is a CNAME instead of the A name.
-            srm_host = cp_get(self._cp, "se", "srm_host", None)
+            srm_host = cp_get(self._cp, self._section, "srm_host", None)
             srm_ip = None
             if srm_host:
                 try:

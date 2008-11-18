@@ -21,7 +21,7 @@ log = getLogger("GIP.dCache.SA")
 PoolManager = 'PoolManager'
 SrmSpaceManager = 'SrmSpaceManager'
 
-def calculate_spaces(cp, admin):
+def calculate_spaces(cp, admin, section='se'):
     """
     Determine the storage areas attached to this dCache.
 
@@ -112,9 +112,9 @@ def calculate_spaces(cp, admin):
         if not lg_info:
             continue
         sa = calculate_space_from_linkgroup(cp,lg_info, [pool_objs[i] for i in \
-            lgpools if i in pool_objs])
+            lgpools if i in pool_objs], section=section)
         sas.append(sa)
-        voinfos = calculate_voinfo_from_lg(cp, lg_info, resv)
+        voinfos = calculate_voinfo_from_lg(cp, lg_info, resv, section=section)
         vos.extend(voinfos)
 
     # Build a SA from each nontrivial pool group
@@ -128,17 +128,18 @@ def calculate_spaces(cp, admin):
         if not my_pool_objs:
             continue
         sa = calculate_space_from_poolgroup(cp, pgroup, my_pool_objs, admin,
-            links, link_settings, allow_staging=can_stage, allow_p2p=can_p2p)
+            links, link_settings, allow_staging=can_stage, allow_p2p=can_p2p,
+            section=section)
         sas.append(sa)
-        voinfos = calculate_voinfo_from_pgroup(cp, pgroup)
+        voinfos = calculate_voinfo_from_pgroup(cp, pgroup, section=section)
         vos.extend(voinfos)
 
     return sas, vos
 
 def calculate_space_from_poolgroup(cp, pgroup, pools, admin, links, \
-        link_settings, allow_staging=False, allow_p2p=False):
+        link_settings, allow_staging=False, allow_p2p=False, section='se'):
     saLocalID = '%s:poolgroup' % pgroup
-    seUniqueID = cp.get('se', 'unique_name')
+    seUniqueID = cp.get(section, 'unique_name')
     myLinks = sets.Set()
     for link, pgroups in links.items():
         if pgroup in pgroups:
@@ -174,7 +175,7 @@ def calculate_space_from_poolgroup(cp, pgroup, pools, admin, links, \
     acbr_attr = 'GlueSAAccessControlBaseRule: %s'
     acbr = '\n'.join([acbr_attr%i for i in getAllowedVOs(cp, pgroup)])
 
-    path = getPath(cp, pgroup)
+    path = getPath(cp, pgroup, section=section)
 
     info = {"saLocalID"        : saLocalID,
             "seUniqueID"       : seUniqueID,
@@ -200,8 +201,8 @@ def calculate_space_from_poolgroup(cp, pgroup, pools, admin, links, \
 
     return info
 
-def calculate_space_from_linkgroup(cp, lg_info, pools):
-    seUniqueID = cp.get("se", "unique_name")
+def calculate_space_from_linkgroup(cp, lg_info, pools, section='se'):
+    seUniqueID = cp.get(section, "unique_name")
     accesslatency = 'offline'
     if lg_info['nearline']:
         accesslatency = 'nearline'
@@ -228,7 +229,7 @@ def calculate_space_from_linkgroup(cp, lg_info, pools):
     acbr_attr = 'GlueSAAccessControlBaseRule: %s'
     acbr = '\n'.join([acbr_attr%i for i in getLGAllowedVOs(cp, lg_info['vos'])])
 
-    path = getPath(cp, lg_info['name'])
+    path = getPath(cp, lg_info['name'], section=section)
 
     lg_info['saLocalID'] = saLocalID
 
@@ -256,13 +257,13 @@ def calculate_space_from_linkgroup(cp, lg_info, pools):
 
     return info
 
-def calculate_voinfo_from_pgroup(cp, pgroup):
+def calculate_voinfo_from_pgroup(cp, pgroup, section='se'):
     voinfos = []
-    seUniqueID = cp.get("se", "unique_name")
+    seUniqueID = cp.get(section, "unique_name")
     for vo in getAllowedVOs(cp, pgroup):
         if vo.startswith('VO:'):
             vo = vo[3:]
-        path = getPath(cp, pgroup, vo)
+        path = getPath(cp, pgroup, vo, section=section)
         id = '%s:%s:poolgroup' % (vo, pgroup)
         acbr = 'GlueVOInfoAccessControlBaseRule: %s' % vo
         info = {'voInfoID': id,
@@ -276,7 +277,7 @@ def calculate_voinfo_from_pgroup(cp, pgroup):
         voinfos.append(info)
     return voinfos
 
-def calculate_voinfo_from_lg(cp, lg, resv):
+def calculate_voinfo_from_lg(cp, lg, resv, section='se'):
     """
     Calculate all the VOInfo for the LinkGroup.  Algorithm:
 
@@ -317,17 +318,24 @@ def calculate_voinfo_from_lg(cp, lg, resv):
             spaces.add('DEFAULT')
 
     # Build a map of (acbr, path) -> unique space descriptions
-    default_path = getPath(cp, lg['name'])
+    default_path = getPath(cp, lg['name'], section=section)
     acbr_path_spacedesc = {}
     for acbr, spaces in acbr_spacedesc.items():
         try:
-            default_acbr_path = getPath(cp, lg['name'], acbr, \
-                return_default=False)
+            vo = acbr
+            if acbr.startswith("VO:"):
+                vo = vo[3:]
+            default_acbr_path = getPath(cp, lg['name'], vo, \
+                return_default=False, section=section)
         except:
             default_acbr_path = default_path
         for space in spaces:
             try:
-                path = getPath(cp, space, acbr, return_default=False)
+                vo = acbr
+                if acbr.startswith("VO:"):
+                    vo = vo[3:]
+                path = getPath(cp, space, vo, return_default=False,
+                    section=section)
             except:
                 path = default_acbr_path
             key = (acbr, path)
@@ -338,14 +346,17 @@ def calculate_voinfo_from_lg(cp, lg, resv):
     allowed_path = {}
     for acbr in allowed_fqans:
         try:
-            default_acbr_path = getPath(cp, lg['name'], acbr, \
-                return_default=False)
+            vo = acbr
+            if acbr.startswith("VO:"):
+                vo = vo[3:]
+            default_acbr_path = getPath(cp, lg['name'], vo, \
+                return_default=False, section=section)
         except:
             default_acbr_path = default_path
         allowed_path[acbr] = default_acbr_path
 
     voinfos = []
-    seUniqueID = cp.get("se", "unique_name")
+    seUniqueID = cp.get(section, "unique_name")
     # Build VOInfo objects from space descriptions
     for key, spaces in acbr_path_spacedesc.items():
         acbr, path = key
@@ -443,7 +454,7 @@ def getAllowedVOs(cp, space):
     allowed_vos = sets.Set(allowed_vos)
     return list(['VO:%s' % i for i in allowed_vos])
 
-def getPath(cp, space, vo=None, return_default=True):
+def getPath(cp, space, vo=None, return_default=True, section='se'):
     """
     Return a path appropriate for a VO and space.
 
@@ -471,12 +482,18 @@ def getPath(cp, space, vo=None, return_default=True):
         default path if it cannot find a VO-specific one.
     @returns: A path string; raises a ValueError if return_default=False
     """
-    default_path = cp_get(cp, "dcache", "space_%s_default_path" % space, None)
+    default_path = cp_get(cp, section, "space_%s_default_path" % space, None)
     if not default_path:
-        default_path = getStoragePath(cp, vo)
+        if section == 'se':
+            default_path = getStoragePath(cp, vo)
+        else:
+            default_path = getStoragePath(cp, vo, section=section)
+        default_path = getStoragePath(cp, vo, section=section)
+    log.debug("Looking up info for space %s, vo %s, section %s; default " \
+        "path is %s" % (space, vo, section, default_path))
     if not vo:
         return default_path
-    vo_specific_paths = cp_get(cp, "dcache", "space_%s_path" % space, \
+    vo_specific_paths = cp_get(cp, section, "space_%s_path" % space, \
         None)
     vo_specific_path = None
     if vo_specific_paths:

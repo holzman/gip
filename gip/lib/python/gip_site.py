@@ -25,6 +25,11 @@ def filter_sponsor(cp, text):
             continue
         if vo in vo_map:
             vo = vo_map[vo]
+        elif vo.startswith('us') and vo[2:] in vo_map:
+            vo = vo_map[vo[2:]]
+        elif vo.lower().startswith("local") or \
+                vo.lower().startswith("unknown"):
+            pass # Do not log warning in this case.
         else:
             log.warning("VO named `%s` does not match any VO in" \
                 " osg-user-vo-map.txt." % str(vo))

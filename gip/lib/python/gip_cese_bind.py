@@ -62,7 +62,17 @@ def getSEList(cp, classicSEs=True):
     simple = cp.getboolean(cesebind, 'simple')
     se_list = []
     if simple:
-        se_list = [cp.get(se, 'unique_name')]
+        try:
+            se_list = [cp.get(se, 'unique_name')]
+        except:
+            pass
+        for sect in cp.sections():
+            if not sect.lower().startswith('se'):
+                continue
+            try:
+                se_list += [cp.get(sect, 'unique_name')]
+            except:
+                pass
     else:
         se_list = eval(cp.get(cesebind, 'se_list'), {})
     if classicSEs:

@@ -89,7 +89,7 @@ def print_CE(cp):
         info['contact_string'] = unique_id
         info['app_dir'] = cp.get('osg_dirs', 'app')
         info['data_dir'] = cp.get('osg_dirs', 'data')
-        info['default_se'] = cp.get('se', 'name')
+        info['default_se'] = getDefaultSE(cp)
         info['max_waiting'] = 999999
         info['max_slots'] = 1
         #info['max_total'] = info['max_running']
@@ -153,7 +153,7 @@ def print_VOViewLocal(queue_info, cp):
             'waiting'     : info2.get('waiting', 0),
             'data'        : cp.get("osg_dirs", "data"),
             'app'         : cp.get("osg_dirs", "app"),
-            'default_se'  : cp.get("se", "name"),
+            'default_se'  : getDefaultSE(cp),
             'ert'         : ert,
             'wrt'         : wrt,
             'acbr'        : 'VO:%s' % vo

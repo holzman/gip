@@ -130,7 +130,7 @@ class LdapData:
             output += ' - %s: %s\n' % (key, val)
         return output
 
-    def __eq__(self, ldif1, ldif2):
+    def __eq__(ldif1, ldif2):
         if not compareDN(ldif1, ldif2):
             return False
         if not compareObjectClass(ldif1, ldif2):

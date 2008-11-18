@@ -69,6 +69,29 @@ def connect(cp):
 
     return p
 
+_defaultSE = None
+def getDefaultSE(cp):
+    global _defaultSE
+    if _defaultSE:
+        return _defaultSE
+    default_se = cp_get(cp, "se", "name", "UNKNOWN")
+    current_se = None
+    for sect in cp.sections():
+        if not sect.lower().startswith('se'):
+            continue
+        try:
+            current_se = cp.get(sect, 'name')
+        except:
+            continue
+        if cp_getBoolean(cp, sect, "default", False):
+            _defaultSE = current_se
+            return current_se
+    if default_se == 'UNKNOWN' and current_se:
+        _defaultSE = current_se
+        return current_se
+    _defaultSE = default_se
+    return default_se
+
 split_re = re.compile("\s*,?\s*")
 def voListStorage(cp, section=None):
     """
@@ -127,7 +150,7 @@ def getPath(cp, vo='', section='vo', classicSE=False):
             myvo = ''
         fallback = cp_get(cp, section, "default","/UNKNOWN").\
             replace("$VO", myvo).replace("VONAME", myvo)
-        if fallback == "/UNKNOWN":
+        if fallback == "/UNKNOWN" or fallback == 'UNAVAILABLE':
             fallback = cp_get(cp, section, "default_path","/UNKNOWN").\
                 replace("$VO", myvo).replace("VONAME", myvo)
     path = cp_get(cp, section, vo, fallback)
@@ -634,7 +657,7 @@ class StorageElement(object):
                 continue
             for vo in vos:
                 myid = '%s:default' % vo
-                path = self.getPathForSA(space=None, vo=vo)
+                path = self.getPathForSA(space=None, vo=vo, section=self._section)
                 acbr = 'GlueVOInfoAccessControlBaseRule: %s' % vo
                 info = {'voInfoID': myid,
                         'name': myid,
@@ -682,6 +705,7 @@ class StorageElement(object):
             default path if it cannot find a VO-specific one.
         @returns: A path string; raises a ValueError if return_default=False
         """
+        log.debug("Get path for SA %s, vo %s, section %s." % (space, vo, section))
         default_path = cp_get(self._cp, self._section, 
             "space_%s_default_path" % space, None)
         if not default_path:
@@ -689,6 +713,7 @@ class StorageElement(object):
                 default_path = getPath(self._cp, vo)
             else:
                 default_path = getPath(self._cp, vo, section=self._section)
+        log.debug("My default path: %s" % default_path)
         if not vo:
             return default_path
         vo_specific_paths = cp_get(self._cp, section, "space_%s_path" % space,

@@ -14,6 +14,7 @@ from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes
 from gip_cluster import getClusterID
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
+from gip_storage import getDefaultSE
 
 from gip_sections import ce, se
 
@@ -189,7 +190,7 @@ def print_CE(cp):
             "status"      : status,
             'app_dir'     : cp_get(cp, 'osg_dirs', 'app', '/Unknown'),
             "data_dir"    : cp_get(cp, "osg_dirs", "data", "/Unknown"),
-            "default_se"  : cp_get(cp, se, "name", "UNAVAILABLE"),
+            "default_se"  : getDefaultSE(cp),
             "acbr"        : ginfo['acbr'],
             "clusterUniqueID": getClusterID(cp),
             "bdii"        : cp_get(cp, "bdii", "endpoint", "Unknown")
@@ -263,7 +264,7 @@ def print_VOViewLocal(cp):
                 "job_slots"   : int(total_nodes),
                 "ert"         : ert,
                 "wrt"         : wrt,
-                "default_se"  : cp_get(cp, se, "name", "UNAVAILABLE"),
+                "default_se"  : getDefaultSE(cp),
                 'app'     : cp_get(cp, 'osg_dirs', 'app', '/Unknown'),
                 "data"    : cp_get(cp, "osg_dirs", "data", "/Unknown"),
                 }

@@ -10,8 +10,8 @@ log = getLogger('GIP.Storage.Bestman')
 
 class BestmanInfo(StorageElement):
 
-    def __init__(self, cp):
-        super(BestmanInfo, self).__init__(cp)
+    def __init__(self, cp, **kw):
+        super(BestmanInfo, self).__init__(cp, **kw)
         srms = self.getSRMs()
         if not srms:
             raise ValueError("No SRM endpoint configured!")
@@ -22,7 +22,9 @@ class BestmanInfo(StorageElement):
 
     def run(self):
         try:
-            self.info = srm_ping.bestman_srm_ping(self._cp, self.endpoint)
+            self.info = srm_ping.bestman_srm_ping(self._cp, self.endpoint,
+                section=self._section)
+            log.info("Returned BestMan info: %s" % str(self.info))
             self.status = True
         except Exception, e:
             log.exception(e)

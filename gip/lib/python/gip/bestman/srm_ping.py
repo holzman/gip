@@ -26,16 +26,16 @@ def which(executable):
             return fullname
     return None
 
-def create_proxy(cp, proxy_filename):
+def create_proxy(cp, proxy_filename, section='bestman'):
     """
     Attempt to create a very shortlived proxy at a given location.
     """
     #if not which('grid-proxy-init'):
     #    raise ValueError("Could not find grid-proxy-init; perhaps you forgot"\
     #        " to source $VDT_LOCATION/setup.sh in the environment beforehand?")
-    usercert = cp_get(cp, "bestman", "usercert", "/etc/grid-security/http/" \
+    usercert = cp_get(cp, section, "usercert", "/etc/grid-security/http/" \
         "httpcert.pem")
-    userkey = cp_get(cp, "bestman", "userkey", "/etc/grid-security/http/" \
+    userkey = cp_get(cp, section, "userkey", "/etc/grid-security/http/" \
         "httpkey.pem")
     cmd = 'grid-proxy-init -valid 00:05 -cert %s -key %s -out %s' % \
         (usercert, userkey, proxy_filename)
@@ -82,7 +82,7 @@ def parse_srm_ping(output):
                 cur_key = None
     return results
 
-def bestman_srm_ping(cp, endpoint):
+def bestman_srm_ping(cp, endpoint, section='bestman'):
     """
     Perform a srm-ping operation against a BeStMan endpoint and return the
     resulting key-value pairs.
@@ -99,7 +99,7 @@ def bestman_srm_ping(cp, endpoint):
         fd, proxy_filename = tempfile.mkstemp()
     results = {}
     try:
-        create_proxy(cp, proxy_filename)
+        create_proxy(cp, proxy_filename, section=section)
         validate_proxy(cp, proxy_filename)
         cmd = 'srm-ping %s -proxyfile %s' % (endpoint, proxy_filename)
         fp = runCommand(cmd)

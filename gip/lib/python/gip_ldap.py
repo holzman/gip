@@ -8,6 +8,7 @@ __author__ = "Brian Bockelman"
 import os
 import re
 import sys
+import sets
 
 class _hdict(dict): #pylint: disable-msg=C0103
     """
@@ -216,8 +217,8 @@ def compareLists(l1, l2):
     Compare two lists of items; turn them into sets and then look at the
     symmetric differences.
     """
-    s1 = set(l1)
-    s2 = set(l2)
+    s1 = sets.Set(l1)
+    s2 = sets.Set(l2)
     if len(s1.symmetric_difference(s2)) == 0:
         return True
     return False

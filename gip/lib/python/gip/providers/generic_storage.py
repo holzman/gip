@@ -13,6 +13,7 @@ from gip_storage import voListStorage, getSETape, \
     getClassicSESpace, StorageElement
 from gip.bestman.BestmanInfo import BestmanInfo
 from gip.dcache.DCacheInfo import DCacheInfo
+from gip.dcache.DCacheInfo19 import DCacheInfo19
 
 log = getLogger("GIP.Storage.Generic")
 
@@ -419,6 +420,8 @@ def determine_provider(provider_implementation, implementation, cp):
     elif provider_implementation == 'dcache':
         cp = config("$GIP_LOCATION/etc/dcache_storage.conf")
         se_class = DCacheInfo
+    elif provider_implementation == 'dcache19':
+        se_class = DCacheInfo19
     elif implementation.find('bestman') >= 0:
         se_class = BestmanInfo
     elif implementation.find('dcache') >= 0:

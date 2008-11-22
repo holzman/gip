@@ -1,77 +1,41 @@
 
-import socket
+import sets
 import urllib2
-from xml.dom.minidom import parse
 
 from gip_common import getLogger, cp_get
 from gip_storage import StorageElement, voListStorage
-
+from DCacheInfoProviderParser import parse_fp
+from space_calculator import getAllowedVOs, getLGAllowedVOs
 
 log = getLogger("GIP.Storage.dCache")
 
-def to_boolean(bool_str):
-    return bool_str == 'true'
-
-def to_integer(int_str):
-    try:
-        return int(int_str)
-    except:
-        return 999999
-
-def get_metrics(dom):
-    all_metrics = []
-    for metric_dom in dom.getElementsByTagName("metric"):
-        name = metric_dom.getAttribute("name")
-        mtype = metric_dom.getAttribute("type")
-        try:
-            value = str(linkgroup.firstChild.data).strip()
-        except Exception, e:
-            continue
-        if not name or not mtype:
-            continue
-        all_metrics.append((name, mtype, value))
-    return all_metrics
-
-class DCacheInfo(StorageElement):
+class DCacheInfo19(StorageElement):
 
     def __init__(self, cp, **kw):
-        super(DCacheInfo, self).__init__(cp, **kw)
+        super(DCacheInfo19, self).__init__(cp, **kw)
         self.status = 'Production'
         self.dom = None
+        self.sas = []
+        self.voinfos = []
+        self.seen_pools = sets.Set()
 
     def run(self):
         endpoint = cp_get(self._cp, self._section, "infoProviderEndpoint", "")
         try:
-            self.dom = parse(urllib2.urlopen(endpoint))
+            self.handler = parse_fp(urllib2.urlopen(endpoint))
         except Exception, e:
             log.exception(e)
-        self.parseSAs()
+            self.handler = None
 
     def parseSAs(self):
-        self.parsePools
-        self.parsePGs
         self.parseSAs_fromLG(self)
+        self.parseVOInfos_fromReservations(self)
         self.parseSAs_fromPG(self)
-        self.parseSESpace(self)
-
-    def parseSESpace(self)
-        summary_doms = self.dom.getElementsByTagName('summary')
-        summary_doms = [i for i in summary_doms if i in self.dom.childNodes]
-        se_space = {}
-        for summary_dom in summary_doms:
-            for name, mtype, value in get_metrics(summary_dom):
-                if name == 'total':
-                    se_space['total_bytes'] = to_integer(value)
-                elif name == 'free':
-                    se_space['free_bytes'] = to_integer(value)
-                elif name == 'used':
-                    se_space['used_bytes'] = to_integer(value)
-        self.se_space = se_space
 
     def getSESpace(self, gb=False, total=False):
-        total = self.se_space.get('total_bytes', 0) / 1000
-        free = self.se_space.get('free_bytes', 0) / 1000
-        used = self.se_space.get('used_bytes', 0) / 1000
+        total = self.handler.summary.get('total', 0) / 1000
+        free = self.handler.summary.get('free', 0) / 1000
+        used = self.handler.summary.get('used', 0) / 1000
         if gb:
             total /= 1000**2
             free /= 1000**2
@@ -80,143 +44,122 @@ class DCacheInfo(StorageElement):
             return used, free, total
         return used, free, total
 
-    def getLGAllowedVOs(self, lg_info):
-        raise NotImplementedError()
+    def parseVOInfos_fromReservations(self):
+        pass
+
+    def parseVOInfos_fromPG(self):
+        pass
 
     def parseSAs_fromLG(self):
-        lgs_dom = [i for i in self.dom.getElementsByTagName("linkgroups") if i\
-            in self.dom.childNodes]
-        self.linkgroups_dom = []
-        self.linkgroups = []
-        for lg_dom in lgs_dom:
-            self.linkgroups_dom += [i for i in \
-                lg_dom.getElementsByTagName("linkgroup") if i in \
-                lg_dom.childNodes]
         default_dict = { \
             "seUniqueID": self.getSEUniqueID(),
-            "filetype": "permanent",
-            "accesslatency": "online",
-            "retentionpolicy": "replica",
-            "root": "/",
-            "totalNearline": 0,
-            "usedNearline": 0,
-            "freeNearline": 0,
-            "reservedNearline": 0,
+            "accessLatency": "online",
+            "retention": "replica",
         }
-        for linkgroup_dom in self.linkgroups_dom:
+        for linkgroup in self.handler.linkgroups.values():
             info = dict(default_dict)
-            info['dom'] = linkgroup_dom
+            space = linkgroup.get('name', None)
+            if not space:
+                continue
+            info['name'] = space
             info['path'] = self.getPathForSA(space, vo, return_default=True,
                 section=self._section)
-            for name, mtype, value in get_metrics(linkgroup_dom):
-                if name == 'nearlineAllowed' and to_boolean(value):
-                    info['accessLatency'] = 'nearline'
-                elif name == 'outputAllowed' and to_boolean(value):
-                    info['retention'] = 'output'
-                elif name == 'custodialAllowed' and to_boolean(value):
-                    info['retention'] = 'custodial'
-                elif name == 'name':
-                    info['name'] = value
-                elif name == 'total':
-                    info['totalOnline'] = to_integer(value)
-                elif name == 'free':
-                    info['freeOnline'] = to_integer(value)
-                elif name == 'used':
-                    info['usedOnline'] = to_integer(value)
-                elif name == 'reserved':
-                    info['reservedOnline'] = to_integer(value)
-            if 'name' not in info:
-                continue
+            if linkgroup.get('nearlineAllowed', False):
+                info['accessLatency'] = 'nearline'
+            info['totalOnline'] = linkgroup.get('total', 0) / 1000**3
+            info['reservedOnline'] = linkgroup.get('reserved', 0) / 1000**3
+            info['usedOnline'] = linkgroup.get('used', 0) / 1000**3
+            info['freeOnline'] = linkgroup.get('free', 0) / 1000**3
+            info['usedSpace'] = linkgroup.get('used', 0) / 1024
+            info['availableSpace'] = linkgroup.get('free', 0) / 1024
             info['saName'] = '%s:%s:%s' % (info['name'], info['retention'],
                 info['accessLatency'])
             acbr_attr = 'GlueSAAccessControlBaseRule: %s'
-            acbr = '\n'.join([acbr_attr % i for i in self.getLGAllowedVOs(cp,
-                info['name'])])
-            self.calculateLGSpaces(info)
+            acbr = '\n'.join([acbr_attr % i for i in getLGAllowedVOs(cp,
+                linkgroup.get('acbrs', ''))])
             info['acbr'] = acbr
-            self.linkgroups.append(info)
+            self.sas.append(info)
+        self.seen_pools += self.handler.pools.keys()
 
     def parseSAs_fromPG(self):
+        seen_pools = self.seen_pools
+        def itemgetter(x, y):
+            return cmp(y.get('total', 0), x.get('total', ))
+        sorted_poolgroups = self.handler.poolgroups.values()
+        sorted_poolgroups.sort(cmp=itemgetter)
+        pools = self.handler.pools
+        default_dict = { \
+            "seUniqueID": self.getSEUniqueID(),
+            "accessLatency": "online",
+            "retention": "replica",
+        }
+        for poolgroup in sorted_poolgroups:
+            info = dict(default_dict)
+            if 'name' not in poolgroup:
+                continue
+            info['name'] = poolgroup['name']
+            if poolgroup.get('total', 0) == 0:
+                continue
+            total = poolgroup.get('total', 0)
+            used = poolgroup.get('used', 0)
+            free = poolgroup.get('free', 0)
+            for pool in poolgroup['pools']:
+                if pool in seen_pools:
+                    total -= pools.get(pool, {}).get('total', 0)
+                    used -= pools.get(pool, {}).get('used', 0)
+                    free -= pools.get(pool, {}).get('free', 0)
+            if total <= 0:
+                continue
+            info['totalOnline'] = max(total, 0) / 1000**3
+            info['usedOnline'] = max(used, 0) / 1000**3
+            info['freeOnline'] = max(free, 0) / 1000**3
+            info['usedSpace'] = max(used, 0) / 1024
+            info['availableSpace'] = max(free, 0) / 1024
+            info['path'] = self.getPath(info['name'], section=self._section)
+            info['acbrs'] = getAllowedVOs(self._cp, info['name'])
+            acbr_attr = 'GlueSAAccessControlBaseRule: %s'
+            acbr = '\n'.join([acbr_attr % i for i in info['acbrs']])
+            info['acbr'] = acbr
+            self.sas.append(info)
 
-    def parsePools(self):
-        pools_dom = self.dom.getElementsByTagName('pools')
-        pools_dom = [i for i in pools_dom if i in self.dom.childNodes]
-        pools = []
-        for pools in pools_dom
-            for pool_dom in pools.getElementsByTagName('pool'):
-                info = {}
-                name = pool_dom.getAttribute('name')
-                if not name:
-                    continue
-                for name, mtype, value in get_metrics(pool_dom):
-                    if name == 'total':
-                        info['total'] = to_integer(value)
-                    elif name == 'free':
-                        info['free'] = to_integer(value)
-                    elif name == 'used':
-                        info['used'] = to_integer(value)
-                pools.append(info)
-        self.pools = pools
- 
-
-    def parsePGs(self):
-        pgs = []
-        poolgroups_dom = self.dom.getElementsByTagName('poolgroups')
-        poolgroups_dom = [i for i in pools_dom if i in self.dom.childNodes]
-        for poolgroups in poolgroups_dom:
-            for poolgroup_dom in poolgroup.getElementsByTagName( \
-                    'poolgroup'):
-                info = {'pools': {}}
-                for poolref_dom in poolgroup_dom.getElementsByTagName( \
-                        'poolref'):
-                    pool = poolref_dom.getAttribute('name')
-                    if pool and pool in self.pools:
-                        info['pools'][pool] = self.pools[pool]
-                pgs.append(info)
-        self.poolgroups = pgs
-
-    def calculateLGSpaces(info):
-        raise NotImplementedError()
-    
     def getSAs(self):
         if getattr(self, 'sas', None):
             return self.sas
-        return super(DCacheInfo, self).getSAs()
+        return super(DCacheInfo19, self).getSAs()
 
     def getVOInfos(self):
         if getattr(self, 'vos', None):
             return self.vos
-        return super(DCacheInfo, self).getVOInfos()
+        return super(DCacheInfo19, self).getVOInfos()
 
-    def getSEVersion(self):
+    def getVersion(self):
         try:
-            return getSEVersion(self._cp, self.admin)
+            return self.handler.version
         except Exception, e:
             log.exception(e)
-            return super(DCacheInfo, self).getSEVersion()
+            return super(DCacheInfo19, self).getVersion()
 
     def getAccessProtocols(self):
         aps = []
-        results = self.admin.execute("LoginBroker", "ls")
-        for line in results.split('\n'):
-            if len(line.strip()) == 0:
+        for door in self.handler.doors:
+            if door.get('family', '') == 'SRM':
                 continue
-            doorname, kind, versions, host, logins, dummy = line.split(';')
-            protocol, version = versions[1:-1].split(',')
-            hostname, port = host[1:-1].split(':')
-            hostname = hostname.split(',')[0]
+            port = door.get('port', 0)
+            version = door.get('version', '0.0.0')
+            protocol = door.get('family', 'UNKNOWN')
+            hostname = door.get('FQDN', '')
             try:
                 hostname = socket.getfqdn(hostname)
             except:
                 pass
             endpoint = "%s://%s:%i" % (protocol, hostname, int(port))
             securityinfo = ''
-            if protocol == 'gsiftp':
-                securityinfo = "gsiftp"
+            if protocol.startswith('gsiftp'):
+                securityinfo = "GSI"
             elif protocol == 'dcap':
-                securityinfo = "none"
+                securityinfo = "None"
             else:
-                securityinfo = "none"
+                securityinfo = "None"
             info = {'accessProtocolID': doorname,
                     'protocol'        : protocol,
                     'endpoint'        : endpoint,
@@ -256,17 +199,11 @@ class DCacheInfo(StorageElement):
             acbr = acbr[1:]
 
             # Use the srm-LoginBroker cell to list all the SRM cells available.
-            results = self.admin.execute("srm-LoginBroker", "ls")
-            srms = []
-            for line in results.split("\n"):
-                if len(line.strip()) == 0:
+            for srm in self.handler.doors:
+                if srm.get('family', '') != 'SRM':
                     continue
-                #Lines have the following format:
-               #SRM-srm@srm-srmDomain;Storage;{SRM,1.1.1};[srm:8443];<0,300000>;
-                doorname, kind, versions, host, logins, dummy = line.split(';')
-                protocol, version = versions[1:-1].split(',')
-                hostname, port = host[1:-1].split(':')
-                hostname = hostname.split(',')[0]
+                hostname = srm.get('FQDN', '')
+                port = srm.get('port', 0)
                 # Make sure we have a FQDN (dCache has a nasty habit of
                 # dropping the domain name internally.
                 try:
@@ -325,5 +262,5 @@ class DCacheInfo(StorageElement):
 
         except Exception, e:
             log.exception(e)
-            return super(DCacheInfo, self).getSRMs()
+            return super(DCacheInfo19, self).getSRMs()
 

@@ -412,6 +412,8 @@ def configSEs(cp, cp2):
         cp2.set(my_sect, "version", cp_get(cp, section, "version", "UNKNOWN"))
         cp2.set(my_sect, "provider_implementation", cp_get(cp, section,
             "provider_implementation", "static"))
+        cp2.set(my_sect, "infoProviderEndpoint", cp_get(cp, section,
+            "infoprovider_endpoint", "file:///dev/null"))
         vo_paths = split_re.split(cp_get(cp, section, "vo_paths", ""))
         for voinfo in vo_paths:
             try:

@@ -16,7 +16,7 @@ class DCacheInfo19(StorageElement):
         self.status = 'Production'
         self.dom = None
         self.sas = []
-        self.voinfos = []
+        self.vos = []
         self.seen_pools = sets.Set()
 
     def run(self):
@@ -26,11 +26,13 @@ class DCacheInfo19(StorageElement):
         except Exception, e:
             log.exception(e)
             self.handler = None
+        self.parse()
 
-    def parseSAs(self):
-        self.parseSAs_fromLG(self)
-        self.parseVOInfos_fromReservations(self)
-        self.parseSAs_fromPG(self)
+    def parse(self):
+        self.parseSAs_fromLG()
+        self.parseSAs_fromPG()
+        self.parseVOInfos_fromReservations()
+        self.parseVOInfos_fromPG()
 
     def getSESpace(self, gb=False, total=False):
         total = self.handler.summary.get('total', 0) / 1000
@@ -52,17 +54,19 @@ class DCacheInfo19(StorageElement):
 
     def parseSAs_fromLG(self):
         default_dict = { \
-            "seUniqueID": self.getSEUniqueID(),
+            "seUniqueID": self.getUniqueID(),
             "accessLatency": "online",
             "retention": "replica",
         }
+        has_links = False
         for linkgroup in self.handler.linkgroups.values():
+            has_links = True
             info = dict(default_dict)
             space = linkgroup.get('name', None)
             if not space:
                 continue
             info['name'] = space
-            info['path'] = self.getPathForSA(space, vo, return_default=True,
+            info['path'] = self.getPathForSA(space, vo='', return_default=True,
                 section=self._section)
             if linkgroup.get('nearlineAllowed', False):
                 info['accessLatency'] = 'nearline'
@@ -74,22 +78,28 @@ class DCacheInfo19(StorageElement):
             info['availableSpace'] = linkgroup.get('free', 0) / 1024
             info['saName'] = '%s:%s:%s' % (info['name'], info['retention'],
                 info['accessLatency'])
+            info['saLocalID'] = info['saName']
             acbr_attr = 'GlueSAAccessControlBaseRule: %s'
-            acbr = '\n'.join([acbr_attr % i for i in getLGAllowedVOs(cp,
+            log.info(linkgroup['acbrs'])
+            acbr = '\n'.join([acbr_attr % i for i in getLGAllowedVOs(self._cp,
                 linkgroup.get('acbrs', ''))])
             info['acbr'] = acbr
+            if len(acbr) == 0:
+                continue
             self.sas.append(info)
-        self.seen_pools += self.handler.pools.keys()
+        if has_links:
+            self.seen_pools.update(self.handler.pools.keys())
 
     def parseSAs_fromPG(self):
         seen_pools = self.seen_pools
         def itemgetter(x, y):
-            return cmp(y.get('total', 0), x.get('total', ))
+            return cmp(x.get('total', 0), y.get('total', ))
+        log.info(self.handler.links)
         sorted_poolgroups = self.handler.poolgroups.values()
-        sorted_poolgroups.sort(cmp=itemgetter)
+        sorted_poolgroups.sort(itemgetter)
         pools = self.handler.pools
         default_dict = { \
-            "seUniqueID": self.getSEUniqueID(),
+            "seUniqueID": self.getUniqueID(),
             "accessLatency": "online",
             "retention": "replica",
         }
@@ -108,14 +118,43 @@ class DCacheInfo19(StorageElement):
                     total -= pools.get(pool, {}).get('total', 0)
                     used -= pools.get(pool, {}).get('used', 0)
                     free -= pools.get(pool, {}).get('free', 0)
+                else:
+                    seen_pools.add(pool)
             if total <= 0:
                 continue
+            or_func = lambda x, y: x or y
+            log.info(poolgroup['links'])
+            can_write = reduce(or_func, [self.handler.links.get(i, {}).get('write', 0) \
+                > 0 for i in poolgroup['links']], False)
+            can_read = reduce(or_func, [self.handler.links.get(i, {}).get('read', 0) \
+                > 0 for i in poolgroup['links']], False)
+            can_p2p = reduce(or_func, [self.handler.links.get(i, {}).get('p2p', 0) \
+                > 0 for i in poolgroup['links']], False)# and allow_p2p
+            can_stage = reduce(or_func, [self.handler.links.get(i, {}).get('cache', 0) \
+                > 0 for i in poolgroup['links']], False)# and allow_staging
+
+            accesslatency = 'online'
+            retentionpolicy = 'replica'
+            if can_stage:
+                accesslatency = 'nearline'
+                retentionpolicy = 'custodial'
+            info['saLocalID'] = '%s:%s:%s' % (info['name'], retentionpolicy,
+                accesslatency)
+            info['saName'] = info['saLocalID']
+            if can_stage:
+                expirationtime = 'releaseWhenExpired'
+            else:
+                expirationtime = 'neverExpire'
+            info['accessLatency'] = accesslatency
+            info['retention'] = retentionpolicy
+
             info['totalOnline'] = max(total, 0) / 1000**3
             info['usedOnline'] = max(used, 0) / 1000**3
             info['freeOnline'] = max(free, 0) / 1000**3
             info['usedSpace'] = max(used, 0) / 1024
             info['availableSpace'] = max(free, 0) / 1024
-            info['path'] = self.getPath(info['name'], section=self._section)
+            info['path'] = self.getPathForSA(info['name'],
+                section=self._section, return_default=True)
             info['acbrs'] = getAllowedVOs(self._cp, info['name'])
             acbr_attr = 'GlueSAAccessControlBaseRule: %s'
             acbr = '\n'.join([acbr_attr % i for i in info['acbrs']])
@@ -128,7 +167,7 @@ class DCacheInfo19(StorageElement):
         return super(DCacheInfo19, self).getSAs()
 
     def getVOInfos(self):
-        if getattr(self, 'vos', None):
+        if getattr(self, 'vos', None) != None:
             return self.vos
         return super(DCacheInfo19, self).getVOInfos()
 
@@ -141,8 +180,10 @@ class DCacheInfo19(StorageElement):
 
     def getAccessProtocols(self):
         aps = []
-        for door in self.handler.doors:
+        for door in self.handler.doors.values():
             if door.get('family', '') == 'SRM':
+                continue
+            if not door.get('name', ''):
                 continue
             port = door.get('port', 0)
             version = door.get('version', '0.0.0')
@@ -160,7 +201,7 @@ class DCacheInfo19(StorageElement):
                 securityinfo = "None"
             else:
                 securityinfo = "None"
-            info = {'accessProtocolID': doorname,
+            info = {'accessProtocolID': door.get('name', ''),
                     'protocol'        : protocol,
                     'endpoint'        : endpoint,
                     'capability'      : 'file transfer',
@@ -197,11 +238,15 @@ class DCacheInfo19(StorageElement):
             for vo in vos:
                 acbr += acbr_tmpl % (vo, vo)
             acbr = acbr[1:]
+            srms = []
 
             # Use the srm-LoginBroker cell to list all the SRM cells available.
-            for srm in self.handler.doors:
+            for srm in self.handler.doors.values():
                 if srm.get('family', '') != 'SRM':
                     continue
+                if not srm.get('name', ''):
+                    continue
+                doorname = srm.get('name', '')
                 hostname = srm.get('FQDN', '')
                 port = srm.get('port', 0)
                 # Make sure we have a FQDN (dCache has a nasty habit of
@@ -219,7 +264,7 @@ class DCacheInfo19(StorageElement):
                 info = {
                     "serviceType"  : "SRM",
                     "acbr"         : acbr,
-                    "cpLocalID"    : doorname,
+                    "cpLocalID"    : srm.get('name', ''),
                     "protocolType" : "SRM",
                     "capability"   : "control",
                     "status"       : "OK",

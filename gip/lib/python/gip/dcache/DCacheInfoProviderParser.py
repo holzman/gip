@@ -186,13 +186,15 @@ class PoolgroupsHandler(ObjectHandler):
     def __init__(self, pginfo):
         ObjectHandler.__init__(self, 'curpg', ['total', 'free', 'used'])
         self.pginfo = pginfo
-        self.curpg = {'pools': sets.Set()}
+        self.curpg = {'pools': sets.Set(), 'links': sets.Set()}
 
     def startElement(self, name, attrs):
         if name == 'poolgroup' and attrs.get('name', ''):
             self.curpg['name'] = str(attrs['name'])
         elif name == 'poolref' and attrs.get('name', ''):
-            self.curpg['pools'].add(attrs['name'])
+            self.curpg['pools'].add(str(attrs['name']))
+        elif name == 'linkref' and attrs.get('name', ''):
+            self.curpg['links'].add(str(attrs['name']))
         else:
             ObjectHandler.startElement(self, name, attrs)
 
@@ -200,7 +202,7 @@ class PoolgroupsHandler(ObjectHandler):
         ObjectHandler.endElement(self, name)
         if name == 'poolgroup' and 'name' in self.curpg:
             self.pginfo[self.curpg['name']] = self.curpg
-            self.curpg = {'pools': sets.Set()}
+            self.curpg = {'pools': sets.Set(), 'links': sets.Set()}
 
 class DoorsHandler(ObjectHandler):
 

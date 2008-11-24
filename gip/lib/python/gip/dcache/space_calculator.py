@@ -391,7 +391,7 @@ def calculate_voinfo_from_lg(cp, lg, resv, section='se'):
 
     return voinfos
 
-vo_re = re.compile('{(.*)}')
+vo_re = re.compile('{(.*?)}')
 def getLGAllowedVOs(cp, vos):
     allowed = []
     mapper = VoMapper(cp)

@@ -368,7 +368,7 @@ def print_access(se, cp): #pylint: disable-msg=W0613
             info['securityinfo'] = securityinfo
         info.setdefault('security', 'GSI')
         info['accessProtocolID'] = info['protocol'].upper() + "_" + \
-                                   info['hostname'] + "_" + info['port']
+                                   info['hostname'] + "_" + str(info['port'])
         info['seUniqueID'] = sename
         if 'capability' not in info:
             info['capability'] = 'file transfer'

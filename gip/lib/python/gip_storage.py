@@ -148,10 +148,10 @@ def getPath(cp, vo='', section='vo', classicSE=False):
         myvo = vo
         if not myvo:
             myvo = ''
-        fallback = cp_get(cp, section, "default","/UNKNOWN").\
+        fallback = str(cp_get(cp, section, "default","/UNKNOWN")).\
             replace("$VO", myvo).replace("VONAME", myvo)
         if fallback == "/UNKNOWN" or fallback == 'UNAVAILABLE':
-            fallback = cp_get(cp, section, "default_path","/UNKNOWN").\
+            fallback = str(cp_get(cp, section, "default_path","/UNKNOWN")).\
                 replace("$VO", myvo).replace("VONAME", myvo)
     path = cp_get(cp, section, vo, fallback)
     return path

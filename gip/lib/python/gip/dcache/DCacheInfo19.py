@@ -2,7 +2,7 @@
 import sets
 import urllib2
 
-from gip_common import getLogger, cp_get
+from gip_common import getLogger, cp_get, normalizeFQAN
 from gip_storage import StorageElement, voListStorage
 from DCacheInfoProviderParser import parse_fp
 from space_calculator import getAllowedVOs, getLGAllowedVOs
@@ -32,7 +32,6 @@ class DCacheInfo19(StorageElement):
         self.parseSAs_fromLG()
         self.parseSAs_fromPG()
         self.parseVOInfos_fromReservations()
-        self.parseVOInfos_fromPG()
 
     def getSESpace(self, gb=False, total=False):
         total = self.handler.summary.get('total', 0) / 1000
@@ -47,10 +46,79 @@ class DCacheInfo19(StorageElement):
         return used, free, total
 
     def parseVOInfos_fromReservations(self):
-        pass
+        seUniqueID = self.getUniqueID()
 
-    def parseVOInfos_fromPG(self):
-        pass
+        # The VOInfo objects should correspond to reservation DESCRIPTIONs,
+        # which may map to multiple reservations
+        voinfo = {}
+        for id, reservation in self.handler.reservations.items():
+            desc = reservation.get('description', 'DEFAULT')
+            if desc.lower() == 'null':
+                desc = 'DEFAULT'
+            voinfo.setdefault(desc, {})
+            voinfo[desc].setdefault('reservations', reservation)
+
+        # Iterate through all the link groups, and then go through all the
+        # reservations in that link group.
+        for lgid, linkgroup in self.handler.linkgroups.items():
+            # Determine ACBRs and allowed VOs
+            found_reservation_vos = sets.Set()
+            allowed_acbrs = getLGAllowedVOs(self._cp,
+                linkgroup.get('acbrs', ''))
+            fqans = [normalizeFQAN(i) for i in allowed_acbrs]
+            all_lg_vos = sets.Set([i.split('/')[1] for i in fqans])
+
+            # Find the corresponding SA
+            found_sa = False
+            lgname = linkgroup.get('name', '')
+            for sa in self.sas:
+                if sa.get('name', None) != lgname:
+                    continue
+                found_sa = True
+                break
+            if not found_sa:
+                continue
+
+            # Advertise the right tag for any VO which has a space reservation
+            # in this link group.
+            for tag, info in voinfo.items():
+                if info.get('linkgroupref', None) != lgid:
+                    continue
+                allowed_acbrs = getLGAlowedVOs(self._cp, info.get('acbrs', ''))
+                fqans = [normalizeFQAN(i) for i in allowed_acbrs]
+                vos = [i.split('/')[1] for i in fqans]
+                found_reservation_vos.update(vos)
+                for acbr in allowed_acbrs:
+                    vo = normalizeFQAN(i).split('/')[1]
+                    path = self.getPathForSA(lgname, vo,
+                        section=self._section)
+                    id = '%s:%s' % (acbr, tag)
+                    info = {'voInfoID': id,
+                            'seUniqueID': seUniqueID,
+                            'name': id,
+                            'path': path,
+                            'tag': tag,
+                            'acbr': acbr,
+                            'saLocalID': sa['saLocalID'],
+                           }
+                    self.vos.append(info)
+
+            # For any VO with no pre-existing reservation, but which is allowed
+            # to make reservations, also do a VOInfo object.
+            for vo in all_lg_vos.difference(found_reservation_vos):
+                vo = normalizeFQAN(i).split('/')[1]
+                path = self.getPathForSA(lgname, vo,
+                    section=self._section)
+                id = '%s' % vo
+                info = {'voInfoID': id,
+                        'seUniqueID': seUniqueID,
+                        'name': id,
+                        'path': path,
+                        'tag': '%s with no reserved space' % vo,
+                        'acbr': 'GlueSAAccessControlBaseRule: VO:%s' % vo,
+                        'saLocalID': sa['saLocalID'],
+                       }
+                self.vos.append(info)
 
     def parseSAs_fromLG(self):
         default_dict = { \
@@ -98,8 +166,9 @@ class DCacheInfo19(StorageElement):
         sorted_poolgroups = self.handler.poolgroups.values()
         sorted_poolgroups.sort(itemgetter)
         pools = self.handler.pools
+        seUniqueID = self.getUniqueID()
         default_dict = { \
-            "seUniqueID": self.getUniqueID(),
+            "seUniqueID": seUniqueID,
             "accessLatency": "online",
             "retention": "replica",
         }
@@ -160,6 +229,26 @@ class DCacheInfo19(StorageElement):
             acbr = '\n'.join([acbr_attr % i for i in info['acbrs']])
             info['acbr'] = acbr
             self.sas.append(info)
+
+            # Create VOInfo objects.
+            for vo in getAllowedVOs(self._cp, poolgroup['name']):
+                if vo.startswith('VO:'):
+                    vo = vo[3:]
+                path = self.getPathForSA(poolgroup['name'], vo=vo,
+                    section=self._section)
+                id = '%s:%s:poolgroup' % (vo, poolgroup['name'])
+                acbr = 'GlueVOInfoAccessControlBaseRule: %s' % vo
+                voinfo = {'voInfoID': id,
+                    'seUniqueID': seUniqueID,
+                    'name': id,
+                    'path': path,
+                    'tag': 'VOInfo associated with poolgroup %s; no space' \
+                        ' reservation' % poolgroup['name'],
+                    'acbr': acbr,
+                    'saLocalID': info['saName']
+                }
+                self.vos.append(voinfo)
+
 
     def getSAs(self):
         if getattr(self, 'sas', None):

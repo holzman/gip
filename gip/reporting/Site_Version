@@ -14,7 +14,7 @@ class TestSiteVersion(GipUnittest.GipTestCase):
         GipUnittest.GipTestCase.__init__(self, 'testSiteVersion')
         self.site = site
         self.name = 'testSiteVersion_%s' % site
-        version_cmd = "vdt-version -vdt-location $VDT_LOCATION"
+        self.version_cmd = "vdt-version -vdt-location $VDT_LOCATION"
 
     def buildGlobusCommand(self, fqdn, cmd):
         preamble = '/bin/bash -c \'cd $OSG_LOCATION; source setup.sh; '
@@ -35,7 +35,7 @@ This report runs vdt-version on the gatekeeper and displays the results.
         """
         output = "Version results for %s:\n" % self.site
         fqdn = self.getFqdn()
-        cmd = self.buildGlobusCommand(fqdn, version_cmd)
+        cmd = self.buildGlobusCommand(fqdn, self.version_cmd)
         output += runCommand(cmd).read()
         
         self.expectTrue(False, msg="output", critical=False)

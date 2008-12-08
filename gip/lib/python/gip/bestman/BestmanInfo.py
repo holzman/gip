@@ -17,7 +17,7 @@ class BestmanInfo(StorageElement):
             raise ValueError("No SRM endpoint configured!")
         self.srm_info = srms[0]
         self.endpoint = self.srm_info['endpoint']
-       
+        self.info = {}
         self.status = False
 
     def run(self):

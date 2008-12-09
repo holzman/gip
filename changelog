@@ -1,5 +1,9 @@
 Changelog
-
+== 1.0.6 ==
+* Include plugin to calculate GlueCEStateEstimatedResponseTime ("ERT")
+* Include logging for ERT
+* Allow attributes in the DN to have internal whitespace
+	
 == 1.0.5 ==
 * Fix syntax error (spurious backticks) in configure_gip
 	

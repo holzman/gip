@@ -154,6 +154,8 @@ def config(*args):
         files += [i.strip() for i in options.config.split(',')]
     files = [os.path.expandvars(i) for i in files]
     files += [os.path.expandvars("$GIP_LOCATION/etc/gip.conf")]
+    if 'GIP_CONFIG' in os.environ:
+        files += [os.path.expandvars("$GIP_CONFIG")]
 
     # Try to read all the files; toss a warning if a config file can't be
     # read:

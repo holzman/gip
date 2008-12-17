@@ -388,6 +388,12 @@ class StorageElement(object):
         self._cp = cp
         self._section = section
 
+    def getSection(self):
+        """
+        Return the ConfigParser section this StorageElement is using.
+        """
+        return self._section
+
     def run(self):
         """
         Run whatever data-gathering activities which need to be done.

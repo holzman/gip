@@ -5,6 +5,7 @@ import sys
 import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, printTemplate, cp_get
 from gip_cluster import getClusterID
 from gip_sections import ce
@@ -35,6 +36,8 @@ def print_CE(cp):
         for vo, queue2 in vo_queues:
             if queue == queue2:
                 acbr += 'GlueCEAccessControlBaseRule: VO:%s\n' % vo
+
+        referenceSI00 = gip_cluster.getReferenceSI00(cp)
 
         info = { \
             "ceUniqueID" : unique_id,
@@ -69,6 +72,7 @@ def print_CE(cp):
             "gramVersion" : '2.0',
             "port" : 2119,
             "waiting" : queue['waiting'],
+            "referenceSI00": referenceSI00,
         }
         printTemplate(ce_template, info)
     return queueInfo

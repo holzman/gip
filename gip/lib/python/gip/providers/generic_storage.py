@@ -21,7 +21,66 @@ def print_SA(se, cp, section="se"): #pylint: disable-msg=W0613
     """
     Print out the SALocal information for GLUE 1.3.
     """ 
+    vo_limit_str = cp_get(cp, section, "vo_limits", "")
+    vo_limit = {}
+    cumulative_total = {}
+    # Determine the limits for each VO
+    for vo_str in vo_limit_str.split(','):
+        vo_str = vo_str.strip()
+        info = vo_str.split(":")
+        if len(info) != 2:
+            continue
+        vo = info[0].strip()
+        try:
+            limit = float(info[1].strip())
+        except:
+            continue
+        vo_limit[vo] = limit
+        cumulative_total.setdefault(vo, 0)
     for sa in se.getSAs():
+        do_continue = False
+        reduce_by_amount = 0
+        # Calculate the total online amount
+        try:
+            totalOnline = float(sa.get("totalOnline", 0))
+        except:
+            continue
+        # Add the total online to the running total for that VO; if necessary,
+        # calculate the amount of space to reduce this SA by.
+        for vo in get_vos_from_acbr(sa.get("acbr", "")):
+            if vo in vo_limit:
+                try:
+                    cumulative_total[vo] += totalOnline
+                except:
+                    pass
+                reduce_by_amount = max(reduce_by_amount,
+                    cumulative_total.get(vo, 0) - vo_limit[vo])
+        # If we reduce more than the total amount, skip
+        if reduce_by_amount > totalOnline:
+            continue
+        elif reduce_by_amount > 0:
+            # Recalculate the total, available, and free space to be consistent.
+            sa['totalOnline'] = str(int(totalOnline - reduce_by_amount))
+            try:
+                sa['availableSpace'] = str(int(max(0,
+                    float(sa['availableSpace']) - reduce_by_amount*1024**2)))
+                sa['freeOnline'] = str(int(max(0, float(sa['freeOnline']) \
+                    - reduce_by_amount)))
+            except:
+                pass
+        # Calculated the allocated amount.  If there is only one VO which can
+        # access this SA, then the allocated amount = total space.
+        # Otherwise, allocated is zero.
+        # If the provider already set allocatedOnline, we ignore this logic.
+        if sa.get('allocatedOnline', None) == None:
+            if len(get_vos_from_acbr(sa.get('acbr', ''))) > 1:
+                sa['allocatedOnline'] = 0
+            else:
+                sa['allocatedOnline'] = sa.get('totalOnline', 0)
+        # Check that installed capacity is >= total online
+        if sa.get('installedCapacity', None) == None:
+            sa['installedCapacity'] = sa.get('totalOnline', 0)
+        # Finally, print out the SA.
         try:
             print_single_SA(sa, se, cp)
         except Exception, e:
@@ -40,10 +99,12 @@ def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
     info.setdefault('path', '/UNKNOWN')
     info.setdefault('filetype', 'permanent')
     info.setdefault('saName', info['saLocalID'])
+    info.setdefault('installedCapacity', info.get('totalOnline', 0))
     info.setdefault('totalOnline', 0)
     info.setdefault('usedOnline', 0)
     info.setdefault('freeOnline', 0)
     info.setdefault('reservedOnline', 0)
+    info.setdefault('allocatedOnline', 0)
     info.setdefault('totalNearline', 0)
     info.setdefault('usedNearline', 0)
     info.setdefault('freeNearline', 0)
@@ -140,17 +201,17 @@ def print_classicSE(cp):
     """
     Emit the relevant GLUE entities for a ClassicSE.
     """
-    if not cp_getBoolean(cp, "classic_se", "advertise_se", False):
+    if not cp_getBoolean(cp, "classic_se", "advertise_se", True):
         log.info("Not advertising a classic SE.")
         return
     else:
         log.info("Advertising a classic SE.")
-    if cp_getBoolean(cp, "se", "shares_fs_with_ce", False):
-        log.info("Not advertising a classic SE because the SE shares a FS.")
-        return
+    #if cp_getBoolean(cp, "se", "shares_fs_with_ce", False):
+    #    log.info("Not advertising a classic SE because the SE shares a FS.")
+    #    return
 
-    status = cp_get(cp, "se", "status", "Production")
-    version = cp_get(cp, "se", "version", "UNKNOWN")
+    status = cp_get(cp, "classic_se", "status", "Production")
+    version = cp_get(cp, "classic_se", "version", "UNKNOWN")
     try:
         used, available, total = getClassicSESpace(cp, total=True, gb=True)
     except Exception, e:
@@ -208,6 +269,7 @@ def print_classicSE(cp):
             "filetype"         : "permanent",
             "saName"           : seUniqueID,
             "totalOnline"      : int(round(total/1000**2)),
+            "installedCapacity": int(round(total/1000**2)),
             "usedOnline"       : int(round(used/1000**2)),
             "freeOnline"       : int(round(available/1000**2)),
             "reservedOnline"   : 0,
@@ -221,6 +283,7 @@ def print_classicSE(cp):
             "availableSpace"   : available,
             "usedSpace"        : used,
             "acbr"             : acbr,
+            "allocatedOnline"  : 0,
            }
     saTemplate = getTemplate("GlueSE", "GlueSALocalID")
     printTemplate(saTemplate, info)
@@ -273,7 +336,7 @@ def print_SE(se, cp):
     printTemplate(seTemplate, info)
 
     try:
-        print_SA(se, cp)
+        print_SA(se, cp, se.getSection())
     except Exception, e:
         log.exception(e)
     try:

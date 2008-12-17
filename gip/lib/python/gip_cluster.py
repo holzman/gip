@@ -19,10 +19,29 @@ from gip_testing import runCommand
 from gip_sections import cluster, subcluster, ce
 
 __all__ = ['generateGlueCluster', 'generateSubClusters', 'getClusterName', \
-    'getClusterID', 'getOSGVersion']
+    'getClusterID', 'getOSGVersion', 'getReferenceSI00']
 __author__ = 'Brian Bockelman'
 
 log = getLogger("GIP.Cluster")
+
+_referenceSI00 = None
+def getReferenceSI00(cp):
+    """
+    The WLCG Installed Capacity document requires us to publish, for every CE,
+    the "reference" SI00 of a core for the CE.  As we do not track the CE to
+    subcluster mapping, we just return the minimum SI00 of all the cluster
+    CPUs.
+    """
+    global _referenceSI00
+    if _referenceSI00:
+        return _referenceSI00
+    _referenceSI00 = 2000
+    for section in cp.sections():
+        if not section.startswith(subcluster):
+            continue
+        _referenceSI00 = min(cp_getInt(cp, section, "SI00", 2000),
+            _referenceSI00)
+    return _referenceSI00
 
 def getOsStatistics():
     """

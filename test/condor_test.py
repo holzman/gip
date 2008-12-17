@@ -63,7 +63,7 @@ def main():
     """
     cp = config()
     stream = streamHandler(cp)
-    runTest(cp, TestCondorProvider, stream, per_site=False, usexml=False)
+    runTest(cp, TestCondorProvider, stream, per_site=False)
 
 if __name__ == '__main__':
     main()

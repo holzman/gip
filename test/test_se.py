@@ -275,6 +275,66 @@ class TestSEConfigs(unittest.TestCase):
         self.check_se_1(entries, cp)
         #self.check_se_2(entries, cp)
 
+    def checkReservedRules1(self, entries):
+        """
+        Make sure that on a SA with multiple supported VOs that there is
+        0GB of reserved space, but non-zero GB of total space.
+        """
+        found_sa = False
+        for entry in entries:
+            if 'GlueSA' not in entry.objectClass:
+                continue
+            if 'osg-group:replica:nearline' not in entry.glue['SALocalID']:
+                continue
+            found_sa = True
+            self.failUnless(int(entry.glue['SATotalOnlineSize'][0]) == 26023)
+            self.failUnless(int(entry.glue['SAReservedOnlineSize'][0]) == 0)
+        self.failUnless(found_sa, msg="Could not find the correct target SA.")
+
+    def checkReservedRules2(self, entries):
+        """
+        Make sure that on a SA with one supported VO that reserved space is
+        equal to the total space.
+        """
+        found_sa = False
+        for entry in entries:
+            if 'GlueSA' not in entry.objectClass:
+                continue
+            if 'atlas-tape-write-group:replica:nearline' not in \
+                    entry.glue['SALocalID']:
+                continue
+            found_sa = True
+            self.failUnless(int(entry.glue['SATotalOnlineSize'][0]) == \
+                int(entry.glue['SAReservedOnlineSize'][0]))
+        self.failUnless(found_sa, msg="Could not find the correct target SA.")
+
+    def checkReducedAmount(self, entries):
+        """
+        Example 3 is set up so one of the SAs will have less space than dCache
+        actually advertises due to a limit on the amount of space a SE can
+        advertise.
+        """
+        found_sa = False
+        for entry in entries:
+            if 'GlueSA' not in entry.objectClass:
+                continue
+            if 'atlas-tape-write-group:replica:nearline' not in \
+                    entry.glue['SALocalID']:
+                continue
+            found_sa = True
+            self.failUnless(int(entry.glue['SATotalOnlineSize'][0]) == 3000)
+        self.failUnless(found_sa, msg="Could not find the correct target SA.")
+
+
+    def test_ngdf_config(self):
+        entries, cp = self.run_test_config('red-se-test3.conf')
+        self.checkReservedRules1(entries)
+        self.checkReservedRules2(entries)
+        self.checkReducedAmount(entries)
+
+    def test_fnal_config(self):
+        entries, cp = self.run_test_config('red-se-test4.conf')
+
 def main():
     cp = config("test_configs/red-se-test.conf")
     stream = streamHandler(cp)

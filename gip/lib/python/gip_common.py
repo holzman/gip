@@ -157,9 +157,12 @@ def config(*args):
     if 'GIP_CONFIG' in os.environ:
         files += [os.path.expandvars("$GIP_CONFIG")]
 
+    log.info("Using GIP SVN revision $Revision$")
+
     # Try to read all the files; toss a warning if a config file can't be
     # read:
     for myfile in files:
+        log.info("Using config file: %s" % myfile)
         try:
             open(myfile, 'r')
         except IOError, ie:

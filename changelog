@@ -1,4 +1,7 @@
 Changelog
+== 1.0.7 ==
+* In configure_gip, check for globus only when looking for LSF queues
+	
 == 1.0.6 ==
 * Include plugin to calculate GlueCEStateEstimatedResponseTime ("ERT")
 * Include logging for ERT

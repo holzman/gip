@@ -325,7 +325,10 @@ def _getJobsInfoInternal(cp):
         return {}
     info = handler2.getClassAds()
     for item, values in handler.getClassAds().items():
-        owner = values.get('AccountingGroup', values.get('Owner', None))
+        if 'AccountingGroup' in values and 'Owner' in values and values['AccountingGroup'].find('.') < 0:
+            owner = '%s.%s' % (values['AccountingGroup'], values['Owner'])
+        else:
+            owner = values.get('AccountingGroup', values.get('Owner', None))
         if not owner:
             continue
         owner_info = info.setdefault(owner, {})
@@ -396,6 +399,8 @@ def getJobsInfo(vo_map, cp):
             new_info = 0
         my_info_dict[my_key] += new_info
 
+    all_group_info = getGroupInfo(vo_map, cp)
+
     unknown_users = sets.Set()
     for user, info in results.items():
         # Determine the VO, or skip the entry
@@ -409,7 +414,14 @@ def getJobsInfo(vo_map, cp):
         try:
             vo = vo_map[name].lower()
         except Exception, e:
-            unknown_users.add(name)
+            if name in all_group_info:
+                group = name
+                if len(all_group_info[name].get('vo', [])) == 1:
+                    vo = all_group_info[name]['vo']
+                else:
+                    vo = 'unknown'
+            else:
+                unknown_users.add(name)
             continue
 
         if group not in group_jobs:

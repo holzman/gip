@@ -149,6 +149,18 @@ def configOsg(cp):
         #log.exception(e)
         print >> sys.stderr, str(e)
 
+    # Set the site status:
+    try:
+        results = int(os.popen("/bin/sh -c 'source $VDT_LOCATION/MIS-CI/etc/" \
+            "grid-site-state-info; echo $grid_site_state_bit'") \
+            .read().strip()) != 0
+        if not results:
+            if not cp.has_section('condor'):
+                cp.add_section('condor')
+            cp.set('condor', 'Closed')
+    except:
+        pass
+
     # The write_config helper function
     def __write_config(section2, option2, section, option): \
             #pylint: disable-msg=C0103

@@ -218,18 +218,15 @@ sub initialize
         $vdt_location = $1;
     }
 
-    $globus_location = $vdt_location . "/globus";
     $gip_location = $vdt_location . "/gip";
 
     vdt_install_log("##########");
     vdt_install_log("# Configuring Generic-Information-Provider at $date");
     vdt_install_log("##########");
 
-    vdt_install_log("The Globus location is $globus_location");
     vdt_install_log("The GIP location is $gip_location");
 
     stat($vdt_location) or die "Error can't access $vdt_location\n";
-    stat($globus_location) or die "Error can't access $globus_location\n";
     stat($gip_location) or die "Error can't access $gip_location\n";
 
     my $tmp_testbed = `$vdt_location/osg-version`;
@@ -838,6 +835,10 @@ sub fix_for_pbs_queues{
 #
 ###########################################################################
 sub fix_for_lsf_queues(){
+
+$globus_location = $vdt_location . "/globus";
+stat($globus_location) or die "Error can't access $globus_location\n";
+
 my @bqueues;
 
 @bqueues=split(' ',`sed -n '/Attribute: queue/{n;p;}' \$VDT_LOCATION/globus/share/globus_gram_job_manager/lsf.rvf`); 

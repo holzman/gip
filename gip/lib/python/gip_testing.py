@@ -11,7 +11,7 @@ import re
 import sys
 import types
 import unittest
-import datetime
+import time
 import urlparse
 import GipUnittest
 
@@ -113,7 +113,7 @@ def streamHandler(cp):
         logDir = pathFormatter(cp_get(cp, "TestRunner", "LogDir", "/tmp"))
         logPrefix = cp_get(cp, "TestRunner", "LogPrefix", "")
         logFile = logDir + "/" + logPrefix \
-            + datetime.datetime.now().strftime("%A_%b_%d_%Y_%H_%M_%S")
+            + time.strftime("%A_%b_%d_%Y_%H_%M_%S")
         return open(logFile, 'w')
 
 def runTest(cp, cls, out=None, per_site=True):

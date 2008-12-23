@@ -177,10 +177,10 @@ def interpolateConfig(cp):
     cp.set("gip_tests", "egee_port", "2170")
     cp.set("gip_tests", "interop_url", "http://oim.grid.iu.edu/publisher/get_osg_interop_bdii_ldap_list.php?grid=%s&format=html" % grid)
     if "ITB" in grid:
-        cp.set("gip_tests", "bdii_addr", "is-itb2.grid.iu.edu")
+        cp.set("gip_tests", "bdii_addr", "is-itb.grid.iu.edu")
         cp.set("gip_tests", "egee_bdii", "pps-bdii.cern.ch")
         cp.set("gip_tests", "egee_bdii_conf_url", "http://egee-pre-production-service.web.cern.ch/egee-pre-production-service/bdii/pps-all-sites.conf")
-        web_server = "http://is-itb2.grid.iu.edu"
+        web_server = "http://is-itb.grid.iu.edu"
     else:
         cp.set("gip_tests", "bdii_addr", "is.grid.iu.edu")
         cp.set("gip_tests", "egee_bdii", "lcg-bdii.cern.ch")

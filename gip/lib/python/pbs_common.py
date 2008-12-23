@@ -6,7 +6,7 @@ Module for interacting with PBS.
 import re
 import grp
 import pwd
-import sets
+import gip_sets as sets
 
 from gip_common import HMSToMin, getLogger, VoMapper, voList, parseRvf
 from gip_testing import runCommand

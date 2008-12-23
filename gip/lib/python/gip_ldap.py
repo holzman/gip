@@ -8,7 +8,7 @@ __author__ = "Brian Bockelman"
 import os
 import re
 import sys
-import sets
+import gip_sets as sets
 
 class _hdict(dict): #pylint: disable-msg=C0103
     """

@@ -7,7 +7,7 @@ outline of how this is computed is given here:
 https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/GipCeInfo
 """
 
-import sets
+import gip_sets as sets
 
 # Standard GIP imports
 import gip_cluster

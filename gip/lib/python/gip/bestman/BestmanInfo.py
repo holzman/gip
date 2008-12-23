@@ -1,6 +1,6 @@
 
 import re
-import sets
+import gip_sets as sets
 
 from gip_common import cp_get, getLogger
 from gip_storage import StorageElement, voListStorage

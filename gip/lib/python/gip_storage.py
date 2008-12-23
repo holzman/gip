@@ -5,7 +5,7 @@ Module for interacting with a dCache storage element.
 
 import os
 import re
-import sets
+import gip_sets as sets
 import stat
 import statvfs
 

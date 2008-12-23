@@ -3,7 +3,7 @@
 import os
 import sys
 import unittest
-from sets import Set
+from gip_sets import Set
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config

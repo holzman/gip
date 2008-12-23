@@ -10,7 +10,7 @@ It takes advantage of the XML format of the ClassAds in order to make parsing
 easier.
 """
 
-import sets
+import gip_sets as sets
 import time
 
 from xml.sax import make_parser, SAXParseException

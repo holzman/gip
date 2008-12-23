@@ -1,5 +1,5 @@
 
-import sets
+import gip_sets as sets
 import urllib2
 
 from gip_common import getLogger, cp_get, normalizeFQAN

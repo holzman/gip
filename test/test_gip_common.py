@@ -2,11 +2,11 @@
 
 import os
 import sys
-import sets
+import gip_sets
 import unittest
 import tempfile
 import ConfigParser
-from sets import Set
+from gip_sets import Set
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, cp_getBoolean, voList

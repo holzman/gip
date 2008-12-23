@@ -4,7 +4,7 @@ A generic provider for storage elements; written for the StorageElement class
 in gip_storage.
 """
 
-import sets
+import gip_sets as sets
 import socket
 
 from gip_common import cp_get, getLogger, config, getTemplate, printTemplate, \

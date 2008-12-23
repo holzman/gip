@@ -5,7 +5,7 @@ important info about available space in dCache
 """
 
 import re
-import sets
+import gip_sets as sets
 
 # dCache imports
 import pools as pools_module

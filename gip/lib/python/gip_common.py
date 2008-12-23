@@ -482,7 +482,7 @@ class FakeLogger:
         @param msg: A message string.
         @param args: Arguments which should be evaluated into the message.
         """
-        print >> sys.stderr, msg % args
+        print >> sys.stderr, str(msg) % args
 
     def info(self, msg, *args):
         """
@@ -490,7 +490,7 @@ class FakeLogger:
         
         @see: debug
         """
-        print >> sys.stderr, msg % args
+        print >> sys.stderr, str(msg) % args
 
     def warning(self, msg, *args):
         """
@@ -498,7 +498,7 @@ class FakeLogger:
 
         @see: debug
         """
-        print >> sys.stderr, msg % args
+        print >> sys.stderr, str(msg) % args
 
     def error(self, msg, *args):
         """
@@ -506,7 +506,7 @@ class FakeLogger:
 
         @see: debug
         """
-        print >> sys.stderr, msg % args
+        print >> sys.stderr, str(msg) % args
 
     def exception(self, msg, *args):
         """
@@ -514,7 +514,7 @@ class FakeLogger:
 
         @see: debug
         """
-        print >> sys.stderr, msg % args
+        print >> sys.stderr, str(msg) % args
 
 def add_giplog_handler():
     """

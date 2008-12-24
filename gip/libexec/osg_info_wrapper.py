@@ -15,6 +15,25 @@ import shutil
 import signal
 import cStringIO
 
+py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
+if not py23:
+      os.EX_CANTCREAT = 73
+      os.EX_CONFIG = 78
+      os.EX_DATAERR = 65
+      os.EX_IOERR = 74
+      os.EX_NOHOST = 68
+      os.EX_NOINPUT = 66
+      os.EX_NOPERM = 77
+      os.EX_NOUSER = 67
+      os.EX_OK = 0
+      os.EX_OSERR = 71
+      os.EX_OSFILE = 72
+      os.EX_PROTOCOL = 76
+      os.EX_SOFTWARE = 70
+      os.EX_TEMPFAIL = 75
+      os.EX_UNAVAILABLE = 69
+      os.EX_USAGE = 64
+                                                   
 try:
    import md5
 except:

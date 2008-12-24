@@ -7,6 +7,12 @@ important info about available space in dCache
 import re
 import gip_sets as sets
 
+import sys
+py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
+if not py23:
+        import operator
+        def sum(data, start=0): return reduce(operator.add, data, start)
+
 # dCache imports
 import pools as pools_module
 import admin

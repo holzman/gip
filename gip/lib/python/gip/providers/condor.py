@@ -8,6 +8,11 @@ https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/GipCeInfo
 """
 
 import gip_sets as sets
+import sys
+py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
+if not py23:
+        import operator
+        def sum(data, start=0): return reduce(operator.add, data, start)
 
 # Standard GIP imports
 import gip_cluster

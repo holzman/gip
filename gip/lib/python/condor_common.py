@@ -13,6 +13,7 @@ easier.
 import gip_sets as sets
 import time
 
+import xml
 from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges
 
@@ -139,7 +140,11 @@ def parseCondorXml(fp, handler): #pylint: disable-msg=C0103
     """
     parser = make_parser()
     parser.setContentHandler(handler)
-    parser.setFeature(feature_external_ges, False)
+    try:
+        parser.setFeature(feature_external_ges, False)
+    except xml.sax._exceptions.SAXNotRecognizedException:
+        pass
+    
     try:
         parser.parse(fp)
     except SAXParseException, e:

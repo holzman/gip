@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import os
+
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
+import GipUnittest
+from gip_ldap import read_bdii, query_bdii
+from gip_testing import runTest, getTestConfig, runCommand
+
+class TestSiteVersion(GipUnittest.GipTestCase):
+    def __init__(self, site, cp):
+        GipUnittest.GipTestCase.__init__(self, 'testSiteVersion')
+        self.site = site
+        self.name = 'testSiteVersion_%s' % site
+        self.version_cmd = "vdt-version -vdt-location $VDT_LOCATION"
+
+    def buildGlobusCommand(self, fqdn, cmd):
+        preamble = '/bin/bash -c \'cd $OSG_LOCATION; source setup.sh; '
+        postamble = '\''
+
+        return 'globus-job-run ' + fqdn + " " + preamble + cmd + postamble
+
+    def getFqdn(self):
+        fd = query_bdii(self.cp, query="(objectClass=GlueCE)", base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site)
+        line = fd.readline().lower()
+        return line
+
+    def testSiteVersion(self):
+        """
+Site Version Check
+
+This report runs vdt-version on the gatekeeper and displays the results.
+        """
+        output = "Version results for %s:\n" % self.site
+        fqdn = self.getFqdn()
+        cmd = self.buildGlobusCommand(fqdn, self.version_cmd)
+        output += runCommand(cmd).read()
+        
+        self.expectTrue(False, msg="output", critical=False)
+        
+def main(args):
+    cp = getTestConfig(args)
+    runTest(cp, TestSiteVersion)
+
+if __name__ == '__main__':
+    main(sys.argv)

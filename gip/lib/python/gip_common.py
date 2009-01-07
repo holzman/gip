@@ -334,25 +334,57 @@ class VoMapper:
         except KeyError:
             raise ValueError("Unable to map user: %s" % username)
 
-def FakeLogger():
+class FakeLogger:
     """
     Super simple logger for python installs which don't have the logging
     package.
     """
-    def debug(msg, *args):
-        print >> sys.stderr, msg
 
-    def info(msg, *args):
-        print >> sys.stderr, msg
+    def __init__(self):
+        pass
 
-    def warning(msg, *args):
-        print >> sys.stderr, msg
+    def debug(self, msg, *args):
+        """
+        Pass a debug message to stderr.
+        
+        Prints out msg % args.
+        
+        @param msg: A message string.
+        @param args: Arguments which should be evaluated into the message.
+        """
+        print >> sys.stderr, str(msg) % args
 
-    def error(msg, *args):
-        print >> sys.stderr, msg
+    def info(self, msg, *args):
+        """
+        Pass an info-level message to stderr.
+        
+        @see: debug
+        """
+        print >> sys.stderr, str(msg) % args
 
-    def exception(msg, *args):
-        print >> sys.stderr, msg
+    def warning(self, msg, *args):
+        """
+        Pass a warning-level message to stderr.
+
+        @see: debug
+        """
+        print >> sys.stderr, str(msg) % args
+
+    def error(self, msg, *args):
+        """
+        Pass an error message to stderr.
+
+        @see: debug
+        """
+        print >> sys.stderr, str(msg) % args
+
+    def exception(self, msg, *args):
+        """
+        Pass an exception message to stderr.
+
+        @see: debug
+        """
+        print >> sys.stderr, str(msg) % args
 
 if py23:
     try:

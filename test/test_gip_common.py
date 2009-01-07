@@ -2,7 +2,7 @@
 
 import os
 import sys
-import gip_sets
+import gip_sets as sets
 import unittest
 import tempfile
 import ConfigParser

@@ -188,8 +188,10 @@ def getClassicSESpace(cp, gb=False, total=False):
         return the total space.  If C{gb=True}, return the numbers in GB;
         otherwise the numbers are in kilobytes.
     """
+    log.info("Calculating Classic SE space.")
     space_info = cp_get(cp, "classic_se", "space", None)
     if space_info:
+        log.info("Using config file information.")
         # Assume that the space reported is in KB
         used, free, tot = eval(space_info, {}, {})
         # Divide by 1000**2 to go from KB to GB
@@ -204,10 +206,13 @@ def getClassicSESpace(cp, gb=False, total=False):
     mount_info = {}
     # First, find out all the storage paths for the supported VOs
     # Uses statvfs to find out the mount info; stat to find the device ID
+    log.info("Querying VFS stats for VO.")
     for vo in voListStorage(cp):
-        path = getPath(cp, vo)
+        path = getPath(cp, vo, classicSE=True, section='classic_se')
         # Skip fake paths
         if not os.path.exists(path):
+            log.warning("Skipping `df` of path %s because it does not exist." \
+                % (path))
             continue
         stat_info = os.stat(path)
         vfs_info = os.statvfs(path)
@@ -222,6 +227,8 @@ def getClassicSESpace(cp, gb=False, total=False):
         used += dev_used
         free += dev_free
         tot += dev_total
+    log.info("Resulting byte-values; used %i, free %i, total %i" % (used, free,
+        tot))
     if gb: # Divide by 1000^2.  Results in a number in MB
         used /= 1000000L
         free /= 1000000L

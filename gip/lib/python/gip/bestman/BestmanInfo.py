@@ -1,8 +1,10 @@
 
+import os
 import re
 import gip_sets as sets
+import statvfs
 
-from gip_common import cp_get, getLogger
+from gip_common import cp_get, cp_getBoolean, getLogger
 from gip_storage import StorageElement, voListStorage
 import srm_ping
 
@@ -105,8 +107,8 @@ class BestmanInfo(StorageElement):
             sa_vos = sets.Set()
             for vo in vos:
                 sa_vos.add(vo)
-                if not vo.startswith('VO'):
-                    sa_vos.add('VO: %s' % vo)
+                #if not vo.startswith('VO'):
+                #    sa_vos.add('VO: %s' % vo)
             sa_vos = list(sa_vos)
             sa_vos.sort()
             sa_info['acbr'] = '\n'.join(['GlueSAAccessControlBaseRule: %s' % i \
@@ -151,6 +153,28 @@ class BestmanInfo(StorageElement):
         return self.voinfos
 
     def getSESpace(self, gb=False, total=False):
+        if cp_getBoolean(self._cp, self._section, 'use_df', False):
+            paths = sets.Set()
+            for sa in self.getSAs():
+                path = sa['path']
+                paths.add(path)
+            used, free, tot = 0, 0, 0
+            for path in paths:
+                try:
+                    stat_info = os.statvfs(path)
+                    blocks = stat_info[statvfs.F_BLOCKS]
+                    bsize = stat_info[statvfs.F_BSIZE]
+                    avail = stat_info[statvfs.F_BFREE]
+                except Exception, e:
+                    log.exception(e)
+                    continue
+                used += (blocks-avail) * bsize / 1024.
+                free += avail          * bsize / 1024.
+                tot +=  blocks         * bsize / 1024.
+            if gb:
+                return int(used/1024.**2), int(free/1024.**2), int(tot/1024.**2)
+            else:
+                return int(used), int(free), int(tot)
         if total:
             used, free, tot = super(BestmanInfo, self).getSESpace(gb=gb,
                 total=total)

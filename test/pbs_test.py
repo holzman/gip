@@ -4,6 +4,7 @@ import os
 import sys
 import unittest
 
+os.environ['GIP_TESTING'] = '1'
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_sets import Set
 from gip_common import config, cp_get
@@ -96,7 +97,7 @@ class TestPbsDynamic(unittest.TestCase):
 
     def test_max_queuable(self):
         """
-        Regression test for the max_queuable attribute.  Ticket #10
+        Regression test for the max_queuable attribute.  Ticket #10.
         """
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/libexec/" \
@@ -106,14 +107,39 @@ class TestPbsDynamic(unittest.TestCase):
         self.failUnless(fd.close() == None)
         has_default_ce = False
         for entry in entries:
-            if 'GlueCE' in entry.objectClass:
-                print entry
             if 'GlueCE' in entry.objectClass and \
                     entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
                     '-pbs-default':
                 self.failUnless(entry.glue['CEPolicyMaxWaitingJobs'] == '2000')
                 has_default_ce = True
         self.failUnless(has_default_ce, msg="Default queue's CE was not found!")
+
+    def test_max_queuable_22(self):
+        """
+        Regression test for the max_queuable attribute.  Ticket #22.
+        """
+        os.environ['GIP_TESTING'] = '1'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
+            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd)
+        self.failUnless(fd.close() == None)
+        has_default_ce = False
+        has_lcgadmin_ce = False
+        for entry in entries:
+            if 'GlueCE' in entry.objectClass and \
+                    entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
+                    '-pbs-default':
+                self.failUnless(entry.glue['CEPolicyMaxTotalJobs'] == '2000')
+                has_default_ce = True
+            if 'GlueCE' in entry.objectClass and \
+                    entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
+                    '-pbs-lcgadmin':
+                print entry
+                self.failUnless(entry.glue['CEPolicyMaxWaitingJobs'] == '2000')
+                has_lcgadmin_ce = True
+        self.failUnless(has_default_ce, msg="Default queue's CE was not found!")
+        self.failUnless(has_default_ce, msg="lcgadmin queue's CE was not found!")
 
     def make_site_tester(site):
         def test_site_entries(self):

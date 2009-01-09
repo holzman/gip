@@ -5,6 +5,7 @@ Queue: default
     state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:7 Exiting:0 Begun
 	:0 
     max_running = 400
+    max_queuable = 2000
     resources_max.nodect = 444
     resources_max.walltime = 24:00:00
     resources_assigned.ncpus = 7
@@ -159,6 +160,7 @@ Queue: oli
 Queue: lcgadmin
     queue_type = Execution
     Priority = 135
+    max_queueable = 2000
     total_jobs = 0
     state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
 	:0 

@@ -125,7 +125,7 @@ def configOsg(cp):
         check_osg = cp.getboolean("gip", "check_osg")
     except:
         check_osg = True
-    if check_osg:
+    if check_osg and 'GIP_TESTING' not in os.environ:
         checkOsgConfigured(cp)
         
     # See if we have a special config.ini location
@@ -151,9 +151,14 @@ def configOsg(cp):
 
     # Set the site status:
     try:
-        results = int(os.popen("/bin/sh -c 'source $VDT_LOCATION/MIS-CI/etc/" \
-            "grid-site-state-info; echo $grid_site_state_bit'") \
-            .read().strip()) != 0
+        state_info_file = '$VDT_LOCATION/MIS-CI/etc/grid-site-state-info'
+        state_info_file = os.path.expandvars(state_info_file)
+        if os.path.exists(state_info_file):
+            results = int(os.popen("/bin/sh -c 'source %s; echo " \
+                "$grid_site_state_bit'" % state_info_file)
+                .read().strip()) != 0
+        else:
+            results = None
         if not results:
             if not cp.has_section('condor'):
                 cp.add_section('condor')

@@ -5,14 +5,12 @@ import sys
 import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    printTemplate, cp_get, responseTimes
+    printTemplate, cp_get
 from gip_cluster import getClusterID
 from pbs_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
 from gip_sections import ce
-from gip_storage import getDefaultSE
 
 log = getLogger("GIP.PBS")
 
@@ -23,8 +21,8 @@ def print_CE(cp):
     ce_name = cp_get(cp, ce, "name", "UNKNOWN_CE")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
     try:
-        excludeQueues = [i.strip() for i in cp_get(cp, "pbs", \
-            "queue_exclude", "").split(',')]
+        excludeQueues = [i.strip() for i in cp.get("pbs", \
+            "queue_exclude").split(',')]
     except:
         excludeQueues = []
     vo_queues = getVoQueues(cp)
@@ -51,47 +49,39 @@ def print_CE(cp):
         if "max_running" not in info:
             info["max_running"] = info["job_slots"]
         if "max_wall" not in info:
-            info["max_wall"] = 1440
-
-        ert, wrt = responseTimes(cp, info.get("running", 0),
-            info.get("wait", 0), max_job_time=info["max_wall"])
-
+            info["max_wall"] = 6000
         info["job_slots"] = min(totalCpu, info["job_slots"])
-        info['ert'] = ert
-        info['wrt'] = wrt
+        info['ert'] = 3600
+        info['wrt'] = 3600
         info['hostingCluster'] = cp_get(cp, ce, 'hosting_cluster', ce_name)
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
         info['ceImpl'] = 'Globus'
         info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')
-        info['contact_string'] = cp_get(cp, "pbs", 'contact_string', unique_id)
-        info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP")
-        info['data_dir'] = cp_get(cp, 'osg_dirs', 'data', "/UNKNOWN_DATA")
-        info['default_se'] = getDefaultSE(cp)
+        info['contact_string'] = unique_id
+        info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_DATA")
+        info['data_dir'] = cp_get(cp, 'osg_dirs', 'data', "/UNKNOWN_APP")
+        info['default_se'] = cp_get(cp, 'se', 'name', "/UNKNOWN_CE")
         if 'max_waiting' not in info:
             info['max_waiting'] = 999999
-        if 'max_queuable' in info:
-            info['max_total'] = info['max_queuable']
-        else:
-            info['max_total'] = info['max_waiting'] + info['max_running']
         info['max_slots'] = 1
         #info['max_total'] = info['max_running']
+        info['max_total'] = info['max_waiting'] + info['max_running']
         info['assigned'] = info['job_slots']
         info['lrmsType'] = 'pbs'
         info['preemption'] = cp_get(cp, 'pbs', 'preemption', '0')
         acbr = ''
-        has_vo = False
+        has_vos = False
         for vo, queue2 in vo_queues:
             if queue == queue2:
                 acbr += 'GlueCEAccessControlBaseRule: VO:%s\n' % vo
-                has_vo = True
-        if not has_vo:
+        if not has_vos:
+            log.warning("No VOs can access queue %s; skipping." % queue)
             continue
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
         info['gramVersion'] = '2.0'
         info['port'] = 2119
         info['waiting'] = info['wait']
-        info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)
         info['clusterUniqueID'] = getClusterID(cp)
         print CE % info
     return queueInfo, totalCpu, freeCpu, queueCpus
@@ -106,16 +96,10 @@ def print_VOViewLocal(queue_info, cp):
         vo_info = queue_jobs.get(queue, {})
         info2 = vo_info.get(vo, {})
         ce_unique_id = '%s:2119/jobmanager-pbs-%s' % (ce_name, queue)
-
-        my_queue_info = queue_info.setdefault(queue, {})
-        ert, wrt = responseTimes(cp, info2.get("running", 0),
-            info2.get("wait", 0),
-            max_job_time=my_queue_info.get("max_wall", 0))
-
         info = {
             'ceUniqueID'  : ce_unique_id,
-            'job_slots'   : my_queue_info.get('job_slots', 0),
-            'free_slots'  : my_queue_info.get('free_slots', 0),
+            'job_slots'   : queue_info.get(queue, {}).get('job_slots', 0),
+            'free_slots'  : queue_info.get(queue, {}).get('free_slots', 0),
             'ce_name'     : ce_name,
             'queue'       : queue,
             'vo'          : vo,
@@ -125,9 +109,9 @@ def print_VOViewLocal(queue_info, cp):
             'max_running' : info2.get('max_running', 0),
             'priority'    : queue_info.get(queue, {}).get('priority', 0),
             'waiting'     : info2.get('wait', 0),
-            'data'        : cp_get(cp, "osg_dirs", "data", "UNKNOWN_DATA"),
-            'app'         : cp_get(cp, "osg_dirs", "app", "UNKNOWN_APP"),
-            'default_se'  : getDefaultSE(cp),
+            'data'        : cp_get(cp, "osg_dirs", "data", "/UNKNOWN_DATA"),
+            'app'         : cp_get(cp, "osg_dirs", "app", "/UNKNOWN_APP"),
+            'default_se'  : cp_get(cp, "se", "name", "/UNKNOWN_SE"),
             'ert'         : 3600,
             'wrt'         : 3600,
             'acbr'        : 'VO:%s' % vo
@@ -138,7 +122,8 @@ def print_VOViewLocal(queue_info, cp):
 def main():
     try:
         cp = config()
-        addToPath(cp_get(cp, "pbs", "pbs_path", "."))
+        if "pbs" in cp.sections() and "pbs_path" in cp.options("pbs"):
+            addToPath(cp.get("pbs", "pbs_path"))
         vo_map = VoMapper(cp)
         pbsVersion = getLrmsInfo(cp)
         queueInfo, totalCpu, freeCpu, queueCpus = print_CE(cp)

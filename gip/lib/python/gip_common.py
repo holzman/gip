@@ -421,6 +421,7 @@ class VoMapper:
             self.map_location = cp.get("vo", "user_vo_map")
         except:
             self.map_location = "$VDT_LOCATION/monitoring/osg-user-vo-map.txt"
+        log.info("Using user-to-VO map location %s." % self.map_location)
         self.voi = []
         self.voc = []
         self.userMap = {}

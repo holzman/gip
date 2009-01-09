@@ -239,9 +239,10 @@ def getQueueInfo(cp):
             queue_data["max_running"] = int(val)
         elif attr == "resources_max.nodect":
             queue_data["job_slots"] = int(val)
-        elif attr == "max_queuable":
+        elif attr == "max_queuable" or attr == 'max_queuable':
             try:
                 queue_data["max_waiting"] = int(val)
+                queue_data["max_queuable"] = int(val)
             except: 
                 log.warning("Invalid input for max_queuable: %s" % str(val))
         elif attr == "acl_group_enable" and val.lower() == 'true':

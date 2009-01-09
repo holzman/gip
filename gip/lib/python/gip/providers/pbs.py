@@ -67,10 +67,14 @@ def print_CE(cp):
         info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP")
         info['data_dir'] = cp_get(cp, 'osg_dirs', 'data', "/UNKNOWN_DATA")
         info['default_se'] = getDefaultSE(cp)
-        info['max_waiting'] = 999999
+        if 'max_waiting' not in info:
+            info['max_waiting'] = 999999
+        if 'max_queuable' in info:
+            info['max_total'] = info['max_queuable']
+        else:
+            info['max_total'] = info['max_waiting'] + info['max_running']
         info['max_slots'] = 1
         #info['max_total'] = info['max_running']
-        info['max_total'] = info['max_waiting'] + info['max_running']
         info['assigned'] = info['job_slots']
         info['lrmsType'] = 'pbs'
         info['preemption'] = cp_get(cp, 'pbs', 'preemption', '0')

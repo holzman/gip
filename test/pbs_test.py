@@ -3,9 +3,9 @@
 import os
 import sys
 import unittest
-from gip_sets import Set
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+from gip_sets import Set
 from gip_common import config, cp_get
 from pbs_common import getVoQueues
 from gip_ldap import read_ldap
@@ -106,6 +106,8 @@ class TestPbsDynamic(unittest.TestCase):
         self.failUnless(fd.close() == None)
         has_default_ce = False
         for entry in entries:
+            if 'GlueCE' in entry.objectClass:
+                print entry
             if 'GlueCE' in entry.objectClass and \
                     entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
                     '-pbs-default':

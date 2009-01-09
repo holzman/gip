@@ -27,7 +27,7 @@ if [ ! -d "$tagdir/$releasename" ] ; then
     exit 3
 fi
 
-excludelist="--exclude */.svn --exclude *~ --exclude #*# --exclude *.tar.gz --exclude *.tgz --exclude changelog"
+excludelist="--exclude */.svn --exclude *~ --exclude #*# --exclude *.tar.gz --exclude *.tgz --exclude changelog --exclude gip/var/logs/*.log"
 
 if [ -z "$GIP_RELEASE_LOCATION" ] ; then
     export GIP_RELEASE_LOCATION=/tmp

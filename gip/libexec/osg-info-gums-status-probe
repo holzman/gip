@@ -19,7 +19,7 @@ GUMS_CLIENT_CONFIG_FILE=${VDT_LOCATION}/gums/config/gums-client.properties
 BAD_UID_MAPPING="null"
 #Prima configuration parameters
 PRIMA_CALLOUT=/etc/grid-security/gsi-authz.conf
-PRIMA_CALLOUT_STRING="libprima_authz_module_gcc"
+PRIMA_CALLOUT_STRING="libprima_authz_module"
 
 
 ###Inline utility functions

@@ -17,6 +17,7 @@ import socket
 import traceback
 import ConfigParser
 import urllib
+import tempfile
 
 from UserDict import UserDict
 
@@ -1044,5 +1045,10 @@ def getFQDNBySiteName(cp, sitename):
             break
     return fqdn
     
-    
-    
+def getTempFilename():
+    try:
+        conffile = tempfile.NamedTemporaryFile()
+        conffile = conffile.name
+    except:
+        conffile = tempfile.mktemp()
+    return conffile

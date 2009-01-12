@@ -4,6 +4,7 @@ A generic provider for storage elements; written for the StorageElement class
 in gip_storage.
 """
 
+import sys
 import gip_sets as sets
 import socket
 
@@ -344,10 +345,12 @@ def print_SE(se, cp):
     except Exception, e:
         log.exception(e)
 
-    try:
-        print_access(se, cp)
-    except Exception, e:
-        log.exception(e)
+    advertise_accesspoints = cp_getBoolean(cp, "gip", "advertise_accesspoints", "True")
+    if advertise_accesspoints:
+        try:
+            print_access(se, cp)
+        except Exception, e:
+            log.exception(e)
 
 def print_SRM(se, cp):
     """

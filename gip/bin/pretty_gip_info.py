@@ -44,7 +44,7 @@ class SiteInfoToXml:
         runCommand(rm_cmd)
         
     def transform(self):
-        transform_cmd = "xsltproc -v -o %s %s %s" % (self.html_file, self.xsl_file, self.xml_file)
+        transform_cmd = "xsltproc -o %s %s %s" % (self.html_file, self.xsl_file, self.xml_file)
         runCommand(transform_cmd)
         
     def getEntries(self):
@@ -244,18 +244,6 @@ class SiteInfoToXml:
                                    }
                 se["ControlProtocol"].append(control_protocol)
 
-            elif stanza_type == "GlueSiteUniqueID":
-                self.site["Name"] = " ".join(map(str, entry.glue['SiteName']))
-                self.site["Location"] = " ".join(map(str, entry.glue['SiteLocation'][0])) 
-                self.site["Coords"] = "%s/%s" % (entry.glue['SiteLongitude'][0], entry.glue['SiteLatitude'][0]) 
-                self.site["Policy"] = " ".join(map(str, entry.glue['SiteWeb']))
-                self.site["Sponsor"] = ", ".join(map(str, entry.glue['SiteSponsor']))
-                self.site["TimeStamp"] = ""
-                self.site["Email"] = " ".join(map(str, entry.glue['SiteEmailContact']))
-                self.site["UserSupport"] = " ".join(map(str, entry.glue['SiteUserSupportContact']))
-                self.site["Admin"] = " ".join(map(str, entry.glue['SiteSysAdminContact']))
-                self.site["Security"] =  " ".join(map(str, entry.glue['SiteSecurityContact']))
-
             elif stanza_type == "GlueClusterUniqueID":
                 cluster_name = " ".join(map(str, entry.glue['ClusterName']))
                 found, cluster = self.findEntry(self.site["cluster"], "Name", cluster_name)
@@ -294,8 +282,27 @@ class SiteInfoToXml:
                                "Memory" : "%s/%s" % (entry.glue['HostMainMemoryRAMSize'][0], entry.glue['HostMainMemoryVirtualSize'][0])
                               }
                 cluster["subcluster"].append(sub_cluster)
+
+            elif stanza_type == "GlueSiteUniqueID":
+                self.site["Name"] = " ".join(map(str, entry.glue['SiteName']))
+                self.site["Location"] = " ".join(map(str, entry.glue['SiteLocation'][0])) 
+                self.site["Coords"] = "%s/%s" % (entry.glue['SiteLongitude'][0], entry.glue['SiteLatitude'][0]) 
+                self.site["Policy"] = " ".join(map(str, entry.glue['SiteWeb']))
+                self.site["Sponsor"] = ", ".join(map(str, entry.glue['SiteSponsor']))
+                self.site["Email"] = " ".join(map(str, entry.glue['SiteEmailContact']))
+                self.site["UserSupport"] = " ".join(map(str, entry.glue['SiteUserSupportContact']))
+                self.site["Admin"] = " ".join(map(str, entry.glue['SiteSysAdminContact']))
+                self.site["Security"] =  " ".join(map(str, entry.glue['SiteSecurityContact']))
+
+            elif stanza_type == "GlueLocationLocalID":
+                #dn: GlueLocationLocalID=TIMESTAMP
+                stanza_type_value = dn[0].split("=")[1]
+                if stanza_type_value == "TIMESTAMP":
+                    self.site["TimeStamp"] = " ".join(map(str, entry.glue['LocationPath'])) 
+
             else:
                 continue
+
         return
 
     def addChild(self, leaf, child_name, text=""):

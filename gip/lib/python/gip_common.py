@@ -1061,5 +1061,5 @@ def getTempFilename():
 def configContents(cp, stream=sys.stderr):
     for section in cp.sections():
         print >> stream, "***" + section + "***"
-        for item in cp2.items(section):
+        for item in cp.items(section):
             print >> stream, item

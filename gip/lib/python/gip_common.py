@@ -1053,3 +1053,9 @@ def getTempFilename():
     except:
         conffile = tempfile.mktemp()
     return conffile
+
+def configContents(cp, stream=sys.stderr):
+    for section in cp.sections():
+        print >> stream, "***" + section + "***"
+        for item in cp2.items(section):
+            print >> stream, item

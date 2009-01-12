@@ -165,7 +165,10 @@ def configOsg(cp):
             cp.set('condor', 'Closed')
     except:
         pass
-
+    
+    # get all the items in the [GIP] section of the config.ini
+    gip_items = cp2.items("GIP")
+    gip_handled_items = []
     # The write_config helper function
     def __write_config(section2, option2, section, option): \
             #pylint: disable-msg=C0103
@@ -175,6 +178,10 @@ def configOsg(cp):
         To avoid circular dependencies, this is a copy of the __write_config in
         gip_common
         """
+        # as we encounter the [GIP] items, add them to the handled list
+        if (section2 == gip_sec) and (not (option2 in gip_handled_items)):
+            gip_handled_items.append(option2)
+
         try:
             new_val = cp2.get(section2, option2)
         except:
@@ -308,6 +315,11 @@ def configOsg(cp):
     __write_config(gip_sec, "bdii", "bdii", "endpoint")
     __write_config(gip_sec, "tmp_var", "cluster", "simple")
     __write_config(gip_sec, "tmp_var", "cesebind", "simple")
+
+    # add all [GIP] items that have not already been handled to the config object
+    for item in gip_items:
+        if not item[0] in gip_handled_items:
+            __write_config(gip_sec, item[0], gip_sec.lower(), item[0])
 
 def configSubclusters(cp, cp2):
     """

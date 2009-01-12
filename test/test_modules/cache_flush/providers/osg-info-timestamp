@@ -24,8 +24,8 @@ def main():
 
         # Dictionary of data to fill in for GlueLocationLocalID
         info = {'locationId':   'TIMESTAMP',
-                'subClusterId': cp.get('ce', 'name'),
-                'clusterId':    cp.get('ce', 'name'),
+                'subClusterId': "UNKNOWN_SUBCLUSTER",
+                'clusterId':    "UNKNOWN_CLUSTER",
                 'locationName': 'TIMESTAMP',
                 'version':      epoch,
                 'path':         now,

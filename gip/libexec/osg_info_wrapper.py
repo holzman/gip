@@ -304,6 +304,8 @@ def handle_plugins(entries, plugins):
             if compareDN(entry, p_entry):
                 for glue, value in p_entry.glue.items():
                     entry.glue[glue] = value
+                for key, value in p_entry.nonglue.items():
+                    entry.nonglue[key] = value
     return entries
 
 def wait_children(pids, response):

@@ -91,11 +91,11 @@ class LdapData:
                 continue
             else:
                 if multi and attr in nonglue:
-                    glue[attr].append(val)
+                    nonglue[attr].append(val)
                 elif multi:
-                    glue[attr] = [val]
+                    nonglue[attr] = [val]
                 else:
-                    glue[attr] = val
+                    nonglue[attr] = val
                 #raise ValueError("Invalid data:\n%s\nBad attribute:%s" % (data,
                 #    attr))
         objectClass.sort()

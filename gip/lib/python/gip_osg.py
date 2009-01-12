@@ -239,6 +239,7 @@ def configOsg(cp):
     __write_config(gip_sec, "srm_implementation", se, "implementation")
     __write_config(gip_sec, "dynamic_dcache", se, "dynamic_dcache")
     __write_config(gip_sec, "srm", se, "srm_present")
+    __write_config(gip_sec, "advertise_gums", site, "advertise_gums")
 
     # Try to auto-detect the batch manager.
     mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge'}

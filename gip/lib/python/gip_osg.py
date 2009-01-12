@@ -167,7 +167,10 @@ def configOsg(cp):
         pass
     
     # get all the items in the [GIP] section of the config.ini
-    gip_items = cp2.items("GIP")
+    try:
+        gip_items = cp2.items("GIP")
+    except ConfigParser.NoSectionError:
+        gip_items = []
     gip_handled_items = []
     # The write_config helper function
     def __write_config(section2, option2, section, option): \

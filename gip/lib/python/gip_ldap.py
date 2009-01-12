@@ -19,6 +19,7 @@ class _hdict(dict): #pylint: disable-msg=C0103
         items.sort()
         return hash(tuple(items))
 
+
 class LdapData:
 
     """
@@ -36,6 +37,12 @@ class LdapData:
     Otherwise, it is just a single string.
     """
 
+    nonglue = {}
+    """
+    Dictionary representing arbitrary non-GLUE attributes.  Handled similarly
+    to the GLUE attributes.
+    """
+
     objectClass = []
     """
     A list of the GLUE objectClasses this entry implements.
@@ -49,6 +56,7 @@ class LdapData:
     def __init__(self, data, multi=False):
         self.ldif = data
         glue = {}
+        nonglue = {}
         objectClass = []
         for line in self.ldif.split('\n'):
             if line.startswith('dn: '):
@@ -82,8 +90,14 @@ class LdapData:
             elif attr.lower() == 'mds-vo-name':
                 continue
             else:
-                raise ValueError("Invalid data:\n%s\nBad attribute: %s" % (data,
-                    attr))
+                if multi and attr in nonglue:
+                    glue[attr].append(val)
+                elif multi:
+                    glue[attr] = [val]
+                else:
+                    glue[attr] = val
+                #raise ValueError("Invalid data:\n%s\nBad attribute:%s" % (data,
+                #    attr))
         objectClass.sort()
         self.objectClass = tuple(objectClass)
         try:
@@ -94,6 +108,10 @@ class LdapData:
         for entry in glue:
             if multi:
                 glue[entry] = tuple(glue[entry])
+        for entry in nonglue:
+            if multi:
+                nonglue[entry] = tuple(nonglue[entry])
+        self.nonglue = _hdict(nonglue)
         self.glue = _hdict(glue)
         self.multi = multi
 
@@ -118,16 +136,24 @@ class LdapData:
             else:
                 for value in values:
                     ldif += 'Glue%s: %s\n' % (entry, value)
+        for entry, values in self.nonglue.items():
+            if not self.multi:
+                ldif += '%s: %s\n' % (entry, values)
+            else:
+                for value in values:
+                    ldif += '%s: %s\n' % (entry, value)
         return ldif
 
     def __hash__(self):
-        return hash(tuple([normalizeDN(self.dn), self.objectClass, self.glue]))
+        return hash(tuple([normalizeDN(self.dn), self.objectClass, self.glue, self.nonglue]))
 
     def __str__(self):
         output = 'Entry: %s\n' % str(self.dn)
         output += 'Classes: %s\n' % str(self.objectClass)
         output += 'Attributes: \n'
         for key, val in self.glue.items():
+            output += ' - %s: %s\n' % (key, val)
+        for key, val in self.nonglue.items():
             output += ' - %s: %s\n' % (key, val)
         return output
 
@@ -138,8 +164,13 @@ class LdapData:
             return False
         if not compareLists(ldif1.glue.keys(), ldif2.glue.keys()):
             return False
+        if not compareLists(ldif1.nonglue.keys(), ldif2.nonglue.keys()):
+            return False
         for entry in ldif1.glue:
             if not compareLists(ldif1.glue[entry], ldif2.glue[entry]):
+                return False
+        for entry in ldif1.nonglue:
+            if not compareLists(ldif1.nonglue[entry], ldif2.nonglue[entry]):
                 return False
         return True
 

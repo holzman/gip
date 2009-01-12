@@ -669,7 +669,11 @@ def printTemplate(template, info):
     @type info: Dictionary
     @param template: Template string returned from getTemplate.
     """
-    print template % info
+    populatedTemplate = (template % info).split('\n')
+    test = re.compile('.*__GIP_DELETEME.*')
+    for line in populatedTemplate:
+        deletable = test.match(line)
+        if not deletable: print line
 
 def voList(cp, vo_map=None):
     """

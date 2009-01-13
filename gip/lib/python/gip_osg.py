@@ -169,7 +169,7 @@ def configOsg(cp):
     # get all the items in the [GIP] section of the config.ini
     try:
         gip_items = cp2.items("GIP")
-    except ConfigParser.NoSectionError:
+    except:
         gip_items = []
     gip_handled_items = []
     # The write_config helper function
@@ -261,6 +261,7 @@ def configOsg(cp):
         cp.set("se", "srm_version", "1.1.0")
     __write_config(gip_sec, "srm_version", se, "version")
     __write_config(gip_sec, "advertise_gsiftp", "classic_se", "advertise_se")
+    __write_config(gip_sec, "gsiftp_host", "classic_se", "host")
 
     # Calculate the default path for each VO
     root_path = cp_get(cp2, gip_sec, "se_root_path", "/")

@@ -46,6 +46,7 @@ class TestPbsDynamic(unittest.TestCase):
         os.environ['GIP_TESTING'] = '1'
         cp = config("test_configs/red.conf")
         vo_queues = Set(getVoQueues(cp))
+        print vo_queues
         diff = vo_queues.symmetric_difference(example_queues)
         self.assertEquals(len(diff), 0, msg="The following VO-queues are " \
             "different between the expected and actual: %s" % str(diff))

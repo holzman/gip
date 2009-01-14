@@ -405,8 +405,12 @@ def getVoQueues(cp):
         if 'users' in qinfo or 'groups' in qinfo:
             acl_vos = parseAclInfo(queue, qinfo, voMap)
             volist.intersection_update(acl_vos)
-            if not volist:
-                continue
+        # Force any VO in the whitelist to show up in the volist, even if it
+        # isn't in the acl_users / acl_groups
+        for vo in whitelist:
+            if vo not in volist:
+                volist.add(vo)
+        # Apply white and black lists
         for vo in volist:
             if (vo in blacklist or "*" in blacklist) and ((len(whitelist) == 0)\
                     or vo not in whitelist):

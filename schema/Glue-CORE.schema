@@ -62,9 +62,8 @@
 attributetype ( 1.3.6.1.4.1.3536.2.6.1.4.0.1
     NAME 'Mds-Vo-name'
     DESC 'Locally unique VO name'
-    EQUALITY caseIgnoreMatch
-    ORDERING caseIgnoreOrderingMatch
-    SUBSTR caseIgnoreSubstringsMatch
+    EQUALITY caseIgnoreIA5Match
+    SUBSTR caseIgnoreIA5SubstringsMatch
     SYNTAX 1.3.6.1.4.1.1466.115.121.1.26
     SINGLE-VALUE)
  

@@ -177,6 +177,7 @@ def interpolateConfig(cp):
     cp.set("gip_tests", "egee_port", "2170")
     cp.set("gip_tests", "interop_url", "http://oim.grid.iu.edu/publisher/get_osg_interop_bdii_ldap_list.php?grid=%s&format=html" % grid)
     if "ITB" in grid:
+        cp.set("bdii", "endpoint", "ldap://is-itb.grid.iu.edu:2170")
         cp.set("gip_tests", "bdii_addr", "is-itb.grid.iu.edu")
         cp.set("gip_tests", "egee_bdii", "pps-bdii.cern.ch")
         cp.set("gip_tests", "egee_bdii_conf_url", "http://egee-pre-production-service.web.cern.ch/egee-pre-production-service/bdii/pps-all-sites.conf")
@@ -191,6 +192,16 @@ def interpolateConfig(cp):
     cp.set("gip_tests", "schema_check_url", web_server + "/data/cemon_processed_osg/%s.processed?which=%s")
     cp.set("gip_tests", "validator_url", web_server + "/data/cemon_processed_osg/%s.processed?which=%s")
 
+    if cp_get(cp, "gip_tests", "compare_excludes", "") == "":
+        compare_excludes="GlueCEStateFreeJobSlots,GlueCEStateRunningJobs,GlueCEStateTotalJobs,GlueSiteLocation,GlueSAStateAvailableSpace,GlueSAStateUsedSpace"
+        cp.set("gip_tests", "compare_excludes", compare_excludes)
+
+    if cp_get(cp, "gip_tests", "enable_glite", "") == "":
+        cp.set("gip_tests", "enable_glite", "False")
+
+    if cp_get(cp, "gip_tests", "results_dir", "") == "":
+        results_dir = os.path.expandvars("$VDT_LOCATION/apache/htdocs/")
+        cp.set("gip_tests", "enable_glite", "False")
 
 def getTestConfig(args):
     cp = config()

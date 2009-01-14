@@ -215,17 +215,21 @@ class SiteInfoToXml:
                 door["NodeList"].append(node)
 
             elif stanza_type == "GlueServiceUniqueID":
-                service = {"Name" : " ".join(map(str, entry.glue['ServiceName'])), 
-                           "Type" : " ".join(map(str, entry.glue['ServiceType'])),
-                           "Version" : " ".join(map(str, entry.glue['ServiceVersion'])), 
-                           "SupportedVOs" : ", ".join(map(str, entry.glue['ServiceAccessControlRule'])), 
-                           "StatusInfo" : " ".join(map(str, entry.glue['ServiceStatusInfo'])), 
-                           "Status" : " ".join(map(str, entry.glue['ServiceStatus'])), 
-                           "WSDL" : " ".join(map(str, entry.glue['ServiceWSDL'])),
-                           "Endpoint": " ".join(map(str, entry.glue['ServiceEndpoint'])), 
-                           "URI" : " ".join(map(str, entry.glue['ServiceURI'])), 
-                           "AccessPointURL" : " ".join(map(str, entry.glue['ServiceAccessPointURL'])) 
-                          }
+                service = {}
+                service["Name"] = " ".join(map(str, entry.glue['ServiceName'])) 
+                service["Type"] = " ".join(map(str, entry.glue['ServiceType']))
+                service["Version"] = " ".join(map(str, entry.glue['ServiceVersion']))
+                try:
+                    service["SupportedVOs"] = ", ".join(map(str, entry.glue['ServiceAccessControlRule']))
+                except:
+                    # the GUMS service won't have ServiceAccessControlRule's
+                    service["SupportedVOs"] = " "
+                service["StatusInfo"] = " ".join(map(str, entry.glue['ServiceStatusInfo'])) 
+                service["Status"] = " ".join(map(str, entry.glue['ServiceStatus'])) 
+                service["WSDL"] = " ".join(map(str, entry.glue['ServiceWSDL']))
+                service["Endpoint"] = " ".join(map(str, entry.glue['ServiceEndpoint'])) 
+                service["URI"] = " ".join(map(str, entry.glue['ServiceURI'])) 
+                service["AccessPointURL"] = " ".join(map(str, entry.glue['ServiceAccessPointURL'])) 
                 self.site["service"].append(service)
                 
             elif stanza_type == "GlueSEControlProtocolLocalID":

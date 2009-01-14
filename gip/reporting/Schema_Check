@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 import GipUnittest
 from gip_ldap import read_ldap, query_bdii, getSiteList
 from gip_common import config, addToPath, getFQDNBySiteName
-from gip_testing import runTest, getTestConfig
+from gip_testing import runTest, getTestConfig, runCommand
 
 slap_conf = """
 include     /etc/openldap/schema/core.schema
@@ -48,6 +48,7 @@ class TestSchema(GipUnittest.GipTestCase):
         self.site = site
         self.name = 'testSchema_%s' % site
         self.slap_conf = createSlapConf()
+        self.info_file = getTempFilename()
         
     def testSchema(self):
         """
@@ -55,8 +56,7 @@ Test schema of site
         """
         fqdn = getFQDNBySiteName(self.cp, self.site)
         url = self.cp.get("gip_tests", "schema_check_url") % (fqdn, self.site)
-        info_file = getTempFilename()
-        fp2 = open(info_file, 'w')
+        fp2 = open(self.info_file, 'w')
         fp = urllib2.urlopen(url)
         ctr = 0
         for line in fp:
@@ -65,10 +65,15 @@ Test schema of site
                 self.failUnless(line.find("Error Message") < 0, msg="Site %s not serving with CEMon." % self.site)
             fp2.write(line)
         fp2.close()
-        stdin, fp3 = os.popen4(slap_cmd % {'slap_conf': self.slap_conf, 'slap_info': info_file})
+        stdin, fp3 = os.popen4(slap_cmd % {'slap_conf': self.slap_conf, 'slap_info': self.info_file})
         stdin.close()
         output = fp3.read()
         self.assertEquals(len(output), 0, msg="slapadd schema check failed for site %s.  Output:\n%s" % (self.site, output))
+    
+    def cleanup(self):
+        rm_cmd = "rm -rf %s"
+        runCommand(rm_cmd % self.slap_conf)
+        runCommand(rm_cmd % self.info_file)
 
 def main(args):
 

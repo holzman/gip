@@ -211,6 +211,7 @@ def configOsg(cp):
     __write_config(site_sec, "country", site, "country")
     __write_config(site_sec, "longitude", site, "longitude")
     __write_config(site_sec, "latitude", site, "latitude")
+    __write_config(site_sec, "group", site, "group")
     
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")

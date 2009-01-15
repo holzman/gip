@@ -4,7 +4,6 @@ import re
 import os
 import sys
 import copy
-import datetime
 import time
 
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))

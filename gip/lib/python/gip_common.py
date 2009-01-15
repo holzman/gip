@@ -1063,3 +1063,13 @@ def configContents(cp, stream=sys.stderr):
         print >> stream, "***" + section + "***"
         for item in cp.items(section):
             print >> stream, item
+
+def strContains(main_str, sub_str):
+    result = False
+    if py23:
+        result = sub_str in main_str
+    else:
+        contains = lambda haystack, needle: haystack.find(needle) > -1
+        if contains(main_str, sub_str) > 0: result = True
+    
+    return result

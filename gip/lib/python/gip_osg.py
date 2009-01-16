@@ -15,6 +15,7 @@ condor_sec = "Condor"
 sge_sec = 'SGE'
 storage_sec = 'Storage'
 gip_sec = 'GIP'
+dcache_sec = 'dcache'
 
 def cp_getInt(cp, section, option, default):
     """
@@ -411,7 +412,6 @@ def configSEs(cp, cp2):
       - version *
       - default_path *
       - vo_paths
-      - allowed_vos
 
     Looks for the above attributes in any section starting with the prefix
     "se"
@@ -458,3 +458,17 @@ def configSEs(cp, cp2):
             vo, path = vo.strip(), path.strip()
             cp2.set(my_sect, vo, path)
 
+        # Handle allowed VO's for dCache
+        spaces_re = re.compile("space_.+_vos")
+        if cp_get(cp, section, "implementation", "UNKNOWN") == "dcache":
+            if not cp2.has_section(dcache_sec):
+                cp2.add_section(dcache_sec)
+            spaces = split_re.split(cp_get(cp, section, "spaces", ""))
+            for option in cp.options(section):
+                is_space = spaces_re.match(option)
+                if not is_space: continue
+                allowed_vos = cp_get(cp, section, option, "")
+                if len(allowed_vos) > 0:
+                    cp2.set(dcache_sec, option, allowed_vos)
+        # Handle allowed VO's for bestman
+        # Yet to be implemented

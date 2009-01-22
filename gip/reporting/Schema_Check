@@ -70,7 +70,7 @@ Test schema of site
         self.assertEquals(len(output), 0, msg="slapadd schema check failed for site %s.  Output:\n%s" % (self.site, output))
     
     def cleanup(self):
-        rm_cmd = "rm -rf %s"
+        rm_cmd = "rm -f %s"
         runCommand(rm_cmd % self.slap_conf)
         runCommand(rm_cmd % self.info_file)
 

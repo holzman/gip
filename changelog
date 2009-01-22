@@ -26,6 +26,8 @@ Changelog
   to be simpler and more straightforward.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+== 1.0.8 ==
+* Fix missing and extraneous imports in token_info_provider.py
 
 == 1.0.7 ==
 * In configure_gip, check for globus only when looking for LSF queues

@@ -11,16 +11,22 @@ from gip_ldap import read_ldap
 class TestSiteTopology(unittest.TestCase):
 
     def setUp(self):
-        self.cp = config("test/test_configs/red.conf")
+        filename = 'test/test_configs/red.conf'
+        if not os.path.exists(filename):
+            filename = 'test_configs/red.conf'
+        self.filename = filename
+        self.cp = config(filename)
 
     def setUpLDAP(self, multi=False):
-        command = "$GIP_LOCATION/providers/site_topology.py"
+        command = "$GIP_LOCATION/providers/site_topology.py --config=%s" % \
+            self.filename
         stdout = os.popen(command)
         entries = read_ldap(stdout, multi=multi)
         return entries
 
     def test_exitcode(self):
-        command = "$GIP_LOCATION/providers/site_topology.py"
+        command = "$GIP_LOCATION/providers/site_topology.py --config=%s" % \
+            self.filename
         stdout = os.popen(command)
         stdout.read()
         self.failUnless(stdout.close() == None, msg="Site topology provider " \

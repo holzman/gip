@@ -160,7 +160,7 @@ Queue: oli
 Queue: lcgadmin
     queue_type = Execution
     Priority = 135
-    max_queueable = 2000
+    max_queueable = 183
     total_jobs = 0
     state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
 	:0 

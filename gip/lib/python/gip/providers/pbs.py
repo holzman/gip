@@ -71,6 +71,7 @@ def print_CE(cp):
             info['max_waiting'] = 999999
         if 'max_queuable' in info:
             info['max_total'] = info['max_queuable']
+            info['free_slots'] = min(info['free_slots'], info['max_queuable'])
         else:
             info['max_total'] = info['max_waiting'] + info['max_running']
         info['max_slots'] = 1

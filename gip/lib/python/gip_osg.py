@@ -130,7 +130,7 @@ def configOsg(cp):
         checkOsgConfigured(cp)
         
     # See if we have a special config.ini location
-    loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
+    loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/configs/current-config.ini")
     loc = os.path.expandvars(loc)
     # Load config.ini values
     cp2 = ConfigParser.ConfigParser()

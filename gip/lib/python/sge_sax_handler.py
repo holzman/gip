@@ -2,9 +2,12 @@ from xml.sax.handler import ContentHandler
 
 class QueueInfoParser(ContentHandler):
     def __init__(self):
-        self.currentQueueInfoElmList = list(['name', 'qtype', 'slots_used', 'slots_total', 'arch'])
-        self.currentJobInfoElmList = list(['JB_job_number', 'JB_job_number', 'JAT_prio', 'JB_name', \
-            'JB_owner', 'state', 'JAT_start_time', 'JB_submission_time', 'slots'])
+        self.currentQueueInfoElmList = list(['name', 'qtype', 'slots_used',
+            'slots_total', 'arch'])
+        self.currentJobInfoElmList = list(['JB_job_number', 'JB_job_number',
+            'JAT_prio', 'JB_name', 'JB_owner', 'state', 'JAT_start_time',
+            'JB_submission_time', 'slots'])
+            
 
     def startDocument(self):
         self.elmContents = ''
@@ -35,10 +38,12 @@ class QueueInfoParser(ContentHandler):
         import copy
         if name == 'Queue-List':
             self.currentQueueInfo['jobs'] = copy.deepcopy(self.currentJobList)
-            self.QueueList[self.currentQueueInfo['name']] = copy.deepcopy(self.currentQueueInfo)
+            self.QueueList[self.currentQueueInfo['name']] = copy.deepcopy(\
+                self.currentQueueInfo)
 
         elif name == 'job_list':
-            self.currentJobList[self.currentJobInfo['JB_job_number']] = copy.deepcopy(self.currentJobInfo)
+            self.currentJobList[self.currentJobInfo['JB_job_number']] = \
+                copy.deepcopy(self.currentJobInfo)
 
         elif name == 'job_info':
             if self.inJobInfo:
@@ -62,12 +67,14 @@ class QueueInfoParser(ContentHandler):
 
 class JobInfoParser(ContentHandler):
     def __init__(self):
-        self.currentJobInfoElmList = list(['JB_job_number', 'JAT_prio', 'JB_name', \
-            'JB_owner', 'state', 'JAT_start_time', 'JB_submission_time', 'slots'])
+        self.currentJobInfoElmList = list(['JB_job_number', 'JAT_prio',
+            'JB_name', 'JB_owner', 'state', 'JAT_start_time',
+            'JB_submission_time', 'slots'])
 
     def startDocument(self):
         self.elmContents = ''
         self.JobList = []
+        self.currentJobInfo = {}
 
     def startElement(self, name, attrs):
         if name == 'job_list':
@@ -87,5 +94,6 @@ class JobInfoParser(ContentHandler):
     def characters(self, ch):
         self.elmContents += str(ch)
 
-    def getQueueInfo(self):
+    def getJobInfo(self):
         return self.JobList
+

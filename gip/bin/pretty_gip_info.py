@@ -33,11 +33,18 @@ class SiteInfoToXml:
         self.html_file = os.path.expandvars(cp_get(cp, "gip", "pretty_gip_html", "$VDT_LOCATION/apache/htdocs/pretty_gip_info.html"))
         
     def main(self):
+        # get and save the LD_LIBRARY_PATH
+        ld_library_path = os.environ["LD_LIBRARY_PATH"]
+        # clear out the LD_LIBRARY_PATH - OSG includes apache which has a version 
+        # of libxml2 that is incompatible with libxslt on some systems
+        os.environ["LD_LIBRARY_PATH"] = ""
         self.getEntries()
         self.parseLdif()
         fileOverWrite(self.xml_file, self.buildXml())
         self.transform()
         self.cleanup()
+        # restore LD_LIBRARY_PATH
+        os.environ["LD_LIBRARY_PATH"] = ld_library_path
 
     def cleanup(self):
         rm_cmd = "rm -rf %s" % self.xml_file

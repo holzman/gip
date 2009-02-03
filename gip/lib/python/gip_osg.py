@@ -291,7 +291,7 @@ def configOsg(cp):
         "name":     "name",
         "numlcpus": "cores_per_node",
         "nodes":    "node_count",
-        "numcpus":  "cpus_per_node",
+        "numpcpus":  "cpus_per_node",
         "clock":    "cpu_speed_mhz",
         "ramsize":  "ram_size",
         "vendor":   "cpu_vendor",

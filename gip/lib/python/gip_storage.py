@@ -76,7 +76,7 @@ def getDefaultSE(cp):
         return _defaultSE
     default_se = cp_get(cp, "se", "name", "UNKNOWN")
     # if [se] name: ??? is "UNAVAILABLE" or not set, then try to get the default_se
-    if default_se == "UNKOWN" or default_se == "UNAVAILABLE":
+    if default_se == "UNKNOWN" or default_se == "UNAVAILABLE":
         default_se = cp_get(cp, "se", "default_se", "UNAVAILABLE")
     # if it is still UNAVAILABLE or not set, check to see if the classic SE is being 
     # advertised and use that

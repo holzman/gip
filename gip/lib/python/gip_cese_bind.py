@@ -9,6 +9,7 @@ from gip_storage import getPath
 from pbs_common import getQueueList as getPBSQueueList
 from lsf_common import getQueueList as getLSFQueueList
 from condor_common import getQueueList as getCondorQueueList
+from sge_common import getQueueList as getSGEQueueList
 from gip_sections import ce, cesebind, se
 
 def getCEList(cp):
@@ -31,6 +32,8 @@ def getCEList(cp):
         queue_entries = getLSFQueueList(cp)
     elif jobman == 'condor':
         queue_entries = getCondorQueueList(cp)
+    elif jobman == 'sge':
+        queue_entries = getSGEQueueList(cp)
     else:
         raise ValueError("Unknown job manager %s." % jobman)
     for queue in queue_entries:

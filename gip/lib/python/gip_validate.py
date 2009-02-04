@@ -123,7 +123,8 @@ This check tests the ldif as reported by cemon for:
         self.test_foreign_keys()
 
     def test_ce(self):
-        self.test_value_not_equal("GlueCE", "CEInfoDefaultSE", "UNAVAILABLE")
+        # Currently disabling the defaultSE check, will enable once we have agreement on the appropriate setting 
+        #self.test_value_not_equal("GlueCE", "CEInfoDefaultSE", "UNAVAILABLE")
         self.test_value_not_equal("GlueCE", "CEPolicyMaxCPUTime", "0")
         self.test_value_not_equal("GlueCE", "CEInfoTotalCPUs", "0")
         self.test_value_not_equal("GlueCE", "CEPolicyMaxWallClockTime", "0")
@@ -246,7 +247,13 @@ This check tests the ldif as reported by cemon for:
         Determine the unique ID for this site.
         """
         site_entries = read_bdii(self.cp, base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site, query="(objectClass=GlueSite)")
-        self.expectEquals(len(site_entries), 1, msg="Multiple GlueSite entries for site %s." % self.site)
+        message = ""
+        if len(site_entries) > 1:
+            message = "Multiple GlueSite entries for site %s." % self.site
+        elif len(site_entries) < 1:
+            message = "There are no GlueSite entries for site %s." % self.site
+            
+        self.expectEquals(len(site_entries), 1, msg=message)
         return site_entries[0].glue['SiteUniqueID']
 
     def getPath(self, surl):

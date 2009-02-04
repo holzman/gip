@@ -295,6 +295,12 @@ def print_SE(se, cp):
     """
     Emit the GLUE entities for the SE, based upon the StorageElement class.
     """
+    
+    # if the unique ID is UNKNOWN, a real SE does not exist, the classic SE
+    # will probably be invoked
+    seUniqueID = se.getUniqueID()
+    if seUniqueID == "UNKNOWN" or seUniqueID == "UNAVAILABLE": return
+    
     status = se.getStatus()
     version = se.getVersion()
 

@@ -1060,9 +1060,11 @@ def getTempFilename():
 
 def configContents(cp, stream=sys.stderr):
     for section in cp.sections():
-        print >> stream, "***" + section + "***"
-        for item in cp.items(section):
-            print >> stream, item
+        print >> stream, "[%s]" % section
+        for option in cp.options(section):
+            msg = "   %-25s : %s" % (option, cp.get(section, option))
+            print >> stream, msg
+        print >> stream, " "
 
 def strContains(main_str, sub_str):
     result = False

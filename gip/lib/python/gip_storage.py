@@ -75,6 +75,15 @@ def getDefaultSE(cp):
     if _defaultSE:
         return _defaultSE
     default_se = cp_get(cp, "se", "name", "UNKNOWN")
+    # if [se] name: ??? is "UNAVAILABLE" or not set, then try to get the default_se
+    if default_se == "UNKOWN" or default_se == "UNAVAILABLE":
+        default_se = cp_get(cp, "se", "default_se", "UNAVAILABLE")
+    # if it is still UNAVAILABLE or not set, check to see if the classic SE is being 
+    # advertised and use that
+    if default_se == "UNAVAILABLE" and cp_getBoolean(cp, "classic_se", "advertise_se", True):
+        fallback_name = siteUniqueID + "_classicSE"
+        default_se = cp_get(cp, "classic_se", "name", fallback_name)
+
     current_se = None
     for sect in cp.sections():
         if not sect.lower().startswith('se'):

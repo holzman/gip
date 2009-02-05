@@ -1,5 +1,9 @@
 Changelog
-
+== 1.1.0rc1 ==
+* More fleshed out (but probably still broken) SGE provider 
+* Fix to include default SE and publish correctly
+* Revert to config.ini instead of current-config.ini
+	
 == 1.1.0 ==
 * Removal of gip-attributes.conf and configure_gip perl script, because: 
 * We now read config.ini directly
@@ -25,6 +29,7 @@ Changelog
 * Storage and subcluster configurations via config.ini have been refactored 
   to be simpler and more straightforward.
 
+	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 == 1.0.8 ==
 * Fix missing and extraneous imports in token_info_provider.py

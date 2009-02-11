@@ -219,11 +219,23 @@ def configOsg(cp):
     __write_config(pbs_sec, "wsgram", pbs, "wsgram")
     __write_config(pbs_sec, "enabled", pbs, "enabled")
     __write_config(pbs_sec, "job_contact", pbs, "contact_string")
-
+    
+    # attempt to put all the pbs options into the internal config object
+    # so that whitelisting and blacklisting work without having to resort to
+    # gip.conf
+    try:
+        for option in cp2.options(pbs_sec):
+            __write_config(pbs_sec, option, pbs, option)
+    except:
+        pass
+        
     # [Condor]
     __write_config(condor_sec, "condor_location", condor, "condor_location")
     __write_config(condor_sec, "wsgram", condor, "wsgram")
-
+    __write_config(condor_sec, "subtract_owner", condor, "subtract_owner")
+    __write_config(condor_sec, "status_constraint", condor, "status_constraint")
+    __write_config(condor_sec, "jobs_constraint", condor, "jobs_constraint")
+    
     # [SGE]
     __write_config(sge_sec, "sge_location", sge, "sge_path")
     __write_config(sge_sec, "sge_location", sge, "sge_root")

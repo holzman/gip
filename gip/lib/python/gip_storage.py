@@ -81,7 +81,7 @@ def getDefaultSE(cp):
     # if it is still UNAVAILABLE or not set, check to see if the classic SE is being 
     # advertised and use that
     if default_se == "UNAVAILABLE" and cp_getBoolean(cp, "classic_se", "advertise_se", True):
-        fallback_name = siteUniqueID + "_classicSE"
+        fallback_name = cp.get("site", "unique_name") + "_classicSE"
         default_se = cp_get(cp, "classic_se", "name", fallback_name)
 
     current_se = None

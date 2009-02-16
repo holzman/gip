@@ -5,7 +5,7 @@ Convenience tools for dealing with XML in the GIP.
 """
 
 import xml.dom.minidom
-from gip_common import fileRead
+from gip_common import fileRead, fileOverWrite
 from xml.sax import make_parser
 from xml.sax.handler import feature_external_ges
 
@@ -21,6 +21,10 @@ def getText(nodelist):
     for node in nodelist:
         if node.nodeType == node.TEXT_NODE:
             rc = rc + node.data
+        if node.childNodes:
+            for child in node.childNodes:
+                if child.nodeType == node.CDATA_SECTION_NODE:
+                    rc = rc + child.data
     return rc
 
 def getDom(source, sourcetype="string"):
@@ -57,4 +61,19 @@ def parseXmlSax(fp, handler):
     parser.setFeature(feature_external_ges, False)
     parser.parse(fp)
 
+def addChild(dom, leaf, child_name, text=""):
+    child = dom.createElement(child_name)
+    leaf.appendChild(child)
+    text = str(text)
+    if len(text) > 0:
+        txtNode = dom.createTextNode(text)
+        child.appendChild(txtNode)
+    
+    return child
 
+def writeXML(dom, filename, pretty=False):
+    if pretty:
+        contents = dom.toprettyxml()
+    else:
+        contents = dom.toxml()
+    fileOverWrite(filename, contents)

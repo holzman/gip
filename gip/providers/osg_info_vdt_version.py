@@ -6,6 +6,7 @@ import sys, time, os
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getTemplate, getLogger, printTemplate
 from gip_testing import runCommand
+from gip_cluster import getSubClusterIDs, getClusterID
 
 # Retrieve our logger in case of failure
 log = getLogger("GIP.timestamp")
@@ -24,19 +25,20 @@ def main():
         # Load up the template for GlueLocationLocalID
         # To view its contents, see $VDT_LOCATION/gip/templates/GlueCluster
         template = getTemplate("GlueCluster", "GlueLocationLocalID")
-
-        # Dictionary of data to fill in for GlueLocationLocalID
-        info = {'locationId':   'VDT_VERSION',
-                'subClusterId': cp.get('ce', 'name'),
-                'clusterId':    cp.get('ce', 'name'),
-                'locationName': 'VDT_VERSION',
-                'version':      vdt_version,
-                'path':         now,
-               }
-
-        # Spit out our template, fill it with the appropriate info.
-        printTemplate(template, info)
-
+        cluster_id = getClusterID(cp)
+        for subClusterId in getSubClusterIDs(cp):
+            # Dictionary of data to fill in for GlueLocationLocalID
+            info = {'locationId':   'VDT_VERSION',
+                    'subClusterId': subClusterId,
+                    'clusterId':    cluster_id,
+                    'locationName': 'VDT_VERSION',
+                    'version':      vdt_version,
+                    'path':         now,
+                   }
+    
+            # Spit out our template, fill it with the appropriate info.
+            printTemplate(template, info)
+            
     except Exception, e:
         # Log error, then report it via stderr.
         log.error(e)

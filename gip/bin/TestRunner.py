@@ -121,7 +121,13 @@ class TestRunner:
         self.runList(self.critical_tests, "critical")
 
         self.writeResultsPage()
-
+        
+        oim_plugin_enabled = cp_getBoolean(self.cp, "gip_tests", "enable_oim_plugin", False)
+        if oim_plugin_enabled:
+            oim_plugin = os.path.expandvars("$GIP_LOCATION/reporting/plugins/OIM_XML_Aggregator.py")
+            cmd = '/bin/bash -c "%(source)s; %(plugin)s "' % ({"source": self.source_cmd, "plugin": oim_plugin})
+            runCommand(cmd)
+            
 def main():
     tr = TestRunner()
     tr.runTests()

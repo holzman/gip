@@ -545,7 +545,8 @@ def main():
         # advertising a classic SE, then you do NOT want to run the 
         # handle_SE function or you will get duplicate and incorrect info 
         if section.lower().startswith("se_"):
-            handle_SE(cp, section)
+            advertise_se = cp_getBoolean(cp, section, "advertise_se", True)
+            if advertise_se: handle_SE(cp, section)
 
     # Handle the "classic" SE.
     try:

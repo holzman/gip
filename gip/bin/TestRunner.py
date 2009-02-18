@@ -122,7 +122,7 @@ class TestRunner:
 
         self.writeResultsPage()
         
-        oim_plugin_enabled = cp_getBoolean(self.cp, "gip_tests", "enable_oim_plugin", False)
+        oim_plugin_enabled = cp_getBoolean(self.cp, "gip_tests", "enable_myosg_plugin", False)
         if oim_plugin_enabled:
             oim_plugin = os.path.expandvars("$GIP_LOCATION/reporting/plugins/OIM_XML_Aggregator.py")
             cmd = '/bin/bash -c "%(source)s; %(plugin)s "' % ({"source": self.source_cmd, "plugin": oim_plugin})

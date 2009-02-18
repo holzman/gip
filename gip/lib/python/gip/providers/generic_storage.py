@@ -541,7 +541,10 @@ def main():
 
     # Handle full-fledged SEs
     for section in cp.sections():
-        if section.lower().startswith("se"):
+        # need to search for sections with "_" because if you are only 
+        # advertising a classic SE, then you do NOT want to run the 
+        # handle_SE function or you will get duplicate and incorrect info 
+        if section.lower().startswith("se_"):
             handle_SE(cp, section)
 
     # Handle the "classic" SE.

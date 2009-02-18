@@ -47,12 +47,17 @@ def getClassicSEList(cp):
     @param cp: Site configuration
     @returns: List of all the ClassicSE's unique_ids
     """
-    if not cp_getBoolean(cp, "classic_se", "advertise_se", False):
-        return []
-    classicSE = cp_get(cp, "classic_se", "host", None)
-    if not classicSE: # len(classicSE) == 0 or classicSE == None
-        return []
-    return [classicSE]
+    classic_list = []
+    if cp_getBoolean(cp, "classic_se", "advertise_se", False):
+        classicSE = cp_get(cp, "classic_se", "unique_name", None)
+        if classicSE:
+            classic_list = [classicSE]
+        else:
+            siteUniqueID = cp.get("site", "unique_name")
+            classicSE = siteUniqueID + "_classicSE"
+            classic_list = [classicSE]
+
+    return classic_list
 
 def getSEList(cp, classicSEs=True):
     """

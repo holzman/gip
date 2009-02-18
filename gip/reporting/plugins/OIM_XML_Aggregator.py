@@ -38,10 +38,10 @@ class OIM_XML:
     def setConfigValues(self):
         self.results_dir = cp_get(self.cp, "gip_tests", "results_dir", "UNKNOWN")
         if self.results_dir == "UNKNOWN": raise ConfigurationError("Results directory is not configured")
-        self.oim_xml_dir = cp_get(self.cp, "gip_tests", "oim_xml_dir", "UNKNOWN")
+        self.oim_xml_dir = cp_get(self.cp, "gip_tests", "myosg_xml_dir", "UNKNOWN")
         if self.oim_xml_dir == "UNKNOWN": raise ConfigurationError("OIM XML directory is not configured")
-        self.oim_summary_xml_file = "%s/%s" % (self.oim_xml_dir, cp_get(self.cp, "gip_tests", "oim_xml_file", "oim.xml"))
-        self.oim_detail_file_template = self.oim_xml_dir + "/" + cp_get(self.cp, "gip_tests", "oim_detail_file_template", "oim_%s_detail.xml")
+        self.oim_summary_xml_file = "%s/%s" % (self.oim_xml_dir, cp_get(self.cp, "gip_tests", "myosg_summary_file", "myosg.xml"))
+        self.oim_detail_file_template = self.oim_xml_dir + "/" + cp_get(self.cp, "gip_tests", "myosg_detail_file_template", "myosg_%s_detail.xml")
         self.oim_tests = cp_get(self.cp, "gip_tests", "oim_tests", self.oim_tests)
 
     def parseIndex(self):

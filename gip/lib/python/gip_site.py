@@ -15,28 +15,25 @@ def filter_sponsor(cp, text):
     text = text.replace('"', '').replace("'", '')
     entries = split_re.split(text)
     results = []
-    if len(entries) == 1:
-        results.append("%s:%i" % (vo, 100))
-    else:
-        for entry in entries:
-            try:
-                vo, number = entry.split(":")
-                number = float(number)
-            except:
-                log.warning("Entry for sponsor, `%s`, is not in <vo>:<value>" \
-                    "format." % str(entry))
-                continue
-            if vo in vo_map:
-                vo = vo_map[vo]
-            elif vo.startswith('us') and vo[2:] in vo_map:
-                vo = vo_map[vo[2:]]
-            elif vo.lower().startswith("local") or \
-                    vo.lower().startswith("unknown"):
-                pass # Do not log warning in this case.
-            else:
-                log.warning("VO named `%s` does not match any VO in" \
-                    " osg-user-vo-map.txt." % str(vo))
-            results.append("%s:%i" % (vo, int(number)))
+    for entry in entries:
+        try:
+            vo, number = entry.split(":")
+            number = float(number)
+        except:
+            log.warning("Entry for sponsor, `%s`, is not in <vo>:<value>" \
+                "format." % str(entry))
+            continue
+        if vo in vo_map:
+            vo = vo_map[vo]
+        elif vo.startswith('us') and vo[2:] in vo_map:
+            vo = vo_map[vo[2:]]
+        elif vo.lower().startswith("local") or \
+                vo.lower().startswith("unknown"):
+            pass # Do not log warning in this case.
+        else:
+            log.warning("VO named `%s` does not match any VO in" \
+                " osg-user-vo-map.txt." % str(vo))
+        results.append("%s:%i" % (vo, int(number)))
     return " ".join(results)
 
 def generateGlueSite(cp):

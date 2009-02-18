@@ -2,14 +2,11 @@
 
 import sys
 import os
-from pprint import pprint
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config
+from gip_common import configContents, config
 cp = config()
+configContents(cp)
 
-for section in cp.sections():
-    print section
-    pprint(cp.items(section))
 
 
 

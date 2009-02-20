@@ -10,6 +10,7 @@ from pbs_common import getQueueList as getPBSQueueList
 from lsf_common import getQueueList as getLSFQueueList
 from condor_common import getQueueList as getCondorQueueList
 from sge_common import getQueueList as getSGEQueueList
+from gip.batch_systems.forwarding import getQueueList as getForwardingQueueList
 from gip_sections import ce, cesebind, se
 
 def getCEList(cp):
@@ -34,6 +35,8 @@ def getCEList(cp):
         queue_entries = getCondorQueueList(cp)
     elif jobman == 'sge':
         queue_entries = getSGEQueueList(cp)
+    elif jobman == 'forwarding':
+        queue_entries = getForwardingQueueList(cp)
     else:
         raise ValueError("Unknown job manager %s." % jobman)
     for queue in queue_entries:

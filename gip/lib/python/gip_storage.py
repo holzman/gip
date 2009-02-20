@@ -81,7 +81,7 @@ def getDefaultSE(cp):
     # if it is still UNAVAILABLE or not set, check to see if the classic SE is being 
     # advertised and use that
     if default_se == "UNAVAILABLE" and cp_getBoolean(cp, "classic_se", "advertise_se", True):
-        fallback_name = cp.get("site", "unique_name") + "_classicSE"
+        fallback_name = cp_get(cp, "site", "unique_name", "UNKNOWN") + "_classicSE"
         default_se = cp_get(cp, "classic_se", "name", fallback_name)
 
     current_se = None
@@ -109,15 +109,20 @@ def voListStorage(cp, section=None):
     @param cp: Configuration for this site
     @type cp: ConfigParser
     """
-    if section and section in cp.section():
-        if "allowed_vos" in cp.options():
+    log.debug("Listing storage VOs for section %s." % str(section))
+    if section and section in cp.sections():
+        if "allowed_vos" in cp.options(section):
             gip_common = __import__("gip_common")
             real_list = gip_common.voList(cp)
-            lookup_vo = dict([(vo.lower, vo) for vo in real_list])
+            lookup_vo = dict([(vo.lower(), vo) for vo in real_list])
             vo_set = sets.Set()
             for vo in split_re.split(cp.get(section, "allowed_vos")):
+                vo = vo.lower()
+                if vo in ['usatlas', 'uscms']:
+                    vo = vo[2:]
                 if vo in lookup_vo:
                     vo_set.add(lookup_vo[vo])
+            log.debug("Valid VOs: %s" % ", ".join(vo_set))
             return vo_set
     try:
         autodetect = cp.getboolean("vo", "autodetect_storage_vos")
@@ -494,7 +499,7 @@ class StorageElement(object):
         acbr_tmpl = '\nGlueServiceAccessControlRule: %s\n' \
             'GlueServiceAccessControlRule: VO:%s'
         acbr = ''
-        vos = voListStorage(self._cp)
+        vos = voListStorage(self._cp, self._section)
         for vo in vos:
             acbr += acbr_tmpl % (vo, vo)
        
@@ -695,7 +700,7 @@ class StorageElement(object):
         """
         Given a certain space, return a list of 
         """
-        return voListStorage(self._cp)
+        return voListStorage(self._cp, self._section)
 
     def getPathForSA(self, space=None, vo=None, return_default=True,
             section='se'):
@@ -740,6 +745,8 @@ class StorageElement(object):
             return default_path
         vo_specific_paths = cp_get(self._cp, section, "space_%s_path" % space,
            None)
+        if vo_specific_paths == None:
+            vo_specific_paths = cp_get(self._cp, section, "vo_dirs", None)
         vo_specific_path = None
         if vo_specific_paths:
             for value in vo_specific_paths.split(','):

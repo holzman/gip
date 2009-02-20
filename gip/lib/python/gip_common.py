@@ -13,6 +13,7 @@ __author__ = "Brian Bockelman"
 import os
 import re
 import sys
+import types
 import socket
 import traceback
 import ConfigParser
@@ -811,6 +812,27 @@ def cp_getInt(cp, section, option, default):
         return int(str(cp_get(cp, section, option, default)).strip())
     except:
         return default
+
+split_re = re.compile("\s*,?\s*")
+def cp_getList(cp, section, option, default):
+    """
+    Helper function for ConfigParser objects which allows setting the default.
+    Returns a list, or the default if it can't make one.
+
+    @param cp: ConfigParser object
+    @param section: Section of the config parser to read
+    @param option: Option in section to retrieve
+    @param default: Default value if the section/option is not present.
+    @returns: Value stored in the CP for section/option, or default if it is
+        not present.
+    """
+    try:
+        results = cp_get(cp, section, option, default)
+        if isinstance(results, types.StringType):
+            results = split_re.split(results)
+        return results
+    except:
+        return list(default)
 
 def pathFormatter(path, slash=False):
     """

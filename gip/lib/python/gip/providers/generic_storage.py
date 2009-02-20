@@ -79,8 +79,10 @@ def print_SA(se, cp, section="se"): #pylint: disable-msg=W0613
             else:
                 sa['allocatedOnline'] = sa.get('totalOnline', 0)
         # Check that installed capacity is >= total online
-        if sa.get('installedCapacity', None) == None:
-            sa['installedCapacity'] = sa.get('totalOnline', 0)
+        if sa.get('installedOnlineCapacity', None) == None:
+            sa['installedOnlineCapacity'] = sa.get('totalOnline', 0)
+        if sa.get('installedNearlineCapacity', None) == None:
+            sa['installedNearlineCapacity'] = sa.get('totalNearline', 0)
         # Finally, print out the SA.
         try:
             print_single_SA(sa, se, cp)
@@ -100,7 +102,8 @@ def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
     info.setdefault('path', '/UNKNOWN')
     info.setdefault('filetype', 'permanent')
     info.setdefault('saName', info['saLocalID'])
-    info.setdefault('installedCapacity', info.get('totalOnline', 0))
+    info.setdefault('installedOnlineCapacity', info.get('totalOnline', 0))
+    info.setdefault('installedNearlineCapacity', info.get('totalNearline', 0))
     info.setdefault('totalOnline', 0)
     info.setdefault('usedOnline', 0)
     info.setdefault('freeOnline', 0)
@@ -223,7 +226,7 @@ def print_classicSE(cp):
     nu, _, nt = getSETape(cp)
 
     bdiiEndpoint = cp.get("bdii", "endpoint")
-    siteUniqueID = cp.get("site", "unique_name")
+    siteUniqueID = cp_get(cp, "site", "unique_name", "UNKNOWN")
     implementation = cp_get(cp, "classic_se", "implementation", "classicSE")
     arch = 'other'
 
@@ -270,7 +273,8 @@ def print_classicSE(cp):
             "filetype"         : "permanent",
             "saName"           : seUniqueID,
             "totalOnline"      : int(round(total/1000**2)),
-            "installedCapacity": int(round(total/1000**2)),
+            "installedOnlineCapacity": 0,
+            "installedNearlineCapacity": 0,
             "usedOnline"       : int(round(used/1000**2)),
             "freeOnline"       : int(round(available/1000**2)),
             "reservedOnline"   : 0,
@@ -384,6 +388,12 @@ def print_single_SRM(info, se, cp):
     info.setdefault('startTime', '1970-01-01T00:00:00Z')
     info.setdefault('statusInfo', 'OK')
     endpoint = info.get('endpoint', 'httpg://example.org:8443/srm/managerv2')
+
+    # Filter endpoint to make it acceptable!
+    endpoint.replace('srm://', 'httpg://')
+    sfn_loc = endpoint.find('?SFN=')
+    if sfn_loc >= 0:
+        endpoint = endpoint[:sfn_loc]
     info['protocolType'] = 'SRM'
     info['serviceType'] = 'SRM'
     info['capability'] = 'control'

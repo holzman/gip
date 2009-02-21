@@ -9,6 +9,7 @@ import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, printTemplate, cp_get
 from gip_cluster import getClusterID
 from gip_sections import ce
+from gip_storage import getDefaultSE
 
 from sge_common import getQueueInfo, getJobsInfo, getLrmsInfo, getVoQueues, \
     getQueueList
@@ -63,7 +64,7 @@ def print_CE(cp):
             "contact_string" : unique_id,
             "app_dir" : cp_get(cp, 'osg_dirs', 'app', "/OSG_APP_UNKNOWN"),
             "data_dir" : cp_get(cp, 'osg_dirs', 'data', "/OSG_DATA_UNKNOWN"),
-            "default_se" : cp_get(cp, 'se', 'name', "DEFAULT_SE"),
+            "default_se" : getDefaultSE(cp),
             "max_running" : queue["slots_total"],
             "max_wall" : queue["max_wall"],
             "max_waiting" : default_max_waiting,
@@ -99,7 +100,7 @@ def print_VOViewLocal(cp):
             'free_slots'  : 0, #TODO: fix
             'ert'         : 3600,
             'wrt'         : 3600,
-            'default_se'  : cp_get(cp, "se", "name", "DEFAULT_SE"),
+            'default_se'  : getDefaultSE(cp),
             'app'         : cp_get(cp, "osg_dirs", "app", "/OSG_APP_UNKNOWN"),
             'data'        : cp_get(cp, "osg_dirs", "data", "/OSG_DATA_UNKNOWN"),
         }

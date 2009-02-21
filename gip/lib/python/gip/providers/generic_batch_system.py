@@ -37,7 +37,7 @@ def print_CE(batch):
             info["free_slots"] = 0
         else:
             if queue in queueCpus:
-                info["free_slots"] = queueCpus[queue]
+                info["free_slots"] = queueCpus[queue][1]
             else:
                 info["free_slots"] = freeCpu
         info["queue"] = queue
@@ -45,7 +45,10 @@ def print_CE(batch):
         unique_id = '%s:2119/jobmanager-%s-%s' % (ce_name, system_name, queue)
         info['ceUniqueID'] = unique_id
         if "job_slots" not in info:
-            info["job_slots"] = totalCpu
+            if queue in queueCpus:
+                info['job_slots'] = queueCpus[queue][0]
+            else:
+                info["job_slots"] = totalCpu
         if "priority" not in info:
             info["priority"] = 0
         if "max_running" not in info:
@@ -147,8 +150,8 @@ def main():
         else:
             log.error("Unknown job manager: %s" % impl)
             sys.exit(1)
-        queueInfo, totalCpu, freeCpu, queueCpus = print_CE(cp)
-        print_VOViewLocal(queueInfo, cp)
+        queueInfo, totalCpu, freeCpu, queueCpus = print_CE(batch)
+        print_VOViewLocal(queueInfo, batch)
     except Exception, e:
         sys.stdout = sys.stderr
         log.error(e)

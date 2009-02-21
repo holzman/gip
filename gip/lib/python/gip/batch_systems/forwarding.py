@@ -7,9 +7,10 @@ import re
 import urllib2
 import cStringIO
 
-from gip_common import cp_get, cp_getList, getLogger, printTemplate
+from gip_common import cp_get, cp_getList, getLogger, printTemplate, \
+    normalizeFQAN
 from gip_cluster import getClusterName
-from condor_common import condorCommand
+from condor_common import condorCommand, condor_version
 from gip_ldap import read_bdii, read_ldap
 from gip_sections import forwarding
 from batch_system import BatchSystem
@@ -24,7 +25,7 @@ class Forwarding(BatchSystem):
     def __init__(self, cp):
         super(Forwarding, self).__init__(cp)
         self.getInputs()
-        self.sites = self.cp_getList(cp, forwarding, "sites", [])
+        self.sites = cp_getList(self.cp, forwarding, "sites", [])
         if not self.sites:
             exc = Exception("No forwarding sites given!")
             log.exception(exc)
@@ -90,6 +91,7 @@ class Forwarding(BatchSystem):
                     self.forward_ces.append(ce)
                     id = ce.glue['CEUniqueID'][0]
                     self.ce_map[id] = ce
+                    ce_unique_ids.append(id)
         self.forward_voviews = []
         self.vo_to_ce_map = {}
         for voview in self.filterObject("GlueVOView"):
@@ -99,7 +101,7 @@ class Forwarding(BatchSystem):
                     self.forward_voviews.append(voview)
                     self.vo_to_ce_map[voview] = self.ce_map[id]
 
-    def groupAttribute(self, attr, listing, type='int'):
+    def groupAttribute(self, attr, listing, type='int', agg_func=sum):
         results = {}
         for ce in listing:
             try:
@@ -113,20 +115,28 @@ class Forwarding(BatchSystem):
                 if attr in ce.nonglue:
                     val = ce.nonglue[attr]
                 if type == 'int':
-                    val = sum([int(i) for i in val])
-                if host in results and results[host] and not val:
-                    continue
-                results[host] = val 
-            except:
-                pass
+                    val = [int(i) for i in val]
+                    results_val = results.setdefault(host, 0)
+                    val.append(results_val)
+                    results[host] = agg_func(val)
+                else:
+                    results.setdefault(host, [])
+                    results[host] += val
+            except Exception, e:
+                log.exception(e)
+        return results
 
-    def addCEAttribute(self, attr):
-        values = groupAttribute(attr, self.forward_ces).values()
+    def addCEAttribute(self, attr, agg_func=sum):
+        values = self.groupAttribute(attr, self.forward_ces).values()
         return sum(values)
 
     def maxCEAttribute(self, attr):
-        values = groupAttribtues(attr, self.forward_ces).values()
+        values = self.groupAttribute(attr, self.forward_ces).values()
         return max(values)
+
+    def allCEAttribute(self, attr):
+        result = self.groupAttribute(attr, self.forward_ces, type='str')
+        return result.values()
 
     def groupVOAttribute(self, attr, filter_vo):
         results = {}
@@ -146,13 +156,15 @@ class Forwarding(BatchSystem):
                 ce_dict[ce_id] = val
             except:
                 pass
+        return results
 
     def addVOAttribute(self, attr, vo):
-        values = groupVOAttribute(attr, vo).values()
+        values = self.groupVOAttribute(attr, vo).values()
         return sum([sum(i.values()) for i in values])
 
     def unionCEAttribute(self, attr):
-        values = groupAttribute(attr, self.forward_ces).values()
+        values = self.groupAttribute(attr, self.forward_ces, type='str').\
+            values()
         results = sets.Set()
         for val in values:
             results.update(val)
@@ -165,7 +177,7 @@ class Forwarding(BatchSystem):
         @returns: The condor version
         @rtype: string
         """
-        for line in condorCommand(condor_version, cp):
+        for line in condorCommand(condor_version, self.cp):
             if line.startswith("$CondorVersion:"):
                 version = line[15:].strip()
                 log.info("Running condor version %s." % version)
@@ -205,9 +217,9 @@ class Forwarding(BatchSystem):
     def getJobsInfo(self):
         results = {}
         for vo, _ in self.getVoQueues():
-            running = self.addVOAttributes('CEStateRunningJobs', vo)
-            waiting = self.addVOAttributes('CEStateWaitingJobs', vo)
-            total = self.addVOAttributes('CEStateTotalJobs', vo)
+            running = self.addVOAttribute('CEStateRunningJobs', vo)
+            waiting = self.addVOAttribute('CEStateWaitingJobs', vo)
+            total = self.addVOAttribute('CEStateTotalJobs', vo)
             results[vo] = {'running': running, 'waiting': waiting,
                 'total': total}
         return {'default': results}
@@ -229,13 +241,32 @@ class Forwarding(BatchSystem):
         results['priority'] = 1
         results['max_wall'] = self.maxCEAttribute('CEPolicyMaxWallClockTime')
         results['max_running'] = self.maxCEAttribute('CEPolicyMaxRunningJobs')
-        results['running'] = self.sumCEAttribute('CEStateRunningJobs')
-        results['wait'] = self.sumCEAttribute('CEStateWaitingJobs')
-        results['total'] = self.sumCEAttribute('CEStateTotalJobs')
+        results['running'] = self.addCEAttribute('CEStateRunningJobs')
+        results['wait'] = self.addCEAttribute('CEStateWaitingJobs')
+        results['total'] = self.addCEAttribute('CEStateTotalJobs')
         return {'default': results}
 
     def parseNodes(self):
-        total_cpus = self.sumCEAttribute('CEInfoTotalCPUs')
-        free_cpus = self.sumCEAttribute('CEStateFreeCPUs')
-        return tutal_cpus, free_cpus, {'default': (total_cpus, free_cpus)}
+        total_cpus = self.specialCPUsParser(self.allCEAttribute(\
+            'CEInfoTotalCPUs'))
+        free_cpus = self.specialCPUsParser(self.allCEAttribute(\
+            'CEStateFreeCPUs'))
+        return total_cpus, free_cpus, {'default': (total_cpus, free_cpus)}
+
+    def specialCPUsParser(self, ce_info):
+        csum = 0
+        for info in ce_info:
+            # Skip empty list
+            if not info:
+                continue
+            try:
+                info = [int(i) for i in info]
+            except:
+                pass
+            # If the CE has all the same values, return the value
+            if min(info) == max(info):
+                csum += info[0]
+            else: # Return the sum of the values
+                csum += sum(info)
+        return csum
 

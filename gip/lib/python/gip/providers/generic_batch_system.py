@@ -152,6 +152,7 @@ def main():
             sys.exit(1)
         queueInfo, totalCpu, freeCpu, queueCpus = print_CE(batch)
         print_VOViewLocal(queueInfo, batch)
+        batch.printAdditional()
     except Exception, e:
         sys.stdout = sys.stderr
         log.error(e)

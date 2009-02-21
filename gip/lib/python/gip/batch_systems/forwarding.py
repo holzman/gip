@@ -9,7 +9,7 @@ import cStringIO
 
 from gip_common import cp_get, cp_getList, getLogger, printTemplate, \
     normalizeFQAN
-from gip_cluster import getClusterName
+from gip_cluster import getClusterID
 from condor_common import condorCommand, condor_version
 from gip_ldap import read_bdii, read_ldap
 from gip_sections import forwarding
@@ -191,7 +191,7 @@ class Forwarding(BatchSystem):
         Print out the subclusters.
         """
         template = '%s'
-        chunk_key = ['GlueClusterUniqueID=%s' % getClusterName(self.cp)]
+        chunk_key = ['GlueClusterUniqueID=%s' % getClusterID(self.cp)]
         for entry in self.data:
             if 'GlueSubCluster' not in entry.objectClass:
                 continue

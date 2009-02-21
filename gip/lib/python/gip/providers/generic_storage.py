@@ -223,7 +223,7 @@ def print_classicSE(cp):
     nu, _, nt = getSETape(cp)
 
     bdiiEndpoint = cp.get("bdii", "endpoint")
-    siteUniqueID = cp.get("site", "unique_name")
+    siteUniqueID = cp_get(cp, "site", "unique_name", "UNKNOWN")
     implementation = cp_get(cp, "classic_se", "implementation", "classicSE")
     arch = 'other'
 

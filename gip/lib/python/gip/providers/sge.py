@@ -35,7 +35,7 @@ def print_CE(cp):
 
         acbr = ''
         for vo, queue2 in vo_queues:
-            if queue == queue2:
+            if queue['name'] == queue2:
                 acbr += 'GlueCEAccessControlBaseRule: VO:%s\n' % vo
 
         referenceSI00 = gip_cluster.getReferenceSI00(cp)

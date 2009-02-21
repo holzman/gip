@@ -108,7 +108,7 @@ def sgeCommand(command, cp):
     return sgeOutputFilter(fp)
 
 def getLrmsInfo(cp):
-    for line in runCommand(sge_version_cmd, cp):
+    for line in runCommand(sge_version_cmd):
         return line.strip('\n')
     raise Exception("Unable to determine LRMS version info.")
 
@@ -148,7 +148,7 @@ def getQueueInfo(cp):
     @returns: A dictionary of queue data and a dictionary of job data.
     """
     queue_list = {}
-    xml = runCommand(sge_queue_info_cmd, cp)
+    xml = runCommand(sge_queue_info_cmd)
     handler = QueueInfoParser()
     parseXmlSax(xml, handler)
     queue_info = handler.getQueueInfo()
@@ -189,15 +189,15 @@ def getQueueInfo(cp):
         q['priority'] = 0  # No such thing that I can find for a queue
 
         # How do you handle queues with no limit?
-        sqc = SGEQueueConfig(sgeCommand(sge_queue_config_cmd % queue, cp))
+        sqc = SGEQueueConfig(sgeCommand(sge_queue_config_cmd % name, cp))
 
         try:
             q['priority'] = int(sqc['priority'])
         except:
             pass
 
-        max_wall_hard = convert_time_to_secs(sqc['h_rt'])
-        max_wall_soft = convert_time_to_secs(sqc['s_rt'])
+        max_wall_hard = convert_time_to_secs(sqc.get('h_rt', 'INFINITY'))
+        max_wall_soft = convert_time_to_secs(sqc.get('s_rt', 'INFINITY'))
         max_wall = min(max_wall_hard, max_wall_soft)
 
         try:
@@ -222,7 +222,7 @@ def getQueueInfo(cp):
     return queue_list, queue_info
 
 def getJobsInfo(vo_map, cp):
-    xml = runCommand(sge_queue_info_cmd, cp)
+    xml = runCommand(sge_queue_info_cmd)
     handler = JobInfoParser()
     parseXmlSax(xml, handler)
     job_info = handler.getJobInfo()

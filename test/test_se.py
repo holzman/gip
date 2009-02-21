@@ -335,6 +335,23 @@ class TestSEConfigs(unittest.TestCase):
     def test_fnal_config(self):
         entries, cp = self.run_test_config('red-se-test4.conf')
 
+    def test_vo_dirs_config(self):
+        """
+        This test verifies that the VO dirs overrides work for the new-style
+        configs.
+        """
+        entries, cp = self.run_test_config('red-se-test5.conf')
+        found_cms_voinfo = False
+        for entry in entries:
+            if 'GlueVOInfo' not in entry.objectClass:
+                continue
+            if entry.glue['VOInfoName'][0] != 'cms:default':
+                continue
+            found_cms_voinfo = True
+            self.failUnless(entry.glue['VOInfoPath'][0] == \
+                '/pnfs/unl.edu/data4/cms/store', msg="vo_dirs override failed.")
+        self.failUnless(found_cms_voinfo, msg="VOInfo for CMS missing.")
+
 def main():
     cp = config("test_configs/red-se-test.conf")
     stream = streamHandler(cp)

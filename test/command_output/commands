@@ -30,3 +30,14 @@ bugroup_r: bugroup -r
 srm_ping: srm-ping srm://osgserv04.slac.stanford.edu:8443/srm/v2/server -proxyfile /tmp/http_proxy
 grid_proxy_info: grid-proxy-info -f /tmp/http_proxy
 grid_proxy_init: grid-proxy-init -valid 00:05 -cert /etc/grid-security/http/httpcert.pem -key /etc/grid-security/http/httpkey.pem -out /tmp/http_proxy
+qstat_help: qstat -help
+qstat_xml: qstat -xml
+qstat_f_xml: qstat -f -xml
+qconf_sq_all: qconf -sq all.q
+qconf_sq_chandra: qconf -sq chandra
+qconf_sq_geo: qconf -sq geo
+qconf_sq_lsdyna: qconf -sq lsdyna
+qconf_sq_myrinet: qconf -sq myrinet
+qconf_sq_pf24h: qconf -sq pf24h
+qconf_sq_schorr_a: qconf -sq schorr_a
+qconf_sql: qconf -sql

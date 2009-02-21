@@ -9,6 +9,7 @@ from gip.providers.pbs import main as pbs_main
 from gip.providers.condor import main as condor_main
 from gip.providers.sge import main as sge_main
 from gip.providers.lsf import main as lsf_main
+from gip.providers.generic_batch_system import main as generic_main
 
 log = getLogger("GIP.BatchSystem")
 
@@ -29,8 +30,7 @@ def main():
     elif job_manager == 'lsf':
         lsf_main()
     else:
-        log.error("Unknown job manager: %s." % job_manager)
-        sys.exit(1)
+        generic_main()
 
 if __name__ == '__main__':
     main()

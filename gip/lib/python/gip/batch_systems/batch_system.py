@@ -92,8 +92,8 @@ class BatchSystem(object):
         - The number of free CPUs in the system.
         - A dictionary mapping PBS queue names to a tuple containing the
             (totalCPUs, freeCPUs).
-       """
-       raise NotImplementedError()
+        """
+        raise NotImplementedError()
 
     def printAdditional(self):
         """

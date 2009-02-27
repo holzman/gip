@@ -29,6 +29,8 @@ def main():
                 gip_version = m.groups()[0]
                 break
 
+        gip_version += '; $Revision$'
+
         # Get the timestamp in the two formats we wanted
         now = time.strftime("%a %b %d %T UTC %Y", time.gmtime())
 

@@ -41,6 +41,7 @@ GlueHostOperatingSystemVersion: %(osVersion)s
 GlueHostProcessorClockSpeed: %(clockSpeed)s
 GlueHostProcessorModel: %(model)s
 GlueHostProcessorVendor: %(vendor)s
+GlueHostProcessorOtherDescription: Cores=%(cores)s
 GlueSubClusterName: %(subCluster)s
 GlueSubClusterUniqueID: %(subClusterUniqueID)s
 GlueSubClusterPhysicalCPUs: %(cpus)s

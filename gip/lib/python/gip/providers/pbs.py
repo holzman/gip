@@ -74,6 +74,7 @@ def print_CE(cp):
             info['free_slots'] = min(info['free_slots'], info['max_queuable'])
         else:
             info['max_total'] = info['max_waiting'] + info['max_running']
+            info['free_slots'] = min(info['free_slots'], info['max_total'])
         info['max_slots'] = 1
         #info['max_total'] = info['max_running']
         info['assigned'] = info['job_slots']

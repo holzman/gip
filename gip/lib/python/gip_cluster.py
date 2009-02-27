@@ -93,7 +93,7 @@ def getClusterName(cp):
     """
     Return the name of the associated cluster.
     """
-    ce_name = cp.get(ce, 'name')
+    ce_name = cp_get(cp, ce, 'name', "UNKNOWN_CE")
     simple = cp.getboolean(cluster, 'simple')
     if simple:
         return ce_name

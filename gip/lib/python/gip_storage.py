@@ -426,7 +426,7 @@ class StorageElement(object):
         """
         Return the list of VOs which are allowed to access this service.
         """
-        return voListStorage(self._cp)
+        return voListStorage(self._cp, self._section)
 
     def getServiceVersions(self):
         """

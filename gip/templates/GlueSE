@@ -89,7 +89,8 @@ GlueSAStateAvailableSpace: %(availableSpace)s
 GlueSAStateUsedSpace: %(usedSpace)s
 %(acbr)s
 GlueSACapability: SRMTokenReservedSpace=%(reservedOnline)s
-GlueSACapability: InstalledOnlineCapacity=%(installedCapacity)s
+GlueSACapability: InstalledOnlineCapacity=%(installedOnlineCapacity)s
+GlueSACapability: InstalledNearlineCapacity=%(installedNearlineCapacity)s
 GlueChunkKey: GlueSEUniqueID=%(seUniqueID)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3

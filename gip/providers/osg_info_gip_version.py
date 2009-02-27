@@ -22,6 +22,7 @@ def main():
         vdt_version_out = runCommand(vdt_version_cmd).readlines()
 
         gip_re = re.compile('Generic Information Provider\s+(.*?)\s*-.*')
+        gip_version = 'UNKNOWN'
         for line in vdt_version_out:
             m = gip_re.match(line)
             if m:

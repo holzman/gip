@@ -11,6 +11,7 @@ from lsf_common import getQueueList as getLSFQueueList
 from condor_common import getQueueList as getCondorQueueList
 from sge_common import getQueueList as getSGEQueueList
 from gip_sections import ce, cesebind, se
+from gip_sets import Set
 
 def getCEList(cp):
     """
@@ -48,12 +49,12 @@ def getClassicSEList(cp):
     @returns: List of all the ClassicSE's unique_ids
     """
     classic_list = []
-    if cp_getBoolean(cp, "classic_se", "advertise_se", False):
+    if cp_getBoolean(cp, "classic_se", "advertise_se", True):
         classicSE = cp_get(cp, "classic_se", "unique_name", None)
         if classicSE:
             classic_list = [classicSE]
         else:
-            siteUniqueID = cp.get("site", "unique_name")
+            siteUniqueID = cp_get(cp, "site", "unique_name", "UNKNOWN")
             classicSE = siteUniqueID + "_classicSE"
             classic_list = [classicSE]
 
@@ -71,11 +72,14 @@ def getSEList(cp, classicSEs=True):
     se_list = []
     if simple:
         try:
-            se_list = [cp.get(se, 'unique_name')]
+            if cp_getBoolean(cp, se, 'advertise_se', True):
+                se_list = [cp.get(se, 'unique_name')]
         except:
             pass
         for sect in cp.sections():
-            if not sect.lower().startswith('se'):
+            if not sect.lower().startswith('se') or sect.lower() == 'se':
+                continue
+            if not cp_getBoolean(cp, sect, 'advertise_se', True):
                 continue
             try:
                 se_list += [cp.get(sect, 'unique_name')]
@@ -85,6 +89,7 @@ def getSEList(cp, classicSEs=True):
         se_list = eval(cp.get(cesebind, 'se_list'), {})
     if classicSEs:
         se_list.extend(getClassicSEList(cp))
+    se_list = list(Set(se_list))
     return se_list
 
 def getCESEBindInfo(cp):

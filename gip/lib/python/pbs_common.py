@@ -356,6 +356,8 @@ def getQueueList(cp):
             queues.append(queue)
         if rvf_queue_list and queue not in rvf_queue_list:
             continue
+        if queue not in queue_exclude:
+            queues.append(queue)
     return queues
 
 def getVoQueues(cp):

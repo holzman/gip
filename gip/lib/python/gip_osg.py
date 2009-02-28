@@ -5,6 +5,7 @@ Populate the GIP based upon the values from the OSG configuration
 import os
 import re
 import sys
+import socket
 import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, se, subcluster
@@ -200,6 +201,13 @@ def configOsg(cp):
     # Now, we compare the two - convert the config.ini options into gip.conf
     # options.
     # [Site Information]
+    has_site_hostname = False
+    if cp2.has_section(site_sec) and cp2.has_option(site_sec, "host_name"):
+        has_site_hostname = True
+    if not has_site_hostname:
+        if not cp2.has_section(site_sec):
+            cp2.add_section(site_sec)
+        cp2.set(site_sec, "host_name", socket.gethostname())
     __write_config(site_sec, "host_name", ce, "name")
     __write_config(site_sec, "host_name", ce, "unique_name")
     __write_config(site_sec, "site_name", site, "name")

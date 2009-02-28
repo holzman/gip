@@ -14,12 +14,16 @@ from gip_ldap import read_ldap
 class TestCESEBind(unittest.TestCase):
 
      def setUp(self):
+         self.filename = "test_configs/red.conf"
+         self.setUpLDAP()
+
+     def setUpLDAP(self):
          os.environ['GIP_TESTING'] = "1"
-         cp = config("test_configs/red.conf")
+         cp = config(self.filename)
          self.ces = getCEList(cp)
          self.ses = getSEList(cp)
          cese_provider_path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-             "osg_info_cesebind.py --config test_configs/red.conf")
+             "osg_info_cesebind.py --config %s" % self.filename)
          fd = os.popen(cese_provider_path)
          self.entries = read_ldap(fd, multi=True)
          self.exit_status = fd.close()
@@ -50,6 +54,18 @@ class TestCESEBind(unittest.TestCase):
                      "GlueCESEBindGroupCEUniqueID=%s" % ce)
                  # 3) Make sure there's a non-zero-length access point
                  self.failIf(len(entry.glue['CESEBindCEAccesspoint'][0])==0)
+
+     def test_cese_disabledse(self):
+         self.filename = 'test_configs/disabled_se.conf'
+         self.setUpLDAP()
+         has_cese_bind = False
+         for entry in self.entries:
+             if 'GlueCESEBindGroup' not in entry.objectClass:
+                 continue
+             has_cese_bind = True
+             if 'srm.unl.edu' in entry.glue['CESEBindGroupSEUniqueID']:
+                 self.fail(msg="There is a CESE entry for the disabled SE.")
+         self.failUnless(has_cese_bind, msg="No CESE bind present.")
 
 def main():
     cp = config("test_configs/red.conf")

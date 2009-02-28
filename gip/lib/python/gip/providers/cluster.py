@@ -11,6 +11,7 @@ from gip_common import config, cp_get, cp_getBoolean, getLogger, getTemplate, \
 from gip_testing import runCommand
 from gip_sections import *
 from gip_cese_bind import getCEList
+from gip_cluster import getClusterName
 
 log = getLogger("GIP.Cluster")
 
@@ -50,7 +51,8 @@ def print_clusters(cp):
     if not cluster_name:
         cluster_name = cp_get(cp, 'ce', 'unique_name', None)
     if not cluster_name:
-        raise Exception("Could not determine cluster name.")
+        getClusterName(cp)
+        #raise Exception("Could not determine cluster name.")
     clusterUniqueID = cp_get(cp, 'ce', 'unique_name', cluster_name)
     siteUniqueID = cp_get(cp, "site", "unique_name", 'UNKNOWN_SITE')
     ces = getCEList(cp)

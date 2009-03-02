@@ -8,7 +8,7 @@ import sys
 import socket
 import ConfigParser
 
-from gip_sections import ce, site, pbs, condor, sge, se, subcluster
+from gip_sections import ce, site, pbs, condor, sge, se, subcluster, cluster
 
 site_sec = "Site Information"
 pbs_sec = "PBS"
@@ -263,6 +263,8 @@ def configOsg(cp):
     __write_config(gip_sec, "dynamic_dcache", se, "dynamic_dcache")
     __write_config(gip_sec, "srm", se, "srm_present")
     __write_config(gip_sec, "advertise_gums", site, "advertise_gums")
+    __write_config(gip_sec, "cluster_name", cluster, "name")
+    __write_config(gip_sec, "simple_cluster", cluster, "simple")
 
     # Try to auto-detect the batch manager.
     mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge'}

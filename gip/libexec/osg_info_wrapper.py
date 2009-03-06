@@ -99,8 +99,8 @@ def main(cp = None, return_entries=False):
     # Load up our parameters
     freshness = cp_getInt(cp, "gip", "freshness", 300)
     cache_ttl = cp_getInt(cp, "gip", "cache_ttl", 600)
-    response  = cp_getInt(cp, "gip", "response",  60)
-    timeout = cp_getInt(cp, "gip",   "timeout",   150)
+    response  = cp_getInt(cp, "gip", "response",  240)
+    timeout = cp_getInt(cp, "gip",   "timeout",   240)
 
     os.setpgrp()
 

@@ -263,8 +263,12 @@ def configOsg(cp):
     __write_config(gip_sec, "dynamic_dcache", se, "dynamic_dcache")
     __write_config(gip_sec, "srm", se, "srm_present")
     __write_config(gip_sec, "advertise_gums", site, "advertise_gums")
-    __write_config(gip_sec, "cluster_name", cluster, "name")
-    __write_config(gip_sec, "simple_cluster", cluster, "simple")
+
+    cluster_name = cp_get(cp2, gip_sec, "cluster_name", "")
+    if len(cluster_name) > 0:
+        __write_config(gip_sec, "cluster_name", cluster, "name")
+        cp.set(gip_sec, "simple_cluster", True)
+        __write_config(gip_sec, "simple_cluster", cluster, "simple")
 
     # Try to auto-detect the batch manager.
     mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge'}

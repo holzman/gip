@@ -267,7 +267,7 @@ def configOsg(cp):
     cluster_name = cp_get(cp2, gip_sec, "cluster_name", "")
     if len(cluster_name) > 0:
         __write_config(gip_sec, "cluster_name", cluster, "name")
-        cp.set(gip_sec, "simple_cluster", True)
+        cp2.set(gip_sec, "simple_cluster", True)
         __write_config(gip_sec, "simple_cluster", cluster, "simple")
 
     # Try to auto-detect the batch manager.

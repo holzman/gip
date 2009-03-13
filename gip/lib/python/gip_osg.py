@@ -446,56 +446,58 @@ def configSEs(cp, cp2):
     for section in cp.sections():
         if not section.startswith("se") and not section.startswith("SE"):
             continue
-        name = cp_get(cp, section, "name", "UNKNOWN")
-        my_sect = "se_%s" % name
-        try:
-            cp2.add_section(my_sect)
-        except ConfigParser.DuplicateSectionError:
-            pass
-        cp2.set(my_sect, "name", name)
-        # Copy over entire section
-        for name, value in cp.items(section):
-            cp2.set(my_sect, name, value)
-        endpoint = cp_get(cp, section, "srm_endpoint",
-            "httpg://UNKNOWN.example.com:8443/srm/v2/server")
-        m = url_re.match(endpoint)
-        if not m:
-            print >> sys.stderr, "Invalid endpoint: %s" % endpoint
-            continue
-        format, host, port, endpoint = m.groups()
-        cp2.set(my_sect, "srm_host", host)
-        cp2.set(my_sect, "srm_port", port)
-        cp2.set(my_sect, "unique_name", host)
-        cp2.set(my_sect, "srm_endpoint", "httpg://%s:%s/%s" % (host, port,
-            endpoint))
-        cp2.set(my_sect, "srm_version", cp_get(cp, section, "srm_version", "2"))
-        cp2.set(my_sect, "implementation", cp_get(cp, section, "implementation",
-            "UNKNOWN"))
-        cp2.set(my_sect, "version", cp_get(cp, section, "version", "UNKNOWN"))
-        cp2.set(my_sect, "provider_implementation", cp_get(cp, section,
-            "provider_implementation", "static"))
-        cp2.set(my_sect, "infoProviderEndpoint", cp_get(cp, section,
-            "infoprovider_endpoint", "file:///dev/null"))
-        vo_paths = split_re.split(cp_get(cp, section, "vo_paths", ""))
-        for voinfo in vo_paths:
+        enabled = cp_getBoolean(cp, section, "enabled")
+        if enabled:
+            name = cp_get(cp, section, "name", "UNKNOWN")
+            my_sect = "se_%s" % name
             try:
-                vo, path = voinfo.split(':')
-            except:
+                cp2.add_section(my_sect)
+            except ConfigParser.DuplicateSectionError:
+                pass
+            cp2.set(my_sect, "name", name)
+            # Copy over entire section
+            for name, value in cp.items(section):
+                cp2.set(my_sect, name, value)
+            endpoint = cp_get(cp, section, "srm_endpoint",
+                "httpg://UNKNOWN.example.com:8443/srm/v2/server")
+            m = url_re.match(endpoint)
+            if not m:
+                print >> sys.stderr, "Invalid endpoint: %s" % endpoint
                 continue
-            vo, path = vo.strip(), path.strip()
-            cp2.set(my_sect, vo, path)
-
-        # Handle allowed VO's for dCache
-        spaces_re = re.compile("space_.+_vos")
-        if cp_get(cp, section, "implementation", "UNKNOWN") == "dcache":
-            if not cp2.has_section(dcache_sec):
-                cp2.add_section(dcache_sec)
-            spaces = split_re.split(cp_get(cp, section, "spaces", ""))
-            for option in cp.options(section):
-                is_space = spaces_re.match(option)
-                if not is_space: continue
-                allowed_vos = cp_get(cp, section, option, "")
-                if len(allowed_vos) > 0:
-                    cp2.set(dcache_sec, option, allowed_vos)
-        # Handle allowed VO's for bestman
-        # Yet to be implemented
+            format, host, port, endpoint = m.groups()
+            cp2.set(my_sect, "srm_host", host)
+            cp2.set(my_sect, "srm_port", port)
+            cp2.set(my_sect, "unique_name", host)
+            cp2.set(my_sect, "srm_endpoint", "httpg://%s:%s/%s" % (host, port,
+                endpoint))
+            cp2.set(my_sect, "srm_version", cp_get(cp, section, "srm_version", "2"))
+            cp2.set(my_sect, "implementation", cp_get(cp, section, "implementation",
+                "UNKNOWN"))
+            cp2.set(my_sect, "version", cp_get(cp, section, "version", "UNKNOWN"))
+            cp2.set(my_sect, "provider_implementation", cp_get(cp, section,
+                "provider_implementation", "static"))
+            cp2.set(my_sect, "infoProviderEndpoint", cp_get(cp, section,
+                "infoprovider_endpoint", "file:///dev/null"))
+            vo_paths = split_re.split(cp_get(cp, section, "vo_paths", ""))
+            for voinfo in vo_paths:
+                try:
+                    vo, path = voinfo.split(':')
+                except:
+                    continue
+                vo, path = vo.strip(), path.strip()
+                cp2.set(my_sect, vo, path)
+    
+            # Handle allowed VO's for dCache
+            spaces_re = re.compile("space_.+_vos")
+            if cp_get(cp, section, "implementation", "UNKNOWN") == "dcache":
+                if not cp2.has_section(dcache_sec):
+                    cp2.add_section(dcache_sec)
+                spaces = split_re.split(cp_get(cp, section, "spaces", ""))
+                for option in cp.options(section):
+                    is_space = spaces_re.match(option)
+                    if not is_space: continue
+                    allowed_vos = cp_get(cp, section, option, "")
+                    if len(allowed_vos) > 0:
+                        cp2.set(dcache_sec, option, allowed_vos)
+            # Handle allowed VO's for bestman
+            # Yet to be implemented

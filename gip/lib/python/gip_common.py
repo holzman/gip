@@ -22,7 +22,6 @@ import tempfile
 
 from UserDict import UserDict
 
-from gip_osg import configOsg
 from gip_ldap import read_bdii
 
 #pylint: disable-msg=W0105
@@ -179,6 +178,7 @@ def config(*args):
     #config_compat(cp)
     readOsg = cp_getBoolean(cp, "gip", "read_osg", "True")
     if readOsg:
+        from gip_osg import configOsg
         configOsg(cp)
 
     return cp

@@ -9,6 +9,9 @@ import socket
 import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, se, subcluster, cluster
+from gip_common import getLogger
+
+log = getLogger("GIP")
 
 site_sec = "Site Information"
 pbs_sec = "PBS"
@@ -135,6 +138,15 @@ def configOsg(cp):
     loc = os.path.expandvars(loc)
     # Load config.ini values
     cp2 = ConfigParser.ConfigParser()
+
+    try:
+        file = open(loc)
+    except IOError:
+        log.error("FATAL ERROR: cannot read config.ini!")
+        file.close()
+        raise
+
+    file.close()
     cp2.read(loc)
 
     try:

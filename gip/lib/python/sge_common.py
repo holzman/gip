@@ -293,6 +293,10 @@ def getVoQueues(cp):
             "queue_exclude").split(',')]
     except:
         queue_exclude = []
+
+    # SGE has a special "waiting" queue -- ignore it.
+    queue_exclude.append('waiting')
+    
     vo_queues = []
     queue_list, q = getQueueInfo(cp)
     rvf_info = parseRvf('sge.rvf')

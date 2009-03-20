@@ -1,0 +1,106 @@
+#!/usr/bin/env python
+
+import re
+import os
+import sys
+import copy
+import time
+
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
+import GipUnittest
+from BeautifulSoup import BeautifulSoup
+from gip_common import cp_get,getURLData
+from gip_ldap import read_bdii, prettyDN
+from gip_testing import runTest, getTestConfig
+
+class LastBDIIUpdate(GipUnittest.GipTestCase):
+    def __init__(self, site, cp):
+        GipUnittest.GipTestCase.__init__(self, 'testLastBDIIUpdate')
+        self.site = site
+        self.name = 'testLastBDIIUpdate_%s' % site
+
+        self.url = cp_get(self.cp, "gip_tests", "update_url", "")
+        self.CONST_NOT_REPORTED = "Not Reported"
+        self.CONST_WEB_NO_DATA = "--:--:--"
+
+    def getLastUpdateFromWeb(self):
+        site_dict = {}
+
+        # compile some regex's to examine url's
+        re_wanted_href = re.compile('(.*)cemon_processed_osg(.*)')
+        re_site = re.compile('(.*)which=(.*)')
+
+        s = getURLData(self.url)
+        soup = BeautifulSoup(s)
+        a_elements = soup.findAll("a")
+        for elm in a_elements:
+            # get the url that the <a> points to
+            site_href = elm.get("href")
+            # only examine the "served" links for the last update timestamp
+            if re_wanted_href.match(site_href):
+                site_match = re_site.match(site_href)
+                site_name = site_match.groups()[1]
+                displayed_time = elm.contents[0]
+                site_dict[site_name] = displayed_time  # hh:mm:ss
+        return site_dict
+
+    def testLastBDIIUpdate(self):
+        """
+            Last BDII Update Timestamp
+
+            This check reports the timestamp last reported to the BDII for each site.<br>
+            If it is more than 10 minutes old, the BDII update process is considered <br>
+            broken.
+        """
+        web_dict = self.getLastUpdateFromWeb()
+        try:
+            web_time = web_dict[self.site]
+        except:
+            web_time = self.CONST_WEB_NO_DATA
+        bdii_time, bdii_human = self.getUpdateTime()
+
+        crit = self.getCritical(bdii_time, web_time)
+        self.expectTrue(False, msg="Time from web page: %s\nTime from BDII: %s" % (web_time, bdii_human), critical=crit)
+
+    def getUpdateTime(self):
+        entries = read_bdii(self.cp, query="(GlueLocationLocalID=TIMESTAMP)", base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site)
+        try:
+            time = entries[0].glue['LocationVersion']
+            human_time = entries[0].glue['LocationPath']
+        except:
+            time = self.CONST_NOT_REPORTED
+            human_time = self.CONST_NOT_REPORTED
+
+        return (time, human_time)
+
+    def getCritical(self, arg_time, web_time):
+        ret = False
+        if arg_time != self.CONST_NOT_REPORTED:
+            local_time = time.time()
+            time_difference = local_time - float(arg_time)
+            diff_minutes = abs(time_difference / 60)
+
+            if diff_minutes > 30:
+                ret = True
+
+        if web_time == self.CONST_WEB_NO_DATA:
+            ret = True
+        else:
+            web_parts = web_time.split(":")
+            try:
+                hours = int(web_parts[0])
+                minutes = int(web_parts[1])
+                if (hours > 0) or (minutes > 30):
+                    ret = True
+            except:
+                ret = True
+
+        return ret
+
+def main(args):
+    cp = getTestConfig(args)
+    runTest(cp, LastBDIIUpdate)
+
+if __name__ == '__main__':
+    main(sys.argv)
+

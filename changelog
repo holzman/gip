@@ -1,0 +1,114 @@
+Changelog
+== 1.1.0rc3 - Validator ==
+* Added oim_aware option to the config file that will trigger a query of
+  OIM for a list of sites to test.
+* A "global" FAIL/OK status per resource has been added to the summary XML
+* Custom config files can be passed to the TestRunner via the command
+  line.  Example:  $GIP_LOCATION/bin/TestRunner.py -c custom_config.conf
+* Added a message to the missing_sites test for administrators to check
+  their CEMon logs if their resource is failing this test.
+* deprecated (and removed) the Validate_GIP_URL test.  The URL info will
+  always fail for resources that are grouped.  This is expected behavior
+  and invalidates this test.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+== 1.1.0rc1 ==
+* More fleshed out (but probably still broken) SGE provider 
+* Fix to include default SE and publish correctly
+* Revert to config.ini instead of current-config.ini
+	
+== 1.1.0 ==
+* Removal of gip-attributes.conf and configure_gip perl script, because: 
+* We now read config.ini directly
+* Reconfigured GIP providers to determine the correct batch system and storage
+  system on-the-fly, removing the need for admin configuration
+* We do not attempt to auto-detect subclusters
+* New wrapper script with new name (osg_info_wrapper.py): (CEMon 
+  compatibility issue)
+* Wrapper script supports a new delete-attributes.conf
+* Completely new providers for Condor, LSF, and SGE.  SGE and LSF are lightly
+  tested (SGE probably does not yet work out of the box).
+* Condor provider now advertises data consistently with the other batch 
+  system providers.
+* New BestMan provider
+* New dCache provider
+* New provider for dCache 1.9 which does NOT need the dCache admin interface
+* Improved adherence to Glue 1.3 
+* Increased unit test coverage
+* Glue parameters CESEbind, site, subclusters, and cluster entries are all 
+  dynamic
+* Improved and more secure method for advertising VO-installed software
+* Glue 1.3 style AccessBaseControlRules are used (CEMon compatibility issue)
+* Storage and subcluster configurations via config.ini have been refactored 
+  to be simpler and more straightforward.
+
+	
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+== 1.0.8 ==
+* Fix missing and extraneous imports in token_info_provider.py
+
+== 1.0.7 ==
+* In configure_gip, check for globus only when looking for LSF queues
+	
+== 1.0.6 ==
+* Include plugin to calculate GlueCEStateEstimatedResponseTime ("ERT")
+* Include logging for ERT
+* Allow attributes in the DN to have internal whitespace
+	
+== 1.0.5 ==
+* Fix syntax error (spurious backticks) in configure_gip
+	
+== 1.0.4 ==
+* Bugfix for GlueVOInfoLocalID, which needs to include GlueSEUniqueID.
+
+== 1.0.3 ==
+* Sets reasonable defaults for GlueCEPolicyMaxObtainableWallClockTime, GlueCEPolicyMaxObtainableCPUTime, GlueCEStateWorstResponseTime
+
+== 1.0.2 ==
+
+Bugs fixed:
+* Respect max_queueable for PBS (10)
+* Multiple SE per CESE bindgroup (11)
+* Schema compliance for GlueServiceStatusInfo?, GlueSARetentionPolicy, 
+  GlueSAAccessLatency, GlueSAExpirationMode,GlueSACapability, 
+  GlueSEImplementationName,GlueSEStatus (9,12)
+* Custom attributes via alter-attributes (14)
+* PBS Default wallclock set to 6000 instead of 0
+
+Features added:
+* Logging (13)
+* LSF queues parsed from RVF instead of bqueues (thanks Alan Sill) 
+
+== 1.0.1 ==
+
+Bugs fixed (references to GIP ticket numbers in [])
+  - The dynamic providers were parsing the VO list differently than in
+    previous cases [1]
+  - For an SRM SE, GlueSEArchitecture is changed from "disk" to "other".
+    This avoids the classicSE script trying to execute df in the wrong
+    places [2, 8]
+  - $GIP_LOCATION/etc/gip.conf was not being read in some cases due to
+    invalid path expansion [3]
+  - Multiple collector hosts were not getting parsed correctly (GIP
+    ticket [4]
+  - OSG Version is now published along with the software tags [5]
+  - PBS dynamic provider was not parsing waiting jobs correctly (GIP
+    ticket [6]
+  - For non-PBS sites using dynamic dcache, GlueSEUniqueID was not being
+    correctly generated [7]
+  - GlueCESEBindCEAccessPoint will not double-count the GlueSAPath now
+  - Wrong permissions and ownership were generated for
+    dcache_storage.conf, gip.conf
+  - CESEBind now advertises /UNAVAILABLE instead of dropping the
+    attribute if the access point is not set
+  - SRM hostname was being advertised based on reverse DNS, which is a
+    problem for sites where the SRM host is a CNAME instead of an A
+    name.  We now print out the admin-specified hostname if the IP
+    matches.
+
+== 1.0.0_rc1 ==
+
+* Fixes: Unique name for SE Control protocol; VO view of SA now
+  matches SA unique ID.
+* Bugfix: Don't assume OSG_GIP_SIMPLIFIED_PATH exists
+

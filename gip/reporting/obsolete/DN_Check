@@ -1,0 +1,47 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import urlparse
+
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
+import GipUnittest
+from gip_ldap import read_bdii, prettyDN
+from gip_common import getLogger
+from gip_testing import runTest, getTestConfig
+
+log = getLogger("GIP.Testing.DN")
+
+class TestDnAds(GipUnittest.GipTestCase):
+    def __init__(self, site, cp):
+        GipUnittest.GipTestCase.__init__(self, 'testDnAds', 'testDnAds_%s' % site, cp)
+        self.site = site
+
+    def testDnAds(self):
+        """        DN Check
+
+        Test DN ads for the following:
+            * o=grid appears once
+            * mds-vo-name=local appears once
+            * mds-vo-name=<site> appears once
+            * they appear in the correct order
+        """
+        entries = read_bdii(self.cp, base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site)
+        for entry in entries:
+            dn = list(entry.dn)
+            self.expectEquals(dn.pop(), "o=grid", msg="DN %s does not end with o=grid" % prettyDN(entry.dn))
+            self.expectEquals(dn.pop(), "mds-vo-name=local", msg="DN %s does not end with mds-vo-name=local,o=grid" % prettyDN(entry.dn))
+            self.expectEquals(dn.pop(), "mds-vo-name=%s" % self.site, msg="DN %s does not end with mds-vo-name=%s,mds-vo-name=local,o=grid" % (prettyDN(entry.dn), self.site))
+            for d in dn:
+                self.expectTrue(d.find("o=grid") < 0, msg="There is an extra o=grid entry in DN %s" % prettyDN(entry.dn))
+                self.expectTrue(d.startswith("mds-vo-name") == False, "There is an extra mds-vo-name entry in DN %s" % prettyDN(entry.dn))
+
+def main(args):
+    """
+    The main entry point for when dn_check is run in standalone mode.
+    """
+    cp = getTestConfig(args)
+    runTest(cp, TestDnAds)
+
+if __name__ == '__main__':
+    main(sys.argv)

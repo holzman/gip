@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# configure_gip: formerly read in gip-attributes.conf and created static ldif files.  This
+# functionality is now handled with the dynamic GIP scripts which read the config.ini file.
+# This file is left as a placeholder for scripts which still attempt to execute configure_gip.

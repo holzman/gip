@@ -1,0 +1,542 @@
+# GLUE Core Schema
+# Specification 1.3
+#
+# Namespace: Glue
+#
+# Copyright (c) 2002-2007 Istituto Nazionale di Fisica Nucleare
+# Author: Sergio Andreozzi <sergio.andreozzi@cnaf.infn.it>
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); 
+# you may not use this file except in compliance with the License. 
+# You may obtain a copy of the License at 
+#
+#    http://www.apache.org/licenses/LICENSE-2.0 
+#
+# Unless required by applicable law or agreed to in writing, software 
+# distributed under the License is distributed on an "AS IS" BASIS, 
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+# See the License for the specific language governing permissions and 
+# limitations under the License.
+#
+#
+# Revision: $Revision: 1.5 $  $Date: 2005/07/22 09:56:20 $
+#
+#
+# OID Structure
+#
+#     Top
+#      |
+#      ---- GlueTop 1.3.6.1.4.1.8005.100
+#             |
+#             ---- .1. GlueGeneralTop
+#             |     |
+#             |     ---- .1. ObjectClass
+#             |     |     |
+#             |     |     ---- .1 GlueSchemaVersion
+#             |     |     |
+#             |     |     ---- .4 GlueKey
+#             |     |     |
+#             |     |     ---- .5 GlueInformationService
+#             |     |     |
+#             |     |     ---- .6 GlueService
+#             |     |     |
+#             |     |     ---- .7 GlueServiceData
+#             |     |     |
+#             |     |     ---- .8 GlueSite
+#             |     |
+#             |     ---- .2. Attributes
+#             |           |
+#             |           ---- .1. Attributes for GlueSchemaVersion
+#             |           |
+#             |           ---- .4. Attributes for GlueKey
+#             |           |
+#             |           ---- .5. Attributes for GlueInformationService
+#             |           |
+#             |           ---- .6. Attributes for GlueService
+#             |           |
+#             |           ---- .7. Attributes for GlueServiceData
+#             |           |
+#             |           ---- .8. Attributes for GlueSite
+
+
+attributetype ( 1.3.6.1.4.1.3536.2.6.1.4.0.1
+    NAME 'Mds-Vo-name'
+    DESC 'Locally unique VO name'
+    EQUALITY caseIgnoreIA5Match
+    SUBSTR caseIgnoreIA5SubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+ 
+objectclass ( 1.3.6.1.4.1.3536.2.6.1.4
+    NAME 'Mds'
+    STRUCTURAL
+    MUST Mds-Vo-name )
+
+#*************************************
+#   Base Class for the Glue Schema
+
+objectclass ( 1.3.6.1.4.1.8005.100
+    NAME 'GlueTop'
+    DESC 'Base class for the Glue Schema'
+    SUP  'Top'
+    ABSTRACT )
+
+#**********************************************
+#   Base Class for general object classes, attributes,
+#   matching rules, etc
+
+objectclass ( 1.3.6.1.4.1.8005.100.1
+    NAME 'GlueGeneralTop'
+    DESC 'Base class for general items in the glue schema'
+    SUP  'GlueTop'
+    ABSTRACT)
+
+#******************************************************
+#     GlueGeneralTop  .1
+#            |
+#       ------------
+#       |         |
+#    Obj .1.    Attr .2.5.
+#       |         |
+#    GlueInformationService
+#       .5
+#
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.2.5.1
+    NAME        'GlueInformationServiceURL'
+    DESC        'The Information Service URL publishing the related info'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+objectclass ( 1.3.6.1.4.1.8005.100.1.1.5
+    NAME        'GlueInformationService'
+    DESC        'Info for the InformationService'
+    SUP         'GlueGeneralTop'
+    AUXILIARY
+    MAY        (GlueInformationServiceURL) )
+
+#******************************************************
+#     GlueGeneralTop  .1
+#            |
+#       -----------
+#       |         |
+#    Obj .1.    Attr .2.1.
+#       |         |
+#  GlueSchemaVersion
+#       .1
+#
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.2.1.1
+    NAME 	'GlueSchemaVersionMajor'
+    DESC 	'Major Schema version number'
+    EQUALITY    integerMatch
+    SYNTAX 	1.3.6.1.4.1.1466.115.121.1.27
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.2.1.2
+    NAME 	'GlueSchemaVersionMinor'
+    DESC 	'Minor Schema version number'
+    EQUALITY    integerMatch
+    SYNTAX 	1.3.6.1.4.1.1466.115.121.1.27
+    SINGLE-VALUE)
+
+objectclass ( 1.3.6.1.4.1.8005.100.1.1.1
+    NAME 	'GlueSchemaVersion'
+    DESC 	'Schema Version Number'
+    SUP  	'GlueGeneralTop'
+    AUXILIARY
+    MUST 	(GlueSchemaVersionMajor $ GlueSchemaVersionMinor) )	
+
+#**********************************************
+#
+#    Internal attributes to be used to overcome
+#    OpenLDAP limitations in query flexibility
+#
+#     GlueGeneralTop  .1
+#            |
+#       -----------
+#       |         |
+#    Obj .1.    Attr .4.2.
+#       |         |
+#    GlueKey
+#       .4
+#
+
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.4.2.1
+    NAME        'GlueChunkKey'
+    DESC        'RDN (AttributeType=AttributeValue) to be used to reference related entry'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.4.2.2
+    NAME        'GlueForeignKey'
+    DESC        'RDN (AttributeType=AttributeValue)'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26)
+
+objectclass ( 1.3.6.1.4.1.8005.100.1.1.4
+    NAME        'GlueKey'
+    DESC        'Internal atributes to express object associations'
+    SUP         'GlueGeneralTop'
+    AUXILIARY
+    MAY         (GlueChunkKey $ GlueForeignKey) )
+
+#**********************************************
+#
+#     GlueGeneralTop  .1
+#            |
+#       -----------
+#       |         |
+#    Obj .1.    Attr .6.2.
+#       |         |
+#    GlueService
+#       .6
+#
+
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.1
+    NAME        'GlueServiceUniqueID'
+    DESC        'Unique Identifier of this service'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.2
+    NAME        'GlueServiceName'
+    DESC        'Human-friendly name'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.3
+    NAME        'GlueServiceType'
+    DESC        'The service type'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.4
+    NAME        'GlueServiceVersion'
+    DESC        'Version of the service: <major version number>.<minor version number>.<patch version number>'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.5
+    NAME        'GlueServiceEndpoint'
+    DESC        'Network endpoint for this service'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.6
+    NAME        'GlueServiceStatus'
+    DESC        'Status of the service. String enumeration: OK, Warning, Critical, Unknown, Other'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.7
+    NAME        'GlueServiceStatusInfo'
+    DESC        'Textual explanation for the status of the service'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.8
+    NAME        'GlueServiceWSDL'
+    DESC        'URI of the WSDL describing the service'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.9
+    NAME        'GlueServiceSemantics'
+    DESC        'URL of detailed description'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.10
+    NAME        'GlueServiceStartTime'
+    DESC        'The timestamp related to last start time of this service'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.11
+    NAME        'GlueServiceOwner'
+    DESC        'Owner of the service (e.g.: one or more VOs)'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.12
+    NAME        'GlueServiceURI'
+    DESC        'URI of the service (D), use GlueServiceUniqueID'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.13
+    NAME        'GlueServiceAccessPointURL'
+    DESC        'the service URL (D), use GlueServiceEndpoint'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.14
+    NAME        'GlueServicePrimaryOwnerName'
+    DESC        'name of the primary owner for this service (D), use GlueServiceOwner'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.15
+    NAME        'GlueServicePrimaryOwnerContact'
+    DESC        'contact of the primary owner for this service (D), use related GlueSite contact info'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.16
+    NAME        'GlueServiceHostingOrganization'
+    DESC        'the organization hosting this service (D), use relationship to GlueSite'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.17
+    NAME        'GlueServiceMajorVersion'
+    DESC        'service implementatin major version (D), use GlueServiceVersion'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.18
+    NAME        'GlueServiceMinorVersion'
+    DESC        'service implementatin minor version (D), use GlueServiceVersion'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.19
+    NAME        'GlueServicePatchVersion'
+    DESC        'service implementatin patch version (D), use GlueServiceVersion'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.20
+    NAME        'GlueServiceAccessControlRule'
+    DESC        'authorized rule for this service (D)'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.21
+    NAME        'GlueServiceInformationServiceURL'
+    DESC        'URL of the information service that can provide info for this service (D), use GlueInformationService class'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.6.2.22
+    NAME        'GlueServiceAccessControlBaseRule'
+    DESC        'authorized rule for this service'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26)
+
+objectclass ( 1.3.6.1.4.1.8005.100.1.1.6
+    NAME        'GlueService'
+    DESC        'Service entity'
+    SUP         'GlueGeneralTop'
+    STRUCTURAL
+    MUST        GlueServiceUniqueID
+    MAY         ( GlueServiceVersion $ GlueServiceName $ GlueServiceType $ GlueServiceEndpoint $ GlueServiceStatus $ GlueServiceStatusInfo $ GlueServiceWSDL $ GlueServiceSemantics $ GlueServiceStartTime $ GlueServiceOwner $ GlueServiceAccessPointURL $ GlueServicePrimaryOwnerName $ GlueServicePrimaryOwnerContact $ GlueServiceHostingOrganization $ GlueServiceMajorVersion $ GlueServiceMinorVersion $ GlueServicePatchVersion $ GlueServiceInformationServiceURL $ GlueServiceAccessControlRule $ GlueServiceURI $ GlueServiceAccessControlBaseRule $ GlueSchemaVersionMajor $ GlueSchemaVersionMinor $ GlueInformationServiceURL $ GlueForeignKey) )
+
+#**********************************************
+#
+#     GlueGeneralTop  .1
+#            |
+#       -----------
+#       |         |
+#    Obj .1.    Attr .7.2.
+#       |         |
+#    GlueServiceData
+#       .7
+#
+
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.7.2.1
+    NAME        'GlueServiceDataKey'
+    DESC        'key'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.7.2.2
+    NAME        'GlueServiceDataValue'
+    DESC        'value'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+objectclass ( 1.3.6.1.4.1.8005.100.1.1.7
+    NAME        'GlueServiceData'
+    DESC        'Service entity'
+    SUP         'GlueGeneralTop'
+    STRUCTURAL
+    MUST        GlueServiceDataKey
+    MAY         (GlueServiceDataValue $ GlueChunkKey) )
+
+#**********************************************
+#
+#     GlueGeneralTop  .1
+#            |
+#       -----------
+#       |         |
+#    Obj .1.    Attr .8.2.
+#       |         |
+#    GlueSite
+#       .8
+#
+
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.1
+    NAME        'GlueSiteUniqueID'
+    DESC        'unique identifier for the site'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.2
+    NAME        'GlueSiteName'
+    DESC        'Human-readable name'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.3
+    NAME        'GlueSiteDescription'
+    DESC        'Short description of this site'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.4
+    NAME        'GlueSiteUserSupportContact'
+    DESC        'E-mail addresses of the support service. Syntax rule, mailto: followed by a list of email addresses separated by a comma (e.g.: mailto: email1, email2, email3'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.5
+    NAME        'GlueSiteSysAdminContact'
+    DESC        'E-mail addresses of the sys admin. Syntax rule, mailto: followed by a list of email addresses separated by a comma (e.g.: mailto: email1, email2, email3'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.6
+    NAME        'GlueSiteSecurityContact'
+    DESC        'E-mail addresses of the security. Syntax rule, mailto: followed by a list of email addresses separated by a comma (e.g.: mailto: email1, email2, email3'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.7
+    NAME        'GlueSiteLocation'
+    DESC        'Geographical location of this site (e.g., city, state, country)'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.8
+    NAME        'GlueSiteLatitude'
+    DESC        'the position of a place north or south of the  equator measured from -90 to 90 degrees with positive values going north and negative values going south'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.9
+    NAME        'GlueSiteLongitude'
+    DESC        'the position of a place east or west of Greenwich, England measured from -180 to 180 degrees with positive values going east and negative values going west'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.10
+    NAME        'GlueSiteWeb'
+    DESC        'The URI identifying a web page with more information about this site'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.11
+    NAME        'GlueSiteSponsor'
+    DESC        'VO sponsoring the site; the syntax should allow the expression of the percentage of sponsorship'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26)
+
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.12
+    NAME        'GlueSiteOtherInfo'
+    DESC        'This attribute is to be used to publish info that does not fit in any other attribute of the site entity. A name=value pair syntax or an XML structure are example of usage'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26)
+	
+attributetype ( 1.3.6.1.4.1.8005.100.1.8.2.13
+    NAME        'GlueSiteEmailContact'
+    DESC        'The main email contact for the site. Syntax rule: mailto: followed by a list of email addresses separated by a comma (e.g.: mailto: email1, email2, email3)'
+    EQUALITY    caseIgnoreIA5Match
+    SUBSTR      caseIgnoreIA5SubstringsMatch
+    SYNTAX      1.3.6.1.4.1.1466.115.121.1.26
+    SINGLE-VALUE)
+
+objectclass ( 1.3.6.1.4.1.8005.100.1.1.8
+    NAME        'GlueSite'
+    DESC        'Site entity'
+    SUP         'GlueGeneralTop'
+    STRUCTURAL
+    MUST        GlueSiteUniqueID
+    MAY         (GlueSiteDescription $ GlueSiteName $ GlueSiteUserSupportContact $ GlueSiteSysAdminContact $ GlueSiteSecurityContact $ GlueSiteLocation $ GlueSiteLatitude $ GlueSiteLongitude $ GlueSiteWeb $ GlueSiteSponsor $ GlueSiteOtherInfo $ GlueSiteEmailContact $ GlueSchemaVersionMajor $ GlueSchemaVersionMinor) )
+

@@ -1,0 +1,126 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import datetime
+
+from gip_ldap import read_bdii
+from test_common import getConfig
+
+class TestPrintCe:
+    def __init__(self, base_path):
+        self.cp = getConfig(base_path)
+        self.sites_list = self.get_sites()
+        self.ce_entries = []
+        self.vo_entries = []
+        self.ce_vo = {}
+
+    def get_sites(self):
+        sites = self.cp.get("gip", "site_names")
+        sites = [i.strip() for i in sites.split(',')]
+        return sites
+
+    def main(self):
+        html = self.getTitle()
+        for s in self.sites_list:
+            self.testCeAds(s)
+            html += self.formatResults(s)
+        return html
+
+    def testCeAds(self, site):
+        entries = read_bdii(self.cp, base="mds-vo-name=%s,mds-vo-name=local,o=grid" % site)
+        self.ce_entries = []
+        self.vo_entries = []
+        self.ce_vo = {}
+        for entry in entries:
+            if 'GlueCE' in entry.objectClass:
+                self.ce_entries.append(entry)
+                self.ce_vo[entry] = []
+            if 'GlueVOView' in entry.objectClass and 'GlueCETop' in entry.objectClass:
+                self.vo_entries.append(entry)
+        for entry in self.vo_entries:
+            for entry2 in self.ce_entries:
+                desired_ck = 'GlueCEUniqueID=%s' % entry2.glue['CEUniqueID']
+                if entry.glue['ChunkKey'] == desired_ck:
+                    self.ce_vo[entry2].append(entry)
+
+    def formatResults(self, site):
+        template1 = """
+            <tr>
+              <td>
+                <ul>
+                  <li>CE: %s
+                    <ul>
+                      <li>LRMS type: %s, Version: %s </li>
+                      <li>Slots used %s, Free %s </li>
+                      <li>Total batch slots: %s </li>
+                      <li>Max wall time: %s </li>
+        """
+        template2 = """
+                      <li>VO: %s
+                        <ul>
+                          <li>Running %s, Waiting %s</li>
+                          <li>Running %s, Waiting %s</li>
+                        </ul>
+                      </li>
+        """
+        template3 = """
+                    </ul>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+        """
+        html = self.getHeader(site)
+
+        for entry in self.ce_entries:
+            html += template1 % (entry.glue['CEUniqueID'], entry.glue['CEInfoLRMSType'], entry.glue['CEInfoLRMSVersion'], \
+                entry.glue['CEStateFreeJobSlots'], entry.glue['CEStateRunningJobs'], entry.glue['CEPolicyAssignedJobSlots'], \
+                entry.glue['CEPolicyMaxWallClockTime'])
+
+            for vo in self.ce_vo[entry]:
+                html += template2 % (vo.glue['VOViewLocalID'], vo.glue['CEStateRunningJobs'], vo.glue['CEStateWaitingJobs'], \
+                                     vo.glue['CEStateRunningJobs'], vo.glue['CEStateWaitingJobs'])
+            html += template3
+
+        html += self.getFooter()
+        return html
+
+    def getTitle(self):
+        updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+        html = """
+            <h1>CE Print</h1>
+            <h2>Print out the following information for each CE at a site:
+                <ul>
+                    <li>LRMS and version</li>
+                    <li>Free batch slots</li>
+                    <li>Running jobs and waiting jobs</li>
+                    <li>Total batch slots</li>
+                    <li>Max wall clock time</li>
+                </ul>
+            </h2>
+            <h2>For each attached VO view, print:
+                <ul>
+                    <li>VO</li>
+                    <li>Running jobs</li>
+                    <li>Waiting jobs</li>
+                </ul>
+            </h2>
+            <h2>Last Updated on: %s </h2>
+        """
+        return html % updateDateTime
+
+    def getHeader(self, site):
+        html = """
+            <h2>Test results for %s</h2>
+            <table>
+        """
+        return html % site
+
+    def getFooter(self):
+        return "</table>"
+
+if __name__ == '__main__':
+    t = TestPrintCe(sys.argv[1])
+    print t.main()
+

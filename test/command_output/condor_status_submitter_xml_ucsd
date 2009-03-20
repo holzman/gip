@@ -1,0 +1,645 @@
+<?xml version="1.0"?>
+<!DOCTYPE classads SYSTEM "classads.dtd">
+<classads>
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MaxJobsRunning"><i>3000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 50 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>3906116</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: I386-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546675</i></a>
+    <a n="Machine"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546438</i></a>
+    <a n="MonitorSelfCPUUsage"><r>8.378270268440247E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.045520000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>94820</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>240</i></a>
+    <a n="JobQueueBirthdate"><i>1190051138</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>3</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_cms.uscms1259@osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215448381</i></a>
+    <a n="UpdateSequenceNumber"><i>6660</i></a>
+    <a n="ServerTime"><i>1217546675</i></a>
+    <a n="LastHeardFrom"><i>1217546675</i></a>
+    <a n="UpdatesTotal"><i>6218</i></a>
+    <a n="UpdatesSequenced"><i>6215</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MaxJobsRunning"><i>3000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 50 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>3906116</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: I386-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546675</i></a>
+    <a n="Machine"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546438</i></a>
+    <a n="MonitorSelfCPUUsage"><r>8.378270268440247E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.045520000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>94820</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>240</i></a>
+    <a n="JobQueueBirthdate"><i>1190051138</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>0</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>3</i></a>
+    <a n="Name"><s>group_cms.uscms1586@osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215448381</i></a>
+    <a n="UpdateSequenceNumber"><i>33115</i></a>
+    <a n="ServerTime"><i>1217546675</i></a>
+    <a n="LastHeardFrom"><i>1217546675</i></a>
+    <a n="UpdatesTotal"><i>32077</i></a>
+    <a n="UpdatesSequenced"><i>32073</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MaxJobsRunning"><i>3000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 50 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>3906116</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: I386-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546675</i></a>
+    <a n="Machine"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546438</i></a>
+    <a n="MonitorSelfCPUUsage"><r>8.378270268440247E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.045520000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>94820</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>240</i></a>
+    <a n="JobQueueBirthdate"><i>1190051138</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>295</i></a>
+    <a n="IdleJobs"><i>586</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>194</i></a>
+    <a n="Name"><s>group_cms.uscms2052@osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215448381</i></a>
+    <a n="UpdateSequenceNumber"><i>53820</i></a>
+    <a n="ServerTime"><i>1217546675</i></a>
+    <a n="LastHeardFrom"><i>1217546675</i></a>
+    <a n="UpdatesTotal"><i>17667</i></a>
+    <a n="UpdatesSequenced"><i>17660</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MaxJobsRunning"><i>3000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 50 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>3906116</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: I386-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546675</i></a>
+    <a n="Machine"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546438</i></a>
+    <a n="MonitorSelfCPUUsage"><r>8.378270268440247E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.045520000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>94820</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>240</i></a>
+    <a n="JobQueueBirthdate"><i>1190051138</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>2</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_cms.uscms2182@osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215448381</i></a>
+    <a n="UpdateSequenceNumber"><i>35025</i></a>
+    <a n="ServerTime"><i>1217546675</i></a>
+    <a n="LastHeardFrom"><i>1217546675</i></a>
+    <a n="UpdatesTotal"><i>34443</i></a>
+    <a n="UpdatesSequenced"><i>34275</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MaxJobsRunning"><i>3000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 50 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>3906116</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: I386-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546675</i></a>
+    <a n="Machine"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546438</i></a>
+    <a n="MonitorSelfCPUUsage"><r>8.378270268440247E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.045520000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>94820</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>240</i></a>
+    <a n="JobQueueBirthdate"><i>1190051138</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>5</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_cms.uscms2185@osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215448381</i></a>
+    <a n="UpdateSequenceNumber"><i>23947</i></a>
+    <a n="ServerTime"><i>1217546675</i></a>
+    <a n="LastHeardFrom"><i>1217546675</i></a>
+    <a n="UpdatesTotal"><i>8182</i></a>
+    <a n="UpdatesSequenced"><i>8175</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MaxJobsRunning"><i>3000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 50 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>3906116</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: I386-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546675</i></a>
+    <a n="Machine"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546438</i></a>
+    <a n="MonitorSelfCPUUsage"><r>8.378270268440247E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.045520000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>94820</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>240</i></a>
+    <a n="JobQueueBirthdate"><i>1190051138</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>53</i></a>
+    <a n="IdleJobs"><i>25</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>25</i></a>
+    <a n="Name"><s>group_cms.uscms2186@osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215448381</i></a>
+    <a n="UpdateSequenceNumber"><i>5318</i></a>
+    <a n="ServerTime"><i>1217546675</i></a>
+    <a n="LastHeardFrom"><i>1217546675</i></a>
+    <a n="UpdatesTotal"><i>5319</i></a>
+    <a n="UpdatesSequenced"><i>5317</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MaxJobsRunning"><i>3000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 50 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>3906116</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: I386-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546675</i></a>
+    <a n="Machine"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546438</i></a>
+    <a n="MonitorSelfCPUUsage"><r>8.378270268440247E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.045520000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>94820</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>240</i></a>
+    <a n="JobQueueBirthdate"><i>1190051138</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>5</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_cms.uscms2302@osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215448381</i></a>
+    <a n="UpdateSequenceNumber"><i>473</i></a>
+    <a n="ServerTime"><i>1217546675</i></a>
+    <a n="LastHeardFrom"><i>1217546675</i></a>
+    <a n="UpdatesTotal"><i>474</i></a>
+    <a n="UpdatesSequenced"><i>473</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MaxJobsRunning"><i>3000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 50 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>3906116</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: I386-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546675</i></a>
+    <a n="Machine"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.16:32935&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546438</i></a>
+    <a n="MonitorSelfCPUUsage"><r>8.378270268440247E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.045520000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>94820</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>240</i></a>
+    <a n="JobQueueBirthdate"><i>1190051138</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>68</i></a>
+    <a n="IdleJobs"><i>581</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>samgrid@osg-gw-2.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215448381</i></a>
+    <a n="UpdateSequenceNumber"><i>87919</i></a>
+    <a n="ServerTime"><i>1217546675</i></a>
+    <a n="LastHeardFrom"><i>1217546675</i></a>
+    <a n="UpdatesTotal"><i>83284</i></a>
+    <a n="UpdatesSequenced"><i>83266</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MaxJobsRunning"><i>1000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 25 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>16386084</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546740</i></a>
+    <a n="Machine"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546607</i></a>
+    <a n="MonitorSelfCPUUsage"><r>7.550320029258728E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.294400000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>114948</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>53</i></a>
+    <a n="JobQueueBirthdate"><i>1185314064</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>5</i></a>
+    <a n="IdleJobs"><i>1</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>1</i></a>
+    <a n="Name"><s>group_cms.uscms099@osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215714669</i></a>
+    <a n="UpdateSequenceNumber"><i>50198</i></a>
+    <a n="ServerTime"><i>1217546740</i></a>
+    <a n="LastHeardFrom"><i>1217546740</i></a>
+    <a n="UpdatesTotal"><i>51060</i></a>
+    <a n="UpdatesSequenced"><i>51040</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MaxJobsRunning"><i>1000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 25 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>16386084</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546740</i></a>
+    <a n="Machine"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546607</i></a>
+    <a n="MonitorSelfCPUUsage"><r>7.550320029258728E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.294400000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>114948</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>53</i></a>
+    <a n="JobQueueBirthdate"><i>1185314064</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>4</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_cms.uscms1259@osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215714669</i></a>
+    <a n="UpdateSequenceNumber"><i>8806</i></a>
+    <a n="ServerTime"><i>1217546740</i></a>
+    <a n="LastHeardFrom"><i>1217546740</i></a>
+    <a n="UpdatesTotal"><i>8446</i></a>
+    <a n="UpdatesSequenced"><i>8443</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MaxJobsRunning"><i>1000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 25 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>16386084</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546740</i></a>
+    <a n="Machine"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546607</i></a>
+    <a n="MonitorSelfCPUUsage"><r>7.550320029258728E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.294400000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>114948</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>53</i></a>
+    <a n="JobQueueBirthdate"><i>1185314064</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>4</i></a>
+    <a n="IdleJobs"><i>13</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>21</i></a>
+    <a n="Name"><s>group_cms.uscms1586@osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215714669</i></a>
+    <a n="UpdateSequenceNumber"><i>30454</i></a>
+    <a n="ServerTime"><i>1217546740</i></a>
+    <a n="LastHeardFrom"><i>1217546740</i></a>
+    <a n="UpdatesTotal"><i>30121</i></a>
+    <a n="UpdatesSequenced"><i>30120</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MaxJobsRunning"><i>1000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 25 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>16386084</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546740</i></a>
+    <a n="Machine"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546607</i></a>
+    <a n="MonitorSelfCPUUsage"><r>7.550320029258728E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.294400000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>114948</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>53</i></a>
+    <a n="JobQueueBirthdate"><i>1185314064</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>252</i></a>
+    <a n="IdleJobs"><i>837</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_cms.uscms2052@osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215714669</i></a>
+    <a n="UpdateSequenceNumber"><i>55255</i></a>
+    <a n="ServerTime"><i>1217546740</i></a>
+    <a n="LastHeardFrom"><i>1217546740</i></a>
+    <a n="UpdatesTotal"><i>20821</i></a>
+    <a n="UpdatesSequenced"><i>20815</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MaxJobsRunning"><i>1000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 25 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>16386084</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546740</i></a>
+    <a n="Machine"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546607</i></a>
+    <a n="MonitorSelfCPUUsage"><r>7.550320029258728E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.294400000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>114948</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>53</i></a>
+    <a n="JobQueueBirthdate"><i>1185314064</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>2</i></a>
+    <a n="IdleJobs"><i>15</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>15</i></a>
+    <a n="Name"><s>group_cms.uscms2182@osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215714669</i></a>
+    <a n="UpdateSequenceNumber"><i>35834</i></a>
+    <a n="ServerTime"><i>1217546740</i></a>
+    <a n="LastHeardFrom"><i>1217546740</i></a>
+    <a n="UpdatesTotal"><i>35835</i></a>
+    <a n="UpdatesSequenced"><i>35665</i></a>
+    <a n="UpdatesLost"><i>1</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MaxJobsRunning"><i>1000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 25 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>16386084</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546740</i></a>
+    <a n="Machine"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546607</i></a>
+    <a n="MonitorSelfCPUUsage"><r>7.550320029258728E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.294400000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>114948</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>53</i></a>
+    <a n="JobQueueBirthdate"><i>1185314064</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>14</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_cms.uscms2185@osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215714669</i></a>
+    <a n="UpdateSequenceNumber"><i>17425</i></a>
+    <a n="ServerTime"><i>1217546740</i></a>
+    <a n="LastHeardFrom"><i>1217546740</i></a>
+    <a n="UpdatesTotal"><i>7689</i></a>
+    <a n="UpdatesSequenced"><i>7680</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MaxJobsRunning"><i>1000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 25 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>16386084</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546740</i></a>
+    <a n="Machine"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546607</i></a>
+    <a n="MonitorSelfCPUUsage"><r>7.550320029258728E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.294400000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>114948</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>53</i></a>
+    <a n="JobQueueBirthdate"><i>1185314064</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>39</i></a>
+    <a n="IdleJobs"><i>22</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>22</i></a>
+    <a n="Name"><s>group_cms.uscms2186@osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215714669</i></a>
+    <a n="UpdateSequenceNumber"><i>7401</i></a>
+    <a n="ServerTime"><i>1217546740</i></a>
+    <a n="LastHeardFrom"><i>1217546740</i></a>
+    <a n="UpdatesTotal"><i>7402</i></a>
+    <a n="UpdatesSequenced"><i>7399</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="f"/></a>
+    <a n="ScheddIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MyAddress"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MaxJobsRunning"><i>1000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 25 || GridMonitorJob =?= TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>16386084</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.3 Jun 20 2008 BuildID: 91405 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1217546740</i></a>
+    <a n="Machine"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;169.228.130.18:35184&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1217546607</i></a>
+    <a n="MonitorSelfCPUUsage"><r>7.550320029258728E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>1.294400000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>114948</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>53</i></a>
+    <a n="JobQueueBirthdate"><i>1185314064</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="RunningJobs"><i>6</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_cms.uscms2302@osg-gw-4.t2.ucsd.edu</s></a>
+    <a n="DaemonStartTime"><i>1215714669</i></a>
+    <a n="UpdateSequenceNumber"><i>662</i></a>
+    <a n="ServerTime"><i>1217546740</i></a>
+    <a n="LastHeardFrom"><i>1217546740</i></a>
+    <a n="UpdatesTotal"><i>663</i></a>
+    <a n="UpdatesSequenced"><i>662</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+</classads>
+
+

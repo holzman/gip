@@ -1,0 +1,179 @@
+Queue: default
+    queue_type = Execution
+    Priority = 1
+    total_jobs = 7
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:7 Exiting:0 Begun
+	:0 
+    max_running = 400
+    max_queuable = 2000
+    resources_max.nodect = 444
+    resources_max.walltime = 24:00:00
+    resources_assigned.ncpus = 7
+    resources_assigned.nodect = 7
+    max_user_run = 150
+    max_user_res.ncpus = 150
+    enabled = True
+    started = True
+
+Queue: osg
+    queue_type = Execution
+    max_queuable = 2000
+    total_jobs = 0
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
+	:0 
+    enabled = True
+    started = True
+
+Queue: workq
+    queue_type = Execution
+    Priority = 118
+    total_jobs = 1
+    max_queueable = 2000
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:1 Exiting:0 Begun
+	:0 
+    max_running = 444
+    resources_max.nodect = 444
+    resources_max.walltime = 24:00:00
+    resources_assigned.ncpus = 1
+    resources_assigned.nodect = 1
+    max_user_run = 444
+    max_user_res.ncpus = 444
+    enabled = True
+    started = True
+
+Queue: pushpa
+    queue_type = Execution
+    Priority = 138
+    total_jobs = 0
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
+	:0 
+    max_running = 20
+    resources_max.nodect = 5
+    resources_max.walltime = 72:00:00
+    resources_assigned.ncpus = 0
+    resources_assigned.nodect = 0
+    max_user_run = 20
+    hasnodes = True
+    max_user_res.ncpus = 20
+    enabled = True
+    started = True
+
+Queue: dzero
+    queue_type = Execution
+    Priority = 116
+    total_jobs = 0
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
+	:0 
+    max_running = 444
+    resources_max.nodect = 444
+    resources_max.walltime = 24:00:00
+    resources_assigned.ncpus = 0
+    resources_assigned.nodect = 0
+    max_user_run = 444
+    max_user_res.ncpus = 444
+    enabled = True
+    started = True
+
+Queue: aarond
+    queue_type = Execution
+    Priority = 131
+    total_jobs = 0
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
+	:0 
+    max_running = 80
+    resources_max.nodect = 80
+    resources_max.walltime = 24:00:00
+    acl_group_enable = True
+    acl_groups = aarond
+    resources_assigned.mem = 0kb
+    resources_assigned.ncpus = 0
+    resources_assigned.nodect = 0
+    max_user_run = 80
+    max_user_res.ncpus = 80
+    enabled = True
+    started = True
+
+Queue: atlas
+    queue_type = Execution
+    Priority = 130
+    total_jobs = 0
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
+	:0 
+    max_running = 444
+    resources_max.nodect = 444
+    resources_max.walltime = 24:00:00
+    resources_assigned.ncpus = 0
+    resources_assigned.nodect = 0
+    max_user_run = 444
+    max_user_res.ncpus = 444
+    enabled = True
+    started = True
+
+Queue: cmsprod
+    queue_type = Execution
+    Priority = 118
+    total_jobs = 51
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:51 Exiting:0 Begu
+	n:0 
+    max_running = 444
+    resources_max.nodect = 444
+    resources_max.walltime = 24:00:00
+    resources_assigned.ncpus = 51
+    resources_assigned.nodect = 51
+    max_user_run = 444
+    max_user_res.ncpus = 444
+    enabled = True
+    started = True
+
+Queue: cms
+    queue_type = Execution
+    Priority = 118
+    total_jobs = 202
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:202 Exiting:0 Beg
+	un:0 
+    max_running = 444
+    resources_max.nodect = 444
+    resources_max.walltime = 24:00:00
+    resources_assigned.ncpus = 202
+    resources_assigned.nodect = 202
+    max_user_run = 444
+    max_user_res.ncpus = 444
+    enabled = True
+    started = True
+
+Queue: oli
+    queue_type = Execution
+    Priority = 135
+    total_jobs = 0
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
+	:0 
+    max_running = 12
+    resources_max.nodect = 12
+    resources_max.walltime = 48:00:00
+    acl_group_enable = True
+    acl_groups = uscmsPool087,uscmsPool1181
+    max_user_run = 12
+    max_user_res.ncpus = 12
+    enabled = True
+    started = True
+
+Queue: lcgadmin
+    queue_type = Execution
+    Priority = 135
+    max_queueable = 183
+    total_jobs = 0
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
+	:0 
+    max_running = 4
+    resources_max.nodect = 4
+    resources_max.walltime = 24:00:00
+    acl_group_enable = True
+    acl_groups = lcgadmin,uscmsPool018,uscmsPool020,brian,nagios
+    resources_assigned.ncpus = 0
+    resources_assigned.nodect = 0
+    max_user_run = 4
+    hasnodes = True
+    max_user_res.ncpus = 4
+    enabled = True
+    started = True
+

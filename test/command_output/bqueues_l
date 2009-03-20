@@ -1,0 +1,2177 @@
+
+QUEUE: grid_ops
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 99   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 44.0 min of KSI2K
+
+ RUNLIMIT                
+ 44.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 45.0 min of KSI2K
+
+ RUNLIMIT                
+ 45.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_OPS/   
+HOSTS:  SHARE/ IR8NM/ IR1NH/ IR8NH/ IR1ND/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30 && swp>500 && maxmem>=1000)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: cmsinter
+  -- interactive queue dedicated to CMS
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 99    0  Open:Active       -   20    -   50     3     0     3     0     0    0
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  ONLY_INTERACTIVE
+
+USERS: u_CMSCOMM/ u_CMSALCA/ u_CMSPHYS/   
+HOSTS:  g_cmsinter/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 2880 && swp>1300)]
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlasinter
+  -- interactive queue dedicated to CMS
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 99    0  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  ONLY_INTERACTIVE
+
+USERS: u_ATLAS/   
+HOSTS:  g_atlasinter/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 2880 && swp>1300)]
+
+-------------------------------------------------------------------------------
+
+QUEUE: cmscaf
+  -- Queue for cmscaf nodes. Very restricted access. CPU limit: 1 week
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 95   10  Open:Active       -    -    -    -    51     2    49     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_CMSCOMM/ u_CMSPHYS/ u_CMSALCA/   
+HOSTS:  g_cmscaf/ g_cmscafspec/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 30240)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: cmsexpress
+  -- Private queue for CMS Repack activity - CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 95   10  Open:Active       -  400    -    -     2     2     0     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: ALCA_EXPRESS/   
+HOSTS:  g_cmsexpress/ g_cmscaf/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 30240)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: cmsrelval
+  -- Another queue for csa07 nodes. CMSSCA07 restricted access. CPU limit: 1 week Requested by Christoph Paus
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 70   10  Open:Active     500  500    -    -     9     0     9     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ITDCCMS/ u_CMSREPACK/   
+HOSTS:  g_cmsproc/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 30240)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: cmsrepack
+  -- Private queue for CMS Repack activity - CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 50   10  Open:Active       -  400    -    -     0     0     0     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_CMSREPACK/   
+HOSTS:  g_cmsrepack/ g_cmsproc/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 30240)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: cmsproc
+  -- Queue for csa07 nodes. CMSSCA07 restricted access. CPU limit: 1 week
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 50   10  Open:Active       -    -    -    8     1     0     1     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ITDCCMS/ u_CMSREPACK/   
+HOSTS:  g_cmsproc/ g_cmscaf/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 30240) && mem>1024 && swp>1024 ] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_dteam
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 27   10  Open:Active       -    -    -    2     0     0     0     0     0    0
+
+ CPULIMIT                
+ 30.0 min of KSI2K
+
+ RUNLIMIT                
+ 30.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_DTEAM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30 && swp>500 && maxmem>=1000)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_2nh_dteam
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 27   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+ CPULIMIT                
+ 120.0 min of KSI2K
+
+ RUNLIMIT                
+ 120.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_DTEAM/   
+HOSTS:  SHARE/ IRSHORT/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 120 && swp>500 && maxmem>=1000)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_glite
+  -- GRID Glite PreProduction; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 27   10  Open:Active      50    -    -    -     0     0     0     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 10080.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_DTEAM/ grid_ALICE/ grid_ATLAS/ grid_CMS/ grid_LHCB/ grid_ALICEPRD/ grid_ALICESGM/ grid_ATLASPRD/ grid_ATLASSGM/ grid_CMSPRD/ grid_CMSSGM/ grid_LHCBPRD/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 10080 && swp>1000 && maxmem>=1500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 8nm
+  -- Public queue - CPU limit: (8 KSI2K minutes).  This is the default queue.
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 26   10  Open:Active       -  100    -    -     1     1     0     0     0    0
+Interval for a host to accept two jobs is 0 seconds
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 8.0 min of KSI2K
+
+ RUNLIMIT                
+ 80.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 9.0 min of KSI2K
+
+ RUNLIMIT                
+ 81.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ IRSHARE/ IR8NM/ IRSHORT/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 81 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_2nh_cms
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 25   10  Open:Active       -    -    -    2    10     0    10     0     0    0
+
+ CPULIMIT                
+ 120.0 min of KSI2K
+
+ RUNLIMIT                
+ 2880.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_DTEAM/ grid_CMS/ grid_CMSPRD/ grid_CMSSGM/   
+HOSTS:  SHARE/ IRSHORT/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 2880 && swp>1000 && maxmem>=1500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_2nh_atlas
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 25   10  Open:Active       -    -    -    2     6     0     6     0     0    0
+
+ CPULIMIT                
+ 120.0 min of KSI2K
+
+ RUNLIMIT                
+ 2880.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_ATLAS/ grid_DTEAM/ grid_ATLASPRD/ grid_ATLASSGM/   
+HOSTS:  SHARE/ IRSHORT/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 2880 && swp>1000 && maxmem>=1500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_2nh_lhcb
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 25   10  Open:Active       -    -    -    2     0     0     0     0     0    0
+
+ CPULIMIT                
+ 120.0 min of KSI2K
+
+ RUNLIMIT                
+ 2880.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_DTEAM/ grid_LHCB/ grid_LHCBPRD/ grid_LHCBSGM/   
+HOSTS:  SHARE/ IRSHORT/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 2880 && swp>1000 && maxmem>=1500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 1nh80
+  -- Public queue for CPU bound jobs only
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 25   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 60.0 min of KSI2K
+
+ RUNLIMIT                
+ 75.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 62.0 min of KSI2K
+
+ RUNLIMIT                
+ 77.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+JOB EXCEPTION PARAMETERS 
+             OVERRUN(min) UNDERRUN(min) IDLE(cputime/runtime)
+ Threshold         -         -          0.50
+      Jobs         -         -             0
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ IRSHARE/ IR1ND/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 77 && cpuf > 0.3 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 1nh
+  -- Public queue - CPU limit: (1 KSI2K hour).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 24   10  Open:Active       -  500    -    -   174    53   121     0     0    0
+Interval for a host to accept two jobs is 0 seconds
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 60.0 min of KSI2K
+
+ RUNLIMIT                
+ 2880.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 61.0 min of KSI2K
+
+ RUNLIMIT                
+ 2881.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ IRSHARE/ IR1NH/ IRSHORT/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 2881 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlasrttshort
+  -- ATLAS RTT Short Queue - CPU limit: (1 KSI2K hour).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 24   10  Open:Active       -    -    -    -    12    11     1     0     0    0
+Interval for a host to accept two jobs is 0 seconds
+
+ CPULIMIT                
+ 60.0 min of KSI2K
+
+ RUNLIMIT                
+ 1200.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASRTT/   
+HOSTS:  g_atlasrtt/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(type==SLC4_64 && lftm > 1200 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_atlas
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 22   10  Open:Active       -    -    -    2    13     0    13     0     0    0
+
+ CPULIMIT                
+ 1440.0 min of KSI2K
+
+ RUNLIMIT                
+ 2160.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_ATLAS/ grid_DTEAM/ grid_ATLASPRD/ grid_ATLASSGM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 2160 && swp>1000 && maxmem>=1500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_2nd_lhcb
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 21   10  Open:Active       -    -    -    2     0     0     0     0     0    0
+
+ CPULIMIT                
+ 2880.0 min of KSI2K
+
+ RUNLIMIT                
+ 8640.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_DTEAM/ grid_LHCB/ grid_LHCBPRD/ grid_LHCBSGM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 8640 && swp>1000 && maxmem>=1500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_cms
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 20   10  Open:Active       -    -    -    2 13561 13295   266     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_DTEAM/ grid_CMS/ grid_CMSPRD/ grid_CMSSGM/   
+HOSTS:  SHARE/ lxb5506 lxb5507 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30240 && swp>1000 && maxmem>=1500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_lhcb
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 20   10  Open:Active       -    -    -    2     0     0     0     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_DTEAM/ grid_LHCB/ grid_LHCBPRD/ grid_LHCBSGM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30240 && swp>1000 && maxmem>=1500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_unosat
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 20   10  Open:Active       -    -    -    -     1     1     0     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_UNOSAT/ grid_DTEAM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30240 && swp>500 && maxmem>=1000)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_eela
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 20   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_EELA/ grid_DTEAM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30240 && swp>500 && maxmem>=1000)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_alice
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 20   10  Open:Active       -    -    -    2     1     0     1     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_ALICE/ grid_ALICEPRD/ grid_ALICESGM/ grid_DTEAM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30240 && swp>1000 && maxmem>=1500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_1nd_alice
+  -- GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 20   10  Open:Active       -    -    -    -   208     0   208     0     0    0
+
+ CPULIMIT                
+ 1440.0 min of KSI2K
+
+ RUNLIMIT                
+ 2160.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_ALICE/ grid_ALICEPRD/ grid_ALICESGM/ grid_DTEAM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 2160 && swp>1000 && maxmem>=1500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_na48
+  -- NA48 GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 20   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_NA48/ grid_DTEAM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30240 && swp>500 && maxmem>=1000)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_geant4
+  -- GEANT4 GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 20   10  Open:Active       -    -    -    -   120     0   120     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_GEANT4/ grid_DTEAM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30240 && swp>500 && maxmem>=1000)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_gear
+  -- GEAR GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 20   10  Open:Active       -    -    -    -    68    67     1     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_GEAR/ grid_DTEAM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30240 && swp>500 && maxmem>=1000)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: grid_gin
+  -- GEAR GRID COMPUTING QUEUE; CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 20   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: grid_GIN/ grid_DTEAM/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30240 && swp>500 && maxmem>=1000)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: system_test
+  -- System Test Queue (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+ 10   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: jveldik dmicol lsfadm_it/   
+HOSTS:  SHARE/ 
+ADMINISTRATORS:  ricardo renshall 
+RES_REQ:  select[(lftm > 30240)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlastzero
+  -- Queue for ATLAS T0 activity
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  7   10  Open:Active       -    -    -    -   270     0   270     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+USERS: u_ITDCUSER/   
+HOSTS:  g_atlastzero/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlastzeroval
+  -- Queue for ATLAS T0 activity validation
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  7   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+USERS: u_ATLASTZERO/   
+HOSTS:  g_atlastzeroval/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlascaf
+  -- ATLAS CAF queue
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  7   10  Open:Active       -    -    -    -     4     0     4     0     0    0
+
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASCAF/   
+HOSTS:  g_atlascaf/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlascatshort
+  -- ATLAS CAT Queue - CPU limit: (1 KSI2K hour).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+Interval for a host to accept two jobs is 0 seconds
+
+ CPULIMIT                
+ 60.0 min of KSI2K
+
+ RUNLIMIT                
+ 1200.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: zp_CAT/   
+HOSTS:  g_atlascatshort/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 1200 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlascatlong
+  -- ATLAS CAT Queue - CPU limit: (10 KSI2K hour).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+Interval for a host to accept two jobs is 0 seconds
+
+ CPULIMIT                
+ 600.0 min of KSI2K
+
+ RUNLIMIT                
+ 12000.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: zp_CAT/   
+HOSTS:  g_atlascatlong/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 12000 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlasrttmedium
+  -- ATLAS RTT Medium Queue - CPU limit: (8 KSI2K hours).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -    79     6    73     0     0    0
+Interval for a host to accept two jobs is 0 seconds
+
+ CPULIMIT                
+ 480.0 min of KSI2K
+
+ RUNLIMIT                
+ 9600.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASRTT/   
+HOSTS:  g_atlasrtt/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(type==SLC4_64 && lftm > 9600 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlasrttlong
+  -- ATLAS RTT Long Queue - CPU limit: (72 KSI2K hours).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -    84     4    80     0     0    0
+Interval for a host to accept two jobs is 0 seconds
+
+ CPULIMIT                
+ 4320.0 min of KSI2K
+
+ RUNLIMIT                
+ 86400.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASRTT/   
+HOSTS:  g_atlasrtt/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(type==SLC4_64 && lftm > 86400 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlasid
+  -- ATLAS CAF queue
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 14400.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 14402.0 min of KSI2K
+
+ RUNLIMIT                
+ 14402.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASID/   
+HOSTS:  g_atlasid/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlastile
+  -- ATLAS CAF queue
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -     2     0     2     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 14400.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 14402.0 min of KSI2K
+
+ RUNLIMIT                
+ 14402.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASTILE/   
+HOSTS:  g_atlastile/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlasmuon
+  -- ATLAS CAF queue
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 14400.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 14402.0 min of KSI2K
+
+ RUNLIMIT                
+ 14402.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASMUON/   
+HOSTS:  g_atlasmuon/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlaslar
+  -- ATLAS CAF queue
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 14400.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 14402.0 min of KSI2K
+
+ RUNLIMIT                
+ 14402.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASLAR/   
+HOSTS:  g_atlaslar/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlasgeneral
+  -- ATLAS CAF queue
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 14400.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 14402.0 min of KSI2K
+
+ RUNLIMIT                
+ 14402.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASGENERAL/   
+HOSTS:  g_atlasgeneral/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlaslarcal
+  -- ATLAS CAF queue
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 14400.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 14402.0 min of KSI2K
+
+ RUNLIMIT                
+ 14402.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASLARCAL/   
+HOSTS:  g_atlaslarcal/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlasidcal
+  -- ATLAS CAF queue
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 14400.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 14402.0 min of KSI2K
+
+ RUNLIMIT                
+ 14402.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASIDCAL/   
+HOSTS:  g_atlasidcal/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlastrig
+  -- ATLAS Trigger
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  6   10  Open:Active       -    -    -    -     1     0     1     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 14400.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 14402.0 min of KSI2K
+
+ RUNLIMIT                
+ 14402.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLASTRIG/   
+HOSTS:  g_atlastrig/ 
+ADMINISTRATORS:  lsfadmin 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14400)] order [jobslots] rusage[jobslots=1]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: cmsprs
+  -- queue for us_cms purchased resources: (8 KSI2K hours).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  5   10  Open:Active      60  175    -    3     0     0     0     0     0    0
+
+ CPULIMIT                
+ 480.0 min of KSI2K
+
+ RUNLIMIT                
+ 3200.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_zh/   
+HOSTS:  SHARE/ PARC/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 3200)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 8nh80
+  -- Public queue for CPU bound jobs only
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  5   10  Open:Active       -    -    -    -  1430  1428     2     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 480.0 min of KSI2K
+
+ RUNLIMIT                
+ 600.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 482.0 min of KSI2K
+
+ RUNLIMIT                
+ 602.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+JOB EXCEPTION PARAMETERS 
+             OVERRUN(min) UNDERRUN(min) IDLE(cputime/runtime)
+ Threshold         -         -          0.50
+      Jobs         -         -             0
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ IRSHARE/ IR1ND/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 602 && cpuf > 0.3 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 8nh
+  -- Public queue - CPU limit: (8 KSI2K hours).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  4   10  Open:Active       -  500    -    3   895   463   432     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 480.0 min of KSI2K
+
+ RUNLIMIT                
+ 3200.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 481.0 min of KSI2K
+
+ RUNLIMIT                
+ 3201.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ IRSHARE/ IR8NH/ IRSHORT/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 3201 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 1nd80
+  -- Public queue for CPU bound jobs only
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  4   10  Open:Active       -    -    -    2    10     0    10     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 1440.0 min of KSI2K
+
+ RUNLIMIT                
+ 1800.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 1442.0 min of KSI2K
+
+ RUNLIMIT                
+ 1802.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+JOB EXCEPTION PARAMETERS 
+             OVERRUN(min) UNDERRUN(min) IDLE(cputime/runtime)
+ Threshold         -         -          0.50
+      Jobs         -         -             1
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ IRSHARE/ IR1ND/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 1802 && cpuf > 0.3 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 1nd
+  -- Public queue - CPU limit: (1 KSI2K day).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  3   10  Open:Active       -    -    -    2  1964  1309   655     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 1440.0 min of KSI2K
+
+ RUNLIMIT                
+ 7200.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 1441.0 min of KSI2K
+
+ RUNLIMIT                
+ 7201.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ IRSHARE/ IR1ND/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 7201 && cpuf > 0.3 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 2nd80
+  -- Public queue for CPU bound jobs only
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  3   10  Open:Active       -    -    -    -    10    10     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 2880.0 min of KSI2K
+
+ RUNLIMIT                
+ 3600.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 2882.0 min of KSI2K
+
+ RUNLIMIT                
+ 3602.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+JOB EXCEPTION PARAMETERS 
+             OVERRUN(min) UNDERRUN(min) IDLE(cputime/runtime)
+ Threshold         -         -          0.50
+      Jobs         -         -             0
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ IRSHARE/ IR1ND/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 3602 && cpuf > 0.3 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 2nd
+  -- Public queue - CPU limit: (2 KSI2K day).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  2   10  Open:Active       -    -    -    2  1368   990   378     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 2880.0 min of KSI2K
+
+ RUNLIMIT                
+ 14400.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 2881.0 min of KSI2K
+
+ RUNLIMIT                
+ 14401.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 14401 && cpuf > 0.3 && swp>500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: prod100
+  -- Public queue - CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  2   10  Open:Active       - 1000    -    2   580   199   381     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 10081.0 min of KSI2K
+
+ RUNLIMIT                
+ 30241.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: prodna61 idcosmic gianotti idctb atlsprod muonprod cmsprod atlaprod alprod disimone objsrvvy atlidali l3cos sissi delmc lconey ntofdaq harpprod scprod xu_PROD/ vy_PROD/   
+HOSTS:  SHARE/ IRSHARE/ IRPROD/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 30241) && swp>500]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 1nw80
+  -- Public queue for CPU bound jobs only
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  2   10  Open:Active       -    -    -    -    10    10     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 12600.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 10082.0 min of KSI2K
+
+ RUNLIMIT                
+ 12602.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+JOB EXCEPTION PARAMETERS 
+             OVERRUN(min) UNDERRUN(min) IDLE(cputime/runtime)
+ Threshold         -         -          0.50
+      Jobs         -         -             0
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ IRSHARE/ IR1ND/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 12602 && cpuf > 0.3 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 1nw
+  -- Public queue - CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  1   10  Open:Active       -    -    -    1   594   392   202     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 10081.0 min of KSI2K
+
+ RUNLIMIT                
+ 30241.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 30241 && cpuf > 0.3 && swp>500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: 2nw
+  -- Public queue - CPU limit: (2 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  1   10  Open:Active       -    -    -    1   549   218   331     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 20080.0 min of KSI2K
+
+ RUNLIMIT                
+ 60240.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 20081.0 min of KSI2K
+
+ RUNLIMIT                
+ 60241.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: all  
+HOSTS:  SHARE/ PARC/ LXSCD/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 60241 && cpuf > 0.3 && swp>500)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: prod200
+  -- Public queue - CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  1   10  Open:Active       - 1000    -    2   675   199   476     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 10081.0 min of KSI2K
+
+ RUNLIMIT                
+ 30241.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: prodna61 idcosmic gianotti duic idctb prodxh evh ceres frs lhcbprod atlsprod muonprod cmsprod atlaprod disimone aliprod objsrvvy atlidali frankz dschulte sissi lconey cerescdr prodna49 harpprod na48cdr scprod ws_ACC/ vy_PROD/   
+HOSTS:  SHARE/ IRSHARE/ IRPROD/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 30241)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: prod400
+  -- Public queue - CPU limit: (1 KSI2K week).
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  1   10  Open:Active       - 1000    -    2   675   199   476     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 10080.0 min of KSI2K
+
+ RUNLIMIT                
+ 30240.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 10081.0 min of KSI2K
+
+ RUNLIMIT                
+ 30241.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: prodna61 gianotti idctb ceres evh frs lhcbprod atlsprod muonprod cmsprod atlaprod lombarda disimone objsrvvy atlidali sissi nairz lconey cerescdr harpprod scprod lgoossen vy_PROD/   
+HOSTS:  SHARE/ IRSHARE/ IRPROD/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 30241)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+
+-------------------------------------------------------------------------------
+
+QUEUE: atlas_1nh80
+  -- Public queue for CPU bound jobs only
+
+PARAMETERS/STATISTICS
+PRIO NICE STATUS          MAX JL/U JL/P JL/H NJOBS  PEND   RUN SSUSP USUSP  RSV 
+  1   10  Open:Active       -    -    -    -     0     0     0     0     0    0
+
+DEFAULT LIMITS:
+ CPULIMIT                
+ 60.0 min of KSI2K
+
+ RUNLIMIT                
+ 75.0 min of KSI2K
+
+MAXIMUM LIMITS:
+ CPULIMIT                
+ 62.0 min of KSI2K
+
+ RUNLIMIT                
+ 77.0 min of KSI2K
+
+SCHEDULING PARAMETERS
+           r15s   r1m  r15m   ut      pg    io   ls    it    tmp    swp    mem
+ loadSched   -     -     -     -       -     -    -     -     -      -      -  
+ loadStop    -     -     -     -       -     -    -     -     -      -      -  
+
+             lftm    pool maxpool  ccload    ccio 
+ loadSched     -       -       -       -       -  
+ loadStop      -       -       -       -       -  
+
+JOB EXCEPTION PARAMETERS 
+             OVERRUN(min) UNDERRUN(min) IDLE(cputime/runtime)
+ Threshold         -         -          0.10
+      Jobs         -         -             0
+
+SCHEDULING POLICIES:  NO_INTERACTIVE
+
+USERS: u_ATLAS/   
+HOSTS:  SHARE/ g_atlastzero/ g_atlastrig/ 
+ADMINISTRATORS:  ricardo renshall 
+REQUEUE_EXIT_VALUES:  EXCLUDE( 240 ) 
+RES_REQ:  select[(lftm > 77 && cpuf > 0.3 && swp>1300)]
+JOB_STARTER:  /usr/local/lsf/etc/job_starter '%USRCMD'
+JOB_ACTION_WARNING_TIME: 2 minute(s)
+

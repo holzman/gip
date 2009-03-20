@@ -1,0 +1,87 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import datetime
+
+from test_common import *
+
+CR = '\r'
+LF = '\n'
+CRLF = CR+LF
+
+class LCG_InfoSites_SE:
+    def __init__(self, base_path):
+        self.cp = getConfig(base_path)
+        self.bdii = self.cp.get("gip", "bdii_addr")
+        self.opts = ['se']
+        try:
+            self.vo = self.cp.get("gip", "vo")
+        except:
+            self.vo = "ops"
+
+    def runquery(self):
+        return runlcginfosites(self.bdii, self.vo, self.opts)
+
+    def main(self):
+        pout = self.runquery().readlines()
+        colorize = -1
+
+        pout.pop(0) # Pop the header
+        pout.pop(0) # Pop the separator line
+
+        html = self.getHeader()
+        for line in pout:
+            items = line.split()
+            avail = items[0]
+            used = items[1]
+            type = items[2]
+            se = items[3]
+            html += self.getDetail(se, type, avail, used, colorize)
+
+            colorize = colorize * -1
+
+        html += self.getFooter()
+
+        return html
+
+    def getHeader(self):
+        updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+
+        html = """
+            <h1>LCG InfoSites Query: 'lcg-infosites --is is.grid.iu.edu --vo ops se'</h1>
+            <h2>Last Updated on: %s </h2>
+            <table rules='all' frame='border'>
+            <tr>
+                <th>SE</th>
+                <th>Type</th>
+                <th>Available Space (Kb)</th>
+                <th>Used Space (Kb)</th>
+            </tr>
+        """
+
+        return html % updateDateTime
+
+    def getDetail(self, se, type, avail, used, colorize):
+        if (colorize == -1):
+            html = "      <tr style='background-color:#99ccff'>"
+        else:
+            html = "      <tr>"
+
+
+        detail = """
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+            </tr>
+        """
+        return html + (detail % (se, type, avail, used))
+
+    def getFooter(self):
+        return "</table>"
+
+if __name__ == '__main__':
+    l = LCG_InfoSites_SE(sys.argv[1])
+    print l.main()
+

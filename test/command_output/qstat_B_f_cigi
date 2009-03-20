@@ -1,0 +1,16 @@
+Server: everest.cigi.uiuc.edu
+   server_state = Active
+   scheduling = True
+   total_jobs = 8
+   state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:8 Exiting:0
+   managers = root@everest.cigi.uiuc.edu
+   operators = root@everest.cigi.uiuc.edu
+   default_queue = batch
+   log_events = 511
+   mail_from = adm
+   resources_assigned.nodect = 8
+   scheduler_iteration = 600
+   node_check_rate = 150
+   tcp_timeout = 6
+   pbs_version = 2.1.9
+

@@ -1,0 +1,126 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import urllib2
+import datetime
+
+from gip_validate import GipValidate
+from gip_ldap import read_ldap, prettyDN
+from test_common import getConfig
+import traceback
+
+def formatExceptionInfo(maxTBlevel=5):
+    cla, exc, trbk = sys.exc_info()
+    excName = cla.__name__
+    try:
+        excArgs = exc.__dict__["args"]
+    except KeyError:
+        excArgs = "<no args>"
+    excTb = traceback.format_tb(trbk, maxTBlevel)
+    return (excName, excArgs, excTb)
+
+
+class Url_Validator:
+    def __init__(self, base_path):
+        self.cp = getConfig(base_path)
+        self.sites_list = self.get_sites()
+
+    def get_sites(self):
+        sites = self.cp.get("gip", "site_names")
+        sites = [i.strip() for i in sites.split(',')]
+        return sites
+
+    def main(self):
+
+        html = self.getTitle()
+        for s in self.sites_list:
+            html += self.getHeader(s)
+            url = self.cp.get("Url_Validator", "url") % s
+            results = ""
+            fp = urllib2.urlopen(url)
+            try:
+                gv = GipValidate(read_ldap(fp))
+                results = gv.run()
+            except:
+                results = formatExceptionInfo()
+
+            html += self.print_results(results)
+        html += self.getFooter()
+        return html
+
+    def getTitle(self):
+        updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+        html = """
+            <h1>URL Validator</h1>
+            <h2>This check tests the ldif as reported by cemon for:
+                <ul>
+                    <li>The following stanzas mustappear at least once:
+                        <ul>
+                            <li>GlueCEUniqueID</li>
+                            <li>GlueVOViewLocalID</li>
+                            <li>GlueSubClusterUniqueID</li>
+                            <li>GlueClusterUniqueID</li>
+                            <li>GlueCESEBindSEUniqueID</li>
+                            <li>GlueCESEBindGroupCEUniqueID</li>
+                            <li>GlueLocationLocalID</li>
+                            <li>GlueServiceUniqueID</li>
+                            <li>GlueSEUniqueID</li>
+                            <li>GlueSEAccessProtocolLocalID</li>
+                            <li>GlueSEControlProtocolLocalID</li>
+                            <li>GlueSALocalID</li>
+                        </ul>
+                    </li>
+                    <li>The GlueSiteUniqueID and GlueSiteName must be the same for EGEE compatibility</li>
+                    <li>The CE Stanza for the following conditions:
+                        <ul>
+                            <li>CEInfoDefaultSE != UNAVAILABLE</li>
+                            <li>CEPolicyMaxCPUTime != 0</li>
+                            <li>CEInfoTotalCPUs != 0</li>
+                            <li>CEStateEstimatedResponseTime != 0</li>
+                            <li>CEStateWorstResponseTime != 0</li>
+                        </ul>
+                    </li>
+                    <li>The site must have sponsors defined and the sponsorship must add up to 100 percent</li>
+                    <li>The ldiff must have newlines appended after every key value combination</li>
+                </ul>
+            </h2>
+            <h2>Last Updated on: %s </h2>
+        """
+        return html % updateDateTime
+
+    def getHeader(self, site):
+        html = """
+            <h2>Test results for %s</h2>
+            <table rules='all' frame='border'>
+            <tr>
+                <th>URL Validator Results</th>
+            </tr>
+
+        """
+        return html % site
+
+    def print_results(self, contents):
+        colorize = -1
+        html = ""
+        for line in contents:
+            l = ''.join(line)
+            if len(l.strip()) > 0:
+                if (colorize == -1):
+                    html = "      <tr style='background-color:#99ccff'>"
+                else:
+                    html = "      <tr>"
+                colorize = colorize * -1
+
+                html += "<td>%s</td>" % line
+        html += "</table>"
+
+        return html
+
+    def getFooter(self):
+        return "</table>"
+
+if __name__ == '__main__':
+    u = Url_Validator(sys.argv[1])
+    print u.main()
+

@@ -146,13 +146,22 @@ def config(*args):
     check_gip_location()
     check_testing_environment()
     cp = ConfigParser.ConfigParser()
-    files = list(args)
+    files = list()
     if py23:
         p = optparse.OptionParser()
         p.add_option('-c', '--config', dest='config', \
             help='Configuration file.', default='gip.conf')
+        p.add_option('-f', '--format', dest='format', \
+            help='Unittest output format', default='')
         (options, args) = p.parse_args()
         files += [i.strip() for i in options.config.split(',')]
+    else:
+        keywordOpts, passedOpts, givenOpts = parseOpts(args)
+        if keywordOpts["config"]:
+             files += [i.strip() for i in keywordOpts["config"].split(',')]
+        if keywordOpts["c"]:
+             files += [i.strip() for i in keywordOpts["c"].split(',')]
+            
     files = [os.path.expandvars(i) for i in files]
     files += [os.path.expandvars("$GIP_LOCATION/etc/gip.conf")]
     if 'GIP_CONFIG' in os.environ:

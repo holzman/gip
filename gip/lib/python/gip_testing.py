@@ -14,10 +14,14 @@ import unittest
 import time
 import urlparse
 import GipUnittest
+import ConfigParser
 
 from gip_common import cp_get, cp_getBoolean, pathFormatter, parseOpts, config
 from gip_common import strContains
 from gip_ldap import getSiteList, prettyDN
+
+py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
+if py23: import optparse
 
 replace_command = False
 
@@ -162,8 +166,16 @@ def runlcginfosites(bdii="is.grid.iu.edu", VO="ops", opts_list=[]):
     return runCommand(cmd)
 
 def interpolateConfig(cp):
-    if cp_get(cp, "gip_tests", "site_names", "") == "":
-        cp.set("gip_tests", "site_names", cp_get(cp, "site", "name", ""))
+    
+    grid = cp_get(cp, "site", "group", "")
+    if cp_getBoolean(cp, "gip_tests", "oim_aware", False):
+        sitelist_cmd = "wget -O - http://oim.grid.iu.edu/pub/resource/show.php?format=plain-text 2>/dev/null | grep \",%s,\" | grep \",CE\" | cut -f1 -d," % grid
+        sitelist = runCommand(sitelist_cmd).read().split()
+        sitelist = ",".join(sitelist)
+        cp.set("gip_tests", "site_names", sitelist)
+    else:
+        if cp_get(cp, "gip_tests", "site_names", "") == "":
+            cp.set("gip_tests", "site_names", cp_get(cp, "site", "name", ""))
 
     if cp_get(cp, "gip_tests", "site_dns", "") == "":
         host_parts = cp_get(cp, "ce", "name", "").split('.')
@@ -173,7 +185,6 @@ def interpolateConfig(cp):
     if cp_get(cp, "gip_tests", "required_site", "") == "":
         cp.set("gip_tests", "required_sites", cp_get(cp, "gip_tests", "site_names", ""))
 
-    grid = cp_get(cp, "site", "group", "")
     cp.set("gip_tests", "bdii_port", "2170")
     cp.set("gip_tests", "egee_port", "2170")
     cp.set("gip_tests", "interop_url", "http://oim.grid.iu.edu/publisher/get_osg_interop_bdii_ldap_list.php?grid=%s&format=html" % grid)
@@ -205,8 +216,8 @@ def interpolateConfig(cp):
         results_dir = os.path.expandvars("$VDT_LOCATION/apache/htdocs/")
         cp.set("gip_tests", "results_dir", results_dir)
 
-def getTestConfig(args):
-    cp = config()
+def getTestConfig(*args):
+    cp = config(args[1:])
     try:
         cp.readfp(open(os.path.expandvars('$GIP_LOCATION/etc/gip_tests.conf')))
     except:
@@ -218,10 +229,21 @@ def getTestConfig(args):
     if not cp.has_section(section):
         cp.add_section(section)
 
+    if py23:
+        p = optparse.OptionParser()
+        p.add_option('-c', '--config', dest='config', help='Configuration file.', default='gip.conf')
+        p.add_option('-f', '--format', dest='format', help='Unittest output format', default='xml')
+        (options, args) = p.parse_args()
+        xml = options.format
+    else:
+        keywordOpts, passedOpts, givenOpts = parseOpts(args)
+        if keywordOpts["format"]:
+             xml = keywordOpts["format"]
+        if keywordOpts["f"]:
+             xml = keywordOpts["f"]
+
     try:
-        xml = args[1]
         if xml == "xml":
-            args.pop(1)
             cp.set(section, "use_xml", "True")
         else:
             cp.set(section, "use_xml", "False")

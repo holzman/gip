@@ -5,6 +5,13 @@ import sys
 import time
 from shutil import copy
 
+vdt_set = False
+gip_set = False
+if "VDT_LOCATION" in os.environ: vdt_set = True
+if "GIP_LOCATION" in os.environ: gip_set = True
+if not (vdt_set and gip_set):
+    raise ValueError("The $VDT_LOCATION and $GIP_LOCATION variables are not set.  Please set them  and run again.")
+
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, cp_get, cp_getBoolean, fileOverWrite, ls
 from gip_testing import runCommand, getTestConfig
@@ -12,9 +19,10 @@ from gip_report_sax_handler import GipResultsParser
 from xml_common import parseXmlSax
 
 class TestRunner:
-    def __init__(self):
-        self.cp = getTestConfig("")
-
+    def __init__(self, args):
+        self.cp = getTestConfig(args)
+        self.args = " ".join(args)
+        
         # these are the test lists by category
         self.reports = []
         self.critical_tests = []
@@ -104,7 +112,7 @@ class TestRunner:
                     continue
 
                 # Ok, not a directory, and not an .xsl file, we can be reasonably sure that this is an actual test... *now* execute it
-                cmd = '/bin/bash -c "%(source)s; %(test)s %(format)s"' % ({"source": self.source_cmd, "test": test, "format":"xml"})
+                cmd = '/bin/bash -c "%(source)s; %(test)s %(args)s -f xml"' % {"source": self.source_cmd, "test": test, "args": self.args}
                 print >> sys.stderr, "Running %s" % cmd
 
                 output = runCommand(cmd).read()
@@ -125,12 +133,12 @@ class TestRunner:
         oim_plugin_enabled = cp_getBoolean(self.cp, "gip_tests", "enable_myosg_plugin", False)
         if oim_plugin_enabled:
             oim_plugin = os.path.expandvars("$GIP_LOCATION/reporting/plugins/OIM_XML_Aggregator.py")
-            cmd = '/bin/bash -c "%(source)s; %(plugin)s "' % ({"source": self.source_cmd, "plugin": oim_plugin})
+            cmd = '/bin/bash -c "%(source)s; %(plugin)s %(args)s "' % ({"source": self.source_cmd, "plugin": oim_plugin, "args": self.args})
             runCommand(cmd)
             
-def main():
-    tr = TestRunner()
+def main(args):
+    tr = TestRunner(args[1:])
     tr.runTests()
 
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(main(sys.argv))

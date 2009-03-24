@@ -1,0 +1,172 @@
+#User-VO map
+# #comment line, format of each regular line line: account VO
+# Next 2 lines with VO names, same order, all lowercase, with case (lines starting with #voi, #VOc)
+#voi osg osg cdms lqcd ildg auger auger ilc ilc ilc ilc ilc ilc i2u2 cdf cdf cdf cdf cdf des des dzero dzero dzero dzero nanohub grase uscms uscms uscms uscms uscms uscms uscms uscms uscms uscms fermilab astro accelerator hypercp ktev miniboone miniboone minos usminos ukminos minos minos minos nova numi mipp patriot sdss theory fermilab accelerator astro cdms hypercp ktev minos nova numi mipp patriot theory fermilab-test auger LIGO glow dosar star geant4 mariachi usatlas usatlas usatlas usatlas usatlas usatlas usatlas usatlas usatlas nwicg ops gugrid gpn compbiogrid engage pragma dteam dteam nysgrid sbgrid cigi mis osgedu fmri gridex fermilab fermilab-test
+#VOc OSG OSG FERMILAB LQCD ILDG AUGER AUGER ILC ILC ILC ILC ILC ILC I2U2 CDF CDF CDF CDF CDF DES DES DZERO DZERO DZERO DZERO NANOHUB GRASE CMS CMS CMS CMS CMS CMS CMS CMS CMS CMS FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB SDSS FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB FERMILAB AUGER LIGO GLOW DOSAR STAR GEANT4 MARIACHI ATLAS ATLAS ATLAS ATLAS ATLAS ATLAS ATLAS ATLAS ATLAS nwicg OPS GUGrid gpn CompBioGrid Engage PRAGMA DTEAM DTEAM NYSGRID SBGRID CIGI MIS OSGEDU FMRI GRIDEX FERMILAB FERMILAB
+#---- accounts for vo: osg ----#
+osg osg
+#---- accounts for vo: icecube ----#
+icecube osg
+#---- accounts for vo: cdms ----#
+cdms cdms
+#---- accounts for vo: lqcd ----#
+#---- accounts for vo: ildg ----#
+#---- accounts for vo: auger ----#
+auger auger
+#---- accounts for vo: augerint ----#
+augerint auger
+#---- accounts for vo: ilc ----#
+#---- accounts for vo: ilc-accelerator ----#
+ilcacc ilc
+#---- accounts for vo: ilc-detector ----#
+ilcdet ilc
+#---- accounts for vo: ilc-sid ----#
+siddet ilc
+#---- accounts for vo: ilc-ild ----#
+ilddet ilc
+#---- accounts for vo: ilc-ilc4c ----#
+#---- accounts for vo: i2u2 ----#
+i2u2 i2u2
+#---- accounts for vo: cdf ----#
+cdf cdf
+#---- accounts for vo: cdfdev ----#
+cdfdev cdf
+#---- accounts for vo: cdffgrid ----#
+cdffgrid cdf
+#---- accounts for vo: cdfnam ----#
+cdfnam cdf
+#---- accounts for vo: cdftestcaf ----#
+#---- accounts for vo: des ----#
+des des
+#---- accounts for vo: des ----#
+#---- accounts for vo: dzerouser ----#
+samgrid dzero
+#---- accounts for vo: dzeropro ----#
+dzeropro dzero
+#---- accounts for vo: dzeroservice ----#
+sam dzero
+#---- accounts for vo: dzeroana ----#
+dzeroana dzero
+#---- accounts for vo: nanohub ----#
+nanohub nanohub
+#---- accounts for vo: grase ----#
+grase grase
+#---- accounts for vo: cmsfrontier ----#
+#---- accounts for vo: cmst2admin ----#
+#---- accounts for vo: cmsphedex ----#
+#---- accounts for vo: cmssoft ----#
+#---- accounts for vo: cmsprod ----#
+#---- accounts for vo: cmsprd ----#
+#---- accounts for vo: cmshigh_prio ----#
+#---- accounts for vo: uscmsuser ----#
+#---- accounts for vo: cmsuser ----#
+#---- accounts for vo: cmsuser-null ----#
+#---- accounts for vo: fermilab ----#
+fnalgrid fermilab
+#---- accounts for vo: astro ----#
+fnal_ast astro
+#---- accounts for vo: accelerator ----#
+fnal_acc accelerator
+#---- accounts for vo: hypercp ----#
+hypercp hypercp
+#---- accounts for vo: ktev ----#
+ktev ktev
+#---- accounts for vo: miniboone ----#
+minboone miniboone
+#---- accounts for vo: miniboone-production ----#
+minbnpro miniboone
+#---- accounts for vo: minos ----#
+minos minos
+#---- accounts for vo: usminos ----#
+#---- accounts for vo: ukminos ----#
+#---- accounts for vo: minossoft ----#
+#---- accounts for vo: minosana ----#
+minosana minos
+#---- accounts for vo: minosgli ----#
+minosgli minos
+#---- accounts for vo: nova ----#
+#---- accounts for vo: numi ----#
+numi numi
+#---- accounts for vo: mipp ----#
+#---- accounts for vo: patriot ----#
+patriot patriot
+#---- accounts for vo: sdss ----#
+sdss sdss
+#---- accounts for vo: theory ----#
+fnal_thy theory
+#---- accounts for vo: fermilab-production ----#
+#---- accounts for vo: accelerator-production ----#
+accelpro accelerator
+#---- accounts for vo: astro-production ----#
+astropro astro
+#---- accounts for vo: cdms-production ----#
+cdmspro cdms
+#---- accounts for vo: hypercp-production ----#
+hypcppro hypercp
+#---- accounts for vo: ktev-production ----#
+ktevpro ktev
+#---- accounts for vo: minos-production ----#
+minospro minos
+#---- accounts for vo: nova-production ----#
+novapro nova
+#---- accounts for vo: numi-production ----#
+numipro numi
+#---- accounts for vo: mipp-production ----#
+#---- accounts for vo: patriot-production ----#
+patripro patriot
+#---- accounts for vo: theory-production ----#
+theopro theory
+#---- accounts for vo: fermilab-test-production ----#
+testpro fermilab-test
+#---- accounts for vo: auger-production ----#
+augerpro auger
+#---- accounts for vo: LIGO ----#
+#---- accounts for vo: GLOW ----#
+glow glow
+#---- accounts for vo: dosar-admin ----#
+dosar dosar
+#---- accounts for vo: star ----#
+star star
+#---- accounts for vo: geant4 ----#
+geant4 geant4
+#---- accounts for vo: mariachi ----#
+#---- accounts for vo: atlasplt ----#
+#---- accounts for vo: newUsatlasProd ----#
+usatlas1 usatlas
+#---- accounts for vo: oldUsatlasProd ----#
+#---- accounts for vo: newUsatlasSoft ----#
+usatlas2 usatlas
+#---- accounts for vo: oldusatlasSoft ----#
+#---- accounts for vo: newusatlas ----#
+usatlas3 usatlas
+#---- accounts for vo: bnlusatlas ----#
+#---- accounts for vo: newatlas ----#
+usatlas4 usatlas
+#---- accounts for vo: oldatlas ----#
+#---- accounts for vo: nwicg ----#
+nwicg nwicg
+#---- accounts for vo: ops ----#
+opssgm ops
+#---- accounts for vo: gugrid ----#
+#---- accounts for vo: gpn ----#
+#---- accounts for vo: compbiogrid ----#
+#---- accounts for vo: engage ----#
+engage engage
+#---- accounts for vo: pragma ----#
+#---- accounts for vo: dteam ----#
+#---- accounts for vo: dteamlcgadmin ----#
+#---- accounts for vo: nysgrid ----#
+nysgrid nysgrid
+#---- accounts for vo: sbgrid ----#
+sbgrid sbgrid
+#---- accounts for vo: cigi ----#
+cigi cigi
+#---- accounts for vo: mis ----#
+mis mis
+#---- accounts for vo: osgedu ----#
+#---- accounts for vo: fmri ----#
+fmri fmri
+#---- accounts for vo: gridex ----#
+#---- accounts for vo: fermilab-grid ----#
+#---- accounts for vo: fermilab-test ----#
+

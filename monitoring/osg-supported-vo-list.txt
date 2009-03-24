@@ -1,0 +1,25 @@
+# List of VOs this site claims to support
+OSG
+FERMILAB
+AUGER
+ILC
+I2U2
+CDF
+DES
+DZERO
+NANOHUB
+GRASE
+SDSS
+GLOW
+DOSAR
+STAR
+GEANT4
+ATLAS
+nwicg
+OPS
+Engage
+NYSGRID
+SBGRID
+CIGI
+MIS
+FMRI

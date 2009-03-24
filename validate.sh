@@ -1,25 +1,50 @@
 #! /bin/bash
 
-config_file=$1
-echo "Using $config_file"
-
-function find_self_dir()
+usage()
 {
-    MYLOCATION="${BASH_ARGV[0]}"
-    export MYLOCATION="${MYLOCATION%/*}"
-    if [ $MYLOCATION == "test_find_self.sh" ] ; then
-        export MYLOCATION=`pwd`
-    fi
-    if [[ $MYLOCATION != /* ]] ; then
-        export MYLOCATION=`pwd`/$MYLOCATION
-    fi
-    MYLOCATION=$(readlink -f $MYLOCATION)
+cat << EOF
+usage: validate.sh options
 
-    echo $MYLOCATION
+This script launch the GIP Validator with the appropriate environment.
+If this script is passed "-c config_file", the GIP Validator will use
+that config file otherwise it will assume $GIP_LOCATION/etc/gip_tests.conf
+is the config file to use.
+
+OPTIONS:
+   -h      Show this message
+   -c      a custom configuration file
+EOF
 }
-export VDT_LOCATION=$(find_self_dir)
+
+while getopts “hc:” OPTION
+do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+         c)
+             config_file=$OPTARG
+             ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
+
+declare -x RUNDIRECTORY="${0%/*}"
+declare -x SCRIPTNAME="${0##*/}"
+
+export VDT_LOCATION=`readlink -f $RUNDIRECTORY`
 export GIP_LOCATION=$VDT_LOCATION/gip
 echo "VDT_LOCATION=$VDT_LOCATION"
 echo "GIP_LOCATION=$GIP_LOCATION"
-
-python $GIP_LOCATION/bin/TestRunner.py $config_file
+echo
+echo "Using configuration file:"
+echo "   $config_file"
+echo
+echo "executing:"
+echo "   python $GIP_LOCATION/bin/TestRunner.py $config_file"
+echo
+$GIP_LOCATION/bin/TestRunner.py -c $config_file

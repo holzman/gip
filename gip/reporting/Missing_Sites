@@ -1,0 +1,34 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import os
+
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
+import GipUnittest
+from gip_ldap import read_bdii, query_bdii
+from gip_testing import runTest, getTestConfig
+
+class TestMissingSites(GipUnittest.GipTestCase):
+    def __init__(self, site, cp):
+        GipUnittest.GipTestCase.__init__(self, 'testMissingSites')
+        self.site = site
+        self.name = 'testMissingSites_%s' % site
+
+    def testMissingSites(self):
+        """
+Missing Sites Check
+
+This check queries the BDII to determine if a site is missing
+        """
+        fd = query_bdii(self.cp, query="(objectClass=GlueCE)", base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site)
+        line = fd.readline().lower()
+        if not line.startswith("dn:"):
+            self.assertEquals(0, 1, "Missing - Check CEMon logs to see any errors and when the last time it reported.")
+
+def main(args):
+    cp = getTestConfig(args)
+    runTest(cp, TestMissingSites)
+
+if __name__ == '__main__':
+    main(sys.argv)

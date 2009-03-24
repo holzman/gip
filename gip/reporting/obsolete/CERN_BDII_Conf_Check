@@ -1,0 +1,82 @@
+#!/usr/bin/env python
+
+import sys
+import os
+
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
+import GipUnittest
+from gip_ldap import read_ldap
+from gip_common import cp_get, getURLData
+from gip_testing import runTest, getTestConfig, runCommand
+
+class CernBdiiCheck(GipUnittest.GipTestCase):
+    def __init__(self, site, cp):
+        GipUnittest.GipTestCase.__init__(self, 'testCernBdii', 'testCernBdii_%s' % site, cp)
+        self.bdii_conf_url = cp_get(self.cp, "gip_tests", "egee_bdii_conf_url", "")
+        self.OIM = cp_get(self.cp, "gip_tests", "interop_url", "")
+        self.site = site
+        self.exists = False
+
+    def testCernBdii(self):
+        """
+CERN BDII Conf check
+
+This checks the OIM web interface to determine if the site is registered
+for interoperability.  If it is, then the BDII configuration web page
+at CERN is checked to make sure that the site is listed.  Additionally,
+the ldap endpoint is checked to make sure that the format is correct.
+        """
+        isInterop = self.checkIsInterop()
+        if isInterop:
+            self.checkConf()
+            self.failUnless(self.exists, msg="%s is registered for interoperability with the WLCG but does not show up in the WLCG BDII configuration." % self.site)
+
+    def checkIsInterop(self):
+        ret = False
+        interop = getURLData(self.bdii_conf_url, True)
+        for line in interop:
+            l = line.split()
+            try:
+                siteName = l[0].lower()
+                endpoint = l[1]
+                if siteName == self.site.lower():
+                    ret = True
+                    self.endpoint = endpoint
+                    break
+            except:
+                continue
+
+        return ret
+
+    def checkEndpoint(self, endpoint):
+        rtn = False
+        r = re.compile('ldap://(.*):([0-9]*)/(.*)')
+        m = r.match(endpoint)
+        if m: rtn = True
+
+        return rtn
+
+    def checkConf(self):
+        conf = getURLData(self.bdii_conf_url, True)
+        for line in conf:
+            l = line.split()
+            try:
+                siteName = l[0].lower()
+                endpoint = l[1]
+
+                if siteName == self.site.lower():
+                    self.exists = True
+                    self.valid = self.checkEndpoint(endpoint)
+                    break
+            except:
+                continue
+
+def main(args):
+    """
+    The main entry point for when dn_check is run in standalone mode.
+    """
+    cp = getTestConfig(args)
+    runTest(cp, CernBdiiCheck)
+
+if __name__ == '__main__':
+    main(sys.argv)

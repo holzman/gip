@@ -1,0 +1,224 @@
+#!/usr/bin/env python
+
+import re
+import sys
+import os
+import difflib
+import datetime
+
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
+import GipUnittest
+from gip_ldap import read_bdii, prettyDN
+from gip_common import getLogger, config, cp_get, getURLData, getFQDNBySiteName
+from gip_testing import runTest, getTestConfig, runCommand
+
+# Globals
+CR = '\r'
+LF = '\n'
+html_lf = '<br>'
+
+class CompareDataSources(GipUnittest.GipTestCase):
+    def __init__(self, site, cp):
+        GipUnittest.GipTestCase.__init__(self, 'testCompare')
+        self.site = site
+        self.name = 'testCompare_%s' % site
+
+        self.bdii = cp_get(self.cp, "gip_tests", "bdii_addr", "")
+        self.port = cp_get(self.cp, "gip_tests", "bdii_port", "")
+        self.excludes = self.get_excludes()
+        self.source = cp_get(self.cp, "gip_tests", "compare_source", "OSG")
+        if self.source == "OSG":
+            url_info['source_directory'] = "cemon_processed_osg"
+        elif self.source == "RAW":
+            url_info['source_directory'] = "cemon_raw_incoming"
+        elif self.source == "INTEROP":
+            url_info['source_directory'] = "cemon_processed_wlcg_interop"
+        else:
+            # need to raise an error here
+            pass
+        url_info['webserver'] = self.bdii
+        url_info['fqdn'] = getFQDNBySiteName(self.cp, site)
+        url_info['sitename'] = self.site
+        self.url = 'http://%(webserver)s/data/%(source_directory)s/%(fqdn)s.processed?which=%(sitename)s' % url_info
+#http://is.grid.iu.edu/data/cemon_processed_osg/cmsosgce.fnal.gov.processed?which=USCMS-FNAL-WC1-CE
+
+    def get_excludes(self):
+        excludes = cp_get(self.cp, "gip_tests", "compare_excludes", "")
+        excludes = [i.strip() for i in excludes.split(',')]
+        return excludes
+
+    def testCompare(self):
+        ldap_data = self.get_ldap_data(site)
+        if len(ldap_data) < 20:  # arbitrary number
+            print >> sys.stderr, "Site: %s is missing from BDII" % site
+            continue  # Skip this site
+
+        ldap_parsed = self.parse_ldap_data(ldap_data)
+
+        cemon_data = self.get_cemon_data(self.url)
+        cemon_parsed = self.parse_cemon_data(cemon_data, site)
+
+        results = self.comparedata(cemon_parsed, ldap_parsed, self.excludes)
+
+        updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+        return html
+
+    def get_cemon_data(self, some_url):
+        return getURLData(some_url)
+
+    def get_ldap_data(self, site):
+        ldiff_filter = 'mds-vo-name=' + site + ',mds-vo-name=local,o=grid'
+        return self.runldapquery(ldiff_filter, "")
+
+    def runldapquery(self, filter, attribute):
+        command = 'ldapsearch -xLLL -p ' + self.port + ' -h ' + self.bdii + ' -b ' + filter + ' ' + attribute
+        pout = runCommand(command)
+        pout = self.unwraplines(pout)
+
+        return pout
+
+    def unwraplines(self, wrapped_list):
+        r = re.compile('^ (.*)$')
+        unwrapped_list = []
+        for l in wrapped_list:
+            m = r.match(l)
+            if m:
+                unwrapped_list[-1] += m.groups()[0]
+            else:
+                unwrapped_list.append(l.rstrip())
+        return unwrapped_list
+
+    def parse_cemon_data(self, data):
+        d = {}
+        served_search_string = 'mds-vo-name=' + self.site.lower()
+        cemon_search_string = 'mds-vo-name=local'
+        stanza_list = data.split(LF + LF)
+        for stanza in stanza_list:
+            stanza_details = stanza.split(LF)
+
+            if self.source == 'cemon':
+                # we need to insert 'mds-vo-name=site' before 'mds-vo-name=local' and before 'o=grid'
+                # to be able to match keys with the ldap data
+                dn = ''.join(stanza_details[0].lower().split())
+                if dn <> "":
+                    pos = dn.find(cemon_search_string)
+                    key = dn[:pos] + served_search_string + ',' + dn[pos:]
+                    # now we are going to remove the dn from the rest of the stanza before storing in the dictionary
+                    d[key] = stanza[len(stanza_details[0]) + 1:]
+            elif self.source == 'served':
+                # we need to insert 'mds-vo-name=local' after 'mds-vo-name=site' and before 'o=grid'
+                # to be able to match keys with the ldap data
+                dn = ''.join(stanza_details[0].lower().split())
+                if dn <> "":
+                    pos = dn.find(served_search_string) + len(served_search_string)
+                    key = dn[:pos] + ',mds-vo-name=local' + dn[pos:]
+                    # now we are going to remove the dn from the rest of the stanza before storing in the dictionary
+                    d[key] = stanza[len(stanza_details[0]) + 1:]
+        return d
+
+    def parse_ldap_data(self, data):
+        d = {}
+        key = ''
+
+        for detail in data:
+            if (detail.find('dn:') <> -1):
+                key = ''.join(detail.lower().split())
+                d[key] = ""
+            else:
+                if (key == ''):
+                    raise RuntimeError('incomplete ldapsearch results')
+                else:
+                    d[key] += detail
+                    if (not detail.endswith(LF)) and (not (detail == "")): d[key] += LF
+        return d
+
+    def comparedata(self, cemon_data, ldap_data):
+        ldap_keys = ldap_data.keys()
+        cemon_keys = cemon_data.keys()
+
+        no_match_list = []
+        missing_key_list = []
+        compare_results = []
+
+        compare_results.append(html_lf +'Key Mismatches: ' + html_lf)
+        for key in ldap_keys:
+            try:
+                ldet = ldap_data[key][:len(ldap_data[key])-1]
+                cdet = cemon_data[key]
+            except:
+                missing_key_list.append(html_lf +'CEMon data does not have key: ' + key + html_lf)
+                continue
+
+            ldet_sum = self.getordsum(ldet)
+            cdet_sum = self.getordsum(cdet)
+
+            # if the ord sum does not match compare, the the specifics of the data to find what is different
+            if (ldet_sum <> cdet_sum):
+                compare_results.extend(self.sub_compare(cdet, ldet, key, self.excludes))
+                compare_results.append(LF)
+                no_match_list.append(key)
+
+        for key in cemon_keys:
+            # check the list of keys that have already been reported as mis-matched.  we don't want to double report
+            for k in no_match_list:
+                if k == key: break
+            else:
+                try:
+                    ldet = ldap_data[key][:len(ldap_data[key])-1]
+                    cdet = cemon_data[key]
+                except:
+                    missing_key_list.append(html_lf +'LDAP data does not have key: ' + key + html_lf)
+                    continue
+
+                ldet_sum = self.getordsum(ldet)
+                cdet_sum = self.getordsum(cdet)
+
+                # if the ord sum does not match compare, the the specifics of the data to find what is different
+                if (ldet_sum <> cdet_sum):
+                    compare_results.extend(self.sub_compare(cdet, ldet, key, self.excludes))
+                    compare_results.append(LF)
+                    no_match_list.append(key)
+
+        compare_results.append(html_lf + 'Missing Keys:' + html_lf)
+        compare_results.extend(missing_key_list)
+        return compare_results
+
+    def getordsum(self, data):
+        try:
+            n = 0
+            for c in data[:-1]:
+                n += ord(c)
+        except:
+            print >> sys.stderr, "n: " + str(n)
+            print >> sys.stderr, "error summing data: " + data
+
+        return n
+
+    def sub_compare(self, cemon_stanza, ldap_stanza, key):
+        sub_compare_results = []
+        results = []
+        add = False
+        search_exp = '^!(.*):' # Search for lines beginning with "! Something:"
+
+        ce_list = cemon_stanza.split(LF)
+        ld_list = ldap_stanza.split(LF)
+        diff = '\n'.join(difflib.context_diff(ce_list, ld_list))
+        search_results = re.findall(search_exp, diff)
+        for result in search_results:
+            result = result[1:][:-1]
+            if not(result in self.excludes):
+                add = True
+                break
+
+        if add:
+            sub_compare_results.append(diff + "\n")
+            if len(sub_compare_results) > 0:
+                results.append(html_lf + 'ldap and cemon data do not match for key: ' + key + html_lf)
+                results.append(sub_compare_results)
+
+        return results
+
+if __name__ == "__main__":
+    cp = getTestConfig(args)
+    runTest(cp, CompareDataSources)
+

@@ -1,0 +1,93 @@
+dn: GlueClusterUniqueID=%(clusterUniqueID)s,mds-vo-name=local,o=grid
+objectClass: GlueClusterTop
+objectClass: GlueCluster
+objectClass: GlueSchemaVersion
+objectClass: GlueInformationService
+objectClass: GlueKey
+GlueClusterName: %(cluster)s
+GlueClusterTmpDir: %(tmp)s
+GlueClusterWNTmpDir: %(wn_tmp)s
+GlueClusterService: UNAVAILABLE
+GlueClusterUniqueID: %(clusterUniqueID)s
+GlueForeignKey: GlueSiteUniqueID=%(siteUniqueID)s
+%(glueClusters)sGlueInformationServiceURL: %(bdii)s
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+
+dn: GlueSubClusterUniqueID=%(subClusterUniqueID)s,GlueClusterUniqueID=%(clusterUniqueID)s,mds-vo-name=local,o=grid
+objectClass: GlueClusterTop
+objectClass: GlueSubCluster
+objectClass: GlueSchemaVersion
+objectClass: GlueHostApplicationSoftware
+objectClass: GlueHostArchitecture
+objectClass: GlueHostBenchmark
+objectClass: GlueHostMainMemory
+objectClass: GlueHostNetworkAdapter
+objectClass: GlueHostOperatingSystem
+objectClass: GlueHostProcessor
+objectClass: GlueInformationService
+objectClass: GlueKey
+GlueChunkKey: GlueClusterUniqueID=%(clusterUniqueID)s
+%(applications)sGlueHostArchitectureSMPSize: %(cpuCount)s
+GlueHostBenchmarkSF00: %(sf2k)s
+GlueHostBenchmarkSI00: %(si2k)s
+GlueHostMainMemoryRAMSize: %(ram)s
+GlueHostMainMemoryVirtualSize: %(virtualMem)s
+GlueHostNetworkAdapterInboundIP: %(inboundIP)s
+GlueHostNetworkAdapterOutboundIP: %(outboundIP)s
+GlueHostOperatingSystemName: %(osName)s
+GlueHostOperatingSystemRelease: %(osRelease)s
+GlueHostOperatingSystemVersion: %(osVersion)s
+GlueHostProcessorClockSpeed: %(clockSpeed)s
+GlueHostProcessorModel: %(model)s
+GlueHostProcessorVendor: %(vendor)s
+GlueHostProcessorOtherDescription: Cores=%(cores)s
+GlueSubClusterName: %(subCluster)s
+GlueSubClusterUniqueID: %(subClusterUniqueID)s
+GlueSubClusterPhysicalCPUs: %(cpus)s
+GlueSubClusterLogicalCPUs: %(cores)s
+GlueSubClusterTmpDir: %(tmp)s
+GlueSubClusterWNTmpDir: %(wn_tmp)s
+GlueInformationServiceURL: %(bdii)s
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+
+dn: GlueSoftwareLocalID=,GlueSubClusterUniqueID=,GlueClusterUniqueID=,mds-vo-name=local,o=grid
+objectClass: GlueClusterTop
+objectClass: GlueSoftware
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueChunkKey: GlueSubClusterUniqueID=
+GlueSoftwareLocalID: 
+GlueSoftwareName: 
+GlueSoftwareVersion: 
+GlueSoftwareInstalledRoot: 
+GlueSoftwareEnvironmentSetup: 
+GlueSoftwareModuleName: 
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+
+dn: GlueSoftwareDataKey=,GlueSoftwareLocalID=,GlueSubClusterUniqueID=,GlueClusterUniqueID=,mds-vo-name=local,o=grid
+objectClass: GlueClusterTop
+objectClass: GlueSoftwareData
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueChunkKey: GlueSubClusterUniqueID=
+GlueSoftwareDataKey: 
+GlueSoftwareDataValue: 
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+
+dn: GlueLocationLocalID=%(locationId)s,GlueSubClusterUniqueID=%(subClusterId)s,GlueClusterUniqueID=%(clusterId)s,mds-vo-name=local,o=grid
+objectClass: GlueClusterTop
+objectClass: GlueLocation
+objectClass: GlueKey
+objectClass: GlueSchemaVersion
+GlueLocationLocalID: %(locationId)s
+GlueLocationName: %(locationName)s
+GlueLocationVersion: %(version)s
+GlueLocationPath: %(path)s
+GlueChunkKey: GlueSubClusterUniqueID=%(subClusterId)s
+GlueSchemaVersionMajor: 1
+GlueSchemaVersionMinor: 3
+

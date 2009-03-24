@@ -21,8 +21,12 @@ from xml_common import parseXmlSax
 class TestRunner:
     def __init__(self, args):
         self.cp = getTestConfig(args)
-        self.args = " ".join(args)
-        
+        self.args = ""
+
+        self.config_file = cp_get(self.cp, "gip_tests", "custom_config_file", "")
+        if len(self.config_file) > 0:
+            self.args = " -c %s" % self.config_file
+
         # these are the test lists by category
         self.reports = []
         self.critical_tests = []
@@ -112,7 +116,8 @@ class TestRunner:
                     continue
 
                 # Ok, not a directory, and not an .xsl file, we can be reasonably sure that this is an actual test... *now* execute it
-                cmd = '/bin/bash -c "%(source)s; %(test)s %(args)s -f xml"' % {"source": self.source_cmd, "test": test, "args": self.args}
+                # cmd = '/bin/bash -c "%(source)s; %(test)s %(args)s -f xml"' % {"source": self.source_cmd, "test": test, "args": self.args}
+                cmd = '/bin/bash -c "%(test)s %(args)s -f xml"' % {"test": test, "args": self.args}
                 print >> sys.stderr, "Running %s" % cmd
 
                 output = runCommand(cmd).read()
@@ -129,13 +134,14 @@ class TestRunner:
         self.runList(self.critical_tests, "critical")
 
         self.writeResultsPage()
-        
+
         oim_plugin_enabled = cp_getBoolean(self.cp, "gip_tests", "enable_myosg_plugin", False)
         if oim_plugin_enabled:
             oim_plugin = os.path.expandvars("$GIP_LOCATION/reporting/plugins/OIM_XML_Aggregator.py")
-            cmd = '/bin/bash -c "%(source)s; %(plugin)s %(args)s "' % ({"source": self.source_cmd, "plugin": oim_plugin, "args": self.args})
+            #cmd = '/bin/bash -c "%(source)s; %(plugin)s %(args)s "' % ({"source": self.source_cmd, "plugin": oim_plugin, "args": self.args})
+            cmd = '/bin/bash -c "%(plugin)s %(args)s "' % ({"plugin": oim_plugin, "args": self.args})
             runCommand(cmd)
-            
+
 def main(args):
     tr = TestRunner(args[1:])
     tr.runTests()

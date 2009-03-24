@@ -87,17 +87,17 @@ def check_testing_environment():
 def parseOpts( args ):
     """
     Parse the passed command line options.
-    
+
     Does not expect the first element of argv; if you pass this directly, use
     parseOpts(sys.argv[1:]).
-    
+
     There are three objects returned:
        - keywordOpts: Options of the form --key=val or -key=val or -key val;
           this is the dictionary of the key: val pairs.
        - passedOpts: Options of the form -name1 or --name2.  List of strings.
-       - givenOpts: Options which aren't associated with any flags.  List of 
+       - givenOpts: Options which aren't associated with any flags.  List of
           strings.
-    
+
     @param args: A list of strings which are the command line options.
     @return: keywordOpts, passedOpts, givenOpts.  See the docstring.
     """
@@ -132,7 +132,7 @@ def parseOpts( args ):
         optNum += 1
     return keywordOpts, passedOpts, givenOpts
 
-def config(*args):
+def config(args):
     """
     Load up the config file.  It's taken from the command line, option -c
     or --config; default is $GIP_LOCATION/etc/gip.conf
@@ -161,7 +161,7 @@ def config(*args):
              files += [i.strip() for i in keywordOpts["config"].split(',')]
         if keywordOpts["c"]:
              files += [i.strip() for i in keywordOpts["c"].split(',')]
-            
+
     files = [os.path.expandvars(i) for i in files]
     files += [os.path.expandvars("$GIP_LOCATION/etc/gip.conf")]
     if 'GIP_CONFIG' in os.environ:
@@ -222,7 +222,7 @@ def config_compat_osg_attributes(override, cp):
     """
     Load up configuration options from osg-attributes.conf into the
     passed config object; translate between the two formats.
-    
+
     @param override: If true, then options in gip.conf will override the
        options in osg-attributes.conf
     @param cp: Site configuration
@@ -284,7 +284,7 @@ def config_compat_gip_attributes(override, cp):
     """
     Load up configuration options from gip-attributes.conf into the
     passed config object; translate between the two formats.
-    
+
     @param override: If true, then options in gip.conf will override the
        options in osg-attributes.conf
     @param cp: Site configuration
@@ -346,7 +346,7 @@ def config_compat_gip_attributes(override, cp):
         "name")
     __write_config(cp, override, gip, "OSG_GIP_DYNAMIC_DCACHE", "se",
         "dynamic_dcache")
-    
+
     config_compat_gip_attributes_subcluster(gip, override, cp)
 
 info_map = {\
@@ -481,16 +481,16 @@ class FakeLogger:
     Super simple logger for python installs which don't have the logging
     package.
     """
-    
+
     def __init__(self):
         pass
-    
+
     def debug(self, msg, *args):
         """
         Pass a debug message to stderr.
-        
+
         Prints out msg % args.
-        
+
         @param msg: A message string.
         @param args: Arguments which should be evaluated into the message.
         """
@@ -499,7 +499,7 @@ class FakeLogger:
     def info(self, msg, *args):
         """
         Pass an info-level message to stderr.
-        
+
         @see: debug
         """
         print >> sys.stderr, str(msg) % args
@@ -531,7 +531,7 @@ class FakeLogger:
 def add_giplog_handler():
     """
     Add a log file to the default root logger.
-    
+
     Uses a rotating logfile of 10MB, with 5 backups.
     """
     mylog = logging.getLogger()
@@ -591,7 +591,7 @@ class _Constants: #pylint: disable-msg=C0103
     """
     A convenience class for important constants.
     """
-    
+
     def __init__(self):
         self.CR = '\r'
         self.LF = '\n'
@@ -613,12 +613,12 @@ class Attributes(UserDict):
         or
         Name="Value"
         from a specificied attribute file
-        
-        This loads the Name: Value pairs into the class, which is 
+
+        This loads the Name: Value pairs into the class, which is
         dictionary-like.
-        
+
         @param attribute_file: Name of the file to parse
-        @raise IOError: Will throw an IOError if there is a problem reading the 
+        @raise IOError: Will throw an IOError if there is a problem reading the
             attribute_file
         """
         f = open(os.path.expandvars(attribute_file))
@@ -728,7 +728,7 @@ def getHostname():
 def fileRead(path):
     """
     Return the contents of the file on a given path
-    
+
     @param path: Path to file for reading
     @raise IOError: When file can't be read (doesn't exist, permission errors)
     @return: File contents.
@@ -739,7 +739,7 @@ def fileRead(path):
 def fileWrite(path, contents):
     """
     Append some contents to a given path
-    
+
     @param path: Path to file we will append.
     @param contents: Additional contents for file.
     @raise IOError: When file can't be appended.
@@ -752,7 +752,7 @@ def fileOverWrite(path, contents):
     """
     Overwrite a file with a contents.
     If file doesn't exist, create and write as usual.
-    
+
     @param path: Path to file we will [over]write.
     @param contents: Contents for file.
     @raise IOError: When file can't be [over]written.
@@ -788,7 +788,7 @@ def cp_getBoolean(cp, section, option, default=True):
     If the cp object has a section/option of the proper name, and if that value
     has a 'y' or 't', we assume it's supposed to be true.  Otherwise, if it
     contains a 'n' or 'f', we assume it's supposed to be true.
-    
+
     If neither applies - or the option doesn't exist, return the default
 
     @param cp: ConfigParser object
@@ -846,7 +846,7 @@ def cp_getList(cp, section, option, default):
 def pathFormatter(path, slash=False):
     """
     Convience function to format a path.
-    
+
     @param path: Path to format
     @keyword slash: Add a trailing (on the right) slash to the path if
       it is not present.
@@ -910,7 +910,7 @@ def matchFQAN(fqan1, fqan2):
        - <VO>
 
     @param fqan1: The FQAN we are testing for match
-    @param fqan2: The FQAN 
+    @param fqan2: The FQAN
     """
     fqan1 = normalizeFQAN(fqan1)
     fqan2 = normalizeFQAN(fqan2)
@@ -930,18 +930,18 @@ rvf_parse = re.compile('(.+?): (?:(.*?)\n)')
 def parseRvf(name):
     """
     Parse the Globus RVF for a specific file.
-    
+
     Retrieves the file from $GLOBUS_LOCATION/share/globus_gram_job_manager/name
-    
-    See an example RVF file for the patterns this matches.  Returns a 
-    dictionary of dictionaries; the keys are attributes, and the values are a 
+
+    See an example RVF file for the patterns this matches.  Returns a
+    dictionary of dictionaries; the keys are attributes, and the values are a
     dictionary of key: value pairs for all the associated information for an
     attribute.
-    
+
     In the case of an exception, this just returns {}
-    
+
     @param name:  Name of RVF file to parse.
-    @return: Dictionary of dictionaries containing information about the 
+    @return: Dictionary of dictionaries containing information about the
       attributes in the RVF file; returns an empty dict in case if there is an
       error.
     """
@@ -973,7 +973,7 @@ def parseRvf(name):
 def getURLData(some_url, lines=False):
     """
     Return the data from a URL.
-    
+
     @param some_url: URL to retrieve
     @keyword lines: True to split the content by lines, False otherwise.
     @return: The data of the URL; a string if lines=False and a list of
@@ -997,7 +997,7 @@ def getUrlFd(some_url):
 def compare_by(fieldname):
     """
     Returns a function which can be used to compare two dictionaries.
-    
+
     @param fieldname: The dictionaries will be compared by applying cmp
       to this particular keyname.
     @return: A function which can be used to compare two dictionaries.
@@ -1005,7 +1005,7 @@ def compare_by(fieldname):
     def compare_two_dicts (a, b):
         """
         Compare two dictionaries, a and b based on a set field.
-        
+
         @return: cmp(a[fieldname], b[fieldname])
         """
         return cmp(a[fieldname], b[fieldname])
@@ -1024,8 +1024,8 @@ def responseTimes(cp, running, waiting, average_job_time=None,
     formula.
 
     We take the
-      ERT = average_job_time/(running+1)*waiting 
-      WRT = max_job_time/(running+1)*waiting 
+      ERT = average_job_time/(running+1)*waiting
+      WRT = max_job_time/(running+1)*waiting
 
     If |running| + |waiting| < 10, then ERT=1hr, WRT=24hr unless |running|=0.
     If |running|=0 or |waiting|=0, then ERT=1 min.
@@ -1080,7 +1080,7 @@ def getFQDNBySiteName(cp, sitename):
             fqdn = entry.glue['CEHostingCluster']
             break
     return fqdn
-    
+
 def getTempFilename():
     try:
         conffile = tempfile.NamedTemporaryFile()
@@ -1104,5 +1104,5 @@ def strContains(main_str, sub_str):
     else:
         contains = lambda haystack, needle: haystack.find(needle) > -1
         if contains(main_str, sub_str) > 0: result = True
-    
+
     return result

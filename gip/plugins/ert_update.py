@@ -4,7 +4,6 @@ import os
 import re
 import sys
 import glob
-import sets
 import cStringIO
 
 if 'GIP_LOCATION' not in os.environ and 'GLOBUS_LOCATION' in os.environ:

@@ -1,0 +1,353 @@
+#!/usr/bin/env perl
+
+use strict;
+#use warnings;
+use FileHandle;
+
+
+my $site_active=0;
+# Parse the command line
+my $dir = `dirname $0`;
+chomp $dir;
+chdir "$dir" or die "Can't cd to $dir: $!\n";
+
+my ($PATH, $LDIF_FILE, $MANAGER) = @ARGV;
+unless ($PATH && $LDIF_FILE)
+{
+    print "Usage: $0 <condor path> <ldif file> [central manager]\n";
+
+    exit 1;
+}
+
+my $condor_config = `. ../../setup.sh; echo \$CONDOR_CONFIG`;
+chomp($condor_config);
+$ENV{CONDOR_CONFIG}=$condor_config;
+
+my $condor_status_constraint = `. ../../monitoring/gip-attributes.conf; echo \$OSG_GIP_CONDOR_STATUS_CONSTRAINT`;
+chomp($condor_status_constraint);
+
+my $vo_file = "../../monitoring/osg-user-vo-map.txt";
+my %user_vo_map;
+my $user_tmp;
+my $user_id;
+my $user_vo;
+my @vo_list;
+my %jobs;
+if(-e $vo_file){
+    
+    open(VOFILE,"<$vo_file");
+    while (<VOFILE>){
+        if (m/^\#/ || m/^\s*$/){ #Ignore Comments
+          
+        } else {
+            chomp;
+            ($user_id, $user_vo) = split /\ /;
+            if(defined $user_vo && defined $user_id){
+                ($user_tmp, $user_vo,)= $user_vo =~ /(us)?(\w+)/;		
+                $user_vo_map{$user_id} = "$user_vo";
+                my $tmp = grep {m/^$user_vo$/i} @vo_list;
+                if($tmp == 0){
+                    push @vo_list , $user_vo;
+                }
+            }
+        }
+    }
+} else {
+    print "VO list file $vo_file not found\n";
+    $user_vo_map{'osg'} = 'osg';
+}
+
+my $groups=`$PATH/condor_config_val GROUP_NAMES 2>&1`;
+my @tmp_vos;
+if ($groups !~ m/^Not\sdefined/i){
+    my @condor_groups = split /,/, $groups;
+     my $quota="$PATH/condor_config_val";
+     my $priv="$PATH/condor_config_val";
+    foreach my $group (@condor_groups){
+        $group =~ s/\s*(.+)\s*/$1/;
+        $group =~ s{group_}{};
+        my $tmp_vo = $group;
+        my $tmp = grep {m/^$tmp_vo$/i} @vo_list;
+        if($tmp>0){
+            push @tmp_vos, "$tmp_vo";
+            $quota= $quota . " GROUP_QUOTA_group_$group"; 
+            $priv= $priv . " GROUP_PRIO_FACTOR_group_$group";
+        }
+    }
+    my $group_quota=`$quota`;
+    my @quotas = split /^/, $group_quota;    
+    my $group_prio=`$priv`;
+    my @prios = split /^/, $group_prio;
+    foreach my $tmp_vo (@tmp_vos){
+        my $quota = shift @quotas;
+        my $prio = shift @prios;
+        if ( !defined $quota || $quota <= 0) {
+            $quota=0;
+        }
+        if ( !defined $quota || $prio <= 0 ) {
+            $prio=0;
+        }
+        $jobs{$tmp_vo}->{'idle'}=0;
+        $jobs{$tmp_vo}->{'running'}=0;
+        $jobs{$tmp_vo}->{'prio'}=$prio;
+        $jobs{$tmp_vo}->{'quota'}=$quota;
+
+    }
+}
+
+# Get the dns from the static file
+my $fh = new FileHandle $LDIF_FILE
+    or die "Can't open static ldif file: $LDIF_FILE\n";
+my @fileIn = <$fh>;
+my @dns = grep /dn:\s+GlueCEUniqueID=/, @fileIn;
+
+my @localVOViewdns = grep /dn:\s+GlueVOViewLocalID=/, @fileIn;
+
+# All the dynamic info goes in here
+my %glue;
+$glue{GlueCEInfoLRMSType} = "condor";
+
+# Figure out the correct central manager
+chomp(my $collector_manager = $MANAGER ? $MANAGER : `$PATH/condor_config_val COLLECTOR_HOST`);
+
+# BUG REPORT: originally, this split the names returned like so:
+# my @tmp_mgr= split / ,/, $collector_manager;
+# This assumes that the names are of this form: name1 ,name2 ,name3
+# This is changed to /\s*,\s*/, which allows any sort of comma-separation:
+# name1,name2 ,name3 ,name4    , name5
+$collector_manager =~ s/,/ /g;
+my @tmp_mgr = split /\s+/, $collector_manager;
+my $central_manager = $tmp_mgr[0];
+chomp($central_manager);
+
+# Condor version
+# Note: this is only the version of this node -- there's probably a 
+# whole bunch of different versions running on the pool
+my ($version) = map { /(\d+\.\d+\.\d+)/; $1 } 
+    grep /CondorVersion:/, `$PATH/condor_version`;
+$glue{GlueCEInfoLRMSVersion} = $version;
+if(!defined $glue{GlueCEInfoLRMSVersion}){
+    $glue{GlueCEInfoLRMSVersion}='unknown';
+}
+# CPU stats
+# For our purposes CPU := VM
+# It's fine if you have 100 cpus free, but who cares if that can only 
+# run one job at a time.  The official definition is:
+#    Number of free CPUs available to a scheduler
+# So I don't think that's entirely wrong.
+my $idle_vms=0;
+my $total_vms=0;
+my $owner_vms=0;
+my $startd_status;
+if(defined $condor_status_constraint and $condor_status_constraint ne ""){
+    $startd_status = `$PATH/condor_status -constraint $condor_status_constraint -pool $central_manager`;
+}else{
+    $startd_status = `$PATH/condor_status -pool $central_manager`;
+}
+
+($total_vms, $owner_vms, $idle_vms) = 
+    $startd_status =~ /Total\s+(\d+)\s+(\d+)\s+\d+\s+(\d+)/;
+if(! defined $total_vms){
+    $total_vms=0;
+}
+if(! defined $idle_vms){
+    $idle_vms=0;
+}
+if(! defined $owner_vms){
+    $owner_vms=0;
+}
+
+my $dont_subtract_owner = `. ../../monitoring/gip-attributes.conf; echo \$OSG_GIP_DONT_SUBTRACT_OWNER`;
+chomp($dont_subtract_owner);
+$total_vms-=$owner_vms unless 
+    (defined $dont_subtract_owner and $dont_subtract_owner eq 1);
+
+$glue{GlueCEInfoTotalCPUs} = $total_vms;
+$glue{GlueCEStateFreeJobSlots} = $idle_vms;
+if(! defined $glue{GlueCEInfoTotalCPUs} ){
+    $glue{GlueCEInfoTotalCPUs}=0;
+}
+if(! defined $glue{GlueCEStateFreeJobSlots}){
+    $glue{GlueCEStateFreeJobSlots}=0;
+}
+$glue{GlueCEStateFreeCPUs}=$glue{GlueCEStateFreeJobSlots};
+
+# Job stats
+# Held jobs are included as "waiting" since the definition is:
+#    Number of jobs that are in a state different than running
+
+my $CONDOR_STATUS;
+#open CONDOR_STATUS, "$PATH/condor_status -submitter -l -pool $central_manager |" or die "Error running condor_status. (file)\n";
+if(defined $condor_status_constraint and $condor_status_constraint ne ""){
+    open CONDOR_STATUS, "$PATH/condor_status -submitter -constraint $condor_status_constraint -pool $central_manager -format '%s:' Name -format '%d:' RunningJobs -format '%d:' IdleJobs -format '%d:\n' HeldJobs |" or die "Error running condor_status. (file)\n";
+    
+} else {
+    open CONDOR_STATUS, "$PATH/condor_status -submitter -pool $central_manager -format '%s:' Name -format '%d:' RunningJobs -format '%d:' IdleJobs -format '%d:\n' HeldJobs |" or die "Error running condor_status. (file)\n";
+}
+my $phase=1;
+my $job_status_running=0;
+my$job_status_idle=0;
+my $job_status_held=0;
+my $tmp;
+$user_id='';
+$user_vo='';
+
+while (<CONDOR_STATUS>){
+     my $lenline=length($_);
+     if ($lenline > 1) {
+         ($user_id,$job_status_running,$job_status_idle,$job_status_held,$tmp)= split(/:/,$_);
+     }else{
+        next;
+     } 
+     $user_id =~ s/\s*"(.*)"\s*$/$1/;
+     ($user_id,$tmp) = split /\@/, $user_id;
+     my @id = split /\./, $user_id;
+     $user_id = $id[$#id];
+     if(defined $user_vo_map{$user_id}){
+         $user_vo = $user_vo_map{$user_id};
+         ($tmp, $user_vo) = $user_vo =~ /(us)?(\w+)/;
+     } else{
+         ($tmp, $user_vo) = $user_id =~ /(us)?([a-zA-Z]+)\d*/;
+     }
+                                                                                                                                                             
+     if (! defined $jobs{$user_vo}) {
+         $jobs{$user_vo}->{'idle'}=0;
+         $jobs{$user_vo}->{'running'}=0;
+         $jobs{$user_vo}->{'quota'}=0;
+         $jobs{$user_vo}->{'prio'}=0;
+     }
+     $jobs{$user_vo}{'running'}+= $job_status_running;
+     $jobs{$user_vo}{'idle'} += $job_status_idle + $job_status_held;
+
+     $job_status_running=0;
+     $job_status_idle=0;
+     $job_status_held=0;
+
+     $user_id='';
+     $user_vo='';
+}
+
+# Time stuff
+# WorstResponseTime is impossible to determine and a reasonable estimate
+#   would required lots of time (15 minutes+) on active pools.
+# EstimatedResponseTime is equally impossible.  Anything here would just
+#   be garbage so it's best if people put it in their static file.
+my $vo;
+# Output the info
+read_site_active_info(); #Checks OSG site active/inactive
+
+foreach my $dn (@dns)
+{
+    print "$dn";
+#dn: GlueCEUniqueID=rsgrid3.its.uiowa.edu:2119/jobmanager-condor-osg, mds-vo-name=local,o=grid
+    #my ($vo) = $dn =~ /\s*dn:\s+GlueCEUniqueID\S+\/jobmanager\-\S+\-(S+)\,\s+\S+/;
+    my $tmp;
+    ($tmp, $vo) = split('/', $dn);
+    ($vo,$tmp) = split(',',$vo);
+    ($tmp,$tmp,$vo) = split ('-',$vo);
+    if(! defined $jobs{$vo}->{'idle'}){
+        $jobs{$vo}->{'idle'}=0;
+    }
+    if(! defined $jobs{$vo}->{'running'}){
+        $jobs{$vo}->{'running'}=0;
+    }
+    if(!exists $jobs{$vo}->{'quota'} || ! defined $jobs{$vo}->{'quota'} || $jobs{$vo}->{'quota'}==0){
+        if(!defined $total_vms){
+             $jobs{$vo}->{'quota'}=0
+        }else{
+             $jobs{$vo}->{'quota'}=$total_vms;
+        }
+    }
+    if(! defined $jobs{$vo}->{'prio'} ){
+        $jobs{$vo}->{'prio'}=0;
+    }
+
+    $glue{'GlueCEStateWaitingJobs'} = $jobs{$vo}->{'idle'};
+    $glue{'GlueCEStateRunningJobs'} = $jobs{$vo}->{'running'};
+    $glue{'GlueCEStateTotalJobs'} =  $jobs{$vo}->{'idle'}+$jobs{$vo}->{'running'};
+    $glue{'GlueCEPolicyAssignedJobSlots'} = $jobs{$vo}->{'quota'};
+    $glue{'GlueCEPolicyPriority'} = $jobs{$vo}->{'prio'};
+
+    if(($jobs{$vo}->{'quota'}-$jobs{$vo}->{'running'}) <= $idle_vms){
+        $glue{'GlueCEStateFreeJobSlots'} = $jobs{$vo}->{'quota'}-$jobs{$vo}->{'running'};
+    }else{
+        $glue{'GlueCEStateFreeJobSlots'} = $idle_vms;
+    }
+    if($glue{'GlueCEStateFreeJobSlots'}<0){
+        $glue{'GlueCEStateFreeJobSlots'}=0
+    }
+    if($site_active==1){
+        $glue{'GlueCEStateStatus'} = "Production";
+    }else{
+        $glue{'GlueCEStateStatus'} = "Closed";
+    }
+    #print STDERR map { if (defined($glue{$_})) { "$_: $glue{$_}\n"; } else { "$_ blah\n" } } keys %glue;
+    print map { "$_: $glue{$_}\n" } keys %glue;
+}
+
+my %glueVOViewLocal;
+$glueVOViewLocal{GlueCEStateFreeJobSlots} = $idle_vms;
+if(!defined $glueVOViewLocal{GlueCEStateFreeJobSlots}){
+    $glueVOViewLocal{GlueCEStateFreeJobSlots}=0;
+}
+foreach my $dn (@localVOViewdns)
+{
+    print "$dn";
+  #  dn: GlueVOViewLocalID=atlas,GlueCEUniqueID=rsgrid3.its.uiowa.edu:2119/jobmanager-condor-atlas,mds-vo-name=local,o=grid
+    ($tmp, $vo) = split('/', $dn);
+    ($vo,$tmp) = split(',',$vo);
+    ($tmp,$tmp,$vo) = split ('-',$vo);
+    if(! defined $jobs{$vo}->{'idle'}){
+        $jobs{$vo}->{'idle'}=0;
+    }
+    if(! defined $jobs{$vo}->{'running'}){
+        $jobs{$vo}->{'running'}=0;
+    }
+    if(! defined $jobs{$vo}->{'quota'} || $jobs{$vo}->{'quota'}==0){
+       if(!defined $total_vms){
+             $jobs{$vo}->{'quota'}=0
+        }else{
+             $jobs{$vo}->{'quota'}=$total_vms;
+        }
+    }
+    if(! defined $jobs{$vo}->{'prio'} ){
+        $jobs{$vo}->{'prio'}=0;
+    }
+
+    $glueVOViewLocal{'GlueCEPolicyAssignedJobSlots'} = $jobs{$vo}->{'quota'};
+    $glueVOViewLocal{GlueCEStateRunningJobs} = $jobs{$vo}->{'running'};
+    $glueVOViewLocal{GlueCEStateWaitingJobs} = $jobs{$vo}->{'idle'};
+    $glueVOViewLocal{GlueCEStateTotalJobs} = $jobs{$vo}->{'idle'}+$jobs{$vo}->{'running'};
+
+    if(($jobs{$vo}->{'quota'}-$jobs{$vo}->{'running'}) <= $idle_vms){
+        $glueVOViewLocal{GlueCEStateFreeJobSlots} = $jobs{$vo}->{'quota'}-$jobs{$vo}->{'running'};
+    }else{
+        $glueVOViewLocal{GlueCEStateFreeJobSlots} = $idle_vms;
+    }    
+    if($glueVOViewLocal{'GlueCEStateFreeJobSlots'}<0){
+            $glueVOViewLocal{'GlueCEStateFreeJobSlots'}=0
+    }
+    print map { "$_: $glueVOViewLocal{$_}\n" } keys %glueVOViewLocal;
+
+}
+
+
+sub read_site_active_info
+{
+    my $conf = "../../MIS-CI/etc/grid-site-state-info";
+
+    if (-e $conf){
+        my $output = `. $conf; echo \$grid_site_state_bit`;
+        my @outList = split /\n/, $output;
+        if(exists $outList[0]){
+            $site_active = $outList[0];
+        }else{
+            $site_active = 0;
+        }
+    }else{
+        $site_active=0;
+    }
+
+}
+
+

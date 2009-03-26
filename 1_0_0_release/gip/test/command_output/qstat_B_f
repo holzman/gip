@@ -1,0 +1,31 @@
+Server: red
+    server_state = Active
+    server_host = red.unl.edu
+    scheduling = True
+    total_jobs = 261
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:261 Exiting:0 Beg
+	un:0 
+    acl_roots = t3
+    managers = mfurukaw@red.unl.edu,root@t3
+    default_queue = workq
+    log_events = 511
+    mail_from = adm
+    query_other_jobs = True
+    resources_default.ncpus = 1
+    default_chunk.ncpus = 1
+    resources_assigned.mem = 0kb
+    resources_assigned.ncpus = 261
+    resources_assigned.nodect = 261
+    scheduler_iteration = 600
+    flatuid = True
+    FLicenses = 183
+    resv_enable = True
+    node_fail_requeue = 310
+    max_array_size = 10000
+    pbs_license_file_location = /opt-head/PBS/altair/security/altair_lic.dat
+    pbs_license_min = 0
+    pbs_license_max = 2147483647
+    pbs_license_linger_time = 3600
+    license_count = Avail_Global:183 Avail_Local:0 Used:261 High_Use:439
+    pbs_version = PBSPro_9.1.0.72982
+

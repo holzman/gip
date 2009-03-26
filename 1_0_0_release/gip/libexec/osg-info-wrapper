@@ -1,0 +1,257 @@
+#!/usr/bin/perl -w
+use strict;
+use POSIX;
+use File::stat;
+use FileHandle;
+
+# Set our process group to a distinct value
+setpgrp();
+
+#Read in the configuration file.
+my %config = (
+        static_dir => '',
+        plugin_dir => '',
+        provider_dir => '',
+        cache_ttl => '',
+        freshness => '',
+        timeout => '',
+        response => '',
+        temp_dir => '',
+	 );
+
+if (! exists $ENV{'GIP_LOCATION'}) {
+    $ENV{'GIP_LOCATION'} = "$ENV{'VDT_LOCATION'}/gip";
+}
+my $conffile = "$ENV{'GIP_LOCATION'}/etc/osg-info-generic.conf";
+
+# Location of the log files for stderr.
+my $provider_log = "$ENV{'GIP_LOCATION'}/var/logs/modules.log";
+
+my $fh = new FileHandle $conffile
+	or die "Error: Can't open config file: $conffile\n";
+foreach (<$fh>){
+	if ((! m/^\#/) & (m/=/)){
+	    m/^(.*)=(.*)$/;
+	    my $key=$1;
+	    my $value=$2;
+	    $key=~s/\s+//g;
+	    $value=~s/\s+//g;
+	    $config{$key}=$value;
+	}
+}
+
+while ( my ($key, $value) = each(%config) ) {
+    if ( ! $config{$key} ){
+	print "Error: configuration parameter $key not set.\n";
+	exit 2;
+	}
+}
+
+my @files=glob("$config{static_dir}/*.ldif");
+my @static;
+
+foreach(@files){
+    #Reads the static ldif.
+    open (STATIC, "$_") || die "Couldn't open config file, $_\n";
+    while (<STATIC>) {
+	push @static, $_;
+    }
+    close (STATIC);
+}
+
+chomp($config{temp_dir});
+mkdir($config{temp_dir});
+
+my @dynamic;
+my @dynamic_ldif;
+my @provider;
+my $pid;
+my @pid;
+my $file_time;
+my $current_time=time;
+
+#Remove junk files.
+my @junk;
+push @junk, glob("$config{plugin_dir}/*~");
+push @junk, glob("$config{provider_dir}/*~");
+push @junk, glob("$config{plugin_dir}/\#*");
+push @junk, glob("$config{provider_dir}/\#*");
+
+foreach(@junk){
+    remove($_);
+}
+
+@dynamic=glob("$config{plugin_dir}/*");
+@provider=glob("$config{provider_dir}/*");
+
+for(@dynamic, @provider){
+    my $chksum = unpack("%64C*", $_);
+    my @file= split ( );
+    $file[0]=~s/.*\///;
+
+    if(! -e "$config{temp_dir}/$file[0].ldif.$chksum"){
+	system("touch $config{temp_dir}/$file[0].ldif.$chksum");
+	$file_time = $current_time - $config{freshness} - 1;
+    }
+    else{
+	$file_time=stat("$config{temp_dir}/$file[0].ldif.$chksum");
+	if($file_time){
+	    $file_time=$file_time->mtime;
+	}else{
+	    $file_time=0;
+	}
+    }
+
+    if($file_time + $config{freshness} <  $current_time ){
+	
+	# Fork the search.
+	unless ($pid=fork){
+	    
+	    close STDOUT;
+
+	    # Set our process group to a distinct value.
+	    setpgrp();
+	    my $PGRP=getpgrp();
+	    
+	    # Eval will kill the process if it times out.
+	    eval { 
+		local $SIG{ALRM} = sub { die "GOT TIRED OF WAITING" };
+		alarm ($config{timeout});  #Will call alarm after the timeout. 
+		system("$_ > $config{temp_dir}/$file[0].ldif.$chksum.$PGRP 2>> $provider_log");
+		`mv $config{temp_dir}/$file[0].ldif.$chksum.$PGRP $config{temp_dir}/$file[0].ldif.$chksum`;
+		alarm(0);           # Cancel the pending alarm if responds.
+	    };
+	    
+	    # This sections is executed if the process times out.
+	    if ($@ =~ /GOT TIRED OF WAITING/) {
+		`rm -f $config{temp_dir}/$file[0].ldif.$chksum.$PGRP`;
+		kill (-SIGKILL(), $PGRP);
+		exit 1;
+	    }
+	    exit 0;
+	}
+	push @pid, $pid;
+    }
+}
+
+# Eval will kill the process if it times out.
+eval { 
+    local $SIG{ALRM} = sub { die "GOT TIRED OF WAITING" };
+    alarm ($config{response});  #Will call alarm after the timeout.
+    foreach(@pid){
+	waitpid($_,0);
+    }
+    alarm(0);           # Cancel the pending alarm if responds.
+};
+
+for(@provider){
+    my $chksum = unpack("%64C*", $_);
+    my @file= split ( );
+    $file[0]=~s/.*\///;
+    $file_time=stat("$config{temp_dir}/$file[0].ldif.$chksum");
+    if($file_time){
+	$file_time=$file_time->mtime;
+    }else{
+	$file_time=$current_time;
+    }
+    if($file_time + $config{cache_ttl} >  $current_time ){
+	#Reads the output from the provider script.
+	open (PROVIDER, "$config{temp_dir}/$file[0].ldif.$chksum") or exit 1;
+	while (<PROVIDER>) {
+	    push @static, $_;
+	}
+	close PROVIDER;
+    }
+}
+
+for(@dynamic){
+    my $chksum = unpack("%64C*", $_);
+    my @file= split ( );
+    $file[0]=~s/.*\///;
+    $file_time=stat("$config{temp_dir}/$file[0].ldif.$chksum");
+    if($file_time){
+	$file_time=$file_time->mtime;
+    }else{
+	$file_time=$current_time;
+    }
+    if($file_time + $config{cache_ttl} >  $current_time ){
+	#Reads the output from the dynamic script.
+	open (DYNAMIC, "$config{temp_dir}/$file[0].ldif.$chksum") or exit 1;
+	while (<DYNAMIC>) {
+	    push @dynamic_ldif, $_;
+	}
+	close DYNAMIC;
+    }
+}
+
+my $static_dn;    
+my $static_value;  
+my $static_attribute="";     
+my $dynamic_dn;   
+my $dynamic_value; 
+my $dynamic_attribute; 
+my $last_dynamic="";
+
+# Feature request: Add custom attributes via alter-attributes.
+# Implementation: Track which attributes of the dynamic entry have been
+# used to replace the static value.  Any unused attributes are then appended
+# at the end of the LDIF entry.
+my $full_attribute;
+my $used_attributes = {};
+
+for(@static){
+    if (/^dn:.*/){
+	$static_dn=$_;
+        # If we have some unused dynamic attributes, add them to the stream
+        while (my ($key, $value) = each(%$used_attributes) ) {
+            if ($value==0) {
+                print "$key\n";
+            }
+        }
+	print "\n$static_dn";
+	$static_dn=~s/\s+//g;
+	$last_dynamic="" ;
+        $used_attributes = {};
+    }elsif(m/^([^:]*:)(.*)/){
+	if($last_dynamic eq $1 ){
+	    next;
+	}else{
+	    $static_attribute=$1;
+	    $static_value=$2;
+	}
+	for (@dynamic_ldif){
+	    if (/^dn:.*/){
+		$dynamic_dn=$_;
+		$dynamic_dn=~s/\s+//g;
+	    }elsif(m/^([^:]*:)(.*)/){
+		$dynamic_attribute=$1;
+		$dynamic_value=$2;
+                $full_attribute = "$dynamic_attribute$dynamic_value";
+		if (lc($dynamic_dn) eq lc($static_dn)){
+		    if ($dynamic_attribute eq $static_attribute){
+ 			print "$dynamic_attribute$dynamic_value\n";
+			$last_dynamic=$dynamic_attribute;
+			undef $static_value;
+                        # Record the attribute/value as used.
+                        $used_attributes->{$full_attribute} = 1;
+		    } else {
+                        if (exists $used_attributes->{$full_attribute}) {
+                            # Do nothing, we don't want to change the status.
+                        } else {
+                            # Add the attribute to the hash
+                            $used_attributes->{$full_attribute} = 0;
+                        }
+                    }
+		}
+	    }	       
+	}
+	if($static_value){
+	    print "$static_attribute$static_value\n";
+	    undef $static_value;
+	}
+    }
+}
+
+print "\n";
+exit;
+

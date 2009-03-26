@@ -1,0 +1,119 @@
+#!/usr/bin/env perl
+use strict;
+
+my $ldif_file; # File name for the static ldif file
+my @ldif_file; # Content of the static ldif file
+my $dn;        # dn for GlueSA
+my %storage;   # Hash of GlueSA and paths
+my $flag;      # Flag used in test
+my $path;       # Storage Path
+my %se;        # SEs
+my @se_dns;
+# Reads the configuration file
+if ($ARGV[0]) {
+    $ldif_file=$ARGV[0];
+} else {
+    print "Usage: $0 <ldif file> \n";
+    exit 1
+}
+
+
+#Gets the content of the static ldif file
+open (LDIF, $ldif_file) || die "Cannot open '$ldif_file': $!,";
+while (<LDIF>) {
+    push @ldif_file, $_;
+}
+close (LDIF);
+
+#Gets a list of SE's that support srm
+#Currently assumes you have GlueSEArchitecture: occuring some time after after dn: GlueSEUniqueID
+my $curr_se;
+my $new_se;
+for (@ldif_file){
+    if(/dn:\s+(GlueSEUniqueID)=/i){
+        $curr_se = $_;
+    }
+    if(/GlueSEArchitecture:\s*disk/i){
+        ($new_se = $curr_se) =~ s/dn: GlueSEUniqueID=([^,]*),.*\n/$1/i;
+        $se{$new_se} = $new_se;
+        push  @se_dns, $curr_se;
+    }
+}
+
+#Gets the dns.
+for (@ldif_file){
+    if(/dn:\s+(GlueSALocalID|GlueSARoot)=/){
+        $flag = $_;
+    }
+    if( $flag ){
+        if(/GlueSAPath:\s(.*)/){
+            $storage{$flag} = $1 ;
+            undef $flag;
+        }
+    }
+}
+my %all_fs;
+while (($dn, $path) = each(%storage)){
+    my $used = 0;
+    my $free = 0;
+    my $fs;
+    (my $host = $dn) =~ s/^.*,GlueSEUniqueID=([^,]*),.*\n/$1/i;
+
+    if (!defined $se{$host}){
+        next;
+    }
+
+    if($path !~ m/UNDEFINED/i) {
+        open DF, "df -P -k '$path' |" || die "Cannot run df: $!,";
+        my $line = 0;
+        while (<DF>) {
+            next if !$line++;
+	        ($fs, undef, $used, $free) = split;
+		$used = int($used);
+		$free = int($free);
+            last;
+        }
+        
+        close DF;
+    }else{
+        undef $fs;
+        $used=0;
+        $free=0;
+    }
+    if(defined $fs){
+        if(! exists $all_fs{$fs}){
+            $all_fs{$fs}{'free'} = $free;
+            $all_fs{$fs}{'used'} = $used;
+        }
+    }
+    print "\n";
+    print "$dn";
+    print "GlueSAStateAvailableSpace: $free\n";
+    print "GlueSAStateUsedSpace: $used\n";
+}
+print "\n";
+my $global_available=0;
+my $global_used=0;
+my $fs;
+my $tmp;
+foreach $fs (keys %all_fs){
+    $global_available = $all_fs{$fs}{'free'};
+    $global_used =  $all_fs{$fs}{'used'};
+    
+}
+$tmp = ($global_available+$global_used)/(1024.*1024);
+$global_available /= (1024.*1024.);
+
+# round off (Camel book p732)
+$tmp = sprintf("%.0f", $tmp);
+$global_available = sprintf("%.0f", $global_available);
+
+foreach $dn (@se_dns){
+    print "\n";
+    print "$dn";
+    print "GlueSESizeFree: $global_available\n";
+    print "GlueSESizeTotal: $tmp\n"
+    
+}
+print "\n";
+exit 0;

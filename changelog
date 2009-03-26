@@ -1,4 +1,8 @@
 Changelog
+== 1.0.9 ==
+* Fix ERT plugin for python < 2.4 (36)
+* GlueCEPolicyTotalJobs never > max_queuable (22)
+	
 == 1.0.8 ==
 * Fix missing and extraneous imports in token_info_provider.py
 

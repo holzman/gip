@@ -8,6 +8,7 @@ import sys
 import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     printTemplate, cp_get, cp_getInt, responseTimes
 from gip_cluster import getClusterID
@@ -109,6 +110,7 @@ def print_CE(cp):
         info['gramVersion'] = '2.0'
         info['port'] = 2119
         info['waiting'] = info.get('wait', 0)
+        info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)
         info['clusterUniqueID'] = getClusterID(cp)
         printTemplate(CE, info)
     return queueInfo, totalCpu, freeCpu, queueCpus

@@ -8,7 +8,7 @@ Originally developed using CERN as a test case.
 import re
 import os
 import sys
-import sets
+import gip_sets as sets
 from gip_common import HMSToMin, getLogger, VoMapper, voList, cp_get, parseRvf
 from gip_testing import runCommand
 

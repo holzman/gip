@@ -13,14 +13,15 @@ __author__ = "Brian Bockelman"
 import os
 import re
 import sys
+import types
 import socket
 import traceback
 import ConfigParser
 import urllib
+import tempfile
 
 from UserDict import UserDict
 
-from gip_osg import configOsg
 from gip_ldap import read_bdii
 
 #pylint: disable-msg=W0105
@@ -154,10 +155,15 @@ def config(*args):
         files += [i.strip() for i in options.config.split(',')]
     files = [os.path.expandvars(i) for i in files]
     files += [os.path.expandvars("$GIP_LOCATION/etc/gip.conf")]
+    if 'GIP_CONFIG' in os.environ:
+        files += [os.path.expandvars("$GIP_CONFIG")]
+
+    log.info("Using GIP SVN revision $Revision$")
 
     # Try to read all the files; toss a warning if a config file can't be
     # read:
     for myfile in files:
+        log.info("Using config file: %s" % myfile)
         try:
             open(myfile, 'r')
         except IOError, ie:
@@ -172,6 +178,7 @@ def config(*args):
     #config_compat(cp)
     readOsg = cp_getBoolean(cp, "gip", "read_osg", "True")
     if readOsg:
+        from gip_osg import configOsg
         configOsg(cp)
 
     return cp
@@ -415,6 +422,7 @@ class VoMapper:
             self.map_location = cp.get("vo", "user_vo_map")
         except:
             self.map_location = "$VDT_LOCATION/monitoring/osg-user-vo-map.txt"
+        log.info("Using user-to-VO map location %s." % self.map_location)
         self.voi = []
         self.voc = []
         self.userMap = {}
@@ -477,7 +485,7 @@ class FakeLogger:
         @param msg: A message string.
         @param args: Arguments which should be evaluated into the message.
         """
-        print >> sys.stderr, msg % args
+        print >> sys.stderr, str(msg) % args
 
     def info(self, msg, *args):
         """
@@ -485,7 +493,7 @@ class FakeLogger:
         
         @see: debug
         """
-        print >> sys.stderr, msg % args
+        print >> sys.stderr, str(msg) % args
 
     def warning(self, msg, *args):
         """
@@ -493,7 +501,7 @@ class FakeLogger:
 
         @see: debug
         """
-        print >> sys.stderr, msg % args
+        print >> sys.stderr, str(msg) % args
 
     def error(self, msg, *args):
         """
@@ -501,7 +509,7 @@ class FakeLogger:
 
         @see: debug
         """
-        print >> sys.stderr, msg % args
+        print >> sys.stderr, str(msg) % args
 
     def exception(self, msg, *args):
         """
@@ -509,7 +517,7 @@ class FakeLogger:
 
         @see: debug
         """
-        print >> sys.stderr, msg % args
+        print >> sys.stderr, str(msg) % args
 
 def add_giplog_handler():
     """
@@ -662,7 +670,11 @@ def printTemplate(template, info):
     @type info: Dictionary
     @param template: Template string returned from getTemplate.
     """
-    print template % info
+    populatedTemplate = (template % info).split('\n')
+    test = re.compile('.*__GIP_DELETEME.*')
+    for line in populatedTemplate:
+        deletable = test.match(line)
+        if not deletable: print line
 
 def voList(cp, vo_map=None):
     """
@@ -800,6 +812,27 @@ def cp_getInt(cp, section, option, default):
         return int(str(cp_get(cp, section, option, default)).strip())
     except:
         return default
+
+split_re = re.compile("\s*,?\s*")
+def cp_getList(cp, section, option, default):
+    """
+    Helper function for ConfigParser objects which allows setting the default.
+    Returns a list, or the default if it can't make one.
+
+    @param cp: ConfigParser object
+    @param section: Section of the config parser to read
+    @param option: Option in section to retrieve
+    @param default: Default value if the section/option is not present.
+    @returns: Value stored in the CP for section/option, or default if it is
+        not present.
+    """
+    try:
+        results = cp_get(cp, section, option, default)
+        if isinstance(results, types.StringType):
+            results = split_re.split(results)
+        return results
+    except:
+        return list(default)
 
 def pathFormatter(path, slash=False):
     """
@@ -1039,5 +1072,28 @@ def getFQDNBySiteName(cp, sitename):
             break
     return fqdn
     
+def getTempFilename():
+    try:
+        conffile = tempfile.NamedTemporaryFile()
+        conffile = conffile.name
+    except:
+        conffile = tempfile.mktemp()
+    return conffile
+
+def configContents(cp, stream=sys.stderr):
+    for section in cp.sections():
+        print >> stream, "[%s]" % section
+        for option in cp.options(section):
+            msg = "   %-25s : %s" % (option, cp.get(section, option))
+            print >> stream, msg
+        print >> stream, " "
+
+def strContains(main_str, sub_str):
+    result = False
+    if py23:
+        result = sub_str in main_str
+    else:
+        contains = lambda haystack, needle: haystack.find(needle) > -1
+        if contains(main_str, sub_str) > 0: result = True
     
-    
+    return result

@@ -9,7 +9,9 @@ from gip_storage import getPath
 from pbs_common import getQueueList as getPBSQueueList
 from lsf_common import getQueueList as getLSFQueueList
 from condor_common import getQueueList as getCondorQueueList
+from sge_common import getQueueList as getSGEQueueList
 from gip_sections import ce, cesebind, se
+from gip_sets import Set
 
 def getCEList(cp):
     """
@@ -31,6 +33,8 @@ def getCEList(cp):
         queue_entries = getLSFQueueList(cp)
     elif jobman == 'condor':
         queue_entries = getCondorQueueList(cp)
+    elif jobman == 'sge':
+        queue_entries = getSGEQueueList(cp)
     else:
         raise ValueError("Unknown job manager %s." % jobman)
     for queue in queue_entries:
@@ -44,12 +48,17 @@ def getClassicSEList(cp):
     @param cp: Site configuration
     @returns: List of all the ClassicSE's unique_ids
     """
-    if not cp_getBoolean(cp, "classic_se", "advertise_se", False):
-        return []
-    classicSE = cp_get(cp, "classic_se", "host", None)
-    if not classicSE: # len(classicSE) == 0 or classicSE == None
-        return []
-    return [classicSE]
+    classic_list = []
+    if cp_getBoolean(cp, "classic_se", "advertise_se", True):
+        classicSE = cp_get(cp, "classic_se", "unique_name", None)
+        if classicSE:
+            classic_list = [classicSE]
+        else:
+            siteUniqueID = cp_get(cp, "site", "unique_name", "UNKNOWN")
+            classicSE = siteUniqueID + "_classicSE"
+            classic_list = [classicSE]
+
+    return classic_list
 
 def getSEList(cp, classicSEs=True):
     """
@@ -63,11 +72,14 @@ def getSEList(cp, classicSEs=True):
     se_list = []
     if simple:
         try:
-            se_list = [cp.get(se, 'unique_name')]
+            if cp_getBoolean(cp, se, 'advertise_se', True):
+                se_list = [cp.get(se, 'unique_name')]
         except:
             pass
         for sect in cp.sections():
-            if not sect.lower().startswith('se'):
+            if not sect.lower().startswith('se') or sect.lower() == 'se':
+                continue
+            if not cp_getBoolean(cp, sect, 'advertise_se', True):
                 continue
             try:
                 se_list += [cp.get(sect, 'unique_name')]
@@ -77,6 +89,7 @@ def getSEList(cp, classicSEs=True):
         se_list = eval(cp.get(cesebind, 'se_list'), {})
     if classicSEs:
         se_list.extend(getClassicSEList(cp))
+    se_list = list(Set(se_list))
     return se_list
 
 def getCESEBindInfo(cp):

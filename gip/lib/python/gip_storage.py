@@ -5,7 +5,7 @@ Module for interacting with a dCache storage element.
 
 import os
 import re
-import sets
+import gip_sets as sets
 import stat
 import statvfs
 
@@ -75,6 +75,15 @@ def getDefaultSE(cp):
     if _defaultSE:
         return _defaultSE
     default_se = cp_get(cp, "se", "name", "UNKNOWN")
+    # if [se] name: ??? is "UNAVAILABLE" or not set, then try to get the default_se
+    if default_se == "UNKNOWN" or default_se == "UNAVAILABLE":
+        default_se = cp_get(cp, "se", "default_se", "UNAVAILABLE")
+    # if it is still UNAVAILABLE or not set, check to see if the classic SE is being 
+    # advertised and use that
+    if default_se == "UNAVAILABLE" and cp_getBoolean(cp, "classic_se", "advertise_se", True):
+        fallback_name = cp_get(cp, "site", "unique_name", "UNKNOWN") + "_classicSE"
+        default_se = cp_get(cp, "classic_se", "name", fallback_name)
+
     current_se = None
     for sect in cp.sections():
         if not sect.lower().startswith('se'):
@@ -100,15 +109,20 @@ def voListStorage(cp, section=None):
     @param cp: Configuration for this site
     @type cp: ConfigParser
     """
-    if section and section in cp.section():
-        if "allowed_vos" in cp.options():
+    log.debug("Listing storage VOs for section %s." % str(section))
+    if section and section in cp.sections():
+        if "allowed_vos" in cp.options(section):
             gip_common = __import__("gip_common")
             real_list = gip_common.voList(cp)
-            lookup_vo = dict([(vo.lower, vo) for vo in real_list])
+            lookup_vo = dict([(vo.lower(), vo) for vo in real_list])
             vo_set = sets.Set()
             for vo in split_re.split(cp.get(section, "allowed_vos")):
+                vo = vo.lower()
+                if vo in ['usatlas', 'uscms']:
+                    vo = vo[2:]
                 if vo in lookup_vo:
                     vo_set.add(lookup_vo[vo])
+            log.debug("Valid VOs: %s" % ", ".join(vo_set))
             return vo_set
     try:
         autodetect = cp.getboolean("vo", "autodetect_storage_vos")
@@ -148,10 +162,10 @@ def getPath(cp, vo='', section='vo', classicSE=False):
         myvo = vo
         if not myvo:
             myvo = ''
-        fallback = cp_get(cp, section, "default","/UNKNOWN").\
+        fallback = str(cp_get(cp, section, "default","/UNKNOWN")).\
             replace("$VO", myvo).replace("VONAME", myvo)
         if fallback == "/UNKNOWN" or fallback == 'UNAVAILABLE':
-            fallback = cp_get(cp, section, "default_path","/UNKNOWN").\
+            fallback = str(cp_get(cp, section, "default_path","/UNKNOWN")).\
                 replace("$VO", myvo).replace("VONAME", myvo)
     path = cp_get(cp, section, vo, fallback)
     return path
@@ -188,8 +202,10 @@ def getClassicSESpace(cp, gb=False, total=False):
         return the total space.  If C{gb=True}, return the numbers in GB;
         otherwise the numbers are in kilobytes.
     """
+    log.info("Calculating Classic SE space.")
     space_info = cp_get(cp, "classic_se", "space", None)
     if space_info:
+        log.info("Using config file information.")
         # Assume that the space reported is in KB
         used, free, tot = eval(space_info, {}, {})
         # Divide by 1000**2 to go from KB to GB
@@ -204,10 +220,13 @@ def getClassicSESpace(cp, gb=False, total=False):
     mount_info = {}
     # First, find out all the storage paths for the supported VOs
     # Uses statvfs to find out the mount info; stat to find the device ID
+    log.info("Querying VFS stats for VO.")
     for vo in voListStorage(cp):
-        path = getPath(cp, vo)
+        path = getPath(cp, vo, classicSE=True, section='classic_se')
         # Skip fake paths
         if not os.path.exists(path):
+            log.warning("Skipping `df` of path %s because it does not exist." \
+                % (path))
             continue
         stat_info = os.stat(path)
         vfs_info = os.statvfs(path)
@@ -222,6 +241,8 @@ def getClassicSESpace(cp, gb=False, total=False):
         used += dev_used
         free += dev_free
         tot += dev_total
+    log.info("Resulting byte-values; used %i, free %i, total %i" % (used, free,
+        tot))
     if gb: # Divide by 1000^2.  Results in a number in MB
         used /= 1000000L
         free /= 1000000L
@@ -388,6 +409,12 @@ class StorageElement(object):
         self._cp = cp
         self._section = section
 
+    def getSection(self):
+        """
+        Return the ConfigParser section this StorageElement is using.
+        """
+        return self._section
+
     def run(self):
         """
         Run whatever data-gathering activities which need to be done.
@@ -399,7 +426,7 @@ class StorageElement(object):
         """
         Return the list of VOs which are allowed to access this service.
         """
-        return voListStorage(self._cp)
+        return voListStorage(self._cp, self._section)
 
     def getServiceVersions(self):
         """
@@ -472,7 +499,7 @@ class StorageElement(object):
         acbr_tmpl = '\nGlueServiceAccessControlRule: %s\n' \
             'GlueServiceAccessControlRule: VO:%s'
         acbr = ''
-        vos = voListStorage(self._cp)
+        vos = voListStorage(self._cp, self._section)
         for vo in vos:
             acbr += acbr_tmpl % (vo, vo)
        
@@ -673,7 +700,7 @@ class StorageElement(object):
         """
         Given a certain space, return a list of 
         """
-        return voListStorage(self._cp)
+        return voListStorage(self._cp, self._section)
 
     def getPathForSA(self, space=None, vo=None, return_default=True,
             section='se'):
@@ -718,6 +745,8 @@ class StorageElement(object):
             return default_path
         vo_specific_paths = cp_get(self._cp, section, "space_%s_path" % space,
            None)
+        if vo_specific_paths == None:
+            vo_specific_paths = cp_get(self._cp, section, "vo_dirs", None)
         vo_specific_path = None
         if vo_specific_paths:
             for value in vo_specific_paths.split(','):

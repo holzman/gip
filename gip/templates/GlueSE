@@ -69,7 +69,7 @@ GlueSAName: %(saName)s
 GlueSATotalOnlineSize: %(totalOnline)s
 GlueSAUsedOnlineSize: %(usedOnline)s
 GlueSAFreeOnlineSize: %(freeOnline)s
-GlueSAReservedOnlineSize: %(reservedOnline)s
+GlueSAReservedOnlineSize: %(allocatedOnline)s
 GlueSATotalNearlineSize: %(totalNearline)s
 GlueSAUsedNearlineSize: %(usedNearline)s
 GlueSAFreeNearlineSize: %(freeNearline)s
@@ -88,6 +88,9 @@ GlueSAPolicyFileLifeTime: %(filetype)s
 GlueSAStateAvailableSpace: %(availableSpace)s
 GlueSAStateUsedSpace: %(usedSpace)s
 %(acbr)s
+GlueSACapability: SRMTokenReservedSpace=%(reservedOnline)s
+GlueSACapability: InstalledOnlineCapacity=%(installedOnlineCapacity)s
+GlueSACapability: InstalledNearlineCapacity=%(installedNearlineCapacity)s
 GlueChunkKey: GlueSEUniqueID=%(seUniqueID)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3

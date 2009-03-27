@@ -2,17 +2,18 @@
 
 import os
 import sys
-import sets
 import unittest
 import tempfile
 import ConfigParser
-from sets import Set
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+from gip_sets import Set
+import gip_sets as sets
 from gip_common import config, cp_getBoolean, voList
 from gip_cluster import getOSGVersion, getApplications
 from gip_testing import runTest, streamHandler
 import gip_testing
+import gip_osg
 
 fermigrid_vos = sets.Set(['osg', 'cdms', 'lqcd', 'auger', 'i2u2', 'cdf', 'des',
     'dzero', 'nanohub', 'grase', 'cms', 'fermilab', 'astro', 'accelerator',
@@ -62,6 +63,38 @@ class TestGipCommon(unittest.TestCase):
             os.rmdir(tmpdir)
             os.environ['GIP_LOCATION'] = old_gip_location
 
+    def test_osg_check(self):
+        """
+        Make sure that the checkOsgConfigured function operates as desired.
+        """
+        cp = config()
+        try:
+            import tempfile
+            file = tempfile.NamedTemporaryFile()
+            filename = file.name
+        except:
+            filename = '/tmp/osg_check'
+            file = open(filename, 'w')
+        if not cp.has_section("gip"):
+            cp.add_section("gip")
+        cp.set("gip", "osg_attributes", filename)
+        try:
+            file.write('hello world!\n')
+            didFail = False
+            try:
+                gip_osg.checkOsgConfigured(cp)
+            except:
+                didFail = True
+            self.failIf(didFail, "Failed on a 'valid' osg-attributes.conf")
+            os.unlink(filename)
+            didFail = False
+            try:
+                gip_osg.checkOsgConfigured(cp)
+            except:
+                didFail = True
+            self.failUnless(didFail, "Did not fail on missing file.")
+        finally:
+            pass
     def test_voList(self):
         """
         Make sure voList does indeed load up the correct VOs.

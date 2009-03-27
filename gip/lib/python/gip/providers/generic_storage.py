@@ -4,7 +4,8 @@ A generic provider for storage elements; written for the StorageElement class
 in gip_storage.
 """
 
-import sets
+import sys
+import gip_sets as sets
 import socket
 
 from gip_common import cp_get, getLogger, config, getTemplate, printTemplate, \
@@ -21,7 +22,68 @@ def print_SA(se, cp, section="se"): #pylint: disable-msg=W0613
     """
     Print out the SALocal information for GLUE 1.3.
     """ 
+    vo_limit_str = cp_get(cp, section, "vo_limits", "")
+    vo_limit = {}
+    cumulative_total = {}
+    # Determine the limits for each VO
+    for vo_str in vo_limit_str.split(','):
+        vo_str = vo_str.strip()
+        info = vo_str.split(":")
+        if len(info) != 2:
+            continue
+        vo = info[0].strip()
+        try:
+            limit = float(info[1].strip())
+        except:
+            continue
+        vo_limit[vo] = limit
+        cumulative_total.setdefault(vo, 0)
     for sa in se.getSAs():
+        do_continue = False
+        reduce_by_amount = 0
+        # Calculate the total online amount
+        try:
+            totalOnline = float(sa.get("totalOnline", 0))
+        except:
+            continue
+        # Add the total online to the running total for that VO; if necessary,
+        # calculate the amount of space to reduce this SA by.
+        for vo in get_vos_from_acbr(sa.get("acbr", "")):
+            if vo in vo_limit:
+                try:
+                    cumulative_total[vo] += totalOnline
+                except:
+                    pass
+                reduce_by_amount = max(reduce_by_amount,
+                    cumulative_total.get(vo, 0) - vo_limit[vo])
+        # If we reduce more than the total amount, skip
+        if reduce_by_amount > totalOnline:
+            continue
+        elif reduce_by_amount > 0:
+            # Recalculate the total, available, and free space to be consistent.
+            sa['totalOnline'] = str(int(totalOnline - reduce_by_amount))
+            try:
+                sa['availableSpace'] = str(int(max(0,
+                    float(sa['availableSpace']) - reduce_by_amount*1024**2)))
+                sa['freeOnline'] = str(int(max(0, float(sa['freeOnline']) \
+                    - reduce_by_amount)))
+            except:
+                pass
+        # Calculated the allocated amount.  If there is only one VO which can
+        # access this SA, then the allocated amount = total space.
+        # Otherwise, allocated is zero.
+        # If the provider already set allocatedOnline, we ignore this logic.
+        if sa.get('allocatedOnline', None) == None:
+            if len(get_vos_from_acbr(sa.get('acbr', ''))) > 1:
+                sa['allocatedOnline'] = 0
+            else:
+                sa['allocatedOnline'] = sa.get('totalOnline', 0)
+        # Check that installed capacity is >= total online
+        if sa.get('installedOnlineCapacity', None) == None:
+            sa['installedOnlineCapacity'] = sa.get('totalOnline', 0)
+        if sa.get('installedNearlineCapacity', None) == None:
+            sa['installedNearlineCapacity'] = sa.get('totalNearline', 0)
+        # Finally, print out the SA.
         try:
             print_single_SA(sa, se, cp)
         except Exception, e:
@@ -40,10 +102,13 @@ def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
     info.setdefault('path', '/UNKNOWN')
     info.setdefault('filetype', 'permanent')
     info.setdefault('saName', info['saLocalID'])
+    info.setdefault('installedOnlineCapacity', info.get('totalOnline', 0))
+    info.setdefault('installedNearlineCapacity', info.get('totalNearline', 0))
     info.setdefault('totalOnline', 0)
     info.setdefault('usedOnline', 0)
     info.setdefault('freeOnline', 0)
     info.setdefault('reservedOnline', 0)
+    info.setdefault('allocatedOnline', 0)
     info.setdefault('totalNearline', 0)
     info.setdefault('usedNearline', 0)
     info.setdefault('freeNearline', 0)
@@ -140,17 +205,17 @@ def print_classicSE(cp):
     """
     Emit the relevant GLUE entities for a ClassicSE.
     """
-    if not cp_getBoolean(cp, "classic_se", "advertise_se", False):
+    if not cp_getBoolean(cp, "classic_se", "advertise_se", True):
         log.info("Not advertising a classic SE.")
         return
     else:
         log.info("Advertising a classic SE.")
-    if cp_getBoolean(cp, "se", "shares_fs_with_ce", False):
-        log.info("Not advertising a classic SE because the SE shares a FS.")
-        return
+    #if cp_getBoolean(cp, "se", "shares_fs_with_ce", False):
+    #    log.info("Not advertising a classic SE because the SE shares a FS.")
+    #    return
 
-    status = cp_get(cp, "se", "status", "Production")
-    version = cp_get(cp, "se", "version", "UNKNOWN")
+    status = cp_get(cp, "classic_se", "status", "Production")
+    version = cp_get(cp, "classic_se", "version", "UNKNOWN")
     try:
         used, available, total = getClassicSESpace(cp, total=True, gb=True)
     except Exception, e:
@@ -161,7 +226,7 @@ def print_classicSE(cp):
     nu, _, nt = getSETape(cp)
 
     bdiiEndpoint = cp.get("bdii", "endpoint")
-    siteUniqueID = cp.get("site", "unique_name")
+    siteUniqueID = cp_get(cp, "site", "unique_name", "UNKNOWN")
     implementation = cp_get(cp, "classic_se", "implementation", "classicSE")
     arch = 'other'
 
@@ -208,6 +273,8 @@ def print_classicSE(cp):
             "filetype"         : "permanent",
             "saName"           : seUniqueID,
             "totalOnline"      : int(round(total/1000**2)),
+            "installedOnlineCapacity": 0,
+            "installedNearlineCapacity": 0,
             "usedOnline"       : int(round(used/1000**2)),
             "freeOnline"       : int(round(available/1000**2)),
             "reservedOnline"   : 0,
@@ -221,6 +288,7 @@ def print_classicSE(cp):
             "availableSpace"   : available,
             "usedSpace"        : used,
             "acbr"             : acbr,
+            "allocatedOnline"  : 0,
            }
     saTemplate = getTemplate("GlueSE", "GlueSALocalID")
     printTemplate(saTemplate, info)
@@ -231,6 +299,12 @@ def print_SE(se, cp):
     """
     Emit the GLUE entities for the SE, based upon the StorageElement class.
     """
+    
+    # if the unique ID is UNKNOWN, a real SE does not exist, the classic SE
+    # will probably be invoked
+    seUniqueID = se.getUniqueID()
+    if seUniqueID == "UNKNOWN" or seUniqueID == "UNAVAILABLE": return
+    
     status = se.getStatus()
     version = se.getVersion()
 
@@ -273,7 +347,7 @@ def print_SE(se, cp):
     printTemplate(seTemplate, info)
 
     try:
-        print_SA(se, cp)
+        print_SA(se, cp, se.getSection())
     except Exception, e:
         log.exception(e)
     try:
@@ -281,10 +355,12 @@ def print_SE(se, cp):
     except Exception, e:
         log.exception(e)
 
-    try:
-        print_access(se, cp)
-    except Exception, e:
-        log.exception(e)
+    advertise_accesspoints = cp_getBoolean(cp, "gip", "advertise_accesspoints", "True")
+    if advertise_accesspoints:
+        try:
+            print_access(se, cp)
+        except Exception, e:
+            log.exception(e)
 
 def print_SRM(se, cp):
     """
@@ -312,6 +388,12 @@ def print_single_SRM(info, se, cp):
     info.setdefault('startTime', '1970-01-01T00:00:00Z')
     info.setdefault('statusInfo', 'OK')
     endpoint = info.get('endpoint', 'httpg://example.org:8443/srm/managerv2')
+
+    # Filter endpoint to make it acceptable!
+    endpoint.replace('srm://', 'httpg://')
+    sfn_loc = endpoint.find('?SFN=')
+    if sfn_loc >= 0:
+        endpoint = endpoint[:sfn_loc]
     info['protocolType'] = 'SRM'
     info['serviceType'] = 'SRM'
     info['capability'] = 'control'
@@ -469,8 +551,12 @@ def main():
 
     # Handle full-fledged SEs
     for section in cp.sections():
-        if section.lower().startswith("se"):
-            handle_SE(cp, section)
+        # need to search for sections with "_" because if you are only 
+        # advertising a classic SE, then you do NOT want to run the 
+        # handle_SE function or you will get duplicate and incorrect info 
+        if section.lower().startswith("se_"):
+            advertise_se = cp_getBoolean(cp, section, "advertise_se", True)
+            if advertise_se: handle_SE(cp, section)
 
     # Handle the "classic" SE.
     try:

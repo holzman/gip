@@ -2,7 +2,6 @@
 
 import time
 import sys
-import datetime
 import os
 
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
@@ -80,7 +79,7 @@ class GipXmlTestRunner:
             self.stream.write(message)
 
     def run(self, test):
-        updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+        updateDateTime = time.strftime("%A %b %d %Y %H:%M:%S")
         # Define the test results class
         result = GipXmlTestResult(self)
 

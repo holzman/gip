@@ -114,13 +114,17 @@ This check tests the ldif as reported by cemon for:
         self.test_existence("GlueServiceUniqueID")
         self.test_existence("GlueSEUniqueID")
         self.test_existence("GlueSEAccessProtocolLocalID")
-        self.test_existence("GlueSEControlProtocolLocalID")
+        # need to check to see if there are any SE's other than the classic SE
+        #  because the classic SE will not have a GlueSEControlProtocolLocalID
+        #  stanza
+        if self.nonClassicSeExist(): self.test_existence("GlueSEControlProtocolLocalID")
         self.test_existence("GlueSALocalID")
         self.test_chunk_keys()
         self.test_foreign_keys()
 
     def test_ce(self):
-        self.test_value_not_equal("GlueCE", "CEInfoDefaultSE", "UNAVAILABLE")
+        # Currently disabling the defaultSE check, will enable once we have agreement on the appropriate setting 
+        #self.test_value_not_equal("GlueCE", "CEInfoDefaultSE", "UNAVAILABLE")
         self.test_value_not_equal("GlueCE", "CEPolicyMaxCPUTime", "0")
         self.test_value_not_equal("GlueCE", "CEInfoTotalCPUs", "0")
         self.test_value_not_equal("GlueCE", "CEPolicyMaxWallClockTime", "0")
@@ -243,7 +247,13 @@ This check tests the ldif as reported by cemon for:
         Determine the unique ID for this site.
         """
         site_entries = read_bdii(self.cp, base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site, query="(objectClass=GlueSite)")
-        self.expectEquals(len(site_entries), 1, msg="Multiple GlueSite entries for site %s." % self.site)
+        message = ""
+        if len(site_entries) > 1:
+            message = "Multiple GlueSite entries for site %s." % self.site
+        elif len(site_entries) < 1:
+            message = "There are no GlueSite entries for site %s." % self.site
+            
+        self.expectEquals(len(site_entries), 1, msg=message)
         return site_entries[0].glue['SiteUniqueID']
 
     def getPath(self, surl):
@@ -268,6 +278,24 @@ This check tests the ldif as reported by cemon for:
                 self.expectTrue(d.find("o=grid") < 0, msg="There is an extra o=grid entry in DN %s" % fulldn)
                 self.expectTrue(d.startswith("mds-vo-name") == False, "There is an extra mds-vo-name entry in DN %s" % fulldn)
 
+    def nonClassicSeExist(self):
+        result = False
+        se_names = self.getSENames()
+        for name in se_names:
+            if not ("classic" in name.lower()):
+                result = True
+                break
+        return result
+        
+    def getSENames(self):
+        se_names = []
+        for entry in self.entries:
+            dn = list(entry.dn)
+            stanza_type = dn[0].split("=")[0]
+            if stanza_type == "GlueSEUniqueID":
+                se_names.append(str(entry.glue['SEName']))
+        return se_names
+    
 def main(args):
     """
     The main entry point for when gip_validate is run in standalone mode.

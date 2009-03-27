@@ -1,6 +1,6 @@
 
 import sys
-import sets
+import gip_sets as sets
 
 from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges

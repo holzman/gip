@@ -5,6 +5,7 @@ import sys
 import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     printTemplate, cp_get, responseTimes
 from gip_cluster import getClusterID
@@ -22,8 +23,8 @@ def print_CE(cp):
     ce_name = cp_get(cp, ce, "name", "UNKNOWN_CE")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
     try:
-        excludeQueues = [i.strip() for i in cp.get("pbs", \
-            "queue_exclude").split(',')]
+        excludeQueues = [i.strip() for i in cp_get(cp, "pbs", \
+            "queue_exclude", "").split(',')]
     except:
         excludeQueues = []
     vo_queues = getVoQueues(cp)
@@ -66,10 +67,16 @@ def print_CE(cp):
         info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP")
         info['data_dir'] = cp_get(cp, 'osg_dirs', 'data', "/UNKNOWN_DATA")
         info['default_se'] = getDefaultSE(cp)
-        info['max_waiting'] = 999999
+        if 'max_waiting' not in info:
+            info['max_waiting'] = 999999
+        if 'max_queuable' in info:
+            info['max_total'] = info['max_queuable']
+            info['free_slots'] = min(info['free_slots'], info['max_queuable'])
+        else:
+            info['max_total'] = info['max_waiting'] + info['max_running']
+            info['free_slots'] = min(info['free_slots'], info['max_total'])
         info['max_slots'] = 1
         #info['max_total'] = info['max_running']
-        info['max_total'] = info['max_waiting'] + info['max_running']
         info['assigned'] = info['job_slots']
         info['lrmsType'] = 'pbs'
         info['preemption'] = cp_get(cp, 'pbs', 'preemption', '0')
@@ -86,6 +93,7 @@ def print_CE(cp):
         info['gramVersion'] = '2.0'
         info['port'] = 2119
         info['waiting'] = info['wait']
+        info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)
         info['clusterUniqueID'] = getClusterID(cp)
         print CE % info
     return queueInfo, totalCpu, freeCpu, queueCpus
@@ -132,7 +140,7 @@ def print_VOViewLocal(queue_info, cp):
 def main():
     try:
         cp = config()
-        addToPath(cp.get("pbs", "pbs_path"))
+        addToPath(cp_get(cp, "pbs", "pbs_path", "."))
         vo_map = VoMapper(cp)
         pbsVersion = getLrmsInfo(cp)
         queueInfo, totalCpu, freeCpu, queueCpus = print_CE(cp)

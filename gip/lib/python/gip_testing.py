@@ -11,11 +11,12 @@ import re
 import sys
 import types
 import unittest
-import datetime
+import time
 import urlparse
 import GipUnittest
 
 from gip_common import cp_get, cp_getBoolean, pathFormatter, parseOpts, config
+from gip_common import strContains
 from gip_ldap import getSiteList, prettyDN
 
 replace_command = False
@@ -113,7 +114,7 @@ def streamHandler(cp):
         logDir = pathFormatter(cp_get(cp, "TestRunner", "LogDir", "/tmp"))
         logPrefix = cp_get(cp, "TestRunner", "LogPrefix", "")
         logFile = logDir + "/" + logPrefix \
-            + datetime.datetime.now().strftime("%A_%b_%d_%Y_%H_%M_%S")
+            + time.strftime("%A_%b_%d_%Y_%H_%M_%S")
         return open(logFile, 'w')
 
 def runTest(cp, cls, out=None, per_site=True):
@@ -176,11 +177,13 @@ def interpolateConfig(cp):
     cp.set("gip_tests", "bdii_port", "2170")
     cp.set("gip_tests", "egee_port", "2170")
     cp.set("gip_tests", "interop_url", "http://oim.grid.iu.edu/publisher/get_osg_interop_bdii_ldap_list.php?grid=%s&format=html" % grid)
-    if "ITB" in grid:
-        cp.set("gip_tests", "bdii_addr", "is-itb2.grid.iu.edu")
+        
+    if strContains(grid, "ITB"):
+        cp.set("bdii", "endpoint", "ldap://is-itb.grid.iu.edu:2170")
+        cp.set("gip_tests", "bdii_addr", "is-itb.grid.iu.edu")
         cp.set("gip_tests", "egee_bdii", "pps-bdii.cern.ch")
         cp.set("gip_tests", "egee_bdii_conf_url", "http://egee-pre-production-service.web.cern.ch/egee-pre-production-service/bdii/pps-all-sites.conf")
-        web_server = "http://is-itb2.grid.iu.edu"
+        web_server = "http://is-itb.grid.iu.edu"
     else:
         cp.set("gip_tests", "bdii_addr", "is.grid.iu.edu")
         cp.set("gip_tests", "egee_bdii", "lcg-bdii.cern.ch")
@@ -191,6 +194,16 @@ def interpolateConfig(cp):
     cp.set("gip_tests", "schema_check_url", web_server + "/data/cemon_processed_osg/%s.processed?which=%s")
     cp.set("gip_tests", "validator_url", web_server + "/data/cemon_processed_osg/%s.processed?which=%s")
 
+    if cp_get(cp, "gip_tests", "compare_excludes", "") == "":
+        compare_excludes="GlueCEStateFreeJobSlots,GlueCEStateRunningJobs,GlueCEStateTotalJobs,GlueSiteLocation,GlueSAStateAvailableSpace,GlueSAStateUsedSpace"
+        cp.set("gip_tests", "compare_excludes", compare_excludes)
+
+    if cp_get(cp, "gip_tests", "enable_glite", "") == "":
+        cp.set("gip_tests", "enable_glite", "False")
+
+    if cp_get(cp, "gip_tests", "results_dir", "") == "":
+        results_dir = os.path.expandvars("$VDT_LOCATION/apache/htdocs/")
+        cp.set("gip_tests", "results_dir", results_dir)
 
 def getTestConfig(args):
     cp = config()

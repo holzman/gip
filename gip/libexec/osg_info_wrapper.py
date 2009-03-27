@@ -15,6 +15,25 @@ import shutil
 import signal
 import cStringIO
 
+py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
+if not py23:
+      os.EX_CANTCREAT = 73
+      os.EX_CONFIG = 78
+      os.EX_DATAERR = 65
+      os.EX_IOERR = 74
+      os.EX_NOHOST = 68
+      os.EX_NOINPUT = 66
+      os.EX_NOPERM = 77
+      os.EX_NOUSER = 67
+      os.EX_OK = 0
+      os.EX_OSERR = 71
+      os.EX_OSFILE = 72
+      os.EX_PROTOCOL = 76
+      os.EX_SOFTWARE = 70
+      os.EX_TEMPFAIL = 75
+      os.EX_UNAVAILABLE = 69
+      os.EX_USAGE = 64
+                                                   
 try:
    import md5
 except:
@@ -80,8 +99,8 @@ def main(cp = None, return_entries=False):
     # Load up our parameters
     freshness = cp_getInt(cp, "gip", "freshness", 300)
     cache_ttl = cp_getInt(cp, "gip", "cache_ttl", 600)
-    response  = cp_getInt(cp, "gip", "response",  60)
-    timeout = cp_getInt(cp, "gip",   "timeout",   150)
+    response  = cp_getInt(cp, "gip", "response",  240)
+    timeout = cp_getInt(cp, "gip",   "timeout",   240)
 
     os.setpgrp()
 
@@ -285,6 +304,8 @@ def handle_plugins(entries, plugins):
             if compareDN(entry, p_entry):
                 for glue, value in p_entry.glue.items():
                     entry.glue[glue] = value
+                for key, value in p_entry.nonglue.items():
+                    entry.nonglue[key] = value
     return entries
 
 def wait_children(pids, response):

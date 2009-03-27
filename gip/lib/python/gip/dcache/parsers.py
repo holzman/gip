@@ -50,7 +50,7 @@ last time all link groups were updated: 1217465172108
 
 import re
 import sys
-import sets
+import gip_sets as sets
 
 resv_re = re.compile('(\d+) voGroup:(.*)\s+voRole:(.*?)\s*linkGroupId:(\d+)\s*size:(\d*)\s*created:(.*?)\s*lifetime:(-*\d*)ms\s*expiration:(.*?)\s*descr:(.*?)\s*state:(.*?)\s*used:(\d+)\s*allocated:(\d+)')
 lg_re = re.compile('(\d+) Name:(.*?)\s*FreeSpace:(\d+)\s*ReservedSpace:(\d+)\s*AvailableSpace:(\d+)\s*VOs:(.*?)\s*onlineAllowed:(true|false)\s*nearlineAllowed:(true|false)\s*replicaAllowed:(true|false)\s*custodialAllowed:(true|false)\s*outputAllowed:(true|false)\s*UpdateTime:(.*)\((\d+)\)')

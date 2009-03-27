@@ -2,7 +2,7 @@
 import socket
 
 from gip_common import getLogger, cp_get
-from gip_storage import StorageElement, voListStorage
+from gip_storage import StorageElement, voListStorage, getdCacheSESpace
 from admin import connect_admin
 from space_calculator import calculate_spaces
 
@@ -30,6 +30,9 @@ class DCacheInfo(StorageElement):
         if getattr(self, 'sas', None):
             return self.sas
         return super(DCacheInfo, self).getSAs()
+
+    def getSESpace(self, gb=False, total=False):
+        return getdCacheSESpace(self._cp, self.admin, gb=gb, total=total)
 
     def getVOInfos(self):
         if getattr(self, 'vos', None):

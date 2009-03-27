@@ -18,11 +18,12 @@ import re
 import os
 import sys
 
-from gip_common import  getLogger, VoMapper, voList
+from gip_common import  getLogger, VoMapper, voList, parseRvf
 from xml_common import parseXmlSax
-from sge_sax_handler import QueueInfoParser
+from sge_sax_handler import QueueInfoParser, JobInfoParser
 from gip_testing import runCommand
 from UserDict import UserDict
+import gip_sets as sets
 
 log = getLogger("GIP.SGE")
 
@@ -35,10 +36,109 @@ sge_queue_list_cmd = 'qconf -sql'
 # h_rt - hard real time limit (max_walltime)
 
 
+def sgeOutputFilter(fp):
+    """
+    SGE's 'qconf' command has a line-continuation format which we will want to
+    parse.  To accomplish this, we use this filter on the output file stream.
+
+    You should "scrub" SGE output like this::
+
+        fp = runCommand(<pbs command>)
+        for line in pbsOutputFilter(fp):
+           ... parse line ...
+
+    Or simply,
+
+       for line in sgeCommand(<pbs command>):
+           ... parse line ...
+    """
+    class SGEIter:
+        """
+        An iterator for the SGE output.
+        """
+
+        def __init__(self, fp):
+            self.fp = fp
+            self.fp_iter = fp.__iter__()
+            self.prevline = ''
+            self.done = False
+
+        def next(self):
+            """
+            Return the next full line of output for the iterator.
+            """
+            try:
+                line = self.fp_iter.next()
+                if not line.endswith('\\'):
+                    result = self.prevline + line
+                    self.prevline = ''
+                    return result
+                line = line.strip()[:-1]
+                self.prevline = self.prevline + line
+                return self.next()
+            except StopIteration:
+                if self.prevline:
+                    results = self.prevline
+                    self.prevline = ''
+                    return results
+                raise
+
+    class SGEFilter:
+        """
+        An iterable object based upon the SGEIter iterator.
+        """
+
+        def __init__(self, myiter):
+            self.iter = myiter
+
+        def __iter__(self):
+            return self.iter
+
+    return SGEFilter(SGEIter(fp))
+
+def sgeCommand(command, cp):
+    """
+    Run a command against the SGE batch system.
+    
+    Use this when talking to SGE; not only does it allow for integration into
+    the GIP test framework, but it also filters and expands SGE-style line
+    continuations.
+    """
+    fp = runCommand(command)
+    return sgeOutputFilter(fp)
+
 def getLrmsInfo(cp):
-    for line in runCommand(sge_version_cmd, cp):
+    for line in runCommand(sge_version_cmd):
         return line.strip('\n')
     raise Exception("Unable to determine LRMS version info.")
+
+def convert_time_to_secs(entry, infinity=9999999, error=None):
+    """
+    Convert the output of a time-related field in SGE to seconds.
+
+    This handles the HH:MM:SS format plus the text "infinity"
+    """
+    if error == None:
+        error = infinity
+    entry = entry.split(':')
+    if len(entry) == 3:
+        try:
+            hours, mins, secs = int(entry[0]), int(entry[1]), int(entry[2])
+        except:
+            log.warning("Invalid time entry: %s" % entry)
+            return error
+        return hours*3600 + mins*60 + secs
+    elif len(entry) == 1:
+        entry = entry[0]
+        if entry.lower().find('inf') >= 0:
+            return infinity
+        else:
+            try:
+                return int(entry)
+            except:
+                return infinity
+    else:
+        return error
 
 def getQueueInfo(cp):
     """
@@ -48,28 +148,37 @@ def getQueueInfo(cp):
     @returns: A dictionary of queue data and a dictionary of job data.
     """
     queue_list = {}
-    xml = runCommand(sge_queue_info_cmd, cp)
+    xml = runCommand(sge_queue_info_cmd)
     handler = QueueInfoParser()
     parseXmlSax(xml, handler)
     queue_info = handler.getQueueInfo()
-    for queue in queue_info:
+    for queue, qinfo in queue_info.items():
+
         if queue == 'waiting':
             continue
 
         # get queue name
         name = queue.split("@")[0]
-        q = queue_list.get(name, {'slots_used': 0, 'slots_total': 0, 'slots_free': 0, 'waiting' : 0, 'name' : name})
-        q['slots_used'] += int(queue_info[queue]['slots_used'])
-        q['slots_total'] += int(queue_info[queue]['slots_total'])
+        q = queue_list.get(name, {'slots_used': 0, 'slots_total': 0,
+            'slots_free': 0, 'waiting' : 0, 'name' : name})
+        try:
+            q['slots_used'] += int(qinfo['slots_used'])
+        except:
+            pass
+        try:
+            q['slots_total'] += int(qinfo['slots_total'])
+        except:
+            pass
         q['slots_free'] = q['slots_total'] - q['slots_used']
-        q['arch'] = queue_info[queue]["arch"]
+        if 'arch' in qinfo:
+            q['arch'] = qinfo['arch']
         q['max_running'] = q['slots_total']
 
         try:
             state = queue_info[queue]["state"]
-            if state == "d":
+            if state.find("d") >= 0 or state.find("D") >= 0:
                 status = "Draining"
-            elif state == "s":
+            elif state.find("s") >= 0:
                 status = "Closed"
             else:
                 status = "Production"
@@ -80,27 +189,40 @@ def getQueueInfo(cp):
         q['priority'] = 0  # No such thing that I can find for a queue
 
         # How do you handle queues with no limit?
-        sqc = SGEQueueConfig(runCommand(sge_queue_config_cmd % queue, cp).read())
-        if sqc['s_rt'].lower() == 'infinity': sqc['s_rt'] = '99999'
-        if sqc['h_rt'].lower() == 'infinity': sqc['h_rt'] = '99999'
-        max_wall = min(sqc['s_rt'], sqc['h_rt'])
+        sqc = SGEQueueConfig(sgeCommand(sge_queue_config_cmd % name, cp))
+
+        try:
+            q['priority'] = int(sqc['priority'])
+        except:
+            pass
+
+        max_wall_hard = convert_time_to_secs(sqc.get('h_rt', 'INFINITY'))
+        max_wall_soft = convert_time_to_secs(sqc.get('s_rt', 'INFINITY'))
+        max_wall = min(max_wall_hard, max_wall_soft)
 
         try:
             q['max_wall'] = min(max_wall, q['max_wall'])
         except:
             q['max_wall'] = max_wall
 
+        user_list = sqc.get('user_lists', 'NONE')
+        if user_list.lower().find('none') >= 0:
+            user_list = re.split('\s*,?\s*', user_list)
+        if 'all' in user_list:
+            user_list = []
+        q['user_list'] = user_list
+
         queue_list[name] = q
 
     waiting_jobs = 0
     for job in queue_info['waiting']:
         waiting_jobs += 1
-    queue_list['waiting'] = waiting_jobs
+    queue_list['waiting'] = {'waiting': waiting_jobs}
 
     return queue_list, queue_info
 
-def getJobsInfo(sge_queue_job_info, queueInfo, cp):
-    xml = runCommand(sge_queue_info_cmd, cp)
+def getJobsInfo(vo_map, cp):
+    xml = runCommand(sge_queue_info_cmd)
     handler = JobInfoParser()
     parseXmlSax(xml, handler)
     job_info = handler.getJobInfo()
@@ -127,44 +249,158 @@ def getJobsInfo(sge_queue_job_info, queueInfo, cp):
     return queue_jobs
 
 class SGEQueueConfig(UserDict):
-    def __init__(self, configstring):
+    def __init__(self, config_fp):
         from gip_common import _Constants
         UserDict.__init__(self, dict=None)
         self.constants = _Constants()
-        self.digest(configstring)
+        self.digest(config_fp)
 
-    def digest(self, configstring):
-        configList = configstring.split(self.constants.LF)
-        for pair in configList:
+    def digest(self, config_fp):
+        for pair in config_fp:
             if len(pair) > 1:
                 key_val = pair.split()
                 self[key_val[0].strip()] = key_val[1].strip()
 
+def parseNodes(cp):
+    """
+    Parse the node information from SGE.  Using the output from qhost, 
+    determine:
+    
+        - The number of total CPUs in the system.
+        - The number of free CPUs in the system.
+        - A dictionary mapping PBS queue names to a tuple containing the
+            (totalCPUs, freeCPUs).
+    """
+    raise NotImplementedError()
+
+def getQueueList(cp):
+    """
+    Returns a list of all the queue names that are supported.
+
+    @param cp: Site configuration
+    @returns: List of strings containing the queue names.
+    """
+    vo_queues = getVoQueues(cp)
+    queues = sets.Set()
+    for vo, queue in vo_queues:
+        queues.add(queue)
+    return queues
+
 def getVoQueues(cp):
     voMap = VoMapper(cp)
     try:
-        queue_exclude = [i.strip() for i in cp.get("sge", "queue_exclude").split(',')]
+        queue_exclude = [i.strip() for i in cp.get("sge",
+            "queue_exclude").split(',')]
     except:
         queue_exclude = []
     vo_queues = []
     queue_list, q = getQueueInfo(cp)
-    for queue in queue_list:
+    rvf_info = parseRvf('sge.rvf')
+    rvf_queue_list = rvf_info.get('queue', {}).get('Values', None)
+    if rvf_queue_list:
+        rvf_queue_list = rvf_queue_list.split()
+        log.info("The RVF lists the following queues: %s." % ', '.join( \
+            rvf_queue_list))
+    for queue, qinfo in queue_list.items():
+        if rvf_queue_list and queue not in rvf_queue_list:
+            continue
         if queue in queue_exclude:
             continue
-
+        volist = sets.Set(voList(cp, voMap))
         try:
-            whitelist = [i.strip() for i in cp.get("sge", "%s_whitelist" % queue).split(',')]
+            whitelist = [i.strip() for i in cp.get("sge",
+                "%s_whitelist" % queue).split(',')]
         except:
             whitelist = []
-
+        whitelist = sets.Set(whitelist)
         try:
-            blacklist = [i.strip() for i in cp.get("sge", "%s_blacklist" % queue).split(',')]
+            blacklist = [i.strip() for i in cp.get("sge",
+                "%s_blacklist" % queue).split(',')]
         except:
             blacklist = []
-
-        for vo in voList(cp, voMap):
-            if (vo in blacklist or "*" in blacklist) and ((len(whitelist) == 0) or vo not in whitelist):
-                continue
+        blacklist = sets.Set(blacklist)
+        if 'user_list' in qinfo:
+            acl_vos = parseAclInfo(queue, qinfo, voMap)
+            if acl_vos:
+                volist.intersection_update(acl_vos)
+        for vo in volist:
+            if (vo in blacklist or "*" in blacklist) and ((len(whitelist) == 0)\
+                or vo not in whitelist):
+                    continue
             vo_queues.append((vo, queue))
-
     return vo_queues
+
+def parseAclInfo(queue, qinfo, vo_mapper):
+    """
+    Take a queue information dictionary and determine which VOs are in the ACL
+    list.  The used keys are:
+
+       - users: A set of all user names allowed to access this queue.
+       - groups: A set of all group names allowed to access this queue.
+
+    @param queue: Queue name (for logging purposes).
+    @param qinfo: Queue info dictionary
+    @param vo_mapper: VO mapper object
+    @returns: A set of allowed VOs
+    """
+    # TODO: find a sample SGE site which uses this!
+    return []
+    user_list = qinfo.get('user_list', sets.Set())
+    users = sets.Set()
+    all_groups = grp.getgrall()
+    all_users = pwd.getpwall()
+    group_dict = {}
+    group_list = [i[1:] for i in user_list if i.startswith('@')]
+    user_list = [i for i in user_list if not i.startswith('@')]
+    for group in all_groups:
+        if group[0] in group_list or group[2] in group_list:
+            users.add(group[0])
+        group_dict[group[2]] = group[0]
+    for user in all_users:
+        try:
+            group = group_dict[user[3]]
+        except:
+            continue
+        if group[0] in group_list or user[3] in group_list:
+            users.add(group[0])
+    vos = sets.Set()
+    for user in users:
+        try:
+            vos.add(vo_mapper[user])
+        except:
+            pass
+    log.info("The acl info for queue %s (users %s, groups %s) mapped to %s." % \
+        (queue, ', '.join(user_list), ', '.join(group_list), ', '.join(vos)))
+    return vos
+
+if __name__ == '__main__':
+
+    qconf_output = """
+name    any
+type    ACL
+fshare  0
+oticket 0
+entries @Mackenzie,@ahouston,@allen,@anderson,@bahar,@batelaan,@belashchenko, \
+        @berkowitz,@bobaru,@brand,@bsbm,@caldwell,@calmit,@chandra,@chen, \
+        @chess,@cheung,@choueiry,@cohen,@condor,@costello,@cse429,@cse477, \
+        @cse496,@cse856,@cusack,@dbus,@deallab,@deogun,@diestler,@dimagno, \
+        @dominguez,@du,@ducharme,@dzenis,@eckhardt,@elbaum,@feng,@g03,@gamess, \
+        @gaskell,@geppert,@gitelson,@gladyshev,@goddard,@gogos,@haldaemon, \
+        @harbison,@harbourne,@hep,@hibbing,@hochstein,@hoffman,@hu,@irmak, \
+        @jaecks,@jaswal,@jaturner,@jiang,@jwang7,@ladunga,@lhoffman,@li,@liu, \
+        @loope,@lu,@lxu,@mech950,@merillium,@morc,@moriyama,@mower,@nagiocmd, \
+        @narayanan,@netdump,@nopbs,@nowak,@ntadmin,@outreach,@parker, \
+        @parkhurst,@parprog,@perez,@powers,@psc_sub,@pytlikzillig,@ramamurthy, \
+        @rcfsrv,@reichenbach,@reid,@riethoven,@rowe,@sabirianov,@samal, \
+        @sayood,@scott,@sellmyer,@seth,@shadwick,@shea,@sicking,@snow,@soh, \
+        @soulakova,@sridhar,@srisa-an,@starace,@stezowski,@subbiah,@swanson, \
+        @tsymbal,@tuan,@tyre,@umstadter,@uno,@vcr,@wang,@woldt,@woodward, \
+        @xwang,@yang,@zeng,@zhang
+"""
+    import cStringIO
+    fp = cStringIO.StringIO()
+    fp.write(qconf_output)
+    fp.seek(0)
+    for line in sgeOutputFilter(fp):
+        print line.strip()
+

@@ -7,9 +7,15 @@ outline of how this is computed is given here:
 https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/GipCeInfo
 """
 
-import sets
+import gip_sets as sets
+import sys
+py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
+if not py23:
+        import operator
+        def sum(data, start=0): return reduce(operator.add, data, start)
 
 # Standard GIP imports
+import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes
 from gip_cluster import getClusterID
@@ -151,49 +157,52 @@ def print_CE(cp):
         ert, wrt = responseTimes(cp, myrunning, myidle+myheld,
             max_job_time=max_wall*60)
 
+        referenceSI00 = gip_cluster.getReferenceSI00(cp)
+
         # Build all the GLUE CE entity information.
         info = { \
-            "ceUniqueID"  : ce_unique_id,
-            'contact_string': ce_unique_id,
-            "ceImpl"      : "Globus",
-            "ceImplVersion": cp_get(cp, ce, 'globus_version', '4.0.6'),
-            "hostingCluster": cp_get(cp, ce, 'hosting_cluster', ce_name),
-            "hostName"    : cp_get(cp, ce, "host_name", ce_name),
-            "gramVersion" : '2.0',
-            "lrmsType"    : "condor",
-            "port"        : 2119,
-            "running"     : myrunning,
-            "idle"        : myidle,
-            "held"        : myheld,
-            "ce_name"     : ce_name,
-            "ert"         : ert,
-            "wrt"         : wrt,
-            "job_manager" : 'condor',
-            "queue"       : group,
-            "lrmsVersion" : condorVersion,
-            "job_slots"   : int(total_nodes),
-            "free_slots"  : int(unclaimed),
+            "ceUniqueID"     : ce_unique_id,
+            'contact_string' : ce_unique_id,
+            "ceImpl"         : "Globus",
+            "ceImplVersion"  : cp_get(cp, ce, 'globus_version', '4.0.6'),
+            "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name),
+            "hostName"       : cp_get(cp, ce, "host_name", ce_name),
+            "gramVersion"    : '2.0',
+            "lrmsType"       : "condor",
+            "port"           : 2119,
+            "running"        : myrunning,
+            "idle"           : myidle,
+            "held"           : myheld,
+            "ce_name"        : ce_name,
+            "ert"            : ert,
+            "wrt"            : wrt,
+            "job_manager"    : 'condor',
+            "queue"          : group,
+            "lrmsVersion"    : condorVersion,
+            "job_slots"      : int(total_nodes),
+            "free_slots"     : int(unclaimed),
             # Held jobs are included as "waiting" since the definition is:
             #    Number of jobs that are in a state different than running
-            "waiting"     : myidle + myheld,
-            "running"     : myrunning,
-            "total"       : myrunning + myidle + myheld,
-            "priority"    : ginfo.get('prio', 0),
-            "assigned"    : assigned,
-            "max_slots"   : 1,
-            "preemption"  : str(int(cp_getBoolean(cp, "condor", \
+            "waiting"        : myidle + myheld,
+            "running"        : myrunning,
+            "total"          : myrunning + myidle + myheld,
+            "priority"       : ginfo.get('prio', 0),
+            "assigned"       : assigned,
+            "max_slots"      : 1,
+            "preemption"     : str(int(cp_getBoolean(cp, "condor", \
                 "preemption", False))),
-            "max_running" : max_running,
-            "max_waiting" : 99999,
-            "max_total"   : 99999,
-            "max_wall"    : cp_getInt(cp, "condor", "max_wall", 1440),
-            "status"      : status,
-            'app_dir'     : cp_get(cp, 'osg_dirs', 'app', '/Unknown'),
-            "data_dir"    : cp_get(cp, "osg_dirs", "data", "/Unknown"),
-            "default_se"  : getDefaultSE(cp),
-            "acbr"        : ginfo['acbr'],
+            "max_running"    : max_running,
+            "max_waiting"    : 99999,
+            "max_total"      : 99999,
+            "max_wall"       : cp_getInt(cp, "condor", "max_wall", 1440),
+            "status"         : status,
+            'app_dir'        : cp_get(cp, 'osg_dirs', 'app', '/Unknown'),
+            "data_dir"       : cp_get(cp, "osg_dirs", "data", "/Unknown"),
+            "default_se"     : getDefaultSE(cp),
+            "acbr"           : ginfo['acbr'],
+            "referenceSI00"  : referenceSI00,
             "clusterUniqueID": getClusterID(cp),
-            "bdii"        : cp_get(cp, "bdii", "endpoint", "Unknown")
+            "bdii"           : cp_get(cp, "bdii", "endpoint", "Unknown")
         }
         printTemplate(ce_template, info)
     return total_nodes, claimed, unclaimed

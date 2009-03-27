@@ -2,7 +2,7 @@
 
 import os
 import sys
-import datetime
+import time
 from shutil import copy
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
@@ -38,7 +38,7 @@ class TestRunner:
         contents += '<?xml-stylesheet type="text/xsl" href="index.xsl"?>\n'
         contents += '<TestRunList>\n'
         siteTestStatus = ""
-        updateDateTime = datetime.datetime.now().strftime("%A %b %d %Y %H:%M:%S")
+        updateDateTime = time.strftime("%a %b %d %T UTC %Y", time.gmtime())
         contents += "<TestRunTime><![CDATA[%s]]></TestRunTime>\n" % updateDateTime
 
         for dict in self.output_files:
@@ -121,7 +121,13 @@ class TestRunner:
         self.runList(self.critical_tests, "critical")
 
         self.writeResultsPage()
-
+        
+        oim_plugin_enabled = cp_getBoolean(self.cp, "gip_tests", "enable_myosg_plugin", False)
+        if oim_plugin_enabled:
+            oim_plugin = os.path.expandvars("$GIP_LOCATION/reporting/plugins/OIM_XML_Aggregator.py")
+            cmd = '/bin/bash -c "%(source)s; %(plugin)s "' % ({"source": self.source_cmd, "plugin": oim_plugin})
+            runCommand(cmd)
+            
 def main():
     tr = TestRunner()
     tr.runTests()

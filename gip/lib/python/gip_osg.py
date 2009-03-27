@@ -5,9 +5,13 @@ Populate the GIP based upon the values from the OSG configuration
 import os
 import re
 import sys
+import socket
 import ConfigParser
 
-from gip_sections import ce, site, pbs, condor, sge, se, subcluster
+from gip_sections import ce, site, pbs, condor, sge, se, subcluster, cluster
+from gip_common import getLogger
+
+log = getLogger("GIP")
 
 site_sec = "Site Information"
 pbs_sec = "PBS"
@@ -15,6 +19,7 @@ condor_sec = "Condor"
 sge_sec = 'SGE'
 storage_sec = 'Storage'
 gip_sec = 'GIP'
+dcache_sec = 'dcache'
 
 def cp_getInt(cp, section, option, default):
     """
@@ -125,7 +130,7 @@ def configOsg(cp):
         check_osg = cp.getboolean("gip", "check_osg")
     except:
         check_osg = True
-    if check_osg:
+    if check_osg and 'GIP_TESTING' not in os.environ:
         checkOsgConfigured(cp)
         
     # See if we have a special config.ini location
@@ -133,6 +138,15 @@ def configOsg(cp):
     loc = os.path.expandvars(loc)
     # Load config.ini values
     cp2 = ConfigParser.ConfigParser()
+
+    try:
+        file = open(loc)
+    except IOError:
+        log.error("FATAL ERROR: cannot read config.ini!")
+        file.close()
+        raise
+
+    file.close()
     cp2.read(loc)
 
     try:
@@ -149,6 +163,29 @@ def configOsg(cp):
         #log.exception(e)
         print >> sys.stderr, str(e)
 
+    # Set the site status:
+    try:
+        state_info_file = '$VDT_LOCATION/MIS-CI/etc/grid-site-state-info'
+        state_info_file = os.path.expandvars(state_info_file)
+        if os.path.exists(state_info_file):
+            results = int(os.popen("/bin/sh -c 'source %s; echo " \
+                "$grid_site_state_bit'" % state_info_file)
+                .read().strip()) != 0
+        else:
+            results = None
+        if not results:
+            if not cp.has_section('condor'):
+                cp.add_section('condor')
+            cp.set('condor', 'Closed')
+    except:
+        pass
+    
+    # get all the items in the [GIP] section of the config.ini
+    try:
+        gip_items = cp2.items("GIP")
+    except:
+        gip_items = []
+    gip_handled_items = []
     # The write_config helper function
     def __write_config(section2, option2, section, option): \
             #pylint: disable-msg=C0103
@@ -158,6 +195,10 @@ def configOsg(cp):
         To avoid circular dependencies, this is a copy of the __write_config in
         gip_common
         """
+        # as we encounter the [GIP] items, add them to the handled list
+        if (section2 == gip_sec) and (not (option2 in gip_handled_items)):
+            gip_handled_items.append(option2)
+
         try:
             new_val = cp2.get(section2, option2)
         except:
@@ -172,6 +213,13 @@ def configOsg(cp):
     # Now, we compare the two - convert the config.ini options into gip.conf
     # options.
     # [Site Information]
+    has_site_hostname = False
+    if cp2.has_section(site_sec) and cp2.has_option(site_sec, "host_name"):
+        has_site_hostname = True
+    if not has_site_hostname:
+        if not cp2.has_section(site_sec):
+            cp2.add_section(site_sec)
+        cp2.set(site_sec, "host_name", socket.gethostname())
     __write_config(site_sec, "host_name", ce, "name")
     __write_config(site_sec, "host_name", ce, "unique_name")
     __write_config(site_sec, "site_name", site, "name")
@@ -184,17 +232,30 @@ def configOsg(cp):
     __write_config(site_sec, "country", site, "country")
     __write_config(site_sec, "longitude", site, "longitude")
     __write_config(site_sec, "latitude", site, "latitude")
+    __write_config(site_sec, "group", site, "group")
     
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
     __write_config(pbs_sec, "wsgram", pbs, "wsgram")
     __write_config(pbs_sec, "enabled", pbs, "enabled")
     __write_config(pbs_sec, "job_contact", pbs, "contact_string")
-
+    
+    # attempt to put all the pbs options into the internal config object
+    # so that whitelisting and blacklisting work without having to resort to
+    # gip.conf
+    try:
+        for option in cp2.options(pbs_sec):
+            __write_config(pbs_sec, option, pbs, option)
+    except:
+        pass
+        
     # [Condor]
     __write_config(condor_sec, "condor_location", condor, "condor_location")
     __write_config(condor_sec, "wsgram", condor, "wsgram")
-
+    __write_config(condor_sec, "subtract_owner", condor, "subtract_owner")
+    __write_config(condor_sec, "status_constraint", condor, "status_constraint")
+    __write_config(condor_sec, "jobs_constraint", condor, "jobs_constraint")
+    
     # [SGE]
     __write_config(sge_sec, "sge_location", sge, "sge_path")
     __write_config(sge_sec, "sge_location", sge, "sge_root")
@@ -204,6 +265,7 @@ def configOsg(cp):
     __write_config(storage_sec, "app_dir", "osg_dirs", "app")
     __write_config(storage_sec, "data_dir", "osg_dirs", "data")
     __write_config(storage_sec, "worker_node_temp", "osg_dirs", "wn_tmp")
+    __write_config(storage_sec, "default_se", "se", "default_se")
 
     # [GIP]
     __write_config(gip_sec, "se_name", se, "name")
@@ -212,6 +274,13 @@ def configOsg(cp):
     __write_config(gip_sec, "srm_implementation", se, "implementation")
     __write_config(gip_sec, "dynamic_dcache", se, "dynamic_dcache")
     __write_config(gip_sec, "srm", se, "srm_present")
+    __write_config(gip_sec, "advertise_gums", site, "advertise_gums")
+
+    cluster_name = cp_get(cp2, gip_sec, "cluster_name", "")
+    if len(cluster_name) > 0:
+        __write_config(gip_sec, "cluster_name", cluster, "name")
+        cp2.set(gip_sec, "simple_cluster", True)
+        __write_config(gip_sec, "simple_cluster", cluster, "simple")
 
     # Try to auto-detect the batch manager.
     mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge'}
@@ -233,6 +302,7 @@ def configOsg(cp):
         cp.set("se", "srm_version", "1.1.0")
     __write_config(gip_sec, "srm_version", se, "version")
     __write_config(gip_sec, "advertise_gsiftp", "classic_se", "advertise_se")
+    __write_config(gip_sec, "gsiftp_host", "classic_se", "host")
 
     # Calculate the default path for each VO
     root_path = cp_get(cp2, gip_sec, "se_root_path", "/")
@@ -260,7 +330,7 @@ def configOsg(cp):
         "name":     "name",
         "numlcpus": "cores_per_node",
         "nodes":    "node_count",
-        "numcpus":  "cpus_per_node",
+        "numpcpus":  "cpus_per_node",
         "clock":    "cpu_speed_mhz",
         "ramsize":  "ram_size",
         "vendor":   "cpu_vendor",
@@ -291,6 +361,11 @@ def configOsg(cp):
     __write_config(gip_sec, "bdii", "bdii", "endpoint")
     __write_config(gip_sec, "tmp_var", "cluster", "simple")
     __write_config(gip_sec, "tmp_var", "cesebind", "simple")
+
+    # add all [GIP] items that have not already been handled to the config object
+    for item in gip_items:
+        if not item[0] in gip_handled_items:
+            __write_config(gip_sec, item[0], gip_sec.lower(), item[0])
 
 def configSubclusters(cp, cp2):
     """
@@ -376,7 +451,6 @@ def configSEs(cp, cp2):
       - version *
       - default_path *
       - vo_paths
-      - allowed_vos
 
     Looks for the above attributes in any section starting with the prefix
     "se"
@@ -384,42 +458,58 @@ def configSEs(cp, cp2):
     for section in cp.sections():
         if not section.startswith("se") and not section.startswith("SE"):
             continue
-        name = cp_get(cp, section, "name", "UNKNOWN")
-        my_sect = "se_%s" % name
-        try:
-            cp2.add_section(my_sect)
-        except ConfigParser.DuplicateSectionError:
-            pass
-        cp2.set(my_sect, "name", name)
-        # Copy over entire section
-        for name, value in cp.items(section):
-            cp2.set(my_sect, name, value)
-        endpoint = cp_get(cp, section, "srm_endpoint",
-            "httpg://UNKNOWN.example.com:8443/srm/v2/server")
-        m = url_re.match(endpoint)
-        if not m:
-            print >> sys.stderr, "Invalid endpoint: %s" % endpoint
-            continue
-        format, host, port, endpoint = m.groups()
-        cp2.set(my_sect, "srm_host", host)
-        cp2.set(my_sect, "srm_port", port)
-        cp2.set(my_sect, "unique_name", host)
-        cp2.set(my_sect, "srm_endpoint", "httpg://%s:%s/%s" % (host, port,
-            endpoint))
-        cp2.set(my_sect, "srm_version", cp_get(cp, section, "srm_version", "2"))
-        cp2.set(my_sect, "implementation", cp_get(cp, section, "implementation",
-            "UNKNOWN"))
-        cp2.set(my_sect, "version", cp_get(cp, section, "version", "UNKNOWN"))
-        cp2.set(my_sect, "provider_implementation", cp_get(cp, section,
-            "provider_implementation", "static"))
-        cp2.set(my_sect, "infoProviderEndpoint", cp_get(cp, section,
-            "infoprovider_endpoint", "file:///dev/null"))
-        vo_paths = split_re.split(cp_get(cp, section, "vo_paths", ""))
-        for voinfo in vo_paths:
+        enabled = cp_getBoolean(cp, section, "enabled")
+        if enabled:
+            name = cp_get(cp, section, "name", "UNKNOWN")
+            my_sect = "se_%s" % name
             try:
-                vo, path = voinfo.split(':')
-            except:
+                cp2.add_section(my_sect)
+            except ConfigParser.DuplicateSectionError:
+                pass
+            cp2.set(my_sect, "name", name)
+            # Copy over entire section
+            for name, value in cp.items(section):
+                cp2.set(my_sect, name, value)
+            endpoint = cp_get(cp, section, "srm_endpoint",
+                "httpg://UNKNOWN.example.com:8443/srm/v2/server")
+            m = url_re.match(endpoint)
+            if not m:
+                print >> sys.stderr, "Invalid endpoint: %s" % endpoint
                 continue
-            vo, path = vo.strip(), path.strip()
-            cp2.set(my_sect, vo, path)
-
+            format, host, port, endpoint = m.groups()
+            cp2.set(my_sect, "srm_host", host)
+            cp2.set(my_sect, "srm_port", port)
+            cp2.set(my_sect, "unique_name", host)
+            cp2.set(my_sect, "srm_endpoint", "httpg://%s:%s/%s" % (host, port,
+                endpoint))
+            cp2.set(my_sect, "srm_version", cp_get(cp, section, "srm_version", "2"))
+            cp2.set(my_sect, "implementation", cp_get(cp, section, "implementation",
+                "UNKNOWN"))
+            cp2.set(my_sect, "version", cp_get(cp, section, "version", "UNKNOWN"))
+            cp2.set(my_sect, "provider_implementation", cp_get(cp, section,
+                "provider_implementation", "static"))
+            cp2.set(my_sect, "infoProviderEndpoint", cp_get(cp, section,
+                "infoprovider_endpoint", "file:///dev/null"))
+            vo_paths = split_re.split(cp_get(cp, section, "vo_paths", ""))
+            for voinfo in vo_paths:
+                try:
+                    vo, path = voinfo.split(':')
+                except:
+                    continue
+                vo, path = vo.strip(), path.strip()
+                cp2.set(my_sect, vo, path)
+    
+            # Handle allowed VO's for dCache
+            spaces_re = re.compile("space_.+_vos")
+            if cp_get(cp, section, "implementation", "UNKNOWN") == "dcache":
+                if not cp2.has_section(dcache_sec):
+                    cp2.add_section(dcache_sec)
+                spaces = split_re.split(cp_get(cp, section, "spaces", ""))
+                for option in cp.options(section):
+                    is_space = spaces_re.match(option)
+                    if not is_space: continue
+                    allowed_vos = cp_get(cp, section, option, "")
+                    if len(allowed_vos) > 0:
+                        cp2.set(dcache_sec, option, allowed_vos)
+            # Handle allowed VO's for bestman
+            # Yet to be implemented

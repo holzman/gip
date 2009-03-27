@@ -37,6 +37,24 @@ class TestOsgInfoWrapper(unittest.TestCase):
         self.assertEquals(has_timestamp, True, msg="Provider did not run.")
         self.assertEquals(has_ce, True, msg="Static info was not included.")
 
+    def test_nonglue(self):
+        """
+        Test the ability to handle non-GLUE attributes (such as FermiGrid's
+        custom extensions).
+        """
+        cp = config("test_modules/nonglue/config")
+        entries = osg_info_wrapper.main(cp, return_entries=True)
+        has_ce = False
+        for entry in entries:
+            if entry.dn[0] == 'GlueCEUniqueID=red.unl.edu:2119/jobmanager' \
+                    '-pbs-cms':
+                has_ce = True
+                self.assertEquals(entry.nonglue['FermiGridMemoryPerNode'][0], \
+                    '5', msg="Add-attributes did not get applied")
+                self.assertEquals(entry.nonglue['FermiGridBatchSlotsPerNode'] \
+                    [0], '5', msg="Alter-attributes did not get applied")
+        self.assertEquals(has_ce, True, msg="Static info was not included.")
+
     def test_timeout(self):
         """
         Test a plugin which times out.

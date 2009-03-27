@@ -3,7 +3,7 @@
 import os
 import sys
 import unittest
-from sets import Set
+from gip_sets import Set
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config
@@ -63,7 +63,7 @@ def main():
     """
     cp = config()
     stream = streamHandler(cp)
-    runTest(cp, TestCondorProvider, stream, per_site=False, usexml=False)
+    runTest(cp, TestCondorProvider, stream, per_site=False)
 
 if __name__ == '__main__':
     main()

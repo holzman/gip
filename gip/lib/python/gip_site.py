@@ -15,6 +15,10 @@ def filter_sponsor(cp, text):
     text = text.replace('"', '').replace("'", '')
     entries = split_re.split(text)
     results = []
+    if len(entries) == 1:
+        entry = entries[0]
+        if len(entry.split(':')) == 1:
+            entries[0] = entry.strip() + ":100"
     for entry in entries:
         try:
             vo, number = entry.split(":")
@@ -33,7 +37,7 @@ def filter_sponsor(cp, text):
         else:
             log.warning("VO named `%s` does not match any VO in" \
                 " osg-user-vo-map.txt." % str(vo))
-        results.append("%s:%i" % (vo, int(number)))
+        results.append("%s:%i" % (vo.lower(), int(number)))
     return " ".join(results)
 
 def generateGlueSite(cp):
@@ -52,7 +56,10 @@ def generateGlueSite(cp):
     info['longitude'] = cp_get(cp, sec, 'longitude', "0.00")
     info['website'] = cp_get(cp, sec, 'sitepolicy', "http://example.com/" \
         "site_policy")
+    # Get the sponsor, then 
     info['sponsor'] = cp_get(cp, sec, 'sponsor', "UNKNOWN:100")
     info['sponsor'] = filter_sponsor(cp, info['sponsor'])
+    info['sponsor'] = '\n'.join(['GlueSiteSponsor: %s' % i for i in \
+        info['sponsor'].split()])
     return info
 

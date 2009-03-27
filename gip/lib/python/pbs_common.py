@@ -6,7 +6,7 @@ Module for interacting with PBS.
 import re
 import grp
 import pwd
-import sets
+import gip_sets as sets
 
 from gip_common import HMSToMin, getLogger, VoMapper, voList, parseRvf
 from gip_testing import runCommand
@@ -239,9 +239,10 @@ def getQueueInfo(cp):
             queue_data["max_running"] = int(val)
         elif attr == "resources_max.nodect":
             queue_data["job_slots"] = int(val)
-        elif attr == "max_queuable":
+        elif attr == "max_queuable" or attr == 'max_queueable':
             try:
                 queue_data["max_waiting"] = int(val)
+                queue_data["max_queuable"] = int(val)
             except: 
                 log.warning("Invalid input for max_queuable: %s" % str(val))
         elif attr == "acl_group_enable" and val.lower() == 'true':
@@ -355,6 +356,8 @@ def getQueueList(cp):
             queues.append(queue)
         if rvf_queue_list and queue not in rvf_queue_list:
             continue
+        if queue not in queue_exclude:
+            queues.append(queue)
     return queues
 
 def getVoQueues(cp):
@@ -404,8 +407,12 @@ def getVoQueues(cp):
         if 'users' in qinfo or 'groups' in qinfo:
             acl_vos = parseAclInfo(queue, qinfo, voMap)
             volist.intersection_update(acl_vos)
-            if not volist:
-                continue
+        # Force any VO in the whitelist to show up in the volist, even if it
+        # isn't in the acl_users / acl_groups
+        for vo in whitelist:
+            if vo not in volist:
+                volist.add(vo)
+        # Apply white and black lists
         for vo in volist:
             if (vo in blacklist or "*" in blacklist) and ((len(whitelist) == 0)\
                     or vo not in whitelist):

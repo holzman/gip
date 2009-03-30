@@ -46,8 +46,15 @@ class TestSchema(GipUnittest.GipTestCase):
         GipUnittest.GipTestCase.__init__(self, 'testSchema')
         self.site = site
         self.name = 'testSchema_%s' % site
+    
+    def setUp(self):
         self.slap_conf = createSlapConf()
         self.info_file = getTempFilename()
+
+    def tearDown(self):
+        rm_cmd = "rm -f %s"
+        runCommand(rm_cmd % self.slap_conf)
+        runCommand(rm_cmd % self.info_file)
         
     def testSchema(self):
         """
@@ -69,11 +76,6 @@ Test schema of site
         output = fp3.read()
         self.assertEquals(len(output), 0, msg="slapadd schema check failed for site %s.  Output:\n%s" % (self.site, output))
     
-    def cleanup(self):
-        rm_cmd = "rm -f %s"
-        runCommand(rm_cmd % self.slap_conf)
-        runCommand(rm_cmd % self.info_file)
-
 def main(args):
 
     addToPath("/usr/sbin")

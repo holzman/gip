@@ -8,6 +8,12 @@ sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 import unittest
 from gip_common import cp_getBoolean
 
+class AbortTestException(Exception):
+    def __init__(self, value):
+        self.parameter = value
+    def __str__(self):
+        return repr(self.parameter)
+
 class GipTestCase(unittest.TestCase):
     def __init__(self, methodName):
         unittest.TestCase.__init__(self, methodName)
@@ -149,8 +155,12 @@ class GipXmlTestResult(unittest.TestResult):
         self.runner.writeUpdate('result="ok" />\n')
 
     def addError(self, test, err):
-        unittest.TestResult.addError(self, test, err)
-        self.runner.writeUpdate('result="error" />\n')
+        exctype, value, tb = err
+        if "AbortTestException" in str(exctype):
+            self.runner.writeUpdate('result="NA" />\n')
+        else:
+            unittest.TestResult.addError(self, test, err)
+            self.runner.writeUpdate('result="error" />\n')
 
     def addFailure(self, test, err):
         unittest.TestResult.addFailure(self, test, err)

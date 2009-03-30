@@ -47,6 +47,8 @@ sure that the site has entries in both.
                 data = read_bdii(self.cp, query, base)
             except:
                 self.failUnless(False, msg="%s does not exist in the WLCG BDII" % self.site)
+        else:
+            raise GipUnittest.AbortTestException("Site not configured for interoperability.")
 
     def checkIsInterop(self):
         ret = False

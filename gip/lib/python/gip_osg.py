@@ -20,6 +20,7 @@ sge_sec = 'SGE'
 storage_sec = 'Storage'
 gip_sec = 'GIP'
 dcache_sec = 'dcache'
+lsf_sec = 'LSF'
 
 def cp_getInt(cp, section, option, default):
     """
@@ -186,6 +187,7 @@ def configOsg(cp):
     except:
         gip_items = []
     gip_handled_items = []
+
     # The write_config helper function
     def __write_config(section2, option2, section, option): \
             #pylint: disable-msg=C0103
@@ -210,6 +212,13 @@ def configOsg(cp):
         elif (not override):
             cp.set(section, option, new_val)
 
+    def __write_all_options_config(section2, section):
+        try:
+            for option in cp2.options(section2):
+                __write_config(section2, option, section, option)
+        except:
+            pass
+        
     # Now, we compare the two - convert the config.ini options into gip.conf
     # options.
     # [Site Information]
@@ -243,24 +252,19 @@ def configOsg(cp):
     # attempt to put all the pbs options into the internal config object
     # so that whitelisting and blacklisting work without having to resort to
     # gip.conf
-    try:
-        for option in cp2.options(pbs_sec):
-            __write_config(pbs_sec, option, pbs, option)
-    except:
-        pass
+    __write_all_options_config(pbs_sec, pbs)
         
     # [Condor]
-    __write_config(condor_sec, "condor_location", condor, "condor_location")
-    __write_config(condor_sec, "wsgram", condor, "wsgram")
-    __write_config(condor_sec, "subtract_owner", condor, "subtract_owner")
-    __write_config(condor_sec, "status_constraint", condor, "status_constraint")
-    __write_config(condor_sec, "jobs_constraint", condor, "jobs_constraint")
-    
+    __write_all_options_config(condor_sec, condor)
+
     # [SGE]
     __write_config(sge_sec, "sge_location", sge, "sge_path")
     __write_config(sge_sec, "sge_location", sge, "sge_root")
-    __write_config(sge_sec, "wsgram", sge, "wsgram")
+    __write_all_options_config(sge_sec, sge)
 
+    # [LSF]
+    __write_all_options_config(lsf_sec, lsf)
+    
     # [Storage]
     __write_config(storage_sec, "app_dir", "osg_dirs", "app")
     __write_config(storage_sec, "data_dir", "osg_dirs", "data")

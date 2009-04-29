@@ -146,7 +146,7 @@ def config(*args):
     check_gip_location()
     check_testing_environment()
     cp = ConfigParser.ConfigParser()
-    files = list()
+    files = list(args)
     if py23:
         p = optparse.OptionParser()
         p.add_option('-c', '--config', dest='config', \
@@ -156,7 +156,7 @@ def config(*args):
         (options, args) = p.parse_args()
         files += [i.strip() for i in options.config.split(',')]
     else:
-        keywordOpts, passedOpts, givenOpts = parseOpts(args)
+        keywordOpts, passedOpts, givenOpts = parseOpts(sys.argv)
         if keywordOpts["config"]:
              files += [i.strip() for i in keywordOpts["config"].split(',')]
         if keywordOpts["c"]:

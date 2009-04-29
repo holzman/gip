@@ -15,6 +15,7 @@ from gip_cluster import getClusterID
 from lsf_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
 from gip_sections import ce
+from gip_storage import getDefaultSE
 
 log = getLogger("GIP.LSF")
 

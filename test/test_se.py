@@ -275,6 +275,40 @@ class TestSEConfigs(unittest.TestCase):
         self.check_se_1(entries, cp)
         #self.check_se_2(entries, cp)
 
+    def test_bestman_space(self):
+        """
+        Make sure that the correct space-calc is used for BestMan in the case
+        where there are no static tokens.
+
+        Written to test bug from ticket #38
+        """
+        entries, cp = self.run_test_config("bestman_space.conf")
+        # Check space for SE
+        found_se = False
+        for entry in entries:
+            if 'GlueSE' not in entry.objectClass:
+                continue
+            if 'cit-se2.ultralight.org' not in entry.glue['SEUniqueID']:
+                continue
+            self.failUnless(int(entry.glue['SESizeTotal'][0]) == 3)
+            self.failUnless(int(entry.glue['SESizeFree'][0]) == 2)
+            found_se = True
+        self.failUnless(found_se, msg="Could not find the correct target SE.")
+        # Check space for SA
+        found_sa = False
+        for entry in entries:
+            if 'GlueSA' not in entry.objectClass:
+                continue
+            if 'GlueSEUniqueID=cit-se2.ultralight.org' not in \
+                    entry.glue['ChunkKey']:
+                continue
+            if 'default' not in entry.glue['SALocalID']:
+                continue
+            self.failUnless(int(entry.glue['SATotalOnlineSize'][0]) == 3)
+            self.failUnless(int(entry.glue['SAFreeOnlineSize'][0]) == 2)
+            found_sa = True
+        self.failUnless(found_se, msg="Could not find the correct target SA.")
+
     def checkReservedRules1(self, entries):
         """
         Make sure that on a SA with multiple supported VOs that there is

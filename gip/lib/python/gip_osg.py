@@ -8,7 +8,8 @@ import sys
 import socket
 import ConfigParser
 
-from gip_sections import ce, site, pbs, condor, sge, se, subcluster, cluster
+from gip_sections import ce, site, pbs, condor, sge, lsf, se, subcluster, \
+    cluster
 from gip_common import getLogger
 
 log = getLogger("GIP")

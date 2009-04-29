@@ -28,6 +28,11 @@ class BestmanInfo(StorageElement):
                 section=self._section)
             log.info("Returned BestMan info: %s" % str(self.info))
             self.status = True
+        except srm_ping.ProxyCreateException, e:
+            log.error(e)
+            log.error("Cannot look up Bestman information because we could " \
+                "not create a valid proxy.")
+            self.status = False
         except Exception, e:
             log.exception(e)
             self.status = False
@@ -153,34 +158,58 @@ class BestmanInfo(StorageElement):
         return self.voinfos
 
     def getSESpace(self, gb=False, total=False):
-        if cp_getBoolean(self._cp, self._section, 'use_df', False):
-            paths = sets.Set()
-            for sa in self.getSAs():
-                path = sa['path']
-                paths.add(path)
-            used, free, tot = 0, 0, 0
-            for path in paths:
+        if cp_getBoolean(self._cp, self._section, 'use_df', False) or \
+                self.status == False:
+            # Let a configuration option override the use_df option.
+            space = cp_get(self._cp, self._section, 'space', '')
+            if space:
                 try:
-                    stat_info = os.statvfs(path)
-                    blocks = stat_info[statvfs.F_BLOCKS]
-                    bsize = stat_info[statvfs.F_BSIZE]
-                    avail = stat_info[statvfs.F_BFREE]
-                except Exception, e:
-                    log.exception(e)
-                    continue
-                used += (blocks-avail) * bsize / 1024.
-                free += avail          * bsize / 1024.
-                tot +=  blocks         * bsize / 1024.
-            if gb:
-                return int(used/1024.**2), int(free/1024.**2), int(tot/1024.**2)
+                    used, free, tot = eval(space, {}, {})
+                    used, free, tot = int(used), int(free), int(tot)
+                except:
+                    used, free, tot = 0, 0, 0
             else:
-                return int(used), int(free), int(tot)
+                paths = sets.Set()
+                # Lookup SA paths only if there's a single SA.
+                # Otherwise, use the default path (otherwise we get a inf loop)
+                if self.sas:
+                    for sa in self.getSAs():
+                        path = sa['path']
+                        paths.add(path)
+                else:
+                    paths = [self.getPathForSA(space=None, \
+                        section=self._section)]
+                used, free, tot = 0, 0, 0
+                for path in paths:
+                    try:
+                        stat_info = os.statvfs(path)
+                        blocks = stat_info[statvfs.F_BLOCKS]
+                        bsize = stat_info[statvfs.F_BSIZE]
+                        avail = stat_info[statvfs.F_BFREE]
+                    except Exception, e:
+                        log.exception(e)
+                        continue
+                    used += (blocks-avail) * bsize / 1024.
+                    free += avail          * bsize / 1024.
+                    tot +=  blocks         * bsize / 1024.
+            if total:
+                if gb:
+                    return int(used/1000.**2), int(free/1000.**2), \
+                        int(tot/1000.**2)
+                else:
+                    return int(used), int(free), int(tot)
+            else:
+                if gb:
+                    return int(used/1000.**2), int(free/1000.**2)
+                else:
+                    return int(used), int(free)
         if total:
             used, free, tot = super(BestmanInfo, self).getSESpace(gb=gb,
                 total=total)
             try:
                 tot = 0
-                for sa in self.getSAs():
+                # Don't use getSAs here; otherwise, may introduce inf. loop.
+                for sa in self.sas:
                     tot += int(sa.setdefault('totalOnline', 0))
                 if not gb:
                     tot *= 1000**2

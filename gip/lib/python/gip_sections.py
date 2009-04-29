@@ -8,4 +8,5 @@ se = 'se'
 pbs = 'pbs'
 condor = 'condor'
 sge = 'sge'
+lsf = 'lsf'
 

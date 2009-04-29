@@ -550,13 +550,18 @@ def main():
     cp = config()
 
     # Handle full-fledged SEs
+    found_se = False
     for section in cp.sections():
         # need to search for sections with "_" because if you are only 
         # advertising a classic SE, then you do NOT want to run the 
         # handle_SE function or you will get duplicate and incorrect info 
         if section.lower().startswith("se_"):
             advertise_se = cp_getBoolean(cp, section, "advertise_se", True)
-            if advertise_se: handle_SE(cp, section)
+            if advertise_se:
+                handle_SE(cp, section)
+            found_se = True
+    if found_se == False and 'se' in cp.sections():
+        handle_SE(cp, 'se')
 
     # Handle the "classic" SE.
     try:

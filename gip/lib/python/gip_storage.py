@@ -9,6 +9,7 @@ import gip_sets as sets
 import stat
 import statvfs
 
+import gip_testing
 from gip_common import getLogger, cp_get, cp_getBoolean, cp_getInt, matchFQAN
 from gip_sections import se
 from gip.dcache.admin import connect_admin
@@ -75,13 +76,16 @@ def getDefaultSE(cp):
     if _defaultSE:
         return _defaultSE
     default_se = cp_get(cp, "se", "name", "UNKNOWN")
-    # if [se] name: ??? is "UNAVAILABLE" or not set, then try to get the default_se
+    # if [se] name: ??? is "UNAVAILABLE" or not set, then try to get the 
+    # default_se
     if default_se == "UNKNOWN" or default_se == "UNAVAILABLE":
         default_se = cp_get(cp, "se", "default_se", "UNAVAILABLE")
-    # if it is still UNAVAILABLE or not set, check to see if the classic SE is being 
-    # advertised and use that
-    if default_se == "UNAVAILABLE" and cp_getBoolean(cp, "classic_se", "advertise_se", True):
-        fallback_name = cp_get(cp, "site", "unique_name", "UNKNOWN") + "_classicSE"
+    # if it is still UNAVAILABLE or not set, check to see if the classic SE 
+    # is being advertised and use that
+    if default_se == "UNAVAILABLE" and cp_getBoolean(cp, "classic_se",
+            "advertise_se", True):
+        fallback_name = cp_get(cp, "site", "unique_name", "UNKNOWN") + \
+            "_classicSE"
         default_se = cp_get(cp, "classic_se", "name", fallback_name)
 
     current_se = None
@@ -225,8 +229,10 @@ def getClassicSESpace(cp, gb=False, total=False):
         path = getPath(cp, vo, classicSE=True, section='classic_se')
         # Skip fake paths
         if not os.path.exists(path):
-            log.warning("Skipping `df` of path %s because it does not exist." \
-                % (path))
+            # Suppress warning message if we are in testing mode
+            if not gip_testing.replace_command:
+                log.warning("Skipping `df` of path %s because it does not" \
+                    " exist." % (path))
             continue
         stat_info = os.stat(path)
         vfs_info = os.statvfs(path)
@@ -645,7 +651,7 @@ class StorageElement(object):
         acbr = '\n'.join(['GlueSAAccessControlBaseRule: %s' % i \
             for i in sa_vos])
         try:
-            used, available, total = getSESpace(self._cp, total=True)
+            used, available, total = self.getSESpace(total=True)
         except Exception, e:
             log.error("Unable to get SE space: %s" % str(e))
             used = 0

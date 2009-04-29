@@ -26,6 +26,9 @@ def which(executable):
             return fullname
     return None
 
+class ProxyCreateException(Exception):
+    pass
+
 def create_proxy(cp, proxy_filename, section='bestman'):
     """
     Attempt to create a very shortlived proxy at a given location.
@@ -37,12 +40,16 @@ def create_proxy(cp, proxy_filename, section='bestman'):
         "httpcert.pem")
     userkey = cp_get(cp, section, "userkey", "/etc/grid-security/http/" \
         "httpkey.pem")
+    if not os.path.exists(usercert):
+        raise ProxyCreateException("Certificate to create proxy, %s, does not" \
+            " exist." % usercert)
     cmd = 'grid-proxy-init -valid 00:05 -cert %s -key %s -out %s' % \
         (usercert, userkey, proxy_filename)
     fd = runCommand(cmd)
     fd.read()
     if fd.close():
-        raise Exception("Unable to create a valid proxy.")
+        raise ProxyCreateException("Unable to create a valid proxy; failed " \
+            "command run by user daemon: %s" % cmd )
 
 def validate_proxy(cp, proxy_filename):
     """

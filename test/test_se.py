@@ -9,6 +9,7 @@ sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, cp_get, voList
 from gip_testing import runTest, streamHandler
 from gip_ldap import read_ldap
+import gip.bestman.srm_ping as srm_ping
 
 class TestSEConfigs(unittest.TestCase):
 
@@ -385,6 +386,31 @@ class TestSEConfigs(unittest.TestCase):
             self.failUnless(entry.glue['VOInfoPath'][0] == \
                 '/pnfs/unl.edu/data4/cms/store', msg="vo_dirs override failed.")
         self.failUnless(found_cms_voinfo, msg="VOInfo for CMS missing.")
+
+    def verify_bestman_output(self, info):
+        """
+        Verify that the two example gsiftp servers are picked up.
+        Verify that the version number is correct.
+        """
+        gsiftp = 'gsiftp://cithep160.ultralight.org:5000;' \
+            'gsiftp://cithep251.ultralight.org:5000'
+        self.failUnless(info['gsiftpTxfServers'] == gsiftp, msg="Incorrect " \
+            "gsiftp server line.")
+        self.failUnless(info['backend_version'] == '2.2.1.2.i4', msg=\
+            "Incorrect backend version number.")
+
+    def test_bestman_output(self):
+        """
+        Test to make sure we can parse BestMan output for the new and old server
+        responses, as well as the new and old client formats
+        """
+        os.environ['GIP_TESTING'] = "1"
+        cfg_name = os.path.join("test_configs", "red-se-test.conf")
+        cp = config(cfg_name)
+        info = srm_ping.bestman_srm_ping(cp, "1")
+        self.verify_bestman_output(info)
+        srm_ping.bestman_srm_ping(cp, "2")
+        self.verify_bestman_output(info)
 
 def main():
     cp = config("test_configs/red-se-test.conf")

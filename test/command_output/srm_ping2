@@ -1,0 +1,23 @@
+srm-ping   2.2.1.2.i4  Tue Apr  7 10:07:10 PDT 2009
+SRM-Clients and BeStMan Copyright(c) 2007-2009,
+Lawrence Berkeley National Laboratory. All rights reserved.
+Support at SRM@LBL.GOV and documents at http://datagrid.lbl.gov/bestman
+ 
+Your proxy has only 235
+ second left. Please renew your proxy.
+Your proxy has only 235 second left.
+Please renew your proxy.
+SRM-CLIENT: Connecting to serviceurl httpg://cit-se2.ultralight.org:8443/srm/v2/server
+
+SRM-PING: Wed Apr 29 08:58:05 PDT 2009  Calling SrmPing Request...
+versionInfo=v2.2
+
+Extra information (Key=Value)
+backend_type=BeStMan
+backend_version=2.2.1.2.i4
+backend_build_date=2009-04-06T17:07:38.000Z 
+gsiftpTxfServers[0]=gsiftp://cithep160.ultralight.org:5000
+gsiftpTxfServers[1]=gsiftp://cithep251.ultralight.org:5000
+GatewayMode=Enabled
+clientDN=/DC=org/DC=doegrids/OU=Services/CN=cithep252.ultralight.org
+gumsIDMapped=null

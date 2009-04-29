@@ -143,8 +143,8 @@ def configOsg(cp):
     try:
         file = open(loc)
     except IOError:
-        log.error("FATAL ERROR: cannot read config.ini!")
-        file.close()
+        log.error("FATAL ERROR: cannot read config.ini; expecting to find it" \
+            " at %s!" % loc)
         raise
 
     file.close()

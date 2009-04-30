@@ -1,6 +1,6 @@
 
 """
-A generic provider for storage elements; written for the StorageElement class 
+A generic provider for storage elements; written for the StorageElement class
 in gip_storage.
 """
 
@@ -21,7 +21,7 @@ log = getLogger("GIP.Storage.Generic")
 def print_SA(se, cp, section="se"): #pylint: disable-msg=W0613
     """
     Print out the SALocal information for GLUE 1.3.
-    """ 
+    """
     vo_limit_str = cp_get(cp, section, "vo_limits", "")
     vo_limit = {}
     cumulative_total = {}
@@ -255,7 +255,7 @@ def print_classicSE(cp):
     printTemplate(seTemplate, info)
 
     vos = voListStorage(cp)
-    try:        
+    try:
         used, available, total = getClassicSESpace(cp, total=True)
     except Exception, e:
         used = 0
@@ -299,12 +299,12 @@ def print_SE(se, cp):
     """
     Emit the GLUE entities for the SE, based upon the StorageElement class.
     """
-    
+
     # if the unique ID is UNKNOWN, a real SE does not exist, the classic SE
     # will probably be invoked
     seUniqueID = se.getUniqueID()
     if seUniqueID == "UNKNOWN" or seUniqueID == "UNAVAILABLE": return
-    
+
     status = se.getStatus()
     version = se.getVersion()
 
@@ -437,7 +437,7 @@ def print_access(se, cp): #pylint: disable-msg=W0613
     for info in se.getAccessProtocols():
         protocol = info.setdefault('protocol', 'gsiftp')
         if 'endpoint' not in info:
-            info['endpoint'] = "%s://%s:%i"% (info['protocol'], 
+            info['endpoint'] = "%s://%s:%i"% (info['protocol'],
                                               info['hostname'],
                                               int(info['port']))
         if 'securityinfo' not in info:
@@ -517,6 +517,16 @@ def handle_SE(cp, section):
     """
     Run a provider for one SE.
     """
+    # if you only have a classic SE, there will still be a [se] section
+    # with the default_se option.  This will result in a GlueService
+    # stanza being written with garbage information in it. So, check
+    # for default_se = "UNKNOWN" or "UNAVAILABLE" and return if it does
+    #
+    # default_se is set in the [Storage] section in config.ini and is
+    # required by configure-osg.py
+    default_se = cp_get(cp, section, "default_se", "UNKNOWN")
+    if default_se == "UNAVAILABLE" or default_se == "UNKNOWN": return
+
     impl = cp_get(cp, section, "implementation", "UNKNOWN")
     provider_impl = cp_get(cp, section, "provider_implementation", "UNKNOWN")
     if provider_impl == "UNKNOWN" and not cp_getBoolean(cp, section,
@@ -552,9 +562,9 @@ def main():
     # Handle full-fledged SEs
     found_se = False
     for section in cp.sections():
-        # need to search for sections with "_" because if you are only 
-        # advertising a classic SE, then you do NOT want to run the 
-        # handle_SE function or you will get duplicate and incorrect info 
+        # need to search for sections with "_" because if you are only
+        # advertising a classic SE, then you do NOT want to run the
+        # handle_SE function or you will get duplicate and incorrect info
         if section.lower().startswith("se_"):
             advertise_se = cp_getBoolean(cp, section, "advertise_se", True)
             if advertise_se:
@@ -568,7 +578,7 @@ def main():
         print_classicSE(cp)
     except Exception, e:
         log.exception(e)
-    
+
 if __name__ == '__main__':
     main()
 

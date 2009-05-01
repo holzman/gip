@@ -114,7 +114,18 @@ def checkOsgConfigured(cp):
     if os.path.getsize(osg_user_vo_map) == 0:
         raise ValueError("osg-user-vo-map.txt is a 0 length file; we may be "
                          "running in an unconfigured OSG install!")
-    
+  
+    loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
+    loc = os.path.expandvars(loc)
+    try:
+        file = open(loc)
+    except IOError, e:
+        log.error("FATAL ERROR: cannot read config.ini; expecting to find it" \
+            " at %s!" % loc)
+        log.exception(e)
+        raise ValueError("Unable to read config.ini; expecting to find it" \
+            " at %s!" % loc)
+ 
     return True
 
 def configOsg(cp):
@@ -135,20 +146,11 @@ def configOsg(cp):
     if check_osg and 'GIP_TESTING' not in os.environ:
         checkOsgConfigured(cp)
         
-    # See if we have a special config.ini location
-    loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
-    loc = os.path.expandvars(loc)
     # Load config.ini values
     cp2 = ConfigParser.ConfigParser()
 
-    try:
-        file = open(loc)
-    except IOError:
-        log.error("FATAL ERROR: cannot read config.ini; expecting to find it" \
-            " at %s!" % loc)
-        raise
-
-    file.close()
+    loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
+    loc = os.path.expandvars(loc)
     cp2.read(loc)
 
     try:

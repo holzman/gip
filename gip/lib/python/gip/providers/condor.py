@@ -50,7 +50,7 @@ def print_CE(cp):
     @type cp: ConfigParser.ConfigParser
     """
     ce_template = getTemplate("GlueCE", "GlueCEUniqueID")
-    ce_name = cp_get(cp, "ce", "name", "")
+    ce_name = cp_get(cp, "ce", "name", "UNKNOWN_CE")
 
     status = cp_get(cp, "condor", "status", "Production")
     

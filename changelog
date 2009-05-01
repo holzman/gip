@@ -1,5 +1,11 @@
 Changelog
-
+== 1.1.1 ==
+* allow old-style storage config again (GIP stanza)
+* BeStMan: correctly determine SE space when no space tokens exist
+* BeStMan: improved logging
+* Parse updated srm-ping output
+* Fix crashing LSF provider
+	
 == 1.1.0 ==
 * Eliminate erroneous publication of 'waiting' queue for SGE
 

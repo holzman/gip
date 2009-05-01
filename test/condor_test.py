@@ -2,11 +2,12 @@
 
 import os
 import sys
+import socket
 import unittest
-from gip_sets import Set
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config
+from gip_sets import Set
+from gip_common import config, cp_get
 from pbs_common import getVoQueues
 from gip_ldap import read_ldap
 from gip_testing import runTest, streamHandler
@@ -40,6 +41,7 @@ class TestCondorProvider(unittest.TestCase):
         entries = read_ldap(fd)
         self.assertEquals(fd.close(), None)
         has_ce = False
+        ce_name = socket.gethostname()
         for entry in entries:
             print entry
             if 'GlueCE' in entry.objectClass:
@@ -49,7 +51,7 @@ class TestCondorProvider(unittest.TestCase):
                 self.assertEquals(entry.glue['CEStateFreeCPUs'], '77')
                 self.assertEquals(entry.glue['CEPolicyAssignedJobSlots'], '81')
                 self.assertEquals(entry.glue['CEUniqueID'], \
-                    'prairiefire.unl.edu:2119/jobmanager-condor-default')
+                    '%s:2119/jobmanager-condor-default' % ce_name)
         self.assertEquals(has_ce, True)
 
     def test_collector_host(self):
@@ -61,6 +63,7 @@ def main():
     """
     The main entry point for when condor_test is run in standalone mode.
     """
+    os.environ['GIP_TESTING'] = '1'
     cp = config()
     stream = streamHandler(cp)
     runTest(cp, TestCondorProvider, stream, per_site=False)

@@ -60,12 +60,14 @@ class TestSiteTopology(unittest.TestCase):
     def test_subcluster(self):
         has_subcluster = False
         for entry in self.setUpLDAP():
-            if 'GlueSubcluster' in entry.objectClass:
+            if 'GlueSubCluster' in entry.objectClass:
                 has_subcluster = True
+                break
         self.failUnless(has_subcluster, msg="No subcluster LDAP entry present!")
 
 
 def main():
+    os.environ['GIP_TESTING'] = '1'
     cp = config()
     stream = streamHandler(cp)
     runTest(cp, TestSiteTopology, stream, per_site=False)

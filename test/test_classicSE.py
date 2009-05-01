@@ -94,14 +94,15 @@ class TestClassicSE(unittest.TestCase):
     def test_many_sa(self):
         vos = voList(self.cp)
         for sa in self.sas:
-            if len(sa.glue['SAAccessControlBaseRule']) == 1:
-               rule = sa.glue['SAAccessControlBaseRule'][0]
-               if rule.startswith("VO:"):
-                   rule = rule[3:]
-               if rule in vos:
-                   vos.remove(rule)
-               else:
-                   self.fail("Unknown VO supported: %s." % rule)
+            print sa
+            rules = sa.glue['SAAccessControlBaseRule']
+            for rule in rules:
+                if rule.startswith("VO:"):
+                    rule = rule[3:]
+                if rule in vos:
+                    vos.remove(rule)
+                else:
+                    self.fail("Unknown VO supported: %s." % rule)
         self.failIf(vos, msg="VOs with no classicSE support: %s" % \
             ', '.join(vos))
 
@@ -119,6 +120,7 @@ class TestClassicSE(unittest.TestCase):
             #self.failUnless(sa.glue['SAPolicyFileLifeTime'] in policy_enum)
 
 def main():
+    os.environ['GIP_TESTING'] = '1'
     cp = config()
     stream = streamHandler(cp)
     runTest(cp, TestClassicSE, stream, per_site=False)

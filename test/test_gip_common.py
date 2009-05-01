@@ -75,9 +75,17 @@ class TestGipCommon(unittest.TestCase):
         except:
             filename = '/tmp/osg_check'
             file = open(filename, 'w')
+        try:
+            import tempfile
+            file2 = tempfile.NamedTemporaryFile()
+            filename2 = file.name
+        except:
+            filename2 = '/tmp/config.ini'
+            file = open(filename2, 'w')
         if not cp.has_section("gip"):
             cp.add_section("gip")
         cp.set("gip", "osg_attributes", filename)
+        cp.set("gip", "osg_config", filename2)
         try:
             file.write('hello world!\n')
             didFail = False
@@ -131,6 +139,7 @@ class TestGipCommon(unittest.TestCase):
         
 
 def main():
+    os.environ['GIP_TESTING'] = '1'
     cp = config()
     stream = streamHandler(cp)
     runTest(cp, TestGipCommon, stream, per_site=False)

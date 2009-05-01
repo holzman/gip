@@ -185,7 +185,7 @@ def main():
     """
     The main entry point for when pbs_test is run in standalone mode.
     """
-    cp = config()
+    cp = config("test_configs/red.conf")
     stream = streamHandler(cp)
     runTest(cp, TestPbsDynamic, stream, per_site=False)
 

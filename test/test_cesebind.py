@@ -17,13 +17,16 @@ class TestCESEBind(unittest.TestCase):
          self.filename = "test_configs/red.conf"
          self.setUpLDAP()
 
-     def setUpLDAP(self):
+     def setUpLDAP(self, filename=None):
+         if filename != None:
+             self.filename = filename
          os.environ['GIP_TESTING'] = "1"
          cp = config(self.filename)
          self.ces = getCEList(cp)
          self.ses = getSEList(cp)
          cese_provider_path = os.path.expandvars("$GIP_LOCATION/libexec/" \
              "osg_info_cesebind.py --config %s" % self.filename)
+         print >> sys.stderr, "Used command", cese_provider_path
          fd = os.popen(cese_provider_path)
          self.entries = read_ldap(fd, multi=True)
          self.exit_status = fd.close()
@@ -41,6 +44,43 @@ class TestCESEBind(unittest.TestCase):
              if matches:
                  return entry
          self.fail(msg="Missing the entry starting with dn: %s" % ','.join(dns))
+
+     def test_cese_override(self):
+         self.setUpLDAP(filename="test_configs/cesebind-override-test2.conf")
+         # Make sure there are the override SEs listed.
+         print self.ses
+         self.failUnless('se1.example.com' in self.ses, msg="se1.example.com"\
+             " is missing.")
+         self.failUnless('se2.example.com' in self.ses, msg="se2.example.com"\
+             " is missing.")
+         self.failUnless(len(self.ses) == 3, msg="Only one SE present!")
+         for ce in self.ces:
+             # 1) Make sure there's a CESEBindGroup
+             self._test_exists("GlueCESEBindGroupCEUniqueID=%s" % ce)
+             for se in self.ses:
+                 # 2) Make sure there is a matching SE portion
+                 entry = self._test_exists("GlueCESEBindSEUniqueID=%s" % se,
+                     "GlueCESEBindGroupCEUniqueID=%s" % ce)
+                 # 3) Make sure there's a non-zero-length access point
+                 self.failIf(len(entry.glue['CESEBindCEAccesspoint'][0])==0)
+
+     def test_cese_override2(self):
+         self.setUpLDAP(filename="test_configs/cesebind-override-test.conf")
+         # Make sure there are the override SEs listed.
+         self.failUnless('se1.example.com' in self.ses, msg="se1.example.com"\
+             " is missing.")
+         self.failUnless('se2.example.com' in self.ses, msg="se2.example.com"\
+             " is missing.")
+         self.failUnless(len(self.ses) == 3, msg="Only one SE present!")
+         for ce in self.ces:
+             # 1) Make sure there's a CESEBindGroup
+             self._test_exists("GlueCESEBindGroupCEUniqueID=%s" % ce)
+             for se in self.ses:
+                 # 2) Make sure there is a matching SE portion
+                 entry = self._test_exists("GlueCESEBindSEUniqueID=%s" % se,
+                     "GlueCESEBindGroupCEUniqueID=%s" % ce)
+                 # 3) Make sure there's a non-zero-length access point
+                 self.failIf(len(entry.glue['CESEBindCEAccesspoint'][0])==0)
 
      def test_cese_portion(self):
          # Make sure there are two SEs; classic and dCache

@@ -524,7 +524,7 @@ def handle_SE(cp, section):
     #
     # default_se is set in the [Storage] section in config.ini and is
     # required by configure-osg.py
-    default_se = cp_get(cp, section, "default_se", "UNKNOWN")
+    default_se = cp_get(cp, "se", "default_se", "UNKNOWN")
     if default_se == "UNAVAILABLE" or default_se == "UNKNOWN": return
 
     impl = cp_get(cp, section, "implementation", "UNKNOWN")

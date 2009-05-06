@@ -86,13 +86,16 @@ class TestGipCommon(unittest.TestCase):
             cp.add_section("gip")
         cp.set("gip", "osg_attributes", filename)
         cp.set("gip", "osg_config", filename2)
+        cp.set("vo", "user_vo_map", "test_configs/red-osg-user-vo-map.txt")
         try:
             file.write('hello world!\n')
             didFail = False
             try:
                 gip_osg.checkOsgConfigured(cp)
-            except:
+            except Exception, e:
+                raise
                 didFail = True
+                print >> sys.stderr, e
             self.failIf(didFail, "Failed on a 'valid' osg-attributes.conf")
             os.unlink(filename)
             didFail = False

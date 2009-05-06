@@ -98,6 +98,7 @@ class TestSubclusterConfigs(unittest.TestCase):
         self.check_red_sc_2(entries)
 
 def main():
+    os.environ['GIP_TESTING'] = '1'
     cp = config("test_configs/red-sc-test.conf")
     stream = streamHandler(cp)
     runTest(cp, TestSubclusterConfigs, stream, per_site=False)

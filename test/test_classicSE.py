@@ -33,6 +33,9 @@ class TestClassicSE(unittest.TestCase):
         cp.set("classic_se", "default", "/opt/osg/data/$VO")
         cp.set("classic_se", "space", "%i, %i, %i" % (1000**2, 10*1000**2,
             11*1000**2))
+        cp.add_section("vo")
+        cp.set("vo", "user_vo_map", "test_configs/red-osg-user-vo-map.txt")
+
         self.output = cStringIO.StringIO()
         old_stdout = sys.stdout
         sys.stdout = self.output

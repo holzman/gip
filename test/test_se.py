@@ -413,6 +413,7 @@ class TestSEConfigs(unittest.TestCase):
         self.verify_bestman_output(info)
 
 def main():
+    os.environ['GIP_TESTING'] = '1'
     cp = config("test_configs/red-se-test.conf")
     stream = streamHandler(cp)
     runTest(cp, TestSEConfigs, stream, per_site=False)

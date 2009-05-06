@@ -10,14 +10,16 @@ from gip_ldap import read_ldap
 
 class TestSiteTopology(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self, filename=None):
         filename = 'test/test_configs/red.conf'
         if not os.path.exists(filename):
             filename = 'test_configs/red.conf'
         self.filename = filename
         self.cp = config(filename)
 
-    def setUpLDAP(self, multi=False):
+    def setUpLDAP(self, multi=False, filename=None):
+        if filename != None:
+            self.filename = filename
         command = "$GIP_LOCATION/providers/site_topology.py --config=%s" % \
             self.filename
         stdout = os.popen(command)
@@ -56,6 +58,21 @@ class TestSiteTopology(unittest.TestCase):
                     'pbs-cmsprod' in entry.glue['ForeignKey'])
                 has_cluster = True
         self.failUnless(has_cluster, msg="No cluster LDAP entry present!")
+
+    def test_cluster_override(self):
+        has_cluster = False
+        override = 'test_override.example.com'
+        for entry in self.setUpLDAP(multi=False,
+                filename="test_configs/cluster-override-test.conf"):
+            if 'GlueCluster' in entry.objectClass:
+                self.failUnless(entry.glue['ClusterName'] == override, msg=\
+                    "Overridden cluster name %s is incorrect" % \
+                    entry.glue['ClusterName'])
+                self.failUnless(entry.glue['ClusterUniqueID'] == override, msg\
+                    ="Overridden cluster ID %s is incorrect" % \
+                    entry.glue['ClusterUniqueID'])
+                has_cluster = True
+        self.failUnless(has_cluster, msg="No cluster entry present!")
 
     def test_subcluster(self):
         has_subcluster = False

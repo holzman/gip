@@ -46,6 +46,11 @@ def print_SA(se, cp, section="se"): #pylint: disable-msg=W0613
             totalOnline = float(sa.get("totalOnline", 0))
         except:
             continue
+
+        # If the ACBR is blank, don't print the SA.
+        if len(sa.get("acbr", "")) < 1:
+            continue
+
         # Add the total online to the running total for that VO; if necessary,
         # calculate the amount of space to reduce this SA by.
         for vo in get_vos_from_acbr(sa.get("acbr", "")):

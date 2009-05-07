@@ -3,6 +3,7 @@
 Provide information about the CEs of this site, the SEs, and
 the bindings between the two.
 """
+import re
 
 from gip_common import cp_get, cp_getBoolean
 from gip_storage import getPath
@@ -60,6 +61,7 @@ def getClassicSEList(cp):
 
     return classic_list
 
+split_re = re.compile("\s*,?\s*")
 def getSEList(cp, classicSEs=True):
     """
     Return a list of all the SE's at this site.
@@ -86,7 +88,10 @@ def getSEList(cp, classicSEs=True):
             except:
                 pass
     else:
-        se_list = eval(cp.get(cesebind, 'se_list'), {})
+        try:
+            se_list = list(split_re.split(cp.get(cesebind, 'se_list')))
+        except:
+            se_list = getSEList(cp, classicSEs=classicSEs)
     if classicSEs:
         se_list.extend(getClassicSEList(cp))
     se_list = list(Set(se_list))

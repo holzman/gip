@@ -64,7 +64,7 @@ class DCacheInfo19(StorageElement):
             # Determine ACBRs and allowed VOs
             found_reservation_vos = sets.Set()
             allowed_acbrs = getLGAllowedVOs(self._cp,
-                linkgroup.get('acbrs', ''))
+                linkgroup.get('acbrs', ''), linkgroup.get('name', ''))
             fqans = [normalizeFQAN(i) for i in allowed_acbrs]
             all_lg_vos = sets.Set([i.split('/')[1] for i in fqans])
 
@@ -150,7 +150,7 @@ class DCacheInfo19(StorageElement):
             acbr_attr = 'GlueSAAccessControlBaseRule: %s'
             log.info(linkgroup['acbrs'])
             acbr = '\n'.join([acbr_attr % i for i in getLGAllowedVOs(self._cp,
-                linkgroup.get('acbrs', ''))])
+                linkgroup.get('acbrs', ''), info['name'])])
             info['acbr'] = acbr
             if len(acbr) == 0:
                 continue

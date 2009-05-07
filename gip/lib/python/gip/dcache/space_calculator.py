@@ -233,7 +233,8 @@ def calculate_space_from_linkgroup(cp, lg_info, pools, section='se'):
     un, fn, tn = getSETape(cp, vo=lg_info['name'])
 
     acbr_attr = 'GlueSAAccessControlBaseRule: %s'
-    acbr = '\n'.join([acbr_attr%i for i in getLGAllowedVOs(cp, lg_info['vos'])])
+    acbr = '\n'.join([acbr_attr%i for i in getLGAllowedVOs(cp, lg_info['vos'],
+        lg_info['name'])])
 
     path = getPath(cp, lg_info['name'], section=section)
 
@@ -301,7 +302,7 @@ def calculate_voinfo_from_lg(cp, lg, resv, section='se'):
     acbr_spacedesc = {}
     lgId = lg['id']
 
-    allowed_fqans = getLGAllowedVOs(cp, lg['vos'])
+    allowed_fqans = getLGAllowedVOs(cp, lg['vos'], lg['name'])
 
     # Build a list of ACBR -> unique space descriptions
     for r in resv:
@@ -398,8 +399,19 @@ def calculate_voinfo_from_lg(cp, lg, resv, section='se'):
     return voinfos
 
 vo_re = re.compile('{(.*?)}')
-def getLGAllowedVOs(cp, vos):
+def getLGAllowedVOs(cp, vos, name=None):
+    """
+    Return the allowed VOs for a certain linkgroup.
+
+    Uses getAllowedVOs to determine any manual mappings from the config file.
+    """
     allowed = []
+    # See if we've manually set this information
+    if name:
+        try:
+            return getAllowedVOs(cp, name, return_default=False)
+        except:
+            pass
     mapper = VoMapper(cp)
     for vo_policy in vo_re.finditer(vos):
         vo_policy = vo_policy.groups()[0]
@@ -415,6 +427,10 @@ def getLGAllowedVOs(cp, vos):
                 pass
     # Remove duplicates and return
     allowed = list(sets.Set(allowed))
+
+    # If there aren't any allowed VOs, then use the manual overrides.
+    if not allowed:
+        return getAllowedVOs(cp, name)
     return allowed
 
 def getReservationACBR(cp, vog, vor):
@@ -447,10 +463,19 @@ def getReservationACBR(cp, vog, vor):
         except:
             return None
 
-def getAllowedVOs(cp, space):
+def getAllowedVOs(cp, space, return_default=True):
+    """
+    Returns a list of ACBRs for VOs which are allowed to access this space.
+
+    Throws a general exception if return_default=False and there's no explicit
+    mapping for this space.
+    """
     allowed_vos = cp_get(cp, "dcache", "space_%s_vos" % space, None)
     if not allowed_vos:
-        allowed_vos = cp_get(cp, "dcache", "default_policy", "*")
+        if return_default:
+            allowed_vos = cp_get(cp, "dcache", "default_policy", "*")
+        else:
+            raise Exception("No manaul access controls for %s." % space)
     allowed_vos = [i.strip() for i in allowed_vos.split(',') if i.strip()]
     if '*' in allowed_vos:
         for vo in voListStorage(cp):

@@ -9,7 +9,7 @@ import socket
 import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, lsf, se, subcluster, \
-    cluster
+    cluster, cesebind
 from gip_common import getLogger
 
 log = getLogger("GIP")
@@ -106,7 +106,10 @@ def checkOsgConfigured(cp):
         raise ValueError("osg-attributes.conf does not exists; we may be "
                          "running in an unconfigured OSG install!")
     # Check to see if the osg-user-vo-map.txt exists and that its size is > 0
-    osg_user_vo_map = "$VDT_LOCATION/monitoring/osg-user-vo-map.txt"
+    try:
+            osg_user_vo_map = cp.get("vo", "user_vo_map")
+    except:
+            osg_user_vo_map = "$VDT_LOCATION/monitoring/osg-user-vo-map.txt"
     osg_user_vo_map = os.path.expandvars(osg_user_vo_map)
     if not os.path.exists(osg_user_vo_map):
         raise ValueError("osg-user-vo-map.txt does not exists; we may be "
@@ -151,6 +154,9 @@ def configOsg(cp):
 
     loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
     loc = os.path.expandvars(loc)
+
+    log.info("Using OSG config.ini %s." % loc)
+
     cp2.read(loc)
 
     try:
@@ -286,8 +292,14 @@ def configOsg(cp):
     cluster_name = cp_get(cp2, gip_sec, "cluster_name", "")
     if len(cluster_name) > 0:
         __write_config(gip_sec, "cluster_name", cluster, "name")
-        cp2.set(gip_sec, "simple_cluster", True)
+        cp2.set(gip_sec, "simple_cluster", "False")
         __write_config(gip_sec, "simple_cluster", cluster, "simple")
+
+    se_bind = cp_get(cp2, gip_sec, "se_list", "")
+    if len(se_bind) > 0:
+        __write_config(gip_sec, "se_list", cesebind, "se_list")
+        cp2.set(gip_sec, "simple_cesebind", "False")
+        __write_config(gip_sec, "simple_cesebind", cesebind, "simple")
 
     # Try to auto-detect the batch manager.
     mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge'}
@@ -366,8 +378,10 @@ def configOsg(cp):
     cp2.set(gip_sec, "bdii", "ldap://is.grid.iu.edu:2170")
     cp2.set(gip_sec, "tmp_var", "True")
     __write_config(gip_sec, "bdii", "bdii", "endpoint")
-    __write_config(gip_sec, "tmp_var", "cluster", "simple")
-    __write_config(gip_sec, "tmp_var", "cesebind", "simple")
+    if cp_get(cp, cluster, "simple", None) == None:
+        __write_config(gip_sec, "tmp_var", "cluster", "simple")
+    if cp_get(cp, "cesebind", "simple", None) == None:
+        __write_config(gip_sec, "tmp_var", "cesebind", "simple")
 
     # add all [GIP] items that have not already been handled to the config object
     for item in gip_items:
@@ -508,15 +522,18 @@ def configSEs(cp, cp2):
     
             # Handle allowed VO's for dCache
             spaces_re = re.compile("space_.+_vos")
-            if cp_get(cp, section, "implementation", "UNKNOWN") == "dcache":
+            if cp_get(cp, section, "implementation", "UNKNOWN").lower() == \
+                    "dcache":
                 if not cp2.has_section(dcache_sec):
                     cp2.add_section(dcache_sec)
                 spaces = split_re.split(cp_get(cp, section, "spaces", ""))
                 for option in cp.options(section):
                     is_space = spaces_re.match(option)
-                    if not is_space: continue
+                    if not is_space:
+                        continue
                     allowed_vos = cp_get(cp, section, option, "")
                     if len(allowed_vos) > 0:
                         cp2.set(dcache_sec, option, allowed_vos)
+
             # Handle allowed VO's for bestman
             # Yet to be implemented

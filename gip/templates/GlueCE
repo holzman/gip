@@ -6,7 +6,6 @@ objectClass: GlueCEAccessControlBase
 objectClass: GlueCEInfo
 objectClass: GlueCEPolicy
 objectClass: GlueCEState
-objectClass: GlueInformationService
 objectClass: GlueKey
 GlueCEHostingCluster: %(hostingCluster)s
 GlueCEName: %(queue)s
@@ -33,12 +32,10 @@ GlueCEStateWaitingJobs: %(waiting)s
 GlueCEStateWorstResponseTime: %(wrt)s
 GlueCEStateFreeJobSlots: %(free_slots)s
 GlueCEPolicyMaxCPUTime: %(max_wall)s
-GlueCEPolicyMaxObtainableCPUTime: %(max_wall)s
 GlueCEPolicyMaxRunningJobs: %(max_running)s
 GlueCEPolicyMaxWaitingJobs: %(max_waiting)s
 GlueCEPolicyMaxTotalJobs: %(max_total)s
 GlueCEPolicyMaxWallClockTime: %(max_wall)s
-GlueCEPolicyMaxObtainableWallClockTime: %(max_wall)s
 GlueCEPolicyPriority: %(priority)s
 GlueCEPolicyAssignedJobSlots: %(assigned)s
 GlueCEPolicyMaxSlotsPerJob: %(max_slots)s
@@ -46,7 +43,6 @@ GlueCEPolicyPreemption: %(preemption)s
 %(acbr)s
 GlueCECapability: CPUScalingReferenceSI00=%(referenceSI00)s
 GlueForeignKey: GlueClusterUniqueID=%(clusterUniqueID)s
-GlueInformationServiceURL: %(bdii)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 

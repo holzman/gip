@@ -1,7 +1,6 @@
 dn: GlueSEUniqueID=%(seUniqueID)s,Mds-Vo-name=local,o=grid
 objectClass: GlueSETop
 objectClass: GlueSE
-objectClass: GlueInformationService
 objectClass: GlueKey
 objectClass: GlueSchemaVersion
 GlueSEUniqueID: %(seUniqueID)s
@@ -17,7 +16,6 @@ GlueSEPort: %(port)s
 GlueSESizeTotal: %(total)s
 GlueSESizeFree: %(free)s
 GlueSEArchitecture: %(arch)s
-GlueInformationServiceURL: %(bdiiEndpoint)s
 GlueForeignKey: GlueSiteUniqueID=%(siteUniqueID)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
@@ -78,11 +76,7 @@ GlueSARetentionPolicy: %(retention)s
 GlueSAAccessLatency: %(accessLatency)s
 GlueSAExpirationMode: %(expiration)s
 GlueSACapability: file storage
-GlueSAPolicyMaxFileSize: 0
-GlueSAPolicyMinFileSize: 0
-GlueSAPolicyMaxData: 0
 GlueSAPolicyMaxNumFiles: 0
-GlueSAPolicyMaxPinDuration: 0
 GlueSAPolicyQuota: 0
 GlueSAPolicyFileLifeTime: %(filetype)s
 GlueSAStateAvailableSpace: %(availableSpace)s

@@ -13,8 +13,6 @@ GlueServiceAccessPointURL: %(url)s
 GlueServiceStatus: %(status)s
 GlueServiceStatusInfo: %(statusInfo)s
 GlueServiceWSDL: %(wsdl)s
-GlueServiceSemantics: UNDEFINED
-GlueServiceStartTime: %(startTime)s
 GlueServiceOwner: OSG
 %(acbr)s
 GlueForeignKey: GlueSiteUniqueID=%(siteID)s

@@ -720,11 +720,11 @@ class StorageElement(object):
         this as a comma-separated list of VO:path pairs; i.e., 
             space_CMS_path=cms:/dev/null, atlas:/pnfs/blah
 
-        If that does not provide a match and return_default is true, then it will
-        look for dcache.space_<space>_default_path and return that.
+        If that does not provide a match and return_default is true, then it 
+        will look for dcache.space_<space>_default_path and return that.
 
-        If that is not there and return_default is true, it will use the standard
-        getPath from gip_storage.
+        If that is not there and return_default is true, it will use the 
+        standard getPath from gip_storage.
 
         If return_default is true, this is guaranteed to return a non-empty
         string; if return_default is false, then this might through a ValueError

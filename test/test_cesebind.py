@@ -75,11 +75,22 @@ class TestCESEBind(unittest.TestCase):
          for ce in self.ces:
              # 1) Make sure there's a CESEBindGroup
              self._test_exists("GlueCESEBindGroupCEUniqueID=%s" % ce)
+             # 2) Make sure that all the SEs are in the group.
+             for entry in self.entries:
+                 if 'GlueCESEBindGroup' not in entry.objectClass:
+                     continue
+                 if ce not in entry.glue['CESEBindGroupCEUniqueID']:
+                     continue
+                 self.failUnless(len(self.ses) == len(entry.glue[\
+                     'CESEBindGroupSEUniqueID']))
+                 for se in self.ses:
+                     self.failUnless(se in entry.glue[\
+                         'CESEBindGroupSEUniqueID'])
              for se in self.ses:
-                 # 2) Make sure there is a matching SE portion
+                 # 3) Make sure there is a matching SE portion
                  entry = self._test_exists("GlueCESEBindSEUniqueID=%s" % se,
                      "GlueCESEBindGroupCEUniqueID=%s" % ce)
-                 # 3) Make sure there's a non-zero-length access point
+                 # 4) Make sure there's a non-zero-length access point
                  self.failIf(len(entry.glue['CESEBindCEAccesspoint'][0])==0)
 
      def test_cese_portion(self):

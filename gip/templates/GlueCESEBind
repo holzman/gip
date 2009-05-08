@@ -3,7 +3,7 @@ objectClass: GlueGeneralTop
 objectClass: GlueCESEBindGroup
 objectClass: GlueSchemaVersion
 GlueCESEBindGroupCEUniqueID: %(ceUniqueID)s
-GlueCESEBindGroupSEUniqueID: %(seUniqueID)s
+%(se_groups)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 

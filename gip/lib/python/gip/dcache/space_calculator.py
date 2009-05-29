@@ -299,6 +299,7 @@ def calculate_voinfo_from_lg(cp, lg, resv, section='se'):
 
     If the space description is "null", change the name to "DEFAULT"
     """
+    log.debug("Starting to calculate voinfo for group %s." % lg['name'])
     acbr_spacedesc = {}
     lgId = lg['id']
 
@@ -362,6 +363,9 @@ def calculate_voinfo_from_lg(cp, lg, resv, section='se'):
             default_acbr_path = default_path
         allowed_path[acbr] = default_acbr_path
 
+    log.info("For link group %s, we have the following space description info" \
+        ": %s" % (lg['name'], str(acbr_path_spacedesc)))
+
     voinfos = []
     seUniqueID = cp.get(section, "unique_name")
     # Build VOInfo objects from space descriptions
@@ -418,7 +422,15 @@ def getLGAllowedVOs(cp, vos, name=None):
         if vo_policy == '*:*':
             return ['VO:%s' % i for i in voListStorage(cp)]
         if vo_policy.startswith('/'):
-            allowed.append('VOMS:%s/Role=%s' % (vo_policy.split(':')))
+            log.debug("VO Policy: %s" % vo_policy)
+            info = tuple(vo_policy.split(':'))
+            if len(info) == 2:
+                try:
+                    allowed.append('VOMS:%s/Role=%s' % info)
+                except:
+                    pass
+            else:
+                log.error("Invalid VO policy: %s" % vo_policy)
         else:
             try:
                 vo = mapper[vo_policy.split(':')[0]]

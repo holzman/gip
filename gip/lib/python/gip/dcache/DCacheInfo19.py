@@ -46,17 +46,21 @@ class DCacheInfo19(StorageElement):
         return used, free, total
 
     def parseVOInfos_fromReservations(self):
+        log.debug("Starting 'parseVOInfos_fromReservations'")
         seUniqueID = self.getUniqueID()
 
         # The VOInfo objects should correspond to reservation DESCRIPTIONs,
         # which may map to multiple reservations
         voinfo = {}
+        log.debug("There are %i reservations." % len(self.handler.reservations))
         for id, reservation in self.handler.reservations.items():
             desc = reservation.get('description', 'DEFAULT')
             if desc.lower() == 'null':
                 desc = 'DEFAULT'
-            voinfo.setdefault(desc, {})
-            voinfo[desc].setdefault('reservations', reservation)
+            reservation_set = voinfo.setdefault(desc, [])
+            reservation_set.append(reservation)
+
+        log.debug("VOInfo objects: %s" % str(voinfo))
 
         # Iterate through all the link groups, and then go through all the
         # reservations in that link group.
@@ -81,27 +85,37 @@ class DCacheInfo19(StorageElement):
 
             # Advertise the right tag for any VO which has a space reservation
             # in this link group.
-            for tag, info in voinfo.items():
-                if info.get('linkgroupref', None) != lgid:
-                    continue
-                allowed_acbrs = getLGAlowedVOs(self._cp, info.get('acbrs', ''))
-                fqans = [normalizeFQAN(i) for i in allowed_acbrs]
-                vos = [i.split('/')[1] for i in fqans]
-                found_reservation_vos.update(vos)
-                for acbr in allowed_acbrs:
-                    vo = normalizeFQAN(i).split('/')[1]
-                    path = self.getPathForSA(lgname, vo,
+            for tag, reservations_set in voinfo.items():
+                for info in reservations_set:
+                    if info.get('linkgroupref', None) != lgid:
+                        continue
+                    log.debug("Analyzing reservation: %s" % str(info))
+                    # Regardless of who owns the reservation, anyone who can 
+                    # write into the LG can write into the reservation.
+                    #if len(str(info.get('FQAN', ''))) == 0:
+                    #    allowed_acbrs = getLGAllowedVOs(self._cp, info.get(
+                    #        'acbrs', ''))
+                    #else:
+                    #    allowed_acbrs = ['VOMS:' +str(info.get('FQAN', ''))]
+                    fqans = [normalizeFQAN(i) for i in allowed_acbrs]
+                    vos = [i.split('/')[1] for i in fqans]
+                    found_reservation_vos.update(vos)
+                    if len(vos) == 0:
+                        continue
+                    path = self.getPathForSA(lgname, vos[0],
                         section=self._section)
-                    id = '%s:%s' % (acbr, tag)
-                    info = {'voInfoID': id,
+                    myid = '%s:%s' % (tag, info.get('id', 'UNKNOWN'))
+                    info = {'voInfoID': myid,
                             'seUniqueID': seUniqueID,
-                            'name': id,
+                            'name': myid,
                             'path': path,
                             'tag': tag,
-                            'acbr': acbr,
+                            'acbr': '\n'.join(['GlueSAAccessControlBaseRule: '\
+                                '%s' % i for i in allowed_acbrs]),
                             'saLocalID': sa['saLocalID'],
-                           }
+                            }
                     self.vos.append(info)
+                
 
             # For any VO with no pre-existing reservation, but which is allowed
             # to make reservations, also do a VOInfo object.

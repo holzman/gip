@@ -360,6 +360,32 @@ class TestSEConfigs(unittest.TestCase):
             self.failUnless(int(entry.glue['SATotalOnlineSize'][0]) == 3000)
         self.failUnless(found_sa, msg="Could not find the correct target SA.")
 
+    def checkPaths(self, entries):
+        """
+        For given LG and reservations, make sure the paths are correct.
+        """
+        lkgrp = [('atlasuser-disk-link-group:replica:nearline', 'ATLASUSERDISK:10007', '/pnfs/usatlas.bnl.gov/atlasuserdisk/'),
+                 ('atlasgroup-disk-link-group:replica:nearline', 'ATLASGROUPDISK:10006', '/pnfs/usatlas.bnl.gov/atlasgroupdisk/')
+                ]
+        for grp, res, path in lkgrp:
+            found_sa = False
+            for entry in entries:
+                if 'GlueSA' not in entry.objectClass:
+                    continue
+                if grp not in entry.glue['SALocalID']:
+                    continue
+                found_sa = True
+                self.failUnless(path in entry.glue['SAPath'])
+            self.failUnless(found_sa, msg="Could not find target SA")
+            found_vo = False
+            for entry in entries:
+                if 'GlueVOInfo' not in entry.objectClass:
+                    continue
+                if res not in entry.glue['VOInfoLocalID']:
+                    continue
+                found_vo = True
+                self.failUnless(path in entry.glue['VOInfoPath'])
+            self.failUnless(found_vo, msg="Could not find target VOInfo.")
 
     def test_ngdf_config(self):
         entries, cp = self.run_test_config('red-se-test3.conf')
@@ -369,6 +395,10 @@ class TestSEConfigs(unittest.TestCase):
 
     def test_fnal_config(self):
         entries, cp = self.run_test_config('red-se-test4.conf')
+
+    def test_atlas_config(self):
+        entries, cp = self.run_test_config('red-se-test6.conf')
+        self.checkPaths(entries)
 
     def test_vo_dirs_config(self):
         """

@@ -44,8 +44,8 @@
     <div style="width: 100%; border: 1px solid #a8a8a8; background-color: DDDDDD;">
         <p style="margin: .5% 0% .5% .5%;"><a onclick="toggle('services');">Services:</a></p>
         <hr/>
-        <xsl:for-each select="/site/service">
-            <div id='services' style='display:none;'>
+        <div id='services' style='display:none;'>
+            <xsl:for-each select="/site/service">
                 <table width='100%'>
                 <tr><td width='45%'>Name:</td><td><xsl:value-of select="serviceName"/></td></tr>
                 <tr><td width='45%'>Type:</td><td><xsl:value-of select="serviceType"/></td></tr>
@@ -56,9 +56,11 @@
                 <tr><td width='45%'>Endpoint:</td><td><xsl:value-of select="serviceEndpoint"/></td></tr>
                 <tr><td width='45%'>URI:</td><td><xsl:value-of select="serviceURI"/></td></tr>
                 <tr><td width='45%'>Access Point URL:</td><td><xsl:value-of select="serviceAccessPointURL"/></td></tr>
-                </table>
-            </div>        
-        </xsl:for-each>
+				<tr><td colspan='2'><hr/></td></tr>
+				</table>
+				<p/>
+            </xsl:for-each>
+        </div>        
     </div>
     <xsl:for-each select="/site/cluster">
         <div style="width: 100%; border: 1px solid #a8a8a8; background-color: DDDDDD;">

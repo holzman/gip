@@ -240,7 +240,9 @@ class DCacheInfo19(StorageElement):
                 section=self._section, return_default=True)
             info['acbrs'] = getAllowedVOs(self._cp, info['name'])
             acbr_attr = 'GlueSAAccessControlBaseRule: %s'
-            acbr = '\n'.join([acbr_attr % i for i in info['acbrs']])
+            acbr = [acbr_attr % i for i in info['acbrs']]
+            acbr += [acbr_attr % i.split(':')[-1] for i in info['acbrs']]
+            acbr = '\n'.join(acbr)
             info['acbr'] = acbr
             self.sas.append(info)
 

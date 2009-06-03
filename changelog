@@ -1,4 +1,11 @@
 Changelog
+== 1.1.1 ==
+* Now correctly identify the default SE to eliminate false "UNKNOWN" values for the Classic SE
+* Fixed setting clusters and cesebind in config_ini and blank acbrs in the SA
+* Fix to allow multiple SE's for a single CE
+* Added new unittests for CESEBind and Cluster overides
+* Unittests now will run without any outside configuration dependencies
+
 == 1.1.0rc1 ==
 * More fleshed out (but probably still broken) SGE provider 
 * Fix to include default SE and publish correctly

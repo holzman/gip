@@ -161,7 +161,7 @@ def flush_cache(temp_dir):
         try:
             os.remove(file)
         except:
-            log.warn("Unable to flush cache file %s" % file)
+            log.warning("Unable to flush cache file %s" % file)
 
 def handle_providers(entries, providers):
     """

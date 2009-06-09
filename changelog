@@ -1,31 +1,19 @@
 Changelog
+== 1.1.2 ==
+* Include both old (voname) and new (VO:voname) ABCRs in GlueSA ACBRs 
+* Now correctly identify the default SE to eliminate false "UNKNOWN" values for the Classic SE
+* Fixed setting clusters and cesebind in config_ini and blank acbrs in the SA
+* Fix to allow multiple SE's for a single CE
+* Added new unittests for CESEBind and Cluster overides
+* Unittests now will run without any outside configuration dependencies
+
 == 1.1.1 ==
 * allow old-style storage config again (GIP stanza)
 * BeStMan: correctly determine SE space when no space tokens exist
 * BeStMan: improved logging
 * Parse updated srm-ping output
 * Fix crashing LSF provider
-	
-== 1.1.0 ==
-* Eliminate erroneous publication of 'waiting' queue for SGE
 
-== 1.1.0rc3 ==
-* Fixes for SGE (at least we should be able to get some basic information correctly published now)
-* Fixes for SE publication (including not publishing a SE at all and publishing the CE as a gsiftp server)
-* Some enhancements to be in-line with the WLCG Installed Capacity document
-* Better error handling (missing/unreadable config.ini, missing cluster)
-* Better reporting of PBS queues and free slots
-* Fixes for reporting site sponsorship
-* Increased timeout from 60s to 240s for each provider
-* New GIP version provider
-	
-== 1.1.0rc2 ==
-* Bugfix: Incorrect foreign keys for vdt-version and timestamp info (18)
-* Bugfix: a classic SE published different GlueSEUniqueIDs in the GlueSEUniqueID stanza and the GlueCSEBind stanza
-* Handle advertise_se parameter in config.ini
-* Pretty_gip_info fixes
-* New code for the MyOSG plugin (OSG GOC)
-	
 == 1.1.0rc1 ==
 * More fleshed out (but probably still broken) SGE provider 
 * Fix to include default SE and publish correctly

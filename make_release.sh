@@ -27,6 +27,7 @@ if [ ! -d "$tagdir/$releasename" ] ; then
     exit 3
 fi
 
+echo $releasename > ${tagdir}/${releasename}/gip/etc/gip_release.txt
 excludelist="--exclude */.svn --exclude *~ --exclude #*# --exclude *.tar.gz --exclude *.tgz --exclude changelog --exclude gip/var/logs/*.log"
 
 if [ -z "$GIP_RELEASE_LOCATION" ] ; then
@@ -34,3 +35,5 @@ if [ -z "$GIP_RELEASE_LOCATION" ] ; then
 fi
 
 tar cfvz ${GIP_RELEASE_LOCATION}/$releasename.tgz -C $tagdir $releasename $excludelist
+
+rm -f ${tagdir}/${releasename}/gip/etc/gip_release.txt

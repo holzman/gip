@@ -42,6 +42,7 @@ except:
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt
 from gip_ldap import read_ldap, compareDN, LdapData
+import gip_sets as sets
 
 log = getLogger("GIP.Wrapper")
 
@@ -161,7 +162,7 @@ def flush_cache(temp_dir):
         try:
             os.remove(file)
         except:
-            log.warning("Unable to flush cache file %s" % file)
+            log.warn("Unable to flush cache file %s" % file)
 
 def handle_providers(entries, providers):
     """
@@ -186,8 +187,13 @@ def handle_providers(entries, providers):
         for p_entry in provider_entries:
             if compareDN(entry, p_entry):
                 remove_entries.append(entry)
-    for entry in remove_entries:
-        entries.remove(entry)
+
+    for entry in sets.Set(remove_entries):
+        log.debug("Removing entry %s" % entry)  
+        try:
+              entries.remove(entry)
+        except ValueError:
+              pass
     # Now add all the new entries from the providers
     for p_entry in provider_entries:
         entries.append(p_entry)

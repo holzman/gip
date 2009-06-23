@@ -41,6 +41,7 @@ except:
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt
+from gip_commpn import get_user_pwd
 from gip_ldap import read_ldap, compareDN, LdapData
 import gip_sets as sets
 
@@ -68,6 +69,20 @@ def main(cp = None, return_entries=False):
     plugin and provider modules, caching where necessary, and combines it with
     the static data.  It then outputs the final GLUE information for this site.
     """
+    
+    # check if we are root.  If we are, drop privileges to daemon to avoid
+    # permissions problems when CEMon tries to run the GIP
+    start_uid = os.getuid()
+    if start_uid == 0:
+        # NOTE:  Must set gid first or you will get an "Operation not permitted"
+        # error
+        user = get_user_pwd("daemon")
+        os.setregid(user["pw_gid"], user["pw_gid"])
+        os.setreuid(user["pw_uid"], user["pw_uid"])
+    else:
+        # Not root so we can't change privileges so pass
+        pass
+    
     log.debug("Starting up the osg-info-wrapper.")
     if cp == None:
         cp = config()

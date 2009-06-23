@@ -13,6 +13,7 @@ __author__ = "Brian Bockelman"
 import os
 import re
 import sys
+import pwd
 import types
 import socket
 import traceback
@@ -1106,3 +1107,15 @@ def strContains(main_str, sub_str):
         if contains(main_str, sub_str) > 0: result = True
     
     return result
+
+def get_user_pwd(name):
+    pwd_tuple = pwd.getpwnam(name)
+    pwd_dict = {"pw_name"   : pwd_tuple[0],
+                "pw_passwd" : pwd_tuple[1],
+                "pw_uid"    : pwd_tuple[2],
+                "pw_gid"    : pwd_tuple[3],
+                "pw_gecos"  : pwd_tuple[4],
+                "pw_dir"    : pwd_tuple[5],
+                "pw_shell"  : pwd_tuple[6]
+               }
+    return pwd_dict

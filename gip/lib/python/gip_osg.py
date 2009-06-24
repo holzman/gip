@@ -355,6 +355,7 @@ def configOsg(cp):
         "vendor":   "cpu_vendor",
         "model":    "cpu_model",
         "inbound":  "inbound_network",
+        "platform": "cpu_platform",
     }
     sc_number = cp_getInt(cp2, gip_sec, "sc_number", "0")
     if sc_number == 0:

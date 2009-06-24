@@ -26,6 +26,29 @@ from gip_sections import ce, se
 
 log = getLogger("GIP.Condor")
 
+# Try to load up the Gratia StorageElement and StorageElementRecord modules.
+# If successful, the GIP has the capability to send information to Gratia.
+# The information we can send to Gratia is ultimately above and beyond the info
+# which we can fit in the BDII schema.
+has_gratia_capacity = True
+try:
+    # Try hard to bootstrap paths.
+    paths = ['/opt/vdt/gratia/probe/common', '$VDT_LOCATION/gratia/probe/'\
+        'common', '/opt/vdt/gratia/probe/service', '$VDT_LOCATION/gratia/probe'\
+        '/service']
+    for path in paths:
+        path = os.path.expandvars(path)
+        if os.path.exists(path) and path not in sys.path:
+            sys.path.append(path)
+
+    # Try to import the necessary Gratia modules.
+    import Gratia
+    import ComputeElement
+    import ComputeElementRecord
+except:
+    has_gratia_capacity = False
+    log.warning("Could not import the Gratia CE modules.")
+
 def print_CE(cp):
     """
     Print out the CE(s) for Condor
@@ -204,6 +227,14 @@ def print_CE(cp):
             "clusterUniqueID": getClusterID(cp),
             "bdii"           : cp_get(cp, "bdii", "endpoint", "Unknown")
         }
+
+        if has_gratia_capacity:
+            try:
+                Gratia.Initialize('ProbeConfig')
+                desc = ComputeElement.ComputeElement()
+                desc = UniqueID(info['ceUniqueID'])
+            except:
+                pass
         printTemplate(ce_template, info)
     return total_nodes, claimed, unclaimed
 

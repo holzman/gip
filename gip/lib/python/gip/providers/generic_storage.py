@@ -4,8 +4,9 @@ A generic provider for storage elements; written for the StorageElement class
 in gip_storage.
 """
 
+import os
 import sys
-import gip_sets as sets
+import time
 import socket
 
 from gip_common import cp_get, getLogger, config, getTemplate, printTemplate, \
@@ -15,8 +16,32 @@ from gip_storage import voListStorage, getSETape, \
 from gip.bestman.BestmanInfo import BestmanInfo
 from gip.dcache.DCacheInfo import DCacheInfo
 from gip.dcache.DCacheInfo19 import DCacheInfo19
+import gip_sets as sets
 
 log = getLogger("GIP.Storage.Generic")
+
+# Try to load up the Gratia StorageElement and StorageElementRecord modules.
+# If successful, the GIP has the capability to send information to Gratia.
+# The information we can send to Gratia is ultimately above and beyond the info
+# which we can fit in the BDII schema.
+has_gratia_capacity = True
+try:
+    # Try hard to bootstrap paths.
+    paths = ['/opt/vdt/gratia/probe/common', '$VDT_LOCATION/gratia/probe/'\
+        'common', '/opt/vdt/gratia/probe/service', '$VDT_LOCATION/gratia/probe'\
+        '/service']
+    for path in paths:
+        path = os.path.expandvars(path)
+        if os.path.exists(path) and path not in sys.path:
+            sys.path.append(path)
+
+    # Try to import the necessary Gratia modules.
+    import Gratia
+    import StorageElement
+    import StorageElementRecord
+except:
+    has_gratia_capacity = False
+    log.warning("Could not import the Gratia StorageElement modules.")
 
 def print_SA(se, cp, section="se"): #pylint: disable-msg=W0613
     """
@@ -123,6 +148,45 @@ def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
     info.setdefault('expiration', 'neverExpire')
     info.setdefault('availableSpace', 0)
     info.setdefault('usedSpace', 0)
+
+    if has_gratia_capacity:
+        try:
+            default_path = os.path.expandvars("$VDT_LOCATION/gratia/probe" \
+                "/service/ProbeConfig")
+            Gratia.Initialize(cp_get("gip", "ProbeConfig", default_path))
+            desc = StorageElement.StorageElement()
+            uniqueID = '%s:%s:%s' % (se_unique_id, "GlueStorageArea",
+                info['saName'])
+            parentID = '%s:%s:%s' % (se_unique_id, "SE", se_unique_id)
+            state.ParentID(info.get("seUniqueID", "UNKNOWN"))
+            desc.UniqueID(uniqueID)
+            desc.Name(info['saName'])
+            desc.SpaceType('GlueStorageArea')
+            desc.Implementation(se.getImplementation())
+            desc.Version(se.getVersion())
+            desc.Status(se.getStatus())
+            Gratia.Send(desc)
+
+            if int(info['totalNearline']) > 0:
+                state = StorageElementRecord.StorageElementRecord()
+                state.UniqueID(uniqueID)
+                state.MeasurementType("raw")
+                state.StorageType("tape")
+                state.TotalSpace(str(info['totalNearline']))
+                state.FreeSpace(str(info['freeNearline']))
+                state.UsedSpace(str(info['usedNearline']))
+                Gratia.Send(state)
+            if int(info['totalOnline']) > 0:
+                state = StorageElementRecord.StorageElementRecord()
+                state.UniqueID(uniqueID)
+                state.MeasurementType("raw")
+                state.StorageType("disk")
+                state.TotalSpace(str(info['totalOnline']))
+                state.FreeSpace(str(info['freeOnline']))
+                state.UsedSpace(str(info['usedOnline']))
+                Gratia.Send(state)
+        except Exception, e:
+            log.exception(e)
     printTemplate(saTemplate, info)
 
 def get_vos_from_acbr(acbr):
@@ -320,7 +384,7 @@ def print_SE(se, cp):
         used, available, total = 0, 0, 0
 
     # Tape information, if we have it...
-    nu, _, nt = se.getSETape()
+    nu, nf, nt = se.getSETape()
 
     bdiiEndpoint = cp.get("bdii", "endpoint")
     siteUniqueID = cp.get("site", "unique_name")
@@ -350,6 +414,44 @@ def print_SE(se, cp):
     seTemplate = getTemplate("GlueSE", "GlueSEUniqueID")
     log.info(str(info))
     printTemplate(seTemplate, info)
+
+    if has_gratia_capacity:
+        try:
+            default_path = os.path.expandvars("$VDT_LOCATION/gratia/probe" \
+                "/service/ProbeConfig")
+            Gratia.Initialize(cp_get("gip", "ProbeConfig", default_path))
+            desc = StorageElement.StorageElement()
+            uniqueID = '%s:%s:%s' % (info['seUniqueID'], "SE",
+                info['seUniqueID'])
+            desc.UniqueID(uniqueID)
+            desc.Name(info['seName'])
+            desc.SpaceType('SE')
+            desc.Implementation(implementation)
+            desc.Version(version)
+            desc.Status(status)
+            Gratia.Send(desc)
+
+            if int(nt) > 0:
+                state = StorageElementRecord.StorageElementRecord()
+                state.UniqueID(uniqueID)
+                state.MeasurementType("raw")
+                state.StorageType("tape")
+                state.TotalSpace(str(nt))
+                state.FreeSpace(str(nf))
+                state.UsedSpace(str(nu))
+                Gratia.Send(state)
+            if int(total) > 0:
+                state = StorageElementRecord.StorageElementRecord()
+                state.UniqueID(uniqueID)
+                state.MeasurementType("raw")
+                state.StorageType("disk")
+                state.TotalSpace(str(total))
+                state.FreeSpace(str(available))
+                state.UsedSpace(str(used))
+                Gratia.Send(state)
+        except Exception, e:
+            log.exception(e)
+
 
     try:
         print_SA(se, cp, se.getSection())

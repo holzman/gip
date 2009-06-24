@@ -78,7 +78,13 @@ def getOSGVersion(cp):
     """
     osg_ver_backup = cp_get(cp, "ce", "osg_version", "OSG 1.2.0")
     osg_version_script = cp_get(cp, "gip", "osg_version_script",
-        "$VDT_LOCATION/osg-version")
+        "")
+    if len(osg_version_script) == 0:
+        osg_version_script = '$VDT_LOCATION/osg-version'
+        osg_version_script = os.path.expandvars(osg_version_script)
+        if not os.path.exists(osg_version_script):
+            osg_version_script = os.path.expandvars("$VDT_LOCATION/osg/bin/" \
+                "osg-version")
     osg_version_script = os.path.expandvars(osg_version_script)
     try:
         osg_ver = runCommand(osg_version_script).read().strip()
@@ -135,6 +141,7 @@ def _generateSubClusterHelper(cp, section):
     clockSpeed = cp_getInt(cp, section, "cpu_speed_mhz", 999999999)
     cpuCount = cp_getInt(cp, section, "cpus_per_node", 2)
     model = cp_get(cp, section, "cpu_model", 'UNDEFINEDVALUE')
+    platform = cp_get(cp, section, "platform", "UNKNOWN")
     vendor = cp_get(cp, section, "cpu_vendor", 'UNDEFINEDVALUE')
     cores_per_cpu = cp_getInt(cp, section, "cores_per_cpu", 2)
     si2k = cp_getInt(cp, section, "SI00", 2000)

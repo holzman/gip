@@ -272,7 +272,7 @@ def guessVO(cp, group):
     """
     From the group name, guess my VO name
     """
-    bycp = cp_get(cp, "condor", "%s_vos", None)
+    bycp = cp_get(cp, "condor", "%s_vos" % group, None)
     mapper = VoMapper(cp)
     vos = voList(cp, vo_map=mapper)
     byname = sets.Set()

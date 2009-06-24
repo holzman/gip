@@ -58,12 +58,11 @@ except:
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt
-from gip_commpn import get_user_pwd
 from gip_ldap import read_ldap, compareDN, LdapData
 import gip_sets as sets
 
 log = getLogger("GIP.Wrapper")
-loglevel = "info"
+
 def create_if_not_exist(*paths):
     """
     Create a directories if they do not exist

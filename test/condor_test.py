@@ -54,6 +54,65 @@ class TestCondorProvider(unittest.TestCase):
                     '%s:2119/jobmanager-condor-default' % ce_name)
         self.assertEquals(has_ce, True)
 
+    def check_for_ce(self, cename, entries):
+        """
+        Make sure there is a CE with unique id cename in the entries list.
+
+        Returns the entry corresponding to this CE.
+        Raises an exception if no such CE exists.
+        """
+        for entry in entries:
+            if 'GlueCE' not in entry.objectClass:
+                continue
+            if cename not in entry.glue['CEUniqueID']:
+                continue
+            return entry
+        self.failIf(True, msg="Expected a CE named %s in the output." % cename)
+
+    def test_groups_output(self):
+        """
+        Look at the group output from UCSD.
+           - Check to make sure a GlueCE is defined for each group.
+           - Check to make sure the black/white lists are obeyed.
+           - Check to make sure that the FreeSlots are right for GlueCE.
+               (FreeSlots should not be more than group quota).
+           - Check to make sure that the FreeSlots are right for GlueVOView.
+               (FreeSlots should not be more than group quota).
+        """
+        os.environ['GIP_TESTING'] = 'suffix=ucsd'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py --config=test_configs/ucsd_condor.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd, multi=True)
+        tmpl = "osg-gw-2.t2.ucsd.edu:2119/jobmanager-condor-%s"
+        # This CE should *not* be present -> verifies blacklists work.
+        try:
+            entry = self.check_for_ce(tmpl % "group_cdf", entries)
+            did_fail = False
+        except:
+            did_fail = True
+        self.failUnless(did_fail, msg="CE %s is present, but shouldn't be" % \
+            (tmpl % "group_cdf"))
+
+        # Check lcgadmin group.  Verifies whitelist is being used.
+        entry = self.check_for_ce(tmpl % "group_lcgadmin", entries)
+        self.failUnless('VO:atlas' in entry.glue['CEAccessControlBaseRule'],
+            msg="ATLAS is not allowed in group_lcgadmin")
+        self.failUnless('VO:cms' in entry.glue['CEAccessControlBaseRule'],
+            msg="CMS is not allowed in group_lcgadmin")
+
+        # Check cmsprod group.  Verifies that the mapper is being used.
+        entry = self.check_for_ce(tmpl % "group_cmsprod", entries)
+        self.failUnless('VO:cms' in entry.glue['CEAccessControlBaseRule'],
+            msg="CMS is not allowed in group_cmsprod")
+        
+        # Check ligo group.  Verifies that whitelist overrides the mapper.
+        entry = self.check_for_ce(tmpl % "group_ligo", entries)
+        self.failUnless('VO:fmri' in entry.glue['CEAccessControlBaseRule'],
+            msg="FMRI is not allowed in group_cmsprod")
+        self.failIf('VO:ligo' in entry.glue['CEAccessControlBaseRule'],
+            msg="LIGO is allowed in group_cmsprod")
+
     def test_collector_host(self):
         """
         Make sure that we can parse non-trivial COLLECTOR_HOST entries.

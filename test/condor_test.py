@@ -43,7 +43,6 @@ class TestCondorProvider(unittest.TestCase):
         has_ce = False
         ce_name = socket.gethostname()
         for entry in entries:
-            print entry
             if 'GlueCE' in entry.objectClass:
                 has_ce = True
                 self.assertEquals(entry.glue['CEStateTotalJobs'], '6')
@@ -113,10 +112,41 @@ class TestCondorProvider(unittest.TestCase):
         self.failIf('VO:ligo' in entry.glue['CEAccessControlBaseRule'],
             msg="LIGO is allowed in group_cmsprod")
 
+        for entry in entries:
+            if 'GlueCE' not in entry.objectClass:
+                continue
+            total = int(entry.glue['CEPolicyAssignedJobSlots'][0])
+            assigned = int(entry.glue['CEPolicyAssignedJobSlots'][0])
+            running = int(entry.glue['CEStateRunningJobs'][0])
+            free = int(entry.glue['CEStateFreeJobSlots'][0])
+            self.failUnless(total <= assigned, msg="Failed invariant: " \
+                "TOTAL <= CE_ASSIGNED")
+            self.failUnless(running <= total, msg="Failed invariant: " \
+                "RUNNING <= TOTAL")
+            self.failUnless(running <= assigned, msg="Failed invariant: " \
+                "RUNNING <= CE_ASSIGNED")
+            self.failUnless(free <= assigned - running, msg="Failed invariant" \
+                ": CE_FREE_SLOTS <= CE_ASSIGNED - RUNNING")
+            unique_id = entry.glue['CEUniqueID']
+            ce_entry = entry
+            for entry in entries:
+                if 'GlueVOView' not in entry.objectClass:
+                    continue
+                chunk = 'GlueCEUniqueID=%s' % unique_id
+                if chunk not in entry.glue['ChunkKey']:
+                    continue
+                vo_free = int(entry.glue['CEStateFreeJobSlots'][0])
+                running = int(entry.glue['CEStateRunningJobs'][0])
+                self.failUnless(vo_free <= free, msg="Failed invariant: " \
+                    "VO_FREE_SLOTS <= CE_FREE_SLOTS")
+                self.failUnless(vo_free <= assigned - running, msg="Failed " \
+                    "invariant: VO_FREE_SLOTS <= CE_ASSIGNED - VO_RUNNING")
+
     def test_collector_host(self):
         """
         Make sure that we can parse non-trivial COLLECTOR_HOST entries.
         """
+        
 
 def main():
     """

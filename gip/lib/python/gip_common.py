@@ -190,6 +190,9 @@ def config(*args):
         from gip_osg import configOsg
         configOsg(cp)
 
+    if 'GIP_DUMP_CONFIG' in os.environ:
+        configContents(cp)
+
     return cp
 
 def __write_config(cp, override, dict_object, key, section, option): \

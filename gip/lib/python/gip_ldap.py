@@ -188,8 +188,17 @@ def read_ldap(fp, multi=False):
     mybuffer = ''
     entries = []
     counter = 0
-    for origline in fp.readlines():
+    lines = fp.readlines()
+
+    # Put in newlines before dn: stanzas if they don't exist already
+    for line in lines[1:]:
         counter += 1
+        if line.startswith('dn:'):
+            if not lines[counter-1].strip() == '\n':
+                lines.insert(counter-1, '\n')
+
+    # Now parse the LDIF into separate entries split on newlines
+    for origline in lines:
         line = origline.strip()
         if len(line) == 0 and entry_started == True:
             entries.append(LdapData(mybuffer[1:], multi=multi))

@@ -194,7 +194,7 @@ def read_ldap(fp, multi=False):
     for line in lines[1:]:
         counter += 1
         if line.startswith('dn:'):
-            if not lines[counter-1].strip() == '\n':
+            if lines[counter-1].strip():
                 lines.insert(counter-1, '\n')
 
     # Now parse the LDIF into separate entries split on newlines

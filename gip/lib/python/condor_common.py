@@ -268,12 +268,57 @@ def getQueueList(cp): #pylint: disable-msg=C0103
 
     return groupInfo.keys()
 
+def determineGroupVOsFromConfig(cp, group, voMap):
+    """
+    Given a group name and the config object, determine the VOs which are
+    allowed in that group; this is based solely on the config files.
+    """
+
+    # This is the old behavior.  Base everything on (groupname)_vos
+    bycp = cp_get(cp, "condor", "%s_vos" % group, None)
+    if bycp:
+        return [i.strip() for i in bycp.split(',')]
+
+    # This is the new behavior.  Base everything on (groupname)_blacklist and
+    # (groupname)_whitelist.  Done to mimic the PBS configuration.
+    volist = sets.Set(voList(cp, voMap))
+    try:
+        whitelist = [i.strip() for i in cp.get("condor", "%s_whitelist" % \
+            group).split(',')]
+    except:
+        whitelist = []
+    whitelist = sets.Set(whitelist)
+    try:
+        blacklist = [i.strip() for i in cp.get("condor", "%s_blacklist" % \
+            group).split(',')]
+    except:
+        blacklist = []
+    blacklist = sets.Set(blacklist)
+
+    # Return None if there's no explicit white/black list setting.
+    if len(whitelist) == 0 and len(blacklist) == 0:
+        return None
+
+    # Force any VO in the whitelist to show up in the volist, even if it
+    # isn't in the acl_users / acl_groups
+    for vo in whitelist:
+        if vo not in volist:
+            volist.add(vo)
+    # Apply white and black lists
+    results = sets.Set()
+    for vo in volist:
+        if (vo in blacklist or "*" in blacklist) and ((len(whitelist) == 0)\
+                or vo not in whitelist):
+            continue
+        results.add(vo)
+    return list(results)
+
 def guessVO(cp, group):
     """
     From the group name, guess my VO name
     """
-    bycp = cp_get(cp, "condor", "%s_vos", None)
     mapper = VoMapper(cp)
+    bycp = determineGroupVOsFromConfig(cp, group, mapper)
     vos = voList(cp, vo_map=mapper)
     byname = sets.Set()
     for vo in vos:
@@ -287,8 +332,8 @@ def guessVO(cp, group):
         bymapper = mapper[altname]
     except:
         bymapper = None
-    if bycp:
-        return [i.strip() for i in bycp.split(',')]
+    if bycp != None:
+        return bycp
     elif bymapper:
         return [bymapper]
     elif byname:

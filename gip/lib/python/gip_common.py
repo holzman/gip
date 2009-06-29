@@ -34,8 +34,9 @@ True if the current version of Python is 2.3 or higher; enables a few extra
 capabilities which Python 2.2 does not have.
 """
 
+import optparse
 if py23:
-    import optparse, logging, logging.config, logging.handlers
+    import logging, logging.config, logging.handlers
 
 # Default log level for our FakeLogger object.
 loglevel = "info"
@@ -147,12 +148,12 @@ def config(*args):
     check_testing_environment()
     cp = ConfigParser.ConfigParser()
     files = list(args)
-    if py23:
-        p = optparse.OptionParser()
-        p.add_option('-c', '--config', dest='config', \
-            help='Configuration file.', default='gip.conf')
-        (options, args) = p.parse_args()
-        files += [i.strip() for i in options.config.split(',')]
+
+    p = optparse.OptionParser()
+    p.add_option('-c', '--config', dest='config', \
+        help='Configuration file.', default='gip.conf')
+    (options, args) = p.parse_args()
+    files += [i.strip() for i in options.config.split(',')]
     files = [os.path.expandvars(i) for i in files]
     files += [os.path.expandvars("$GIP_LOCATION/etc/gip.conf")]
     if 'GIP_CONFIG' in os.environ:

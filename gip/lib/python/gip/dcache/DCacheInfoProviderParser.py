@@ -130,7 +130,7 @@ class ObjectHandler(ContentHandler):
             getattr(self, self.objname)[self.cur_metric] = ch == 'true'
         elif self.cur_type == 'integer':
             try:
-                getattr(self, self.objname)[self.cur_metric] = int(ch)
+                getattr(self, self.objname)[self.cur_metric] = long(ch)
             except:
                 pass
         else:

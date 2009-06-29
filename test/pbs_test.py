@@ -46,7 +46,6 @@ class TestPbsDynamic(unittest.TestCase):
         os.environ['GIP_TESTING'] = '1'
         cp = config("test_configs/red.conf")
         vo_queues = Set(getVoQueues(cp))
-        print vo_queues
         diff = vo_queues.symmetric_difference(example_queues)
         self.assertEquals(len(diff), 0, msg="The following VO-queues are " \
             "different between the expected and actual: %s" % str(diff))
@@ -140,6 +139,28 @@ class TestPbsDynamic(unittest.TestCase):
                 has_lcgadmin_ce = True
         self.failUnless(has_default_ce, msg="Default queue's CE was not found!")
         self.failUnless(has_default_ce, msg="lcgadmin queue's CE was not found!")
+
+    def test_max_running(self):
+        """
+        Regression test for max_running.  Ensure that the number of free slots
+        & total reported is never greater than the # of max running.
+        """
+        os.environ['GIP_TESTING'] = '1'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
+            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd)
+        self.failUnless(fd.close() == None)
+        has_dzero_ce = False
+        for entry in entries:
+            if 'GlueCE' in entry.objectClass and \
+                    entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
+                    '-pbs-dzero':
+                self.failUnless(entry.glue['CEPolicyMaxRunningJobs'] == '158')
+                self.failUnless(entry.glue['CEPolicyMaxTotalJobs'] == '158')
+                self.failUnless(entry.glue['CEStateFreeJobSlots'] == '158')
+                has_dzero_ce = True
+        self.failUnless(has_dzero_ce, msg="dzero queue's CE was not found!")
 
     def test_max_queuable_26(self):
         """

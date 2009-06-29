@@ -4,7 +4,7 @@ Queue: default
     total_jobs = 7
     state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:7 Exiting:0 Begun
 	:0 
-    max_running = 400
+    max_running = 2000
     max_queuable = 2000
     resources_max.nodect = 444
     resources_max.walltime = 24:00:00
@@ -64,7 +64,7 @@ Queue: dzero
     total_jobs = 0
     state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
 	:0 
-    max_running = 444
+    max_running = 158
     resources_max.nodect = 444
     resources_max.walltime = 24:00:00
     resources_assigned.ncpus = 0
@@ -164,7 +164,7 @@ Queue: lcgadmin
     total_jobs = 0
     state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0 Begun
 	:0 
-    max_running = 4
+    max_running = 400
     resources_max.nodect = 4
     resources_max.walltime = 24:00:00
     acl_group_enable = True

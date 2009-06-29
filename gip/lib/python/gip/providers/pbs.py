@@ -76,8 +76,18 @@ def print_CE(cp):
             info['max_total'] = info['max_waiting'] + info['max_running']
             info['free_slots'] = min(info['free_slots'], info['max_total'])
         info['max_slots'] = 1
-        #info['max_total'] = info['max_running']
+
+        # Enforce invariants:
+        # max_total <= max_running
+        # free_slots <= max_running
+        info['max_total'] = min(info['max_total'], info['max_running'])
+        info['free_slots'] = min(info['free_slots'], info['max_running'])
+
         info['assigned'] = info['job_slots']
+        # Enforce invariants:
+        # assigned <= max_running
+        info['assigned'] = min(info['assigned'], info['max_running'])
+
         info['lrmsType'] = 'pbs'
         info['preemption'] = cp_get(cp, 'pbs', 'preemption', '0')
         acbr = ''

@@ -478,6 +478,7 @@ def configSEs(cp, cp2):
     """
 
     if not py23:
+        # python 2.2's ConfigParser class doesn't have items(). 
         def cpitems(cp, section):
             d = cp.defaults().copy()
             try:
@@ -489,8 +490,10 @@ def configSEs(cp, cp2):
             options = d.keys()
             if "__name__" in options:
                 options.remove("__name__")
+
             return [(option, cp._interpolate(section, option, d[option], d))
-                                             
+                    for option in options]
+
     for section in cp.sections():
         if not section.startswith("se") and not section.startswith("SE"):
             continue

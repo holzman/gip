@@ -3,7 +3,7 @@
 import os
 import sys
 import unittest
-import tempfile
+import tempfile23 as tempfile
 import ConfigParser
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))

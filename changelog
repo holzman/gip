@@ -3,6 +3,8 @@ Changelog
 * If storage_vos is set, ignore the blacklist/whitelist for storage (storage_vos is an explicit whitelist already).
 * Fix bug where we tried to remove duplicate stanzas more than once
 * Insert newlines before stanzas if needed
+* RHEL3 compatibility: fix integer overflows in dCache 1.9 provider
+* RHEL3 compatibility: fix SE-related config bug
 * Check for osg-version in both $VDT_LOCATION and $VDT_LOCATION/osg/bin
 * Condor: Allow (groupname)_blacklist and (groupname)_whitelist in Condor
 * Condor: Parse condor_status correctly for multi-schedd sites 

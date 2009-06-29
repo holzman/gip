@@ -68,6 +68,21 @@ class TestCondorProvider(unittest.TestCase):
             return entry
         self.failIf(True, msg="Expected a CE named %s in the output." % cename)
 
+    def test_multi_schedd_output(self):
+        """
+        Make sure that condor submitter accounting groups spread over multiple
+        schedds (and hence in multiple ClassAds) are aggregated.
+        """
+        ce = 'fnpcfg1.fnal.gov:2119/jobmanager-condor-group_nysgrid'
+        os.environ['GIP_TESTING'] = 'suffix=fnal'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py --config=test_configs/fnal_condor.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd, multi=True)
+        entry = self.check_for_ce(ce, entries)
+        self.failUnless('25' in entry.glue['CEStateRunningJobs'], msg="Did not"\
+            " aggregate multiple schedd's properly.")
+
     def test_groups_output(self):
         """
         Look at the group output from UCSD.

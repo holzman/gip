@@ -202,7 +202,7 @@ class TestOsgInfoWrapper(unittest.TestCase):
         entries = osg_info_wrapper.main(cp, return_entries=True)
         timestamp_entry = entries[0]
         t2 = float(timestamp_entry.glue['LocationVersion'][0])
-        self.assertTrue(t1 < t2)
+        self.failUnless(t1 < t2)
 
 def main():
     """

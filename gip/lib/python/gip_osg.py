@@ -489,7 +489,7 @@ def configSEs(cp, cp2):
             options = d.keys()
             if "__name__" in options:
                 options.remove("__name__")
-                return [(option, cp._interpolate(section, option, d[option], d))
+            return [(option, cp._interpolate(section, option, d[option], d))
                                              
     for section in cp.sections():
         if not section.startswith("se") and not section.startswith("SE"):

@@ -10,8 +10,10 @@ It takes advantage of the XML format of the ClassAds in order to make parsing
 easier.
 """
 
+import sys
 import gip_sets as sets
 import time
+import types
 
 import xml
 from xml.sax import make_parser, SAXParseException
@@ -55,6 +57,10 @@ class ClassAdParser(ContentHandler):
             self.attrlist = []
         else:
             self.attrlist = list(attrlist)
+        if isinstance(idx, types.TupleType) and self.attrlist:
+            for name in idx:
+                if name not in self.attrlist:
+                    self.attrlist.append(name)
         if self.attrlist and idx not in self.attrlist:
             self.attrlist.append(idx)
         self.idxAttr = idx
@@ -104,9 +110,18 @@ class ClassAdParser(ContentHandler):
         End of an XML element - save everything we learned
         """
         if name == 'c':
-            idx = self.curCaInfo.get(self.idxAttr, None)
-            if idx:
-                self.caInfo[idx] = self.curCaInfo
+            if isinstance(self.idxAttr, types.TupleType):
+                full_idx = ()
+                for idx in self.idxAttr:
+                    idx = self.curCaInfo.get(idx, None)
+                    if idx:
+                        full_idx += (idx,)
+                if len(full_idx) == len(self.idxAttr):
+                    self.caInfo[full_idx] = self.curCaInfo
+            else:
+                idx = self.curCaInfo.get(self.idxAttr, None)
+                if idx:
+                    self.caInfo[idx] = self.curCaInfo
         elif name == 'a':
             if self.attrName in self.attrlist or len(self.attrlist) == 0:
                 self.curCaInfo[self.attrName] = self.attrInfo
@@ -424,8 +439,8 @@ def getJobsInfo(vo_map, cp):
     queue_constraint = cp_get(cp, "condor", "jobs_constraint", "TRUE")
     if queue_constraint == 'TRUE':
         fp = condorCommand(condor_status_submitter, cp)
-        handler = ClassAdParser('Name', ['RunningJobs', 'IdleJobs', 'HeldJobs',\
-            'MaxJobsRunning', 'FlockedJobs'])
+        handler = ClassAdParser(('Name', 'ScheddName'), ['RunningJobs',
+            'IdleJobs', 'HeldJobs', 'MaxJobsRunning', 'FlockedJobs'])
         try:
             parseCondorXml(fp, handler)
         except Exception, e:
@@ -454,6 +469,8 @@ def getJobsInfo(vo_map, cp):
     unknown_users = sets.Set()
     for user, info in results.items():
         # Determine the VO, or skip the entry
+        if isinstance(user, types.TupleType):
+            user = user[0]
         name = user.split("@")[0]
         name_info = name.split('.', 1)
         if len(name_info) == 2:
@@ -474,9 +491,7 @@ def getJobsInfo(vo_map, cp):
                 unknown_users.add(name)
             continue
 
-        if group not in group_jobs:
-            group_jobs[group] = {}
-        vo_jobs = group_jobs[group]
+        vo_jobs = group_jobs.setdefault(group, {})
 
         # Add the information to the current dictionary.
         my_info = vo_jobs.get(vo, {"running":0, "idle":0, "held":0, \

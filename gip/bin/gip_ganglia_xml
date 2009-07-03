@@ -1,0 +1,100 @@
+#!/usr/bin/python
+
+import os
+import sys
+import time
+import cStringIO
+from xml.sax.saxutils import XMLGenerator
+from ConfigParser import ConfigParser
+
+if 'GIP_LOCATION' in os.environ:
+    if os.environ['GIP_LOCATION'] not in sys.path:
+        sys.path.append(os.path.join(os.environ['GIP_LOCATION'], 'lib',
+            'python'))
+import gip_ldap
+
+class GipToGanglia(object):
+
+    def __init__(self):
+        self.cp = ConfigParser()
+        self.cp.add_section("bdii")
+        self.cp.set("bdii", "endpoint", "ldap://is.grid.iu.edu:2170")
+
+    def load_data(self):
+        self.ces = gip_ldap.read_bdii(self.cp, "(objectClass=GlueCE)")
+        results = []
+        for ce in self.ces:
+            unique_id = ce.glue['CEUniqueID']
+            try:
+                max_size = min(int(ce.glue['CEPolicyAssignedJobSlots']),
+                    int(ce.glue['CEPolicyMaxRunningJobs']))
+                waiting = int(ce.glue['CEStateWaitingJobs'])
+                running = int(ce.glue['CEStateRunningJobs'])
+                free = int(ce.glue['CEStateFreeCPUs'])
+            except:
+                continue
+            results.append((unique_id, max_size, waiting, running, free))
+        return results
+
+    def make_metrics(self):
+        metrics = []
+        data = self.load_data()
+        max_size = 0
+        for info in self.load_data():
+            id, size, wait, run, free = info
+            metric = { \
+                'cpu_num': size,
+                'load_one': run,
+                'Site Size': size,
+                'Waiting Jobs': wait,
+                'Running Jobs': run,
+                'Free slots': free,
+            }
+            max_size = max(max_size, size)
+            metrics.append((id, metric))
+        for id, metric in metrics:
+            metric['cpu_num'] = max_size
+        return metrics
+
+    def create_xml(self):
+        now = str(int(time.time()))
+        metrics = self.make_metrics()
+        fd = cStringIO.StringIO()
+        gen = XMLGenerator(fd, 'UTF-8')
+        gen.startDocument()
+        fd.write('<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>')
+        fd.write('\n')
+        gen.startElement('GANGLIA_XML', {'VERSION': '3.1.1', 'SOURCE': 'BDII'})
+        gen.characters('\n\t')
+        gen.startElement('CLUSTER', {'NAME': 'OSG', 'LOCALTIME': now})
+        gen.characters('\n')
+        for id, metrics in self.make_metrics():
+            gen.characters('\t\t')
+            gen.startElement('HOST', {'NAME': id, 'REPORTED': now})
+            gen.characters('\n')
+            for metric, val in metrics.items():
+                gen.characters('\t\t\t')
+                gen.startElement('METRIC', {'NAME': metric, 'VAL': str(val),
+                    'TYPE': 'uint32'})
+                gen.endElement('METRIC')
+                gen.characters('\n')
+            gen.characters('\t\t')
+            gen.endElement('HOST')
+            gen.characters('\n')
+        gen.characters('\t')
+        gen.endElement('CLUSTER')
+        gen.characters('\n')
+        gen.endElement('GANGLIA_XML')
+        gen.endDocument()
+        return fd.getvalue()
+
+    def __str__(self):
+        return self.create_xml()
+
+def main():
+    parser = GipToGanglia()
+    print parser
+
+if __name__ == '__main__':
+    main()
+

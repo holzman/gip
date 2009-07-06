@@ -26,15 +26,22 @@ class OutputManager:
     def add_output(self, name, output):
         self.strings[name] = output
 
-    def add_file(self, filename):
+    def add_file(self, filename, dirname=None):
         if os.path.exists(filename):
-            self.files.append()
+            self.files.append((filename, dirname))
+        else:
+            print "ERROR: File %s does not exist." % filename
 
     def write_output(self, fd):
         tf = tarfile.open(fileobj=fd, mode="w:bz2", name="gip.tar.bz2")
         try:
             for file in self.files:
-                tf.add(file)
+                file, dirname = file
+                if dirname:
+                    tf.add(file, arcname=os.path.join(dirname,
+                        os.path.split(file)[-1]))
+                else:
+                    tf.add(file)
             for filename, string in self.strings.items():
                 fd_str = cStringIO.StringIO(string)
                 fd_str.seek(0)
@@ -45,7 +52,6 @@ class OutputManager:
                 tf.addfile(ti, fd_str)
             tf.close()
         except Exception, e:
-            raise
             print >> sys.stderr, e
             return ""
 
@@ -315,9 +321,35 @@ def gip_check_temp(cp, outh):
         output += "`ls` operation returned non-zero exit code"
     try:
         for file in os.listdir(temp_dir):
-            outh.add_file(os.path.join(temp_dir, file))
-    finally:
+            if file.startswith("."):
+                continue
+            outh.add_file(os.path.join(temp_dir, file), dirname="temp_dir")
+    except Exception, e:
+        print >> sys.stderr, e
         return output
+    return output
+
+def gip_check_log(cp, outh):
+    """
+    List the contents of the GIP temp directory.
+    Add each file present to the output handler.
+    """
+    log_dir = os.path.expandvars("$GIP_LOCATION/var/logs")
+    if not os.path.exists(log_dir):
+        return "FAILURE: Temp directory does not exist!"
+    fd = os.popen("ls -lh %s" % log_dir)
+    output = "Contents of log directory:\n%s" % fd.read()
+    if fd.close():
+        output += "`ls` operation returned non-zero exit code"
+    try:
+        for file in os.listdir(log_dir):
+            if file.startswith("."):
+                continue
+            outh.add_file(os.path.join(log_dir, file), dirname="log_dir")
+    except Exception, e:
+        print >> sys.stderr, e
+        return output
+    return output
 
 def main():
     opts = parse_args()
@@ -344,13 +376,13 @@ def main():
     output += '\n'
     out, cp = gip_check_config()
     output += out
-    if cp == None:
-        print 
     output += '\n'
     output += gip_check_perms(cp)
     output += '\n'
     output += gip_check_temp(cp, out_handler)
     output += '\n'
+    output += gip_check_log(cp, out_handler)
+    output += "\n"
 
     if opts.talk:
         print output

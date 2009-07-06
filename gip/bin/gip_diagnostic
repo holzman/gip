@@ -33,7 +33,7 @@ class OutputManager:
             print "ERROR: File %s does not exist." % filename
 
     def write_output(self, fd):
-        tf = tarfile.open(fileobj=fd, mode="w:bz2", name="gip.tar.bz2")
+        tf = tarfile.open(fileobj=fd, mode="w:gz", name="gip.tar.gz")
         try:
             for file in self.files:
                 file, dirname = file
@@ -58,7 +58,7 @@ class OutputManager:
 def parse_args():
     parser = optparse.OptionParser()
     parser.add_option("-f", "--file", dest="filename",
-        default="gip_diagnostic.tar.bz2")
+        default="gip_diagnostic.tar.gz")
     parser.add_option("-q", "--quiet", dest="talk", action='store_false',
         default=True)
     parser.add_option("-r", "--remote", dest="endpoint")
@@ -154,6 +154,8 @@ def pull_remote(command, fdout=sys.stdout, fderr=sys.stderr):
 
 def local_script_path():
     script_name = sys.argv[0]
+    if script_name.startswith("./"):
+        script_name = "." + script_name
     abs_path = os.path.join(sys.path[0], script_name)
     return abs_path
 
@@ -184,7 +186,7 @@ def gip_check_config():
     output = 'Checking configuration can be loaded... '
     if 'GIP_LOCATION' not in os.environ:
         output += "FAIL: $GIP_LOCATION missing."
-        return output
+        return output, None
     gip_loc = os.environ['GIP_LOCATION']
     inc = os.path.join(gip_loc, 'lib', 'python')
     if inc not in sys.path:
@@ -194,7 +196,7 @@ def gip_check_config():
     except Exception, e:
         print >> sys.stderr, str(e)
         output += "FAIL: Unable to import gip_common"
-        return output
+        return output, None
     try:
         cp = gip_common.config()
     except Exception, e:
@@ -296,7 +298,7 @@ def gip_check_perms(cp):
         if not can_read(add_attributes):
             output += "FAILURE: daemon cannot read add attrs file.\n"
     if os.path.exists(alter_attributes):
-        output += "OK: Alter attrs file %s exists.\n" % alter_attribtues
+        output += "OK: Alter attrs file %s exists.\n" % alter_attributes
         if not can_read(alter_attributes):
             output += "FAILURE: daemon cannot read alterattrs file.\n"
     if os.path.exists(remove_attributes):
@@ -351,22 +353,56 @@ def gip_check_log(cp, outh):
         return output
     return output
 
+def gip_check_misc(cp, outh):
+    """
+    Add various miscellaneous files to the output handler
+    """
+    add_attributes = os.path.expandvars(cp_get(cp, "gip", \
+        "add_attributes", "$GIP_LOCATION/etc/add-attributes.conf"))
+    alter_attributes = os.path.expandvars(cp_get(cp, "gip", \
+        "alter_attributes", "$GIP_LOCATION/etc/alter-attributes.conf"))
+    remove_attributes = os.path.expandvars(cp_get(cp, "gip", \
+        "remove_attributes", "$GIP_LOCATION/etc/remove-attributes.conf"))
+    config_ini = cp_get(cp, "gip", "osg_config",
+        "$VDT_LOCATION/monitoring/config.ini")
+    config_ini= os.path.expandvars(config_ini)
+    osg_user_vo_map = cp_get(cp, "vo", "user_vo_map",
+        "$VDT_LOCATION/monitoring/osg-user-vo-map.txt")
+    osg_user_vo_map = os.path.expandvars(osg_user_vo_map)
+
+    output = 'Checking misc files:\n'
+
+    for file in [add_attributes, alter_attributes, remove_attributes,
+            config_ini, osg_user_vo_map]:
+        if os.path.exists(file):
+            output += "Recording file %s.\n" % file
+            outh.add_file(file, dirname="misc")
+        else:
+            output += "Not recording %s because it doesn't exist.\n" % file
+
+    return output
+
 def main():
     opts = parse_args()
 
     if opts.endpoint:
-        script_path = local_script_path
+        script_path = local_script_path()
         if not os.path.exists(script_path):
             if opts.talk:
                 print "Could not detect script's path for remote execution."
+                print "Attempted location: %s" % script_path
             sys.exit(1)
         endpoint = opts.endpoint
         if endpoint.find(':/jobmanager') < 0:
             endpoint += ':/jobmanager-fork'
-        if not opts.file:
-            opts.file = 'gip_diagnostic.tgz'
-        cmd = 'globus-job-run -stdout %s %s -s %s -q --file /dev/stdout' % \
-            (opts.file, endpoint, script_path)
+        if not opts.filename:
+            opts.filename = 'gip_diagnostic.tar.gz'
+        if os.path.exists(opts.filename):
+            print "Cowardly refusing to overwrite existing output file %s." % \
+                opts.filename
+        cmd = 'globus-job-run -stdout -s %s %s -s %s -q --file /dev/stdout' % \
+            (opts.filename, endpoint, script_path)
+        print "Attempting command: %s" % cmd
         exit_code = pull_remote(cmd)
         sys.exit(exit_code)
 
@@ -382,6 +418,8 @@ def main():
     output += gip_check_temp(cp, out_handler)
     output += '\n'
     output += gip_check_log(cp, out_handler)
+    output += "\n"
+    output += gip_check_misc(cp, out_handler)
     output += "\n"
 
     if opts.talk:

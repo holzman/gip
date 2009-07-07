@@ -34,15 +34,18 @@ class OutputManager:
 
     def write_output(self, fd):
         tf = tarfile.open(fileobj=fd, mode="w:gz", name="gip.tar.gz")
-        try:
-            for file in self.files:
+        for file in self.files:
+            try:
                 file, dirname = file
                 if dirname:
                     tf.add(file, arcname=os.path.join(dirname,
                         os.path.split(file)[-1]))
                 else:
                     tf.add(file)
-            for filename, string in self.strings.items():
+            except Exception, e:
+                print >> sys.stderr, e
+        for filename, string in self.strings.items():
+            try:
                 fd_str = cStringIO.StringIO(string)
                 fd_str.seek(0)
                 ti = tarfile.TarInfo()
@@ -50,10 +53,9 @@ class OutputManager:
                 ti.name = filename
                 ti.type = tarfile.REGTYPE
                 tf.addfile(ti, fd_str)
-            tf.close()
-        except Exception, e:
-            print >> sys.stderr, e
-            return ""
+            except Exception, e:
+                print >> sys.stderr, e
+        tf.close()
 
 def parse_args():
     parser = optparse.OptionParser()

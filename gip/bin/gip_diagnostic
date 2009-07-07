@@ -154,15 +154,18 @@ def pull_remote(command, fdout=sys.stdout, fderr=sys.stderr):
 
 def local_script_path():
     script_name = sys.argv[0]
-    if script_name.startswith("./"):
-        script_name = "." + script_name
-    abs_path = os.path.join(sys.path[0], script_name)
-    return abs_path
+    #if script_name.startswith("./"):
+    #    script_name = "." + script_name
+    #abs_path = os.path.join(sys.path[0], script_name)
+    #return abs_path
+    return script_name
 
 def gip_check_env():
     """
     Check environment for $GIP_LOCATION or $VDT_LOCATION
     """
+    if 'OSG_LOCATION' in os.environ and 'VDT_LOCATION' not in os.environ:
+        os.environ['VDT_LOCATION'] = os.environ['OSG_LOCATION']
     output = "Checking for $GIP_LOCATION... "
     if 'GIP_LOCATION' in os.environ:
         output += "OK\n"
@@ -197,12 +200,17 @@ def gip_check_config():
         print >> sys.stderr, str(e)
         output += "FAIL: Unable to import gip_common"
         return output, None
+    old_sys_argv = sys.argv
+    sys.argv = [sys.argv[0]]
     try:
-        cp = gip_common.config()
-    except Exception, e:
-        print >> sys.stderr, str(e)
-        output += "FAIL: Unable to generate config file."
-        return output, None
+        try:
+            cp = gip_common.config()
+        except Exception, e:
+            print >> sys.stderr, str(e)
+            output += "FAIL: Unable to generate config file."
+            return output, None
+    finally:
+        sys.argv = old_sys_argv
     contents = cStringIO.StringIO()
     output += "OK\n"
     gip_common.configContents(cp, stream=contents)
@@ -398,9 +406,10 @@ def main():
         if not opts.filename:
             opts.filename = 'gip_diagnostic.tar.gz'
         if os.path.exists(opts.filename):
-            print "Cowardly refusing to overwrite existing output file %s." % \
-                opts.filename
-        cmd = 'globus-job-run -stdout -s %s %s -s %s -q --file /dev/stdout' % \
+            print >> sys.stderr, "Cowardly refusing to overwrite existing " \
+                "output file %s." % opts.filename
+            sys.exit(1)
+        cmd = 'globus-job-run -stdout -s %s %s -s %s -q -f /dev/stdout' % \
             (opts.filename, endpoint, script_path)
         print "Attempting command: %s" % cmd
         exit_code = pull_remote(cmd)

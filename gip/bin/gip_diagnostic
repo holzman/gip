@@ -160,6 +160,14 @@ def local_script_path():
     #return abs_path
     return script_name
 
+def configContents(cp, stream=sys.stderr):
+    for section in cp.sections():
+        print >> stream, "[%s]" % section
+        for option in cp.options(section):
+            msg = "   %-25s : %s" % (option, cp.get(section, option))
+            print >> stream, msg
+        print >> stream, " "
+
 def gip_check_env():
     """
     Check environment for $GIP_LOCATION or $VDT_LOCATION
@@ -213,7 +221,7 @@ def gip_check_config():
         sys.argv = old_sys_argv
     contents = cStringIO.StringIO()
     output += "OK\n"
-    gip_common.configContents(cp, stream=contents)
+    configContents(cp, stream=contents)
     output += contents.getvalue()
     return output, cp
 
@@ -275,8 +283,13 @@ def gip_check_perms(cp):
     log_dir = os.path.expandvars("$GIP_LOCATION/var/logs")
     gip_log = os.path.join(log_dir, "gip.log")
     modules_log = os.path.join(log_dir, "modules.log")
-    if can_write(log_dir):
-        output += "OK: User daemon can write into log directory %s.\n" % log_dir
+    if os.path.exists(log_dir):
+        if can_write(log_dir):
+            output += "OK: User daemon can write into log directory %s.\n" % \
+                log_dir
+    else:
+        output += "FAILURE: GIP logging directory %s does not exist." % log_dir
+        return output
     if os.path.exists(gip_log):
         output += "OK: GIP log file %s exists.\n" % gip_log
         if can_write(gip_log):

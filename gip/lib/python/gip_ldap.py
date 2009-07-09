@@ -286,7 +286,7 @@ def compareDN(ldif1, ldif2):
         dn2 = ldif2.dn[idx]
         if dn1.lower().find("mds-vo-name") >= 0 or \
                 dn1.lower().find("o=grid") >=0:
-            continue
+            break
         if dn1 != dn2:
             return False
     return True

@@ -56,7 +56,12 @@ def print_clusters(cp):
     #clusterUniqueID = cp_get(cp, 'ce', 'unique_name', cluster_name)
     clusterUniqueID = getClusterID(cp)
     siteUniqueID = cp_get(cp, "site", "unique_name", 'UNKNOWN_SITE')
-    ces = getCEList(cp)
+    extraCEs = cp_get(cp, 'cluster', 'other_ces', [])
+    if extraCEs:
+        extraCEs = [x.strip() for x in extraCEs.split(',')]
+
+    ces = getCEList(cp, extraCEs)
+
     glueClusters = ''
     for ce in ces:
         glueClusters += 'GlueForeignKey: GlueCEUniqueID=%s\n' %  ce

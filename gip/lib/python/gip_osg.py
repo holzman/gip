@@ -10,7 +10,7 @@ import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, lsf, se, subcluster, \
     cluster, cesebind
-from gip_common import getLogger
+from gip_common import getLogger, py23
 
 log = getLogger("GIP")
 
@@ -477,6 +477,24 @@ def configSEs(cp, cp2):
     Looks for the above attributes in any section starting with the prefix
     "se"
     """
+
+    if not py23:
+        # python 2.2's ConfigParser class doesn't have items(). 
+        def cpitems(cp, section):
+            d = cp.defaults().copy()
+            try:
+                d.update(cp._ConfigParser__sections[section])
+            except KeyError:
+                if section != ConfigParser.DEFAULTSECT:
+                    raise ConfigParser.NoSectionError
+
+            options = d.keys()
+            if "__name__" in options:
+                options.remove("__name__")
+
+            return [(option, cp._interpolate(section, option, d[option], d))
+                    for option in options]
+
     for section in cp.sections():
         if not section.startswith("se") and not section.startswith("SE"):
             continue
@@ -490,8 +508,12 @@ def configSEs(cp, cp2):
                 pass
             cp2.set(my_sect, "name", name)
             # Copy over entire section
-            for name, value in cp.items(section):
-                cp2.set(my_sect, name, value)
+            if py23:
+                for name, value in cp.items(section):
+                    cp2.set(my_sect, name, value)
+            else:
+                for name, value in cpitems(cp, section):
+                    cp2.set(my_sect, name, value)
             endpoint = cp_get(cp, section, "srm_endpoint",
                 "httpg://UNKNOWN.example.com:8443/srm/v2/server")
             m = url_re.match(endpoint)

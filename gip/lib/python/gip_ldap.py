@@ -275,22 +275,22 @@ def normalizeDN(dn_tuple):
             return dn[:-1]
         dn += entry + ','
 
+def _starts_with_suffix(ldif):
+    if ldif.dn[0].lower().find("mds-vo-name") >= 0 or \
+            ldif.dn[0].lower().find("o=grid") >=0:
+        return True
+    else:
+        return False
+
 def compareDN(ldif1, ldif2):
     """
     Compare two DNs of LdapData objects.
     
     Returns true if both objects have the same LDAP DN.
     """
-    dn1_startswith_suffix = False
-    dn2_startswith_suffix = False
-    if ldif1.dn[0].lower().find("mds-vo-name") >= 0 or \
-            ldif1.dn[0].lower().find("o=grid") >=0:
-        dn1_startswith_suffix = True
+    dn1_startswith_suffix = _starts_with_suffix(ldif1)
+    dn2_startswith_suffix = _starts_with_suffix(ldif2)
 
-    if ldif2.dn[0].lower().find("mds-vo-name") >= 0 or \
-            ldif2.dn[0].lower().find("o=grid") >=0:
-        dn2_startswith_suffix = True
-        
     if (dn1_startswith_suffix and dn2_startswith_suffix):
         for idx in range(len(ldif1.dn)):
             dn1 = ldif1.dn[idx]

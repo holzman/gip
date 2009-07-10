@@ -288,6 +288,7 @@ def configOsg(cp):
     __write_config(gip_sec, "dynamic_dcache", se, "dynamic_dcache")
     __write_config(gip_sec, "srm", se, "srm_present")
     __write_config(gip_sec, "advertise_gums", site, "advertise_gums")
+    __write_config(gip_sec, "other_ces", cluster, "other_ces")
 
     cluster_name = cp_get(cp2, gip_sec, "cluster_name", "")
     if len(cluster_name) > 0:

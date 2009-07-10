@@ -14,7 +14,7 @@ from sge_common import getQueueList as getSGEQueueList
 from gip_sections import ce, cesebind, se
 from gip_sets import Set
 
-def getCEList(cp):
+def getCEList(cp, extraCEs=[]):
     """
     Return a list of all the CE names at this site.
 
@@ -25,8 +25,11 @@ def getCEList(cp):
     @returns: List of strings containing all the local CE names.
     """
     jobman = cp.get(ce, "job_manager").strip().lower()
-    hostname = cp.get(ce, 'name')
-    ce_name = '%s:2119/jobmanager-%s-%%s' % (hostname, jobman)
+    hostnames = [cp.get(ce, 'name')] 
+    hostnames += extraCEs
+
+    ce_names = ['%s:2119/jobmanager-%s-%%s' % (hostname, jobman) for hostname in hostnames]
+
     ce_list = []
     if jobman == 'pbs':
         queue_entries = getPBSQueueList(cp)
@@ -39,7 +42,8 @@ def getCEList(cp):
     else:
         raise ValueError("Unknown job manager %s." % jobman)
     for queue in queue_entries:
-        ce_list.append(ce_name % queue)
+        for ce_name in ce_names:
+            ce_list.append(ce_name % queue)
     return ce_list
 
 def getClassicSEList(cp):

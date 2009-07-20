@@ -393,7 +393,7 @@ class GipToGanglia(object):
                 'Site Size': size,
                 'Waiting Jobs': wait,
                 'Running Jobs': run,
-                'Free slots': free,
+                'Free Slots': free,
             }
             max_size = max(max_size, size)
             metrics.append((id, metric))
@@ -407,8 +407,8 @@ class GipToGanglia(object):
         fd = cStringIO.StringIO()
         gen = XMLGenerator(fd, 'UTF-8')
         gen.startDocument()
-        fd.write('<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>')
-        fd.write('\n')
+#        fd.write('<?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>')
+#        fd.write('\n')
         gen.startElement('GANGLIA_XML', {'VERSION': '3.1.1', 'SOURCE': 'BDII'})
         gen.characters('\n\t')
         gen.startElement('CLUSTER', {'NAME': 'OSG', 'LOCALTIME': now})

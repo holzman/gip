@@ -83,6 +83,14 @@ def print_subclusters(cp):
     subclusters = gip_cluster.generateSubClusters(cp)
     template = getTemplate("GlueCluster", "GlueSubClusterUniqueID")
     for subcluster_info in subclusters:
+        if 'hepspec' in subcluster_info and subcluster_info['hepspec']:
+            desc = 'GlueHostProcessorOtherDescription: ' \
+                'Cores=%s, Benchmark=%s-HEP-SPEC06' % \
+                (str(subcluster_info['cores']), str(subcluster_info['hepspec']))
+        else:
+            desc = 'GlueHostProcessorOtherDescription: Cores=%s' % \
+                str(subcluster_info['cores'])
+        subcluster_info['otherDesc'] = desc
         printTemplate(template, subcluster_info)
 
 def main():

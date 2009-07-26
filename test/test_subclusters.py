@@ -29,7 +29,7 @@ class TestSubclusterConfigs(unittest.TestCase):
         self.failIf(fd.close(), msg="Run of subcluster provider failed!")
         return entries
 
-    def check_red_sc_1(self, entries):
+    def check_red_sc_1(self, entries, new=False):
         found_entry = False
         for entry in entries:
             if 'GlueSubCluster' not in entry.objectClass:
@@ -56,6 +56,9 @@ class TestSubclusterConfigs(unittest.TestCase):
             self.failUnless(entry.glue['HostBenchmarkSF00'][0] == '2000')
             self.failUnless(entry.glue['HostArchitectureSMPSize'][0] == '2')
             self.failUnless(entry.glue['HostProcessorClockSpeed'][0] == '2200')
+            if new:
+                self.failUnless(entry.glue['HostProcessorOtherDescription'][0] == \
+                    'Cores=%i, Benchmark=%i-HEP-SPEC06' % (240, 8))
         self.failUnless(found_entry, msg="Test subcluster red.unl.edu not" \
             "found!")
 
@@ -84,6 +87,8 @@ class TestSubclusterConfigs(unittest.TestCase):
             self.failUnless(entry.glue['HostBenchmarkSF00'][0] == '2000')
             self.failUnless(entry.glue['HostArchitectureSMPSize'][0] == '2')
             self.failUnless(entry.glue['HostProcessorClockSpeed'][0] == '2400')
+            self.failUnless(entry.glue['HostProcessorOtherDescription'][0] == \
+                'Cores=%i' % (53*4))
         self.failUnless(found_entry, msg="Test subcluster 'Dell Nodes' not" \
             "found!")
 
@@ -94,7 +99,7 @@ class TestSubclusterConfigs(unittest.TestCase):
 
     def test_new_sc_config(self):
         entries = self.run_test_config("red-sc-test2.conf")
-        self.check_red_sc_1(entries)
+        self.check_red_sc_1(entries, new=True)
         self.check_red_sc_2(entries)
 
 def main():

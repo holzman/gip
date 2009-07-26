@@ -53,7 +53,7 @@ class BestmanInfo(StorageElement):
  
     gftp_url_re = re.compile('(.+)://(.+)')
     def getAccessProtocols(self):
-        results = []
+        results = super(BestmanInfo, self).getAccessProtocols()
         gftps = self.info.get('gsiftpTxfServers', '')
         for gftp in gftps.split(';'):
             m = self.gftp_url_re.match(gftp)

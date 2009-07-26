@@ -14,7 +14,7 @@ objectClass: GlueSchemaVersion
 GlueCESEBindSEUniqueID: %(seUniqueID)s
 GlueCESEBindCEAccesspoint: %(access_point)s
 GlueCESEBindCEUniqueID: %(ceUniqueID)s
-GlueCESEBindWeight: 0
+GlueCESEBindWeight: 0%(mount_point)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 

@@ -453,7 +453,11 @@ class StorageElement(object):
 
         For the base class, this just returns [].
         """
-        return []
+        mount_point = cp_get(self._cp, self._section, 'mount_point', None)
+        if None:
+            return []
+        return [{'protocol': 'file', 'hostname': 'POSIX.example.com', 'port': '1234',
+            'version': '1.0.0'}]
 
     def hasSRM(self):
         """
@@ -470,7 +474,7 @@ class StorageElement(object):
            - acbr
            - status
            - version
-           - endptoin
+           - endpoint
            - name
            
         The base class implementation uses the following configuration entries

@@ -275,21 +275,40 @@ def normalizeDN(dn_tuple):
             return dn[:-1]
         dn += entry + ','
 
+def _starts_with_suffix(ldif):
+    if ldif.dn[0].lower().find("mds-vo-name") >= 0 or \
+            ldif.dn[0].lower().find("o=grid") >=0:
+        return True
+    else:
+        return False
+
 def compareDN(ldif1, ldif2):
     """
     Compare two DNs of LdapData objects.
     
     Returns true if both objects have the same LDAP DN.
     """
-    for idx in range(len(ldif1.dn)):
-        dn1 = ldif1.dn[idx]
-        dn2 = ldif2.dn[idx]
-        if dn1.lower().find("mds-vo-name") >= 0 or \
-                dn1.lower().find("o=grid") >=0:
-            break
-        if dn1 != dn2:
-            return False
-    return True
+    dn1_startswith_suffix = _starts_with_suffix(ldif1)
+    dn2_startswith_suffix = _starts_with_suffix(ldif2)
+
+    if (dn1_startswith_suffix and dn2_startswith_suffix):
+        for idx in range(len(ldif1.dn)):
+            dn1 = ldif1.dn[idx]
+            dn2 = ldif2.dn[idx]
+            if dn1 != dn2:
+                return False
+        return True
+    elif (dn1_startswith_suffix == False and dn2_startswith_suffix == False):
+        for idx in range(len(ldif1.dn)):
+            dn1 = ldif1.dn[idx]
+            dn2 = ldif2.dn[idx]
+            if dn1.lower().find("mds-vo-name") >= 0 or \
+                    dn1.lower().find("o=grid") >=0:
+                continue
+            if dn1 != dn2:
+                return False
+        return True
+    return False
 
 def compareObjectClass(ldif1, ldif2):
     """

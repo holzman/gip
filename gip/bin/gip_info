@@ -2,6 +2,23 @@
 
 import os
 import sys
+import pwd
+
+# check if we are root.  If we are, drop privileges to daemon to avoid
+# permissions problems when CEMon tries to run the GIP
+start_uid = os.getuid()
+if start_uid == 0:
+    # NOTE:  Must set gid first or you will get an "Operation not permitted"
+    # error
+    pwd_tuple = pwd.getpwnam("daemon")
+    pw_uid = pwd_tuple[2]
+    pw_gid = pwd_tuple[3]
+
+    os.setregid(pw_gid, pw_gid)
+    os.setreuid(pw_uid, pw_uid)
+else:
+    # Not root so we can't change privileges so pass
+    pass
 
 #Standard testing imports:
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))

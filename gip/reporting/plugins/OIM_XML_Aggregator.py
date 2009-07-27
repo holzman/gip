@@ -14,9 +14,9 @@ from plugins_common import search_list_by_name, ConfigurationError, \
         EmptyNodeListError, GenericXMLError, getTestResultFileList
 
 class OIM_XML:
-    def __init__(self):
-        self.cp = getTestConfig("")
-        self.oim_tests = "Interop_Reporting_Check,Missing_Sites,Validate_GIP_BDII,Validate_GIP_URL"
+    def __init__(self, args):
+        self.cp = getTestConfig(args)
+        self.oim_tests = "Interop_Reporting_Check,Missing_Sites,Validate_GIP_BDII"
         self.oim_xml_dir = "" 
         self.oim_summary_xml_file = ""
         self.oim_detail_file_template = ""
@@ -42,7 +42,7 @@ class OIM_XML:
         if self.oim_xml_dir == "UNKNOWN": raise ConfigurationError("OIM XML directory is not configured")
         self.oim_summary_xml_file = "%s/%s" % (self.oim_xml_dir, cp_get(self.cp, "gip_tests", "myosg_summary_file", "myosg.xml"))
         self.oim_detail_file_template = self.oim_xml_dir + "/" + cp_get(self.cp, "gip_tests", "myosg_detail_file_template", "myosg_%s_detail.xml")
-        self.oim_tests = cp_get(self.cp, "gip_tests", "oim_tests", self.oim_tests)
+        self.oim_tests = cp_get(self.cp, "gip_tests", "myosg_tests", self.oim_tests)
 
     def parseIndex(self):
         index_list = []
@@ -77,17 +77,29 @@ class OIM_XML:
     def buildSummaryXML(self, index_list):
         summary_dom = Document()
         gip = addChild(summary_dom, summary_dom, "gip")
+        status = 0
         
         addChild(summary_dom, gip, "TestRunTime", index_list[0]["TestRunTime"])
         for item in index_list:
             resource = addChild(summary_dom, gip, "Resource")
             addChild(summary_dom, resource, "Name", item["Name"])
             for case in item["TestCases"]:
-                testCase = addChild(summary_dom, resource, "TestCase")
-                addChild(summary_dom, testCase, "Name", case["Name"])
-                addChild(summary_dom, testCase, "Status", case["Status"])
-                addChild(summary_dom, testCase, "Reason")
+                if case["Name"] in self.oim_tests:
+                    testCase = addChild(summary_dom, resource, "TestCase")
+                    addChild(summary_dom, testCase, "Name", case["Name"])
+                    addChild(summary_dom, testCase, "Status", case["Status"])
+                    addChild(summary_dom, testCase, "Reason")
+                    if not case["Status"] == "OK":
+                        status += 1
+            
+            if status > 0:
+                OverAllStatus = "FAIL"
+            else:
+                OverAllStatus = "OK"
 
+            addChild(summary_dom, resource, "OverAllStatus", OverAllStatus)
+            status = 0
+            
         writeXML(summary_dom, self.oim_summary_xml_file)
 
     def parseResults(self):
@@ -152,21 +164,22 @@ class OIM_XML:
             addChild(resource_dom, gip, "TestRunTime", self.test_run_time)
             addChild(resource_dom, gip, "ResourceName", resource["Name"])
             for case in resource["TestCases"]:
-                testCase = addChild(resource_dom, gip, "TestCase")
-                addChild(resource_dom, testCase, "Name", case["Name"])
-                addChild(resource_dom, testCase, "Status", case["Status"])
-                for detail in case["Details"]:
-                    addChild(resource_dom, testCase, "Detail", detail)
+                if case["Name"] in self.oim_tests:
+                    testCase = addChild(resource_dom, gip, "TestCase")
+                    addChild(resource_dom, testCase, "Name", case["Name"])
+                    addChild(resource_dom, testCase, "Status", case["Status"])
+                    for detail in case["Details"]:
+                        addChild(resource_dom, testCase, "Detail", detail)
             
             writeXML(resource_dom, self.oim_detail_file_template % resource["Name"])
         
     
-def main():
-    oim_plugin = OIM_XML()
+def main(args):
+    oim_plugin = OIM_XML(args[1:])
     print >> sys.stderr, "OIM Plugin: %s" % str(oim_plugin)
     oim_plugin.buildSummaryXML(oim_plugin.parseIndex())
     oim_plugin.buildResourceXML(oim_plugin.parseResults())
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv)
         

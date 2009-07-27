@@ -146,6 +146,7 @@ def _generateSubClusterHelper(cp, section):
     cores_per_cpu = cp_getInt(cp, section, "cores_per_cpu", 2)
     si2k = cp_getInt(cp, section, "SI00", 2000)
     sf2k = cp_getInt(cp, section, "SF00", 2000)
+    hepspec = cp_getInt(cp, section, "HEPSPEC", 0)
     ram = cp_getInt(cp, section, "ram_size", 1000*cpuCount*cores_per_cpu)
     cores = cp_getInt(cp, section, "total_cores", 999999999)
     if cores_per_cpu != 0:

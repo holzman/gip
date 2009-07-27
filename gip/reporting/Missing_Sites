@@ -24,7 +24,7 @@ This check queries the BDII to determine if a site is missing
         fd = query_bdii(self.cp, query="(objectClass=GlueCE)", base="mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site)
         line = fd.readline().lower()
         if not line.startswith("dn:"):
-            self.assertEquals(0, 1, "Missing")
+            self.assertEquals(0, 1, "Missing - Check CEMon logs to see any errors and when the last time it reported.")
 
 def main(args):
     cp = getTestConfig(args)

@@ -19,6 +19,8 @@ def main():
         # get the VDT version
         vdt_version_cmd = os.path.expandvars("$VDT_LOCATION/vdt/bin/") + 'vdt-version --brief'
         vdt_version = runCommand(vdt_version_cmd).readlines()[0].strip()
+        if (vdt_version == ""): vdt_version = "OLD_VDT"
+        
         # Get the timestamp in the two formats we wanted
         now = time.strftime("%a %b %d %T UTC %Y", time.gmtime())
 

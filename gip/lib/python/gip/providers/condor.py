@@ -147,9 +147,34 @@ def print_CE(cp):
                 max_running = max(max_runnings)
         if ginfo.get('quota', 0) != 999999:
             max_running = max(max_running, ginfo.get('quota', 0))
-        assigned = max(ginfo.get("quota", 0), total_nodes)
+
+        # Invariants:
+        # If (ASSIGNED is defined): TOTAL <= ASSIGNED
+        if ginfo.get("quota", 0) > 0:
+            # Force the total nodes to be at most the maximum running
+            ce_total_nodes = min(ginfo.get("quota", 0), total_nodes)
+            # The assigned job slots is equal to the quota.
+            # The total nodes may not be greater than the quota.
+            # The assigned slots may be larger than the total.
+            assigned = ginfo.get("quota", 0)
+        else:
+            # Default to having the assigned jobs = total nodes.
+            assigned = total_nodes
+            ce_total_nodes = total_nodes
 
         myrunning = sum([i.get('running', 0) for i in jinfo.values()], 0)
+
+        # If the running jobs are greater than the total/assigned, bump
+        # up the values of the total/assigned
+        # Keeps the invariant: RUNNING <= ASSIGNED, RUNNING <= TOTAL
+        assigned = max(assigned, myrunning)
+        ce_total_nodes = max(assigned, ce_total_nodes)
+
+        # Make sure the following holds:
+        # CE_FREE_SLOTS <= ASSIGNED - RUNNING
+        # CE_FREE_SLOTS <= UNCLAIMED SLOTS IN CONDOR
+        ce_unclaimed = min(assigned - myrunning, unclaimed)
+
         myidle = sum([i.get('idle', 0) for i in jinfo.values()], 0)
         myheld = sum([i.get('held', 0) for i in jinfo.values()], 0)
 
@@ -179,8 +204,8 @@ def print_CE(cp):
             "job_manager"    : 'condor',
             "queue"          : group,
             "lrmsVersion"    : condorVersion,
-            "job_slots"      : int(total_nodes),
-            "free_slots"     : int(unclaimed),
+            "job_slots"      : int(ce_total_nodes),
+            "free_slots"     : int(ce_unclaimed),
             # Held jobs are included as "waiting" since the definition is:
             #    Number of jobs that are in a state different than running
             "waiting"        : myidle + myheld,
@@ -235,27 +260,56 @@ def print_VOViewLocal(cp):
 
     # Add in the default group
     all_group_vos = []    
-    for val in groupInfo.values():
+    total_assigned = 0
+    for key, val in groupInfo.items():
+        if key == 'default':
+            continue
         all_group_vos.extend(val['vos'])
+        total_assigned += val.get('quota', 0)
     all_vos = sets.Set(voList(cp))
     defaultVoList = [i for i in all_vos if i not in all_group_vos]
     if 'default' not in groupInfo:
         groupInfo['default'] = {}
     groupInfo['default']['vos'] = defaultVoList
 
+    if total_nodes > total_assigned:
+        log.info("There are %i assigned job slots out of %i total; assigning" \
+            " the rest to the default group." % (total_assigned, total_nodes))
+        groupInfo['default']['quota'] = total_nodes-total_assigned
+    else:
+        log.warning("More assigned nodes (%i) than actual nodes (%i)!" % \
+            (total_assigned, total_nodes))
+
     for group in groupInfo:
         jinfo = jobs_info.get(group, {})
         vos = sets.Set(groupInfo[group].get('vos', [group]))
         vos.update(jinfo.keys())
         vos.intersection_update(all_vos)
+
+        # Enforce invariants
+        # VO_FREE_SLOTS <= CE_FREE_SLOTS
+        # VO_FREE_SLOTS <= CE_ASSIGNED - VO_RUNNING
+        # This code determines CE_ASSIGNED
+        ginfo = groupInfo[group]
+        if ginfo.get("quota", 0) > 0:
+            assigned = ginfo.get("quota", 0)
+        else:
+            assigned = total_nodes
+
         log.debug("All VOs for %s: %s" % (group, ", ".join(vos)))
         ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)    
         max_wall = cp_getInt(cp, "condor", "max_wall", 1440)
+
+        myrunning = sum([i.get('running', 0) for i in jinfo.values()], 0)
+        assigned = max(assigned, myrunning)
+        
         for vo in vos:
             acbr = 'VO:%s' % vo
             info = jinfo.get(vo, {"running": 0, "idle": 0, "held": 0})
             ert, wrt = responseTimes(cp, info["running"], info["idle"] + \
                 info["held"], max_job_time=max_wall*60)
+            free = min(unclaimed, assigned-myrunning,
+                assigned-int(info['running']))
 
             info = {"vo"      : vo,
                 "acbr"        : acbr,
@@ -269,7 +323,7 @@ def print_VOViewLocal(cp):
                 #    Number of jobs that are in a state different than running
                 "waiting"     : info["idle"] + info["held"],
                 "total"       : info["running"] + info["idle"] + info["held"],
-                "free_slots"  : int(unclaimed),
+                "free_slots"  : int(free),
                 "job_slots"   : int(total_nodes),
                 "ert"         : ert,
                 "wrt"         : wrt,

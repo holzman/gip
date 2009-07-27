@@ -233,7 +233,7 @@ This check tests the ldif as reported by cemon for:
             self.expectNotEquals(m, None, msg="Invalid GlueForeignKey.")
 
             site_unique_id = m.groups()[0]
-            self.expectEquals(site_unique_id, self.site_id, msg="Incorrect site unique ID for service.")
+            self.expectEquals(site_unique_id, self.site_id, msg="Incorrect site unique ID for SRM service. %s != %s" % (site_unique_id, self.site_id))
 
             path = self.getPath(entry.glue['ServiceEndpoint'])
             if path.startswith("/srm/managerv"):

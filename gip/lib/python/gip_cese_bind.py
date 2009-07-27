@@ -101,6 +101,26 @@ def getSEList(cp, classicSEs=True):
     se_list = list(Set(se_list))
     return se_list
 
+def getSESections(cp):
+    """
+    For each SE section (non-classic), determine the corresponding section
+    name.
+
+    Returns a dict; the SE unique ID is the key, the section is the value.
+    """
+    se_map = {}
+    for sect in cp.sections():
+        if not sect.lower().startswith('se') or sect.lower() == 'se':
+            continue
+        if not cp_getBoolean(cp, sect, 'advertise_se', True):
+            continue
+        try:
+            se_map[cp.get(sect, 'unique_name')] = sect
+        except:
+            pass
+    return se_map
+
+
 def getCESEBindInfo(cp):
     """
     Generates a list of information for the CESE bind groups.
@@ -117,12 +137,19 @@ def getCESEBindInfo(cp):
     classicse_list = getClassicSEList(cp)
     se_list.extend(classicse_list)
     #access_point = cp_get(cp, "vo", "default", "/")
+
+    section_map = getSESections(cp)
+
     access_point = getPath(cp)
     if not access_point:
         access_point = "/"
     classic_access_point = cp_get(cp, "osg_dirs", "data", "/")
-    for myce in ce_list:
-        for myse in se_list:
+    for myse in se_list:
+        mount_point = None
+        if myse in section_map:
+            section = section_map[myse]
+            mount_point = cp_get(cp, section, "mount_point", None)
+        for myce in ce_list:
             if myse in classicse_list:
                 ap = classic_access_point
             else:
@@ -131,6 +158,11 @@ def getCESEBindInfo(cp):
                     'seUniqueID' : myse,
                     'access_point' : ap,
                    }
+            if mount_point:
+                info['mount_point'] = '\nGlueCESEBindMountInfo: %s' % \
+                    mount_point
+            else:
+                info['mount_point'] = ''
             binds.append(info)
     return binds
 

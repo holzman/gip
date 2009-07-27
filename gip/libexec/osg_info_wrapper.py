@@ -9,11 +9,28 @@ Complete rewrite by Brian Bockelman
 
 import os
 import sys
+import pwd
 import glob
 import time
 import shutil
 import signal
 import cStringIO
+
+# check if we are root.  If we are, drop privileges to daemon to avoid
+# permissions problems when CEMon tries to run the GIP
+start_uid = os.getuid()
+if start_uid == 0:
+    # NOTE:  Must set gid first or you will get an "Operation not permitted"
+    # error
+    pwd_tuple = pwd.getpwnam("daemon")
+    pw_uid = pwd_tuple[2]
+    pw_gid = pwd_tuple[3]
+
+    os.setregid(pw_gid, pw_gid)
+    os.setreuid(pw_uid, pw_uid)
+else:
+    # Not root so we can't change privileges so pass
+    pass
 
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
 if not py23:
@@ -68,6 +85,7 @@ def main(cp = None, return_entries=False):
     plugin and provider modules, caching where necessary, and combines it with
     the static data.  It then outputs the final GLUE information for this site.
     """
+    
     log.debug("Starting up the osg-info-wrapper.")
     if cp == None:
         cp = config()

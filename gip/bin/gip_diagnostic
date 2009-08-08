@@ -405,6 +405,49 @@ def gip_check_misc(cp, outh):
 
     return output
 
+def gip_check_old(cp, outh):
+    """
+    Go through the old static files directory and pull files if they exist.
+    """
+    gip_static = os.path.expandvars("$GIP_LOCATION/etc/osg-info-gip-config")
+    if not os.path.exists(gip_static):
+        return "No old static files found.\n"
+    output = "Old static file directory found."
+    fd = os.popen("ls -lh %s" % gip_static)
+    output = "Contents of static directory:\n%s" % fd.read()
+    if fd.close():
+        output += "`ls` operation returned non-zero exit code"
+    for file in os.listdir(gip_static):
+        try:
+            if file.startswith("."):
+                continue
+            outh.add_file(os.path.join(gip_static, file), dirname="old_static")
+        except Exception, e:
+            print >> sys.stderr, e
+    return output
+
+def gip_check_ldap(cp, outh):
+    """
+    Go through the old ldap files directory and pull files if they exist.
+    """
+    gip_static = os.path.expandvars("$GIP_LOCATION/var/ldif")
+    if not os.path.exists(gip_static):
+        return "No old ldif files found.\n"
+    output = "Old ldif file directory found."
+    fd = os.popen("ls -lh %s" % gip_static)
+    output = "Contents of ldif directory:\n%s" % fd.read()
+    if fd.close():
+        output += "`ls` operation returned non-zero exit code"
+    for file in os.listdir(gip_static):
+        try:
+            if file.startswith("."):
+                continue
+            outh.add_file(os.path.join(gip_static, file), dirname="old_ldif")
+        except Exception, e:
+            print >> sys.stderr, e
+    return output
+
+
 def main():
     opts = parse_args()
 
@@ -444,6 +487,10 @@ def main():
     output += gip_check_log(cp, out_handler)
     output += "\n"
     output += gip_check_misc(cp, out_handler)
+    output += "\n"
+    output += gip_check_old(cp, out_handler)
+    output += "\n"
+    output += gip_check_ldap(cp, out_handler)
     output += "\n"
 
     if opts.talk:

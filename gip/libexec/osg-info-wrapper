@@ -1,3 +1,3 @@
 #!/bin/sh
-source /opt/osg/osg-100/setup.sh
-/opt/osg/osg-100/gip/libexec/osg_info_wrapper.py 2> /dev/null
+source MAGIC_VDT_LOCATION/setup.sh
+MAGIC_VDT_LOCATION/gip/libexec/osg_info_wrapper.py 2> /dev/null

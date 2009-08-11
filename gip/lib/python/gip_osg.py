@@ -254,9 +254,11 @@ def configOsg(cp):
     
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
-    __write_config(pbs_sec, "wsgram", pbs, "wsgram")
-    __write_config(pbs_sec, "enabled", pbs, "enabled")
-    __write_config(pbs_sec, "job_contact", pbs, "contact_string")
+    # With the call to __write_all_options_config, the next 2 lines are obsolete
+    #__write_config(pbs_sec, "wsgram", pbs, "wsgram")
+    #__write_config(pbs_sec, "enabled", pbs, "enabled")
+    # Changing the provider to use job_contact, rather than contact_string
+    #__write_config(pbs_sec, "job_contact", pbs, "contact_string")
     
     # attempt to put all the pbs options into the internal config object
     # so that whitelisting and blacklisting work without having to resort to

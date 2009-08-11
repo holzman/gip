@@ -88,7 +88,7 @@ def print_CE(cp):
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
         info['ceImpl'] = 'Globus'
         info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')
-        info['contact_string'] = unique_id
+        info['contact_string'] = cp_get(cp, "lsf", 'job_contact', unique_id)
         info['app_dir'] = cp.get('osg_dirs', 'app')
         info['data_dir'] = cp.get('osg_dirs', 'data')
         info['default_se'] = getDefaultSE(cp)

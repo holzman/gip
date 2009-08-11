@@ -210,7 +210,7 @@ def print_CE(cp):
         # Build all the GLUE CE entity information.
         info = { \
             "ceUniqueID"     : ce_unique_id,
-            'contact_string' : ce_unique_id,
+            'contact_string' : cp_get(cp, "condor", 'job_contact', ce_unique_id),
             "ceImpl"         : "Globus",
             "ceImplVersion"  : cp_get(cp, ce, 'globus_version', '4.0.6'),
             "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name),
@@ -328,7 +328,7 @@ def print_VOViewLocal(cp):
             assigned = total_nodes
 
         log.debug("All VOs for %s: %s" % (group, ", ".join(vos)))
-        ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)    
+        ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)
         max_wall = cp_getInt(cp, "condor", "max_wall", 1440)
 
         myrunning = sum([i.get('running', 0) for i in jinfo.values()], 0)

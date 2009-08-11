@@ -483,7 +483,7 @@ def run_child(executable, orig_filename, timeout):
             os._exit(os.EX_SOFTWARE)
     log.debug("Set a %.2f second timeout." % timeout)
     t1 = -time.time()
-    sys.stderr = open(os.path.expandvars("$GIP_LOCATION/var/logs/module.logs"), 'a')
+    sys.stderr = open(os.path.expandvars("$GIP_LOCATION/var/logs/module.log"), 'a')
     exec_name = executable.split('/')[-1]
     pid = os.spawnl(os.P_NOWAIT, "/bin/sh", exec_name, "-c", "%s > %s" % \
         (executable, filename))

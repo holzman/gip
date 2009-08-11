@@ -284,7 +284,7 @@ def gip_check_perms(cp):
 
     log_dir = os.path.expandvars("$GIP_LOCATION/var/logs")
     gip_log = os.path.join(log_dir, "gip.log")
-    modules_log = os.path.join(log_dir, "modules.log")
+    modules_log = os.path.join(log_dir, "module.log")
     if os.path.exists(log_dir):
         if can_write(log_dir):
             output += "OK: User daemon can write into log directory %s.\n" % \

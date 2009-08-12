@@ -2,6 +2,8 @@
 
 import sys
 import types
+import urllib
+import urllib2
 import datetime
 import optparse
 import cStringIO
@@ -9,6 +11,9 @@ import cStringIO
 from xml.sax.saxutils import XMLGenerator
 
 import osg_info_wrapper
+import gip_common
+
+log = gip_common.getLogger('CEMonUploader')
 
 def filter_by_class(entries, objectClass):
     filter = []
@@ -63,7 +68,8 @@ def determine_ses(ce, all_cese):
 ap_multi_attributes = ['SEAccessProtocolEndpoint', 'SEAccessProtocolVersion',
     'SEAccessProtocolLocalID', 'SEAccessProtocolSupportedSecurity',
     'SEAccessProtocolMaxStreams']
-drop_attrs = ['GlueForeignKey']
+drop_attrs = ['GlueForeignKey', 'GlueSiteDescription', 'GlueSiteLocation',
+    'GlueSiteWeb', 'GlueSiteSponsor', 'GlueSiteOtherInfo', 'GlueChunkKey']
 
 
 class ClassAdSink(object):
@@ -92,9 +98,18 @@ class ClassAdPrinter(ClassAdSink):
 
 class CEMonMessageProducer(ClassAdSink):
 
-    def __init__(self, host):
+    def __init__(self, hosts):
         super(CEMonMessageProducer, self).__init__()
-        self.host = host
+        if not hasattr(self, 'default_url'):
+            self.default_url = ''
+        self.endpoints = []
+        for host in hosts:
+            if host.startswith('https://'):
+                self.endpoints.append(host)
+            else:
+                if len(host.split(':')) != 2:
+                    host = '%s:14001' % host
+                self.endpoints.append('https://%s%s' % (host, self.default_url))
 
     def generate(self, messages, producer="OSG CE Sensor"):
         self.encoding = 'UTF-8'
@@ -190,27 +205,61 @@ class CEMonMessageProducer(ClassAdSink):
             'Envelope'), 'Envelope')
         gen.endPrefixMapping('soapenv')
         gen.endDocument()
-        return output.getvalue()
+        results = output.getvalue()
+        log.debug("CEMon notification results:\n%s" % results)
+        return results
 
-class BdiiSender(ClassAdSink, CEMonMessageProducer):
+    def run(self):
+        if not hasattr(self, 'encoded_output'):
+            return
+        all_threads = []
+        for endpoint in self.endpoints:
+            t = threading.Thread(target=self._thread_target, args=(endpoint,))
+            t.setName('Uploader for endpoint %s' % endpoint)
+            t.setDaemon(True)
+            t.run()
+            all_threads.append(t)
+        for t in all_threads:
+            t.join()
 
-    def __init__(self, host):
-        super(BdiiSender, self).__init__(host)
+    def _thread_target(self, endpoint):
+        try:
+            req = urllib2.Request(endpoint, self.encoded_output)
+            req.add_header("SOAPAction", 
+                '"http://glite.org/ce/monitorapij/ws/Notify"')
+            req.add_header("Cache-Control", "no-cache")
+            req.add_header("Pragma", "no-cache")
+            req.add_header("Accept", "application/soap+xml, " \
+                "application/dime, multipart/related, text/*")
+            log.info("Uploading output to %s" % endpoint)
+            urllib2.urlopen(req)
+        except Exception, e:
+            log.exception(e)
+            raise
+
+class BdiiSender(CEMonMessageProducer):
+
+    def __init__(self, hosts):
+        self.default_url = '/'
+        super(BdiiSender, self).__init__(hosts)
         self.ads = []
+        log.info("BDII info destinations: %s" % ', '.join(self.endpoints))
 
     def emit(self, results):
         self.ads.append(results)
 
     def run(self):
         messages = ['\n'.join([ldap.to_ldif() for ldap in self.ads])]
-        output = self.generate(messages)
-        print output
+        self.encoded_output = self.generate(messages)
+        super(BdiiSender, self).run()
 
-class ClassAdSender(ClassAdSink, CEMonMessageProducer):
+class ClassAdSender(CEMonMessageProducer):
 
-    def __init__(self, host):
+    def __init__(self, hosts):
+        self.default_url = '/ig/services/CEInfoCollector'
         super(ClassAdSender, self).__init__(host)
         self.ads = []
+        log.info("ClassAd destinations: %s" % ', '.join(self.endpoints))
 
     def emit(self, classad):
         self.ads.append(classad)
@@ -233,7 +282,8 @@ class ClassAdSender(ClassAdSink, CEMonMessageProducer):
             message = "[\n" + "\n        ".join(out) + "\n\n]"
             messages.append(message)
         output = self.generate(messages)
-        print output
+        self.encoded_output = urllib.urlencode(output)
+        super(ClassAdSender, self).run()
 
 class ClassAdEmitter(object):
 
@@ -403,24 +453,35 @@ def configure_emitter():
         " this data to.", action="append")
     options, args = parser.parse_args()
 
-    #if options.verbose:
-    #cae.add_emitter(ClassAdPrinter())
+    if options.verbose:
+        cae.add_emitter(ClassAdPrinter())
 
-    #if options.ress:
-    cae.add_emitter(ClassAdSender())
+    if options.ress:
+        cae.add_emitter(ClassAdSender())
 
-    #if options.bdii:
-    bdii = BdiiSender()
-    #else:
-    #bdii = None
+    if options.bdii:
+        bdii = BdiiSender(options.bdii)
+    else:
+        bdii = None
     
     return cae, bdii
 
+
 def main():
-
     cae, bdii = configure_emitter()
-
     entries = osg_info_wrapper.main(return_entries=True)
+    upload(cae, bdii, entries)
+
+def upload(cae, bdii, entries):
+    """
+    Converts the list of LdapData objects (entries) to ClassAds.  Submit
+    the list of resulting class ads and original LDAP to the respective
+    servers.
+
+       * cae: ClassAdEmitter object
+       * bdii: BdiiSender object
+       * entries: list of LdapData objects.
+    """
     all_sites = filter_by_class(entries, 'GlueSite')
     all_ces = filter_by_class(entries, 'GlueCE')
     all_voviews = filter_by_class(entries, 'GlueVOView')
@@ -439,6 +500,7 @@ def main():
     id_to_se = {}
     for se in all_ses:
         id_to_se[se.glue['SEUniqueID'][0]] = se
+    log.info("All SEs found: %s" % ', '.join(id_to_se.keys()))
 
     # Determine the SE -> CP list mapping
     se_to_cps = {}
@@ -503,6 +565,7 @@ def main():
         "ClusterUniqueID")
 
     for ce in all_ces:
+        log.info("Creating ClassAds related to CE %s" % ce.glue['CEUniqueID'])
         # Adjoined cluster and site are required.
         try:
             cluster = join_FK(ce, all_clusters, "ClusterUniqueID")
@@ -560,6 +623,11 @@ def main():
         for entry in entries:
             bdii.emit(entry)
         bdii.run()
+
+def main():
+    cae, bdii = configure_emitter()
+    entries = osg_info_wrapper.main(return_entries=True)
+    upload(cae, bdii, entries)
 
 if __name__ == '__main__':
     main()

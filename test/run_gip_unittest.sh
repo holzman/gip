@@ -67,7 +67,7 @@ echo "Running Unittest: $UNITTEST"
 
 original_dir=`pwd`
 cd $VDT_LOCATION/test
-./$UNITTEST >> $GIP_LOCATION/var/logs/gip_unittest.log 2>&1
+python $UNITTEST >> $GIP_LOCATION/var/logs/gip_unittest.log 2>&1
 UNITTEST_RETURN_CODE=$?
 cd $original_dir
 

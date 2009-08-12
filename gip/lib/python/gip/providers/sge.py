@@ -41,6 +41,10 @@ def print_CE(cp):
 
         referenceSI00 = gip_cluster.getReferenceSI00(cp)
 
+        contact_string = cp_get(cp, "sge", 'job_contact', unique_id)
+        if contact_string.endswith("jobmanager-sge"):
+            contact_string += "-%s" % queue
+
         info = { \
             "ceUniqueID" : unique_id,
             "ceName" : ce_name,
@@ -61,7 +65,7 @@ def print_CE(cp):
             "wrt" : 3600,
             "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name),
             "hostName" : cp_get(cp, ce, 'host_name', ce_name),
-            "contact_string" : cp_get(cp, "sge", 'job_contact', unique_id),
+            "contact_string" : contact_string,
             "app_dir" : cp_get(cp, 'osg_dirs', 'app', "/OSG_APP_UNKNOWN"),
             "data_dir" : cp_get(cp, 'osg_dirs', 'data', "/OSG_DATA_UNKNOWN"),
             "default_se" : getDefaultSE(cp),

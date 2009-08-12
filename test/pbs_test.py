@@ -184,7 +184,21 @@ class TestPbsDynamic(unittest.TestCase):
                 has_lcgadmin_ce = True
         self.failUnless(has_lcgadmin_ce, msg="lcgadmin queue's CE was not found!")
 
+    def test_contact_string(self):
+        os.environ['GIP_TESTING'] = '1'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
+            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd)
+        self.failUnless(fd.close() == None)
 
+        for entry in entries:
+            if 'GlueCE' in entry.objectClass:
+                contact_string = entry.glue['CEInfoContactString']
+                self.failIf(contact_string == "", "Contact string is missing")
+                self.failIf(contact_string.endswith("jobmanager-pbs"), \
+                    "Contact string must include the queue.")
+                
     def make_site_tester(site):
         def test_site_entries(self):
             """

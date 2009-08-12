@@ -53,6 +53,21 @@ class TestCondorProvider(unittest.TestCase):
                     '%s:2119/jobmanager-condor-default' % ce_name)
         self.assertEquals(has_ce, True)
 
+    def test_contact_string(self):
+        os.environ['GIP_TESTING'] = '1'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py --config=test_configs/condor_test.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd)
+        self.failUnless(fd.close() == None)
+
+        for entry in entries:
+            if 'GlueCE' in entry.objectClass:
+                contact_string = entry.glue['CEInfoContactString']
+                self.failIf(contact_string == "", "Contact string is missing")
+                self.failIf(contact_string.endswith("jobmanager-condor"), \
+                    "Contact string must include the queue.")
+
     def check_for_ce(self, cename, entries):
         """
         Make sure there is a CE with unique id cename in the entries list.

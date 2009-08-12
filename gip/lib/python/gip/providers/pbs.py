@@ -63,7 +63,12 @@ def print_CE(cp):
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
         info['ceImpl'] = 'Globus'
         info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')
-        info['contact_string'] = cp_get(cp, "pbs", 'job_contact', unique_id)
+
+        contact_string = cp_get(cp, "pbs", 'job_contact', unique_id)
+        if contact_string.endswith("jobmanager-pbs"):
+            contact_string += "-%s" % queue
+        
+        info['contact_string'] = contact_string
         info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP")
         info['data_dir'] = cp_get(cp, 'osg_dirs', 'data', "/UNKNOWN_DATA")
         info['default_se'] = getDefaultSE(cp)

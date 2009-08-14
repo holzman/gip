@@ -98,8 +98,10 @@ def print_VOViewLocal(cp):
             'ceUniqueID'  : ce_unique_id,
             'voLocalID'   : vo,
             'acbr'        : 'VO:%s' % vo,
-            'running'     : queue_jobs.get(queue, {}).get('running', 0),
-            'waiting'     : queue_jobs.get(queue, {}).get('waiting', 0),
+            'running'     : queue_jobs.get(queue, {}).get(vo, {}).\
+                get('running', 0),
+            'waiting'     : queue_jobs.get(queue, {}).get(vo, {}).\
+                get('waiting', 0),
             #'free_slots'  : vo.get(queue, {}).get('free_slots', 0),
             'free_slots'  : 0, #TODO: fix
             'ert'         : 3600,

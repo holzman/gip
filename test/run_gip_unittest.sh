@@ -10,8 +10,8 @@ Note that the -V option is required.
 
 OPTIONS:
    -h      Show this message
-   -V      Show this message (require)
-   -t      The test to run
+   -V      Set VDT_LOCATION (required)
+   -t      The test to run (optional - defaults to test_gip.py)
 EOF
 }
 

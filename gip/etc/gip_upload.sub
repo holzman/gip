@@ -1,0 +1,14 @@
+OnExitRemove = false
+Error = /opt/osg/osg-1.2/gip/var/logs/gip_upload.err
+Output = /opt/osg/osg-1.2/gip/var/logs/gip_upload.out
+Executable = /home/brian/projects/gip/trunk/gip/libexec/osg_classad_transform.py
+Log = /opt/osg/osg-1.2/gip/var/logs/gip_upload.log
+Environment = PATH=/usr/bin:/bin;GIP_LOCATION=/opt/osg/osg-1.2/gip;VDT_LOCATION=/opt/osg/osg-1.2
+Arguments = -u -k /home/brian/projects/gip/trunk/gip/containerkey.pem
+Universe = local
+Notification = never
+DeferralTime = (CurrentTime + 300 + random(30))
+DeferralWindow = 99999999
+DeferralPrepTime = 180
+PeriodicRelease = HoldReasonCode =!= 1
+Queue

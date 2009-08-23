@@ -121,7 +121,12 @@ def main(cp = None, return_entries=False):
     response  = cp_getInt(cp, "gip", "response",  240)
     timeout = cp_getInt(cp, "gip",   "timeout",   240)
 
-    os.setpgrp()
+    try:
+        os.setpgrp()
+    except OSError, oe:
+        # If launched from a batch system (condor), we might not have perms
+        if oe.errno != 1:
+            raise
 
     # First, load the static info
     static_info = read_static(static_dir)

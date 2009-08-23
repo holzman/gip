@@ -1,19 +1,49 @@
 #!/usr/bin/python
 
+import os
+import re
 import sys
 import types
 import urllib
 import urllib2
+import httplib
 import datetime
 import optparse
+import threading
 import cStringIO
 
 from xml.sax.saxutils import XMLGenerator
 
+sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import osg_info_wrapper
 import gip_common
 
 log = gip_common.getLogger('CEMonUploader')
+
+class HTTPSHandler2(urllib2.HTTPSHandler):
+
+    def __init__(self, *cert, **kw):
+        
+        ext_key = kw.setdefault('key_file',
+            '/etc/grid-security/containerkey.pem')
+        ext_cert = kw.setdefault('certificate_file',
+            '/etc/grid-security/containercert.pem')
+
+        class HTTPSConnection2(httplib.HTTPSConnection):
+
+            def __init__(self, host):
+                httplib.HTTPSConnection.__init__(self, host)
+                self.key_file = ext_key 
+                self.cert_file = ext_cert
+        self.conn_class = HTTPSConnection2
+        del kw['key_file']
+        del kw['certificate_file']
+        urllib2.HTTPSHandler.__init__(self, *cert, **kw)
+ 
+    def https_open(self, req):
+        return self.do_open(self.conn_class, req)
+
+    https_request = urllib2.HTTPSHandler.do_request_
 
 def filter_by_class(entries, objectClass):
     filter = []
@@ -98,18 +128,20 @@ class ClassAdPrinter(ClassAdSink):
 
 class CEMonMessageProducer(ClassAdSink):
 
-    def __init__(self, hosts):
+    def __init__(self, hosts, certificate_file=None, key_file=None):
         super(CEMonMessageProducer, self).__init__()
+        self.certificate = certificate_file
+        self.key = key_file
         if not hasattr(self, 'default_url'):
             self.default_url = ''
         self.endpoints = []
         for host in hosts:
-            if host.startswith('https://'):
+            if host.find('://') >= 0:
                 self.endpoints.append(host)
             else:
                 if len(host.split(':')) != 2:
                     host = '%s:14001' % host
-                self.endpoints.append('https://%s%s' % (host, self.default_url))
+                self.endpoints.append('http://%s%s' % (host, self.default_url))
 
     def generate(self, messages, producer="OSG CE Sensor"):
         self.encoding = 'UTF-8'
@@ -217,7 +249,7 @@ class CEMonMessageProducer(ClassAdSink):
             t = threading.Thread(target=self._thread_target, args=(endpoint,))
             t.setName('Uploader for endpoint %s' % endpoint)
             t.setDaemon(True)
-            t.run()
+            t.start()
             all_threads.append(t)
         for t in all_threads:
             t.join()
@@ -232,16 +264,24 @@ class CEMonMessageProducer(ClassAdSink):
             req.add_header("Accept", "application/soap+xml, " \
                 "application/dime, multipart/related, text/*")
             log.info("Uploading output to %s" % endpoint)
-            urllib2.urlopen(req)
+            kw = {}
+            if self.certificate:
+                kw['certificate_file'] = self.certificate
+            if self.key:
+                kw['key_file'] = self.key
+            auth_handler = HTTPSHandler2(**kw)
+            opener = urllib2.build_opener(auth_handler)
+            output = opener.open(req).read()
+            # print output
         except Exception, e:
             log.exception(e)
             raise
 
 class BdiiSender(CEMonMessageProducer):
 
-    def __init__(self, hosts):
+    def __init__(self, hosts, **kw):
         self.default_url = '/'
-        super(BdiiSender, self).__init__(hosts)
+        super(BdiiSender, self).__init__(hosts, **kw)
         self.ads = []
         log.info("BDII info destinations: %s" % ', '.join(self.endpoints))
 
@@ -255,9 +295,9 @@ class BdiiSender(CEMonMessageProducer):
 
 class ClassAdSender(CEMonMessageProducer):
 
-    def __init__(self, hosts):
+    def __init__(self, hosts, **kw):
         self.default_url = '/ig/services/CEInfoCollector'
-        super(ClassAdSender, self).__init__(host)
+        super(ClassAdSender, self).__init__(hosts, **kw)
         self.ads = []
         log.info("ClassAd destinations: %s" % ', '.join(self.endpoints))
 
@@ -282,7 +322,7 @@ class ClassAdSender(CEMonMessageProducer):
             message = "[\n" + "\n        ".join(out) + "\n\n]"
             messages.append(message)
         output = self.generate(messages)
-        self.encoded_output = urllib.urlencode(output)
+        self.encoded_output = output
         super(ClassAdSender, self).run()
 
 class ClassAdEmitter(object):
@@ -441,26 +481,54 @@ def map_to_list(key_class, values_class, join):
             continue
     return results
 
+split_re = re.compile('\s*;?,?\s*')
 def configure_emitter():
 
     cae = ClassAdEmitter()
 
     parser = optparse.OptionParser()
     parser.add_option("-v", "--verbose", action="store_true", dest="verbose")
+    parser.add_option("-u", "--use_config", action="store_true", dest="config",
+        help="Use the settings in the GIP config files.")
     parser.add_option("-b", "--bdii", dest="bdii", help="BDII servers to send" \
         " this data to.", action="append")
     parser.add_option("-r", "--ress", dest="ress", help="ReSS servers to send" \
         " this data to.", action="append")
+    parser.add_option("-c", "--certificate", dest="certificate", help="Cert" \
+        "ificate file to use.", default=None)
+    parser.add_option("-k", "--keyfile", dest="key", help="Key file to use.",
+        default=None)
     options, args = parser.parse_args()
+    sys.argv = []
 
     if options.verbose:
         cae.add_emitter(ClassAdPrinter())
 
+    kw = {}
+    if options.key:
+        kw['key_file'] = options.key
+    if options.certificate:
+        kw['certificate_file'] = options.certificate
+
+    if not options.ress:
+        options.ress = []
+    if not options.bdii:
+        options.bdii = []
+
+    if options.config:
+        cp = gip_common.config()
+        bdii_endpoints = gip_common.cp_get(cp, "gip", "bdii_endpoints", "")
+        ress_endpoints = gip_common.cp_get(cp, "gip", "ress_endpoints", "")
+        for endpoint in split_re.split(ress_endpoints):
+            options.ress.append(endpoint)
+        for endpoint in split_re.split(bdii_endpoints):
+            options.bdii.append(endpoint)
+
     if options.ress:
-        cae.add_emitter(ClassAdSender())
+        cae.add_emitter(ClassAdSender(options.ress, **kw))
 
     if options.bdii:
-        bdii = BdiiSender(options.bdii)
+        bdii = BdiiSender(options.bdii, **kw)
     else:
         bdii = None
     

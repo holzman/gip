@@ -291,6 +291,8 @@ def configOsg(cp):
     __write_config(gip_sec, "srm", se, "srm_present")
     __write_config(gip_sec, "advertise_gums", site, "advertise_gums")
     __write_config(gip_sec, "other_ces", cluster, "other_ces")
+    __write_config(gip_sec, "bdii_endpoints", "gip", "bdii_endpoints")
+    __write_config(gip_sec, "ress_endpoints", "gip", "ress_endpoints")
 
     cluster_name = cp_get(cp2, gip_sec, "cluster_name", "")
     if len(cluster_name) > 0:

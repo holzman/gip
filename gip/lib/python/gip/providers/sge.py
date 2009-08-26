@@ -43,7 +43,7 @@ def print_CE(cp):
 
         contact_string = cp_get(cp, "sge", 'job_contact', unique_id)
         if contact_string.endswith("jobmanager-sge"):
-            contact_string += "-%s" % queue
+            contact_string += "-%s" % queue['name']
 
         info = { \
             "ceUniqueID" : unique_id,

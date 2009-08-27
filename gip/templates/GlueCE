@@ -32,10 +32,12 @@ GlueCEStateWaitingJobs: %(waiting)s
 GlueCEStateWorstResponseTime: %(wrt)s
 GlueCEStateFreeJobSlots: %(free_slots)s
 GlueCEPolicyMaxCPUTime: %(max_wall)s
+GlueCEPolicyMaxObtainableCPUTime: %(max_wall)s
 GlueCEPolicyMaxRunningJobs: %(max_running)s
 GlueCEPolicyMaxWaitingJobs: %(max_waiting)s
 GlueCEPolicyMaxTotalJobs: %(max_total)s
 GlueCEPolicyMaxWallClockTime: %(max_wall)s
+GlueCEPolicyMaxObtainableWallClockTime: %(max_wall)s
 GlueCEPolicyPriority: %(priority)s
 GlueCEPolicyAssignedJobSlots: %(assigned)s
 GlueCEPolicyMaxSlotsPerJob: %(max_slots)s

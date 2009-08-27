@@ -4,9 +4,8 @@ A generic provider for storage elements; written for the StorageElement class
 in gip_storage.
 """
 
-import os
 import sys
-import time
+import gip_sets as sets
 import socket
 
 from gip_common import cp_get, getLogger, config, getTemplate, printTemplate, \
@@ -16,32 +15,8 @@ from gip_storage import voListStorage, getSETape, \
 from gip.bestman.BestmanInfo import BestmanInfo
 from gip.dcache.DCacheInfo import DCacheInfo
 from gip.dcache.DCacheInfo19 import DCacheInfo19
-import gip_sets as sets
 
 log = getLogger("GIP.Storage.Generic")
-
-# Try to load up the Gratia StorageElement and StorageElementRecord modules.
-# If successful, the GIP has the capability to send information to Gratia.
-# The information we can send to Gratia is ultimately above and beyond the info
-# which we can fit in the BDII schema.
-has_gratia_capacity = True
-try:
-    # Try hard to bootstrap paths.
-    paths = ['/opt/vdt/gratia/probe/common', '$VDT_LOCATION/gratia/probe/'\
-        'common', '/opt/vdt/gratia/probe/service', '$VDT_LOCATION/gratia/probe'\
-        '/service']
-    for path in paths:
-        path = os.path.expandvars(path)
-        if os.path.exists(path) and path not in sys.path:
-            sys.path.append(path)
-
-    # Try to import the necessary Gratia modules.
-    import Gratia
-    import StorageElement
-    import StorageElementRecord
-except:
-    has_gratia_capacity = False
-    log.warning("Could not import the Gratia StorageElement modules.")
 
 def print_SA(se, cp, section="se"): #pylint: disable-msg=W0613
     """

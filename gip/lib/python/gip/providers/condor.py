@@ -183,11 +183,14 @@ def print_CE(cp):
             max_job_time=max_wall*60)
 
         referenceSI00 = gip_cluster.getReferenceSI00(cp)
-
+        contact_string = cp_get(cp, "condor", 'job_contact', ce_unique_id)
+        if contact_string.endswith("jobmanager-condor"):
+            contact_string += "-%s" % group
+	
         # Build all the GLUE CE entity information.
         info = { \
             "ceUniqueID"     : ce_unique_id,
-            'contact_string' : ce_unique_id,
+            'contact_string' : contact_string,
             "ceImpl"         : "Globus",
             "ceImplVersion"  : cp_get(cp, ce, 'globus_version', '4.0.6'),
             "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name),

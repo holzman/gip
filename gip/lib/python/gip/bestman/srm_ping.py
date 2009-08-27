@@ -65,7 +65,8 @@ def validate_proxy(cp, proxy_filename):
     fd = runCommand(cmd)
     fd.read()
     if fd.close():
-        return False
+        raise ProxyCreateException("Unable to validate proxy; " \
+              "command run by user daemon: %s" % cmd )
     return True
 
 key_re = re.compile('\s*Key=(.+)')
@@ -192,6 +193,7 @@ def bestman_srm_ping(cp, endpoint, section='bestman'):
         fp = runCommand(cmd)
         output = fp.read()
         if fp.close():
+            log.debug("srm-ping failed; command %s failed with output: %s" % (cmd, output))
             raise ValueError("srm-ping failed.")
         results = parse_srm_ping(output)
     finally:

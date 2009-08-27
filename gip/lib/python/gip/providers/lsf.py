@@ -82,13 +82,17 @@ def print_CE(cp):
         ert, wrt = responseTimes(cp, info["running"], info["wait"],
             max_job_time=info["max_wall"])
 
+        contact_string = cp_get(cp, "lsf", 'job_contact', unique_id)
+        if contact_string.endswith("jobmanager-lsf"):
+            contact_string += "-%s" % queue
+
         info['ert'] = ert
         info['wrt'] = wrt
         info['hostingCluster'] = cp_get(cp, ce, 'hosting_cluster', ce_name)
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
         info['ceImpl'] = 'Globus'
         info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')
-        info['contact_string'] = unique_id
+        info['contact_string'] = contact_string
         info['app_dir'] = cp.get('osg_dirs', 'app')
         info['data_dir'] = cp.get('osg_dirs', 'data')
         info['default_se'] = getDefaultSE(cp)

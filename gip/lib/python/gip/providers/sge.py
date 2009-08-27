@@ -41,6 +41,10 @@ def print_CE(cp):
 
         referenceSI00 = gip_cluster.getReferenceSI00(cp)
 
+        contact_string = cp_get(cp, "sge", 'job_contact', unique_id)
+        if contact_string.endswith("jobmanager-sge"):
+            contact_string += "-%s" % queue['name']
+
         info = { \
             "ceUniqueID" : unique_id,
             "ceName" : ce_name,
@@ -61,7 +65,7 @@ def print_CE(cp):
             "wrt" : 3600,
             "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name),
             "hostName" : cp_get(cp, ce, 'host_name', ce_name),
-            "contact_string" : unique_id,
+            "contact_string" : contact_string,
             "app_dir" : cp_get(cp, 'osg_dirs', 'app', "/OSG_APP_UNKNOWN"),
             "data_dir" : cp_get(cp, 'osg_dirs', 'data', "/OSG_DATA_UNKNOWN"),
             "default_se" : getDefaultSE(cp),
@@ -94,8 +98,10 @@ def print_VOViewLocal(cp):
             'ceUniqueID'  : ce_unique_id,
             'voLocalID'   : vo,
             'acbr'        : 'VO:%s' % vo,
-            'running'     : queue_jobs.get(queue, {}).get('running', 0),
-            'waiting'     : queue_jobs.get(queue, {}).get('waiting', 0),
+            'running'     : queue_jobs.get(queue, {}).get(vo, {}).\
+                get('running', 0),
+            'waiting'     : queue_jobs.get(queue, {}).get(vo, {}).\
+                get('waiting', 0),
             #'free_slots'  : vo.get(queue, {}).get('free_slots', 0),
             'free_slots'  : 0, #TODO: fix
             'ert'         : 3600,
@@ -107,9 +113,43 @@ def print_VOViewLocal(cp):
         info['total'] = info['waiting'] + info['running']
         printTemplate(VOView, info)
 
+def bootstrapSGE(cp):
+    """
+    If it exists, source
+    $SGE_ROOT/$SGE_CELL/common/settings.sh
+    """
+    sge_root = cp_get(cp, "sge", "sge_root", "")
+    if not sge_root:
+        log.warning("Could not locate sge_root in config file!  Not " \
+            "bootstrapping SGE environment.")
+        return
+    sge_cell = cp_get(cp, "sge", "sge_cell", "")
+    if not sge_cell:
+        log.warning("Could not locate sge_cell in config file!  Not " \
+            "bootstrapping SGE environment.")
+        return
+    settings = os.path.join(sge_root, sge_cell, "common/settings.sh")
+    if not os.path.exists(settings):
+        log.warning("Could not find the SGE settings file; looked in %s" % \
+            settings)
+        return
+    cmd = "/bin/sh -c 'source %s; /usr/bin/env'" % settings
+    fd = os.popen(cmd)
+    results = fd.read()
+    if fd.close():
+        log.warning("Unable to source the SGE settings file; tried %s." % \
+            settings)
+    for line in results.splitlines():
+        line = line.strip()
+        info = line.split('=', 2)
+        if len(info) != 2:
+            continue
+        os.environ[info[0]] = info[1]
+
 def main():
     try:
         cp = config()
+        bootstrapSGE(cp)
         addToPath(cp_get(cp, "sge", "sge_path", "."))
         vo_map = VoMapper(cp)
         pbsVersion = getLrmsInfo(cp)

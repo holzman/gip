@@ -254,9 +254,11 @@ def configOsg(cp):
     
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
-    __write_config(pbs_sec, "wsgram", pbs, "wsgram")
-    __write_config(pbs_sec, "enabled", pbs, "enabled")
-    __write_config(pbs_sec, "job_contact", pbs, "contact_string")
+    # With the call to __write_all_options_config, the next 2 lines are obsolete
+    #__write_config(pbs_sec, "wsgram", pbs, "wsgram")
+    #__write_config(pbs_sec, "enabled", pbs, "enabled")
+    # Changing the provider to use job_contact, rather than contact_string
+    #__write_config(pbs_sec, "job_contact", pbs, "contact_string")
     
     # attempt to put all the pbs options into the internal config object
     # so that whitelisting and blacklisting work without having to resort to
@@ -289,6 +291,8 @@ def configOsg(cp):
     __write_config(gip_sec, "srm", se, "srm_present")
     __write_config(gip_sec, "advertise_gums", site, "advertise_gums")
     __write_config(gip_sec, "other_ces", cluster, "other_ces")
+    __write_config(gip_sec, "bdii_endpoints", "gip", "bdii_endpoints")
+    __write_config(gip_sec, "ress_endpoints", "gip", "ress_endpoints")
 
     cluster_name = cp_get(cp2, gip_sec, "cluster_name", "")
     if len(cluster_name) > 0:

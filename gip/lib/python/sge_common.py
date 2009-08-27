@@ -30,7 +30,7 @@ log = getLogger("GIP.SGE")
 sge_version_cmd = "qstat -help"
 sge_queue_info_cmd = 'qstat -f -xml'
 sge_queue_config_cmd = 'qconf -sq %s'
-sge_job_info_cmd = 'qstat -xml'
+sge_job_info_cmd = 'qstat -xml -u \*'
 sge_queue_list_cmd = 'qconf -sql'
 
 # h_rt - hard real time limit (max_walltime)
@@ -222,15 +222,19 @@ def getQueueInfo(cp):
     return queue_list, queue_info
 
 def getJobsInfo(vo_map, cp):
-    xml = runCommand(sge_queue_info_cmd)
+    xml = runCommand(sge_job_info_cmd)
     handler = JobInfoParser()
     parseXmlSax(xml, handler)
     job_info = handler.getJobInfo()
     queue_jobs = {}
-
+    
     for job in job_info:
-        user = job_info['JB_owner']
-        state = job_info['state']
+        user = job['JB_owner']
+        state = job['state']
+        queue = job.get('queue_name', '')
+        if queue.strip() == '':
+            queue = 'waiting'
+        queue = queue.split('@')[0]
         try:
             vo = vo_map[user].lower()
         except:
@@ -238,14 +242,15 @@ def getJobsInfo(vo_map, cp):
             # associated with a VO, so we skip the job.
             continue
 
-        info = queue_jobs.get(vo, {"running":0, "wait":0, "total":0})
-        if stat3 == "r":
+        voinfo = queue_jobs.setdefault(queue, {})
+        info = voinfo.setdefault(vo, {"running":0, "wait":0, "total":0})
+        if state == "r":
             info["running"] += 1
         else:
             info["wait"] += 1
         info["total"] += 1
         info["vo"] = vo
-        queue_jobs[vo] = info
+    log.debug("SGE job info: %s" % str(queue_jobs))
     return queue_jobs
 
 class SGEQueueConfig(UserDict):
@@ -259,7 +264,8 @@ class SGEQueueConfig(UserDict):
         for pair in config_fp:
             if len(pair) > 1:
                 key_val = pair.split()
-                self[key_val[0].strip()] = key_val[1].strip()
+                if len(key_val) > 1:
+                    self[key_val[0].strip()] = key_val[1].strip()
 
 def parseNodes(cp):
     """
@@ -305,6 +311,8 @@ def getVoQueues(cp):
         rvf_queue_list = rvf_queue_list.split()
         log.info("The RVF lists the following queues: %s." % ', '.join( \
             rvf_queue_list))
+    else:
+        log.warning("Unable to load a RVF file for SGE.")
     for queue, qinfo in queue_list.items():
         if rvf_queue_list and queue not in rvf_queue_list:
             continue

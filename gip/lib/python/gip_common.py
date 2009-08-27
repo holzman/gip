@@ -866,3 +866,13 @@ def get_user_pwd(name):
                 "pw_shell"  : pwd_tuple[6]
                }
     return pwd_dict
+
+# Adding back into the trunk, since the SGE provider expects it
+class _Constants: #pylint: disable-msg=C0103
+    """
+    A convenience class for important constants.
+    """
+    
+    def __init__(self):
+        self.CR = '\r'
+        self.LF = '\n'

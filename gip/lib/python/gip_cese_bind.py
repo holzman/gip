@@ -159,6 +159,9 @@ def getCESEBindInfo(cp):
                     'access_point' : ap,
                    }
             if mount_point:
+                # Note: always start this with a newline, otherwise the
+                # GLUE template will put this on the same line as the previous
+                # attribute
                 info['mount_point'] = '\nGlueCESEBindMountInfo: %s' % \
                     mount_point
             else:

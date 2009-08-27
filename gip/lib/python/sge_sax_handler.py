@@ -67,9 +67,9 @@ class QueueInfoParser(ContentHandler):
 
 class JobInfoParser(ContentHandler):
     def __init__(self):
-        self.currentJobInfoElmList = list(['JB_job_number', 'JAT_prio',
+        self.currentJobInfoElmList = ['JB_job_number', 'JAT_prio',
             'JB_name', 'JB_owner', 'state', 'JAT_start_time',
-            'JB_submission_time', 'slots'])
+            'JB_submission_time', 'slots', 'queue_name']
 
     def startDocument(self):
         self.elmContents = ''
@@ -79,15 +79,16 @@ class JobInfoParser(ContentHandler):
     def startElement(self, name, attrs):
         if name == 'job_list':
             self.currentJobInfo = {}
-        else:
-            pass
+        elif name in self.currentJobInfoElmList:
+            self.elmContents = ''
 
     def endElement(self, name):
         import copy
         if name == 'job_list':
             self.JobList.append(copy.deepcopy(self.currentJobInfo))
         elif name in self.currentJobInfoElmList:
-            self.currentJobInfo[name] = str(self.elmContents)
+            self.currentJobInfo[str(name)] = str(self.elmContents)
+            self.elmContents = ''
         else:
             pass
 

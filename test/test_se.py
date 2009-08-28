@@ -9,6 +9,7 @@ sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, cp_get, voList
 from gip_testing import runTest, streamHandler
 from gip_ldap import read_ldap
+import gip.bestman.srm_ping as srm_ping
 
 class TestSEConfigs(unittest.TestCase):
 
@@ -275,6 +276,40 @@ class TestSEConfigs(unittest.TestCase):
         self.check_se_1(entries, cp)
         #self.check_se_2(entries, cp)
 
+    def test_bestman_space(self):
+        """
+        Make sure that the correct space-calc is used for BestMan in the case
+        where there are no static tokens.
+
+        Written to test bug from ticket #38
+        """
+        entries, cp = self.run_test_config("bestman_space.conf")
+        # Check space for SE
+        found_se = False
+        for entry in entries:
+            if 'GlueSE' not in entry.objectClass:
+                continue
+            if 'cit-se2.ultralight.org' not in entry.glue['SEUniqueID']:
+                continue
+            self.failUnless(int(entry.glue['SESizeTotal'][0]) == 3)
+            self.failUnless(int(entry.glue['SESizeFree'][0]) == 2)
+            found_se = True
+        self.failUnless(found_se, msg="Could not find the correct target SE.")
+        # Check space for SA
+        found_sa = False
+        for entry in entries:
+            if 'GlueSA' not in entry.objectClass:
+                continue
+            if 'GlueSEUniqueID=cit-se2.ultralight.org' not in \
+                    entry.glue['ChunkKey']:
+                continue
+            if 'default' not in entry.glue['SALocalID']:
+                continue
+            self.failUnless(int(entry.glue['SATotalOnlineSize'][0]) == 3)
+            self.failUnless(int(entry.glue['SAFreeOnlineSize'][0]) == 2)
+            found_sa = True
+        self.failUnless(found_se, msg="Could not find the correct target SA.")
+
     def checkReservedRules1(self, entries):
         """
         Make sure that on a SA with multiple supported VOs that there is
@@ -325,6 +360,32 @@ class TestSEConfigs(unittest.TestCase):
             self.failUnless(int(entry.glue['SATotalOnlineSize'][0]) == 3000)
         self.failUnless(found_sa, msg="Could not find the correct target SA.")
 
+    def checkPaths(self, entries):
+        """
+        For given LG and reservations, make sure the paths are correct.
+        """
+        lkgrp = [('atlasuser-disk-link-group:replica:nearline', 'ATLASUSERDISK:10007', '/pnfs/usatlas.bnl.gov/atlasuserdisk/'),
+                 ('atlasgroup-disk-link-group:replica:nearline', 'ATLASGROUPDISK:10006', '/pnfs/usatlas.bnl.gov/atlasgroupdisk/')
+                ]
+        for grp, res, path in lkgrp:
+            found_sa = False
+            for entry in entries:
+                if 'GlueSA' not in entry.objectClass:
+                    continue
+                if grp not in entry.glue['SALocalID']:
+                    continue
+                found_sa = True
+                self.failUnless(path in entry.glue['SAPath'])
+            self.failUnless(found_sa, msg="Could not find target SA")
+            found_vo = False
+            for entry in entries:
+                if 'GlueVOInfo' not in entry.objectClass:
+                    continue
+                if res not in entry.glue['VOInfoLocalID']:
+                    continue
+                found_vo = True
+                self.failUnless(path in entry.glue['VOInfoPath'])
+            self.failUnless(found_vo, msg="Could not find target VOInfo.")
 
     def test_ngdf_config(self):
         entries, cp = self.run_test_config('red-se-test3.conf')
@@ -334,6 +395,10 @@ class TestSEConfigs(unittest.TestCase):
 
     def test_fnal_config(self):
         entries, cp = self.run_test_config('red-se-test4.conf')
+
+    def test_atlas_config(self):
+        entries, cp = self.run_test_config('red-se-test6.conf')
+        self.checkPaths(entries)
 
     def test_vo_dirs_config(self):
         """
@@ -352,7 +417,33 @@ class TestSEConfigs(unittest.TestCase):
                 '/pnfs/unl.edu/data4/cms/store', msg="vo_dirs override failed.")
         self.failUnless(found_cms_voinfo, msg="VOInfo for CMS missing.")
 
+    def verify_bestman_output(self, info):
+        """
+        Verify that the two example gsiftp servers are picked up.
+        Verify that the version number is correct.
+        """
+        gsiftp = 'gsiftp://cithep160.ultralight.org:5000;' \
+            'gsiftp://cithep251.ultralight.org:5000'
+        self.failUnless(info['gsiftpTxfServers'] == gsiftp, msg="Incorrect " \
+            "gsiftp server line.")
+        self.failUnless(info['backend_version'] == '2.2.1.2.i4', msg=\
+            "Incorrect backend version number.")
+
+    def test_bestman_output(self):
+        """
+        Test to make sure we can parse BestMan output for the new and old server
+        responses, as well as the new and old client formats
+        """
+        os.environ['GIP_TESTING'] = "1"
+        cfg_name = os.path.join("test_configs", "red-se-test.conf")
+        cp = config(cfg_name)
+        info = srm_ping.bestman_srm_ping(cp, "1")
+        self.verify_bestman_output(info)
+        srm_ping.bestman_srm_ping(cp, "2")
+        self.verify_bestman_output(info)
+
 def main():
+    os.environ['GIP_TESTING'] = '1'
     cp = config("test_configs/red-se-test.conf")
     stream = streamHandler(cp)
     runTest(cp, TestSEConfigs, stream, per_site=False)

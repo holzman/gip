@@ -33,6 +33,9 @@ class TestClassicSE(unittest.TestCase):
         cp.set("classic_se", "default", "/opt/osg/data/$VO")
         cp.set("classic_se", "space", "%i, %i, %i" % (1000**2, 10*1000**2,
             11*1000**2))
+        cp.add_section("vo")
+        cp.set("vo", "user_vo_map", "test_configs/red-osg-user-vo-map.txt")
+
         self.output = cStringIO.StringIO()
         old_stdout = sys.stdout
         sys.stdout = self.output
@@ -94,14 +97,15 @@ class TestClassicSE(unittest.TestCase):
     def test_many_sa(self):
         vos = voList(self.cp)
         for sa in self.sas:
-            if len(sa.glue['SAAccessControlBaseRule']) == 1:
-               rule = sa.glue['SAAccessControlBaseRule'][0]
-               if rule.startswith("VO:"):
-                   rule = rule[3:]
-               if rule in vos:
-                   vos.remove(rule)
-               else:
-                   self.fail("Unknown VO supported: %s." % rule)
+            print sa
+            rules = sa.glue['SAAccessControlBaseRule']
+            for rule in rules:
+                if rule.startswith("VO:"):
+                    rule = rule[3:]
+                if rule in vos:
+                    vos.remove(rule)
+                else:
+                    self.fail("Unknown VO supported: %s." % rule)
         self.failIf(vos, msg="VOs with no classicSE support: %s" % \
             ', '.join(vos))
 
@@ -119,6 +123,7 @@ class TestClassicSE(unittest.TestCase):
             #self.failUnless(sa.glue['SAPolicyFileLifeTime'] in policy_enum)
 
 def main():
+    os.environ['GIP_TESTING'] = '1'
     cp = config()
     stream = streamHandler(cp)
     runTest(cp, TestClassicSE, stream, per_site=False)

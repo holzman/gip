@@ -1,0 +1,408 @@
+<?xml version="1.0"?>
+<!DOCTYPE classads SYSTEM "classads.dtd">
+<classads>
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill@fnpcosg1.fnal.gov</s></a>
+    <a n="QuillDatabaseName"><s>quill</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>q53llr21</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MyAddress"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MaxJobsRunning"><i>2000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 20 || GridMonitorJob == TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8388528</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.2.3 May 11 2009 BuildID: 151729 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MyCurrentTime"><i>1245895765</i></a>
+    <a n="Machine"><s>fnpc3x1.fnal.gov</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1245895588</i></a>
+    <a n="MonitorSelfCPUUsage"><r>4.153999965637922E-03</r></a>
+    <a n="MonitorSelfImageSize"><r>1.201840000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>92876</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1213035256</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>fnpc3x1.fnal.gov</s></a>
+    <a n="RunningJobs"><i>1</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_atlas.usatlas4@fnal.gov</s></a>
+    <a n="DaemonStartTime"><i>1245864703</i></a>
+    <a n="UpdateSequenceNumber"><i>234</i></a>
+    <a n="ServerTime"><i>1245895765</i></a>
+    <a n="LastHeardFrom"><i>1245895765</i></a>
+    <a n="UpdatesTotal"><i>6845</i></a>
+    <a n="UpdatesSequenced"><i>6842</i></a>
+    <a n="UpdatesLost"><i>2281</i></a>
+    <a n="UpdatesHistory"><s>0x49249249249249249249249249248924</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill@fnpcosg1.fnal.gov</s></a>
+    <a n="QuillDatabaseName"><s>quill</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>q53llr21</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MyAddress"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MaxJobsRunning"><i>2000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 20 || GridMonitorJob == TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8388528</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.2.3 May 11 2009 BuildID: 151729 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MyCurrentTime"><i>1245895765</i></a>
+    <a n="Machine"><s>fnpc3x1.fnal.gov</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1245895588</i></a>
+    <a n="MonitorSelfCPUUsage"><r>4.153999965637922E-03</r></a>
+    <a n="MonitorSelfImageSize"><r>1.201840000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>92876</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1213035256</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>fnpc3x1.fnal.gov</s></a>
+    <a n="RunningJobs"><i>28</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_e907.mipppro@fnal.gov</s></a>
+    <a n="DaemonStartTime"><i>1245864703</i></a>
+    <a n="UpdateSequenceNumber"><i>242</i></a>
+    <a n="ServerTime"><i>1245895765</i></a>
+    <a n="LastHeardFrom"><i>1245895765</i></a>
+    <a n="UpdatesTotal"><i>5031</i></a>
+    <a n="UpdatesSequenced"><i>5028</i></a>
+    <a n="UpdatesLost"><i>1677</i></a>
+    <a n="UpdatesHistory"><s>0x49249249249249249248924924924924</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill@fnpcosg1.fnal.gov</s></a>
+    <a n="QuillDatabaseName"><s>quill</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>q53llr21</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MyAddress"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MaxJobsRunning"><i>2000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 20 || GridMonitorJob == TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8388528</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.2.3 May 11 2009 BuildID: 151729 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MyCurrentTime"><i>1245895765</i></a>
+    <a n="Machine"><s>fnpc3x1.fnal.gov</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1245895588</i></a>
+    <a n="MonitorSelfCPUUsage"><r>4.153999965637922E-03</r></a>
+    <a n="MonitorSelfImageSize"><r>1.201840000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>92876</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1213035256</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>fnpc3x1.fnal.gov</s></a>
+    <a n="RunningJobs"><i>0</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>1</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_nanohub.nanohub@fnal.gov</s></a>
+    <a n="DaemonStartTime"><i>1245864703</i></a>
+    <a n="UpdateSequenceNumber"><i>242</i></a>
+    <a n="ServerTime"><i>1245895765</i></a>
+    <a n="LastHeardFrom"><i>1245895765</i></a>
+    <a n="UpdatesTotal"><i>6953</i></a>
+    <a n="UpdatesSequenced"><i>6952</i></a>
+    <a n="UpdatesLost"><i>2317</i></a>
+    <a n="UpdatesHistory"><s>0x49249249249249249249249224924924</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill@fnpcosg1.fnal.gov</s></a>
+    <a n="QuillDatabaseName"><s>quill</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>q53llr21</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MyAddress"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MaxJobsRunning"><i>2000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 20 || GridMonitorJob == TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8388528</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.2.3 May 11 2009 BuildID: 151729 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MyCurrentTime"><i>1245895765</i></a>
+    <a n="Machine"><s>fnpc3x1.fnal.gov</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1245895588</i></a>
+    <a n="MonitorSelfCPUUsage"><r>4.153999965637922E-03</r></a>
+    <a n="MonitorSelfImageSize"><r>1.201840000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>92876</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1213035256</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>fnpc3x1.fnal.gov</s></a>
+    <a n="RunningJobs"><i>24</i></a>
+    <a n="IdleJobs"><i>20</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_nysgrid.nysgrid@fnal.gov</s></a>
+    <a n="DaemonStartTime"><i>1245864703</i></a>
+    <a n="UpdateSequenceNumber"><i>242</i></a>
+    <a n="ServerTime"><i>1245895765</i></a>
+    <a n="LastHeardFrom"><i>1245895765</i></a>
+    <a n="UpdatesTotal"><i>6903</i></a>
+    <a n="UpdatesSequenced"><i>6902</i></a>
+    <a n="UpdatesLost"><i>2301</i></a>
+    <a n="UpdatesHistory"><s>0x49249249249124924924924924924924</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill@fnpcfg1.fnal.gov</s></a>
+    <a n="QuillDatabaseName"><s>quill</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>q53llr21</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;131.225.166.3:63157&gt;</s></a>
+    <a n="MyAddress"><s>&lt;131.225.166.3:63157&gt;</s></a>
+    <a n="MaxJobsRunning"><i>2000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 20 || GridMonitorJob == TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8388528</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.2.3 May 11 2009 BuildID: 151729 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MyCurrentTime"><i>1245895601</i></a>
+    <a n="Machine"><s>fnpc4x1.fnal.gov</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;131.225.166.3:63157&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1245895579</i></a>
+    <a n="MonitorSelfCPUUsage"><r>1.665789932012558E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>9.456800000000000E+04</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>67304</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1214342489</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>fnpc4x1.fnal.gov</s></a>
+    <a n="RunningJobs"><i>399</i></a>
+    <a n="IdleJobs"><i>98</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_e875.minosgli@fnal.gov</s></a>
+    <a n="DaemonStartTime"><i>1245684369</i></a>
+    <a n="UpdateSequenceNumber"><i>1681</i></a>
+    <a n="ServerTime"><i>1245895601</i></a>
+    <a n="LastHeardFrom"><i>1245895601</i></a>
+    <a n="UpdatesTotal"><i>5046</i></a>
+    <a n="UpdatesSequenced"><i>5045</i></a>
+    <a n="UpdatesLost"><i>1682</i></a>
+    <a n="UpdatesHistory"><s>0x49249249249249249249249124924924</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill@fnpcfg1.fnal.gov</s></a>
+    <a n="QuillDatabaseName"><s>quill</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>q53llr21</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;131.225.166.3:63157&gt;</s></a>
+    <a n="MyAddress"><s>&lt;131.225.166.3:63157&gt;</s></a>
+    <a n="MaxJobsRunning"><i>2000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 20 || GridMonitorJob == TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8388528</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.2.3 May 11 2009 BuildID: 151729 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MyCurrentTime"><i>1245895601</i></a>
+    <a n="Machine"><s>fnpc4x1.fnal.gov</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;131.225.166.3:63157&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1245895579</i></a>
+    <a n="MonitorSelfCPUUsage"><r>1.665789932012558E-01</r></a>
+    <a n="MonitorSelfImageSize"><r>9.456800000000000E+04</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>67304</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1214342489</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>fnpc4x1.fnal.gov</s></a>
+    <a n="RunningJobs"><i>1</i></a>
+    <a n="IdleJobs"><i>1</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_nysgrid.nysgrid@fnal.gov</s></a>
+    <a n="DaemonStartTime"><i>1245684369</i></a>
+    <a n="UpdateSequenceNumber"><i>1255</i></a>
+    <a n="ServerTime"><i>1245895601</i></a>
+    <a n="LastHeardFrom"><i>1245895601</i></a>
+    <a n="UpdatesTotal"><i>3348</i></a>
+    <a n="UpdatesSequenced"><i>3347</i></a>
+    <a n="UpdatesLost"><i>1116</i></a>
+    <a n="UpdatesHistory"><s>0x49249249249124924924924924924924</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill@fnpcfg2.fnal.gov</s></a>
+    <a n="QuillDatabaseName"><s>quill</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>q53llr21</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;131.225.166.9:60913&gt;</s></a>
+    <a n="MyAddress"><s>&lt;131.225.166.9:60913&gt;</s></a>
+    <a n="MaxJobsRunning"><i>2000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 20 || GridMonitorJob == TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8388528</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.2.3 May 11 2009 BuildID: 151729 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MyCurrentTime"><i>1245895804</i></a>
+    <a n="Machine"><s>fnpc5x2.fnal.gov</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;131.225.166.9:60913&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1245895783</i></a>
+    <a n="MonitorSelfCPUUsage"><r>4.162000026553869E-03</r></a>
+    <a n="MonitorSelfImageSize"><r>4.036800000000000E+04</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>13124</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1232045626</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>fnpc5x2.fnal.gov</s></a>
+    <a n="RunningJobs"><i>10</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>minosgli@fnal.gov</s></a>
+    <a n="DaemonStartTime"><i>1245683859</i></a>
+    <a n="UpdateSequenceNumber"><i>1251</i></a>
+    <a n="ServerTime"><i>1245895804</i></a>
+    <a n="LastHeardFrom"><i>1245895804</i></a>
+    <a n="UpdatesTotal"><i>3756</i></a>
+    <a n="UpdatesSequenced"><i>3755</i></a>
+    <a n="UpdatesLost"><i>1252</i></a>
+    <a n="UpdatesHistory"><s>0x49249249249249249224924924924924</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill@fnpcfg2.fnal.gov</s></a>
+    <a n="QuillDatabaseName"><s>quill</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>q53llr21</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;131.225.166.9:60913&gt;</s></a>
+    <a n="MyAddress"><s>&lt;131.225.166.9:60913&gt;</s></a>
+    <a n="MaxJobsRunning"><i>2000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 20 || GridMonitorJob == TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8388528</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.2.3 May 11 2009 BuildID: 151729 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MyCurrentTime"><i>1245895503</i></a>
+    <a n="Machine"><s>fnpc5x2.fnal.gov</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;131.225.166.9:60913&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1245895303</i></a>
+    <a n="MonitorSelfCPUUsage"><r>4.166999831795692E-03</r></a>
+    <a n="MonitorSelfImageSize"><r>4.036800000000000E+04</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>13124</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1232045626</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>fnpc5x2.fnal.gov</s></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="RunningJobs"><i>0</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="Name"><s>nanohub@fnal.gov</s></a>
+    <a n="DaemonStartTime"><i>1245683859</i></a>
+    <a n="UpdateSequenceNumber"><i>367</i></a>
+    <a n="ServerTime"><i>1245895503</i></a>
+    <a n="LastHeardFrom"><i>1245895503</i></a>
+    <a n="UpdatesTotal"><i>1104</i></a>
+    <a n="UpdatesSequenced"><i>1059</i></a>
+    <a n="UpdatesLost"><i>368</i></a>
+    <a n="UpdatesHistory"><s>0x49249249249249249249244924924924</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill@fnpcfg2.fnal.gov</s></a>
+    <a n="QuillDatabaseName"><s>quill</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>q53llr21</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;131.225.166.9:60913&gt;</s></a>
+    <a n="MyAddress"><s>&lt;131.225.166.9:60913&gt;</s></a>
+    <a n="MaxJobsRunning"><i>2000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 20 || GridMonitorJob == TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8388528</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.2.3 May 11 2009 BuildID: 151729 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MyCurrentTime"><i>1245895804</i></a>
+    <a n="Machine"><s>fnpc5x2.fnal.gov</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;131.225.166.9:60913&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1245895783</i></a>
+    <a n="MonitorSelfCPUUsage"><r>4.162000026553869E-03</r></a>
+    <a n="MonitorSelfImageSize"><r>4.036800000000000E+04</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>13124</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1232045626</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>fnpc5x2.fnal.gov</s></a>
+    <a n="RunningJobs"><i>10</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>nysgrid@fnal.gov</s></a>
+    <a n="DaemonStartTime"><i>1245683859</i></a>
+    <a n="UpdateSequenceNumber"><i>1129</i></a>
+    <a n="ServerTime"><i>1245895804</i></a>
+    <a n="LastHeardFrom"><i>1245895804</i></a>
+    <a n="UpdatesTotal"><i>3306</i></a>
+    <a n="UpdatesSequenced"><i>3305</i></a>
+    <a n="UpdatesLost"><i>1102</i></a>
+    <a n="UpdatesHistory"><s>0x44924924924924924924924924924924</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+</classads>

@@ -1,0 +1,23 @@
+
+SRM-CLIENT: got remote srm object
+
+SRM-PING: Wed Apr 29 11:05:33 CDT 2009 Calling SrmPing Request...
+Ping versionInfo=v2.2
+
+Extra information
+        Key=backend_type
+        Value=BeStMan
+        Key=backend_version
+        Value=2.2.1.2.i4
+        Key=backend_build_date
+        Value=2008-12-16T02:00:24.000Z 
+        Key=GatewayMode
+        Value=Enabled
+        Key=gsiftpTxfServers
+        Value=gsiftp://cithep160.ultralight.org:5000;gsiftp://cithep251.ultralight.org:5000
+        Key=clientDN
+        Value=/DC=org/DC=doegrids/OU=People/CN=Brian Bockelman 504307
+        Key=gumsIDMapped
+        Value=uscms01
+        Key=staticToken(0)
+        Value=DEFAULT desc=DEFAULT size=10737418240000

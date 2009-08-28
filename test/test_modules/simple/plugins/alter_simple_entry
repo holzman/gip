@@ -1,5 +1,0 @@
-#!/usr/bin/env python
-
-print "dn: GlueCEUniqueID=red.unl.edu:2119/jobmanager-pbs-workq,mds-vo-name=Nebraska,o=grid"
-print "GlueCEPolicyAssignedJobSlots: 1234"
-

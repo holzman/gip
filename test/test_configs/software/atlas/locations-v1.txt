@@ -1,4 +1,0 @@
-#
-VO-cms-CMKIN_6_1_0 CMKIN_6_1_0 /opt/osg/app/cmssoft/cms
-LCG-2_7_0 2.7.0 /opt/osg/app/dteam
-

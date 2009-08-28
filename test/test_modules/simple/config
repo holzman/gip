@@ -1,7 +1,0 @@
-
-[gip]
-temp_dir = test_modules/tmp
-plugin_dir = test_modules/simple/plugins
-provider_dir = test_modules/simple/providers
-static_dir = test_modules/static
-

@@ -1,3 +1,0 @@
-dn: GlueCEUniqueID=red.unl.edu:2119/jobmanager-pbs-cms,mds-vo-name=Nebraska,o=grid
-FermiGridBatchSlotsPerNode: 5
-

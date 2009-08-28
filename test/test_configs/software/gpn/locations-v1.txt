@@ -1,8 +1,0 @@
-
-VO-cms-CMSSW_0_9_2 CMSSW_0_9_2 /opt/osg/app/cmssoft/cms
-VO-cms-CMSSW_0_8_4 CMSSW_0_8_4 /opt/osg/app/cmssoft/cms
-VO-cms-CMSSW_1_1_0 CMSSW_1_1_0 /opt/osg/app/cmssoft/cms
-VO-cms-CMSSW_1_2_1 CMSSW_1_2_1 /opt/osg/app/cmssoft/cms
-VO-cms-CMSSW_1_2_2 CMSSW_1_2_2 /opt/osg/app/cmssoft/cms
-VO-cms-CMSSW_1_2_3 CMSSW_1_2_3 /opt/osg/app/cmssoft/cms
-

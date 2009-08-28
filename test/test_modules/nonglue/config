@@ -1,8 +1,0 @@
-
-[gip]
-temp_dir = test_modules/tmp
-plugin_dir = test_modules/nonglue/plugins
-provider_dir = test_modules/nonglue/providers
-alter_attributes = test_modules/nonglue/alter_attributes
-add_attributes = test_modules/nonglue/add_attributes
-static_dir = test_modules/static

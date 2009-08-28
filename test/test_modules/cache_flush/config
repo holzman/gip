@@ -1,7 +1,0 @@
-
-[gip]
-temp_dir = test_modules/cache_flush/tmp
-plugin_dir = test_modules/cache_flush/plugins
-provider_dir = test_modules/cache_flush/providers
-static_dir = test_modules/cache_flush/static
-

@@ -6,6 +6,7 @@ objectClass: GlueCEAccessControlBase
 objectClass: GlueCEInfo
 objectClass: GlueCEPolicy
 objectClass: GlueCEState
+objectClass: GlueInformationService
 objectClass: GlueKey
 GlueCEHostingCluster: %(hostingCluster)s
 GlueCEName: %(queue)s
@@ -44,6 +45,7 @@ GlueCEPolicyMaxSlotsPerJob: %(max_slots)s
 GlueCEPolicyPreemption: %(preemption)s
 %(acbr)s
 GlueCECapability: CPUScalingReferenceSI00=%(referenceSI00)s
+GlueInformationServiceURL: %(bdii)s
 GlueForeignKey: GlueClusterUniqueID=%(clusterUniqueID)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3

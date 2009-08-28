@@ -2,11 +2,13 @@ dn: GlueClusterUniqueID=%(clusterUniqueID)s,mds-vo-name=local,o=grid
 objectClass: GlueClusterTop
 objectClass: GlueCluster
 objectClass: GlueSchemaVersion
+objectClass: GlueInformationService
 objectClass: GlueKey
 GlueClusterName: %(cluster)s
 GlueClusterTmpDir: %(tmp)s
 GlueClusterWNTmpDir: %(wn_tmp)s
 GlueClusterUniqueID: %(clusterUniqueID)s
+GlueInformationServiceURL: %(bdii)s
 GlueForeignKey: GlueSiteUniqueID=%(siteUniqueID)s
 %(glueClusters)sGlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
@@ -22,6 +24,7 @@ objectClass: GlueHostMainMemory
 objectClass: GlueHostNetworkAdapter
 objectClass: GlueHostOperatingSystem
 objectClass: GlueHostProcessor
+objectClass: GlueInformationService
 objectClass: GlueKey
 GlueChunkKey: GlueClusterUniqueID=%(clusterUniqueID)s
 %(applications)sGlueHostArchitectureSMPSize: %(cpuCount)s
@@ -45,6 +48,7 @@ GlueSubClusterPhysicalCPUs: %(cpus)s
 GlueSubClusterLogicalCPUs: %(cores)s
 GlueSubClusterTmpDir: %(tmp)s
 GlueSubClusterWNTmpDir: %(wn_tmp)s
+GlueInformationServiceURL: %(bdii)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3
 

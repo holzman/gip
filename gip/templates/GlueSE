@@ -2,6 +2,7 @@ dn: GlueSEUniqueID=%(seUniqueID)s,Mds-Vo-name=local,o=grid
 objectClass: GlueSETop
 objectClass: GlueSE
 objectClass: GlueKey
+objectClass: GlueInformationService
 objectClass: GlueSchemaVersion
 GlueSEUniqueID: %(seUniqueID)s
 GlueSEName: %(seName)s
@@ -16,6 +17,7 @@ GlueSEPort: %(port)s
 GlueSESizeTotal: %(total)s
 GlueSESizeFree: %(free)s
 GlueSEArchitecture: %(arch)s
+GlueInformationServiceURL: %(bdii)s
 GlueForeignKey: GlueSiteUniqueID=%(siteUniqueID)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3

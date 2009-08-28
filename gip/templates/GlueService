@@ -14,7 +14,7 @@ GlueServiceStatus: %(status)s
 GlueServiceStatusInfo: %(statusInfo)s
 GlueServiceWSDL: %(wsdl)s
 GlueServiceSemantics: UNDEFINED
-GlueServiceStartTime: 1970-01-01T00:00:00Z
+GlueServiceStartTime: %(startTime)s
 GlueServiceOwner: OSG
 %(acbr)s
 GlueForeignKey: GlueSiteUniqueID=%(siteID)s

@@ -294,7 +294,6 @@ def print_classicSE(cp):
     # Tape information, if we have it...
     nu, _, nt = getSETape(cp)
 
-    bdiiEndpoint = cp.get("bdii", "endpoint")
     siteUniqueID = cp_get(cp, "site", "unique_name", "UNKNOWN")
     implementation = cp_get(cp, "classic_se", "implementation", "classicSE")
     arch = 'other'
@@ -316,7 +315,7 @@ def print_classicSE(cp):
              "architecture"   : arch,
              "free"           : available,
              "total"          : total,
-             "bdiiEndpoint"   : bdiiEndpoint,
+             "bdii"           : cp_get(cp, "bdii", "endpoint", "Unknown"),
              "siteUniqueID"   : siteUniqueID,
              "arch"           : arch,
            }
@@ -386,7 +385,6 @@ def print_SE(se, cp):
     # Tape information, if we have it...
     nu, nf, nt = se.getSETape()
 
-    bdiiEndpoint = cp.get("bdii", "endpoint")
     siteUniqueID = cp.get("site", "unique_name")
     implementation = se.getImplementation()
 
@@ -407,7 +405,7 @@ def print_SE(se, cp):
              "architecture"   : arch,
              "free"           : available,
              "total"          : total,
-             "bdiiEndpoint"   : bdiiEndpoint,
+             "bdii"           : cp_get(cp, "bdii", "endpoint", "Unknown"),
              "siteUniqueID"   : siteUniqueID,
              "arch"           : arch,
            }

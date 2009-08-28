@@ -1,0 +1,19 @@
+dn: GlueCEUniqueID=red.unl.edu:2119/jobmanager-pbs-cms,mds-vo-name=Nebraska,o=grid
+objectClass: GlueCETop
+objectClass: GlueCE
+objectClass: GlueSchemaVersion
+objectClass: GlueCEAccessControlBase
+objectClass: GlueCEInfo
+objectClass: GlueCEPolicy
+objectClass: GlueCEState
+objectClass: GlueInformationService
+objectClass: GlueKey
+GlueCEHostingCluster: red.unl.edu
+GlueCEName: cms
+GlueCEImplementationName: UNDEFINED
+GlueCEImplementationVersion: UNDEFINED
+GlueCECapability: UNDEFINED
+GlueCEUniqueID: red.unl.edu:2119/jobmanager-pbs-cms
+FermiGridBatchSlotsPerNode: 6
+FermiGridMemoryPerNode: 5
+

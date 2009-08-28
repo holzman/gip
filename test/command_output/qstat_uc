@@ -1,0 +1,30 @@
+Job id              Name             User            Time Use S Queue
+------------------- ---------------- --------------- -------- - -----
+236386.uct3-edge2   STDIN            samgrid         02:23:15 R test_exec
+236387.uct3-edge2   STDIN            samgrid         00:00:17 R test_exec
+236456.uct3-edge2   ...3x5_FULLETA_0 antonk          01:15:35 R uct3_exec
+236457.uct3-edge2   ...3x5_FULLETA_1 antonk          01:16:00 R uct3_exec
+236458.uct3-edge2   ...3x5_FULLETA_2 antonk          01:16:22 R uct3_exec
+236459.uct3-edge2   ...3x5_FULLETA_3 antonk          01:16:51 R uct3_exec
+236460.uct3-edge2   ...3x5_FULLETA_4 antonk          01:18:11 R uct3_exec
+236461.uct3-edge2   ...3x5_FULLETA_5 antonk          01:17:03 R uct3_exec
+236462.uct3-edge2   ...3x5_FULLETA_6 antonk          01:16:05 R uct3_exec
+236463.uct3-edge2   ...3x5_FULLETA_7 antonk          01:16:23 R uct3_exec
+236464.uct3-edge2   ...3x5_FULLETA_0 antonk          01:17:16 R uct3_exec
+236465.uct3-edge2   ...3x5_FULLETA_1 antonk          01:14:33 R uct3_exec
+236466.uct3-edge2   ...3x5_FULLETA_2 antonk          01:15:16 R uct3_exec
+236467.uct3-edge2   ...3x5_FULLETA_3 antonk          01:14:37 R uct3_exec
+236468.uct3-edge2   ...3x5_FULLETA_4 antonk          01:15:41 R uct3_exec
+236469.uct3-edge2   ...3x5_FULLETA_5 antonk          01:15:05 R uct3_exec
+236470.uct3-edge2   ...3x5_FULLETA_6 antonk          01:14:54 R uct3_exec
+236471.uct3-edge2   ...3x5_FULLETA_7 antonk          01:16:39 R uct3_exec
+236472.uct3-edge2   ...3x5_FULLETA_0 antonk          01:16:03 R uct3_exec
+236473.uct3-edge2   ...3x5_FULLETA_1 antonk          01:16:27 R uct3_exec
+236474.uct3-edge2   ...3x5_FULLETA_2 antonk          01:15:57 R uct3_exec
+236475.uct3-edge2   ...3x5_FULLETA_3 antonk          01:18:04 R uct3_exec
+236476.uct3-edge2   ...3x5_FULLETA_4 antonk          01:16:59 R uct3_exec
+236477.uct3-edge2   ...3x5_FULLETA_5 antonk          01:16:45 R uct3_exec
+236478.uct3-edge2   ...3x5_FULLETA_6 antonk          01:15:20 R uct3_exec
+236479.uct3-edge2   ...3x5_FULLETA_7 antonk          01:15:17 R uct3_exec
+236480.uct3-edge2   STDIN            usatlas1               0 Q test_exec
+

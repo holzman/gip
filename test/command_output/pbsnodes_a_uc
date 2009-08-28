@@ -1,0 +1,161 @@
+uct3-c001
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c001.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=709072,totmem=6218980kb,availmem=5546068kb,physmem=8316148kb,ncpus=4,loadave=0.02,netload=2984643804,state=free,jobs=? 0,rectime=1209667584
+
+uct3-c002
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c002.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=259272,totmem=6218980kb,availmem=5909076kb,physmem=8316148kb,ncpus=4,loadave=0.00,netload=981130424,state=free,jobs=? 0,rectime=1209667600
+
+uct3-c004
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c004.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=2079379,totmem=6218980kb,availmem=5695408kb,physmem=8316148kb,ncpus=4,loadave=0.00,netload=1894553246,state=free,jobs=? 0,rectime=1209667604
+
+uct3-c005
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c005.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=3900895,totmem=6218980kb,availmem=5972484kb,physmem=8316148kb,ncpus=4,loadave=0.00,netload=2080969672,state=free,jobs=? 0,rectime=1209667610
+
+uct3-c006
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c006.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=3900917,totmem=6153960kb,availmem=5910920kb,physmem=8251128kb,ncpus=4,loadave=0.00,netload=2974901303,state=free,jobs=? 0,rectime=1209667605
+
+uct3-c009
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c009.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=3900967,totmem=6218980kb,availmem=6004484kb,physmem=8316148kb,ncpus=4,loadave=0.27,netload=770808379,state=free,jobs=? 0,rectime=1209667607
+
+uct3-c010
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c010.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=3901009,totmem=6218980kb,availmem=5982864kb,physmem=8316148kb,ncpus=4,loadave=0.08,netload=1778336940,state=free,jobs=? 0,rectime=1209667603
+
+uct3-c011
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c011.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=3901040,totmem=6218980kb,availmem=6017708kb,physmem=8316148kb,ncpus=4,loadave=0.00,netload=3385726379,state=free,jobs=? 0,rectime=1209667610
+
+uct3-c012
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c012.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=3901051,totmem=6218980kb,availmem=5969072kb,physmem=8316148kb,ncpus=4,loadave=0.04,netload=459059401,state=free,jobs=? 0,rectime=1209667600
+
+uct3-c013
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c013.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=3901096,totmem=6218980kb,availmem=6000684kb,physmem=8316148kb,ncpus=4,loadave=0.03,netload=3352344374,state=free,jobs=? 0,rectime=1209667610
+
+uct3-c014
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c014.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=2521783,totmem=6218972kb,availmem=5946220kb,physmem=8316140kb,ncpus=4,loadave=0.00,netload=2694510025,state=free,jobs=? 0,rectime=1209667607
+
+uct3-c015
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c015.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=2522161,totmem=6218980kb,availmem=6014124kb,physmem=8316148kb,ncpus=4,loadave=0.00,netload=2515040084,state=free,jobs=? 0,rectime=1209667610
+
+uct3-c016
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c016.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=1921588,totmem=6218980kb,availmem=5818792kb,physmem=8316148kb,ncpus=4,loadave=0.00,netload=84325162,state=free,jobs=? 0,rectime=1209667581
+
+uct3-c017
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c017.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=3901185,totmem=6218980kb,availmem=5778532kb,physmem=8316148kb,ncpus=4,loadave=0.00,netload=2179322772,state=free,jobs=? 0,rectime=1209667606
+
+uct3-c018
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    status = opsys=linux,uname=Linux uct3-c018.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=? 0,nsessions=? 0,nusers=0,idletime=3901197,totmem=6218980kb,availmem=5998828kb,physmem=8316148kb,ncpus=4,loadave=0.01,netload=4169073085,state=free,jobs=? 0,rectime=1209667596
+
+uct3-c019
+    state = free
+    np = 4
+    properties = uct3
+    ntype = cluster
+    jobs = 0/236478.uct3-edge2.uchicago.edu, 1/236479.uct3-edge2.uchicago.edu
+    status = opsys=linux,uname=Linux uct3-c019.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=15239 15240,nsessions=2,nusers=1,idletime=3901234,totmem=6218980kb,availmem=5787584kb,physmem=8316148kb,ncpus=4,loadave=1.61,netload=1872389740,state=free,jobs=236478.uct3-edge2.uchicago.edu 236479.uct3-edge2.uchicago.edu,rectime=1209667607
+
+uct3-c008
+    state = job-exclusive
+    np = 4
+    properties = uct3
+    ntype = cluster
+    jobs = 0/236474.uct3-edge2.uchicago.edu, 1/236475.uct3-edge2.uchicago.edu, 2/236477.uct3-edge2.uchicago.edu, 3/236476.uct3-edge2.uchicago.edu
+    status = opsys=linux,uname=Linux uct3-c008.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=19392 19393 19398 19629,nsessions=4,nusers=1,idletime=3900984,totmem=6218972kb,availmem=5135836kb,physmem=8316140kb,ncpus=4,loadave=3.53,netload=2569726564,state=free,jobs=199697.uct3-edge2.uchicago.edu 199698.uct3-edge2.uchicago.edu 199699.uct3-edge2.uchicago.edu 199700.uct3-edge2.uchicago.edu 236474.uct3-edge2.uchicago.edu 236475.uct3-edge2.uchicago.edu 236477.uct3-edge2.uchicago.edu 236476.uct3-edge2.uchicago.edu,rectime=1209667604
+
+uct3-c021
+    state = job-exclusive
+    np = 4
+    properties = uct3
+    ntype = cluster
+    jobs = 0/236470.uct3-edge2.uchicago.edu, 1/236471.uct3-edge2.uchicago.edu, 2/236472.uct3-edge2.uchicago.edu, 3/236473.uct3-edge2.uchicago.edu
+    status = opsys=linux,uname=Linux uct3-c021.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=10333 10334 10341 10576,nsessions=4,nusers=1,idletime=3023689,totmem=6218980kb,availmem=5251276kb,physmem=8316148kb,ncpus=4,loadave=2.97,netload=4171289028,state=free,jobs=236470.uct3-edge2.uchicago.edu 236471.uct3-edge2.uchicago.edu 236472.uct3-edge2.uchicago.edu 236473.uct3-edge2.uchicago.edu,rectime=1209667582
+
+uct3-c022
+    state = job-exclusive
+    np = 4
+    properties = uct3
+    ntype = cluster
+    jobs = 0/236466.uct3-edge2.uchicago.edu, 1/236467.uct3-edge2.uchicago.edu, 2/236468.uct3-edge2.uchicago.edu, 3/236469.uct3-edge2.uchicago.edu
+    status = opsys=linux,uname=Linux uct3-c022.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=29092 29776 29777 29784 30021,nsessions=5,nusers=1,idletime=5761,totmem=6218980kb,availmem=4647272kb,physmem=8316148kb,ncpus=4,loadave=3.82,netload=1968409539,state=free,jobs=236466.uct3-edge2.uchicago.edu 236467.uct3-edge2.uchicago.edu 236468.uct3-edge2.uchicago.edu 236469.uct3-edge2.uchicago.edu,rectime=1209667578
+
+uct3-c007
+    state = job-exclusive
+    np = 4
+    properties = uct3
+    ntype = cluster
+    jobs = 0/236462.uct3-edge2.uchicago.edu, 1/236463.uct3-edge2.uchicago.edu, 2/236464.uct3-edge2.uchicago.edu, 3/236465.uct3-edge2.uchicago.edu
+    status = opsys=linux,uname=Linux uct3-c007.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=13548 13551 13710 13711,nsessions=4,nusers=1,idletime=12141,totmem=6218980kb,availmem=5190732kb,physmem=8316148kb,ncpus=4,loadave=3.19,netload=3936654516,state=free,jobs=236462.uct3-edge2.uchicago.edu 236463.uct3-edge2.uchicago.edu 236464.uct3-edge2.uchicago.edu 236465.uct3-edge2.uchicago.edu,rectime=1209667607
+
+uct3-c003
+    state = job-exclusive
+    np = 4
+    properties = uct3
+    ntype = cluster
+    jobs = 0/236458.uct3-edge2.uchicago.edu, 1/236459.uct3-edge2.uchicago.edu, 2/236460.uct3-edge2.uchicago.edu, 3/236461.uct3-edge2.uchicago.edu
+    status = opsys=linux,uname=Linux uct3-c003.mwt2.org 2.6.9-55.0.12.EL.cernsmp #1 SMP Mon Nov 5 17:34:28 CET 2007 i686,sessions=5340 5347 5348 5583,nsessions=4,nusers=1,idletime=901317,totmem=6219296kb,availmem=5669280kb,physmem=8316464kb,ncpus=4,loadave=3.36,netload=843952660,state=free,jobs=236458.uct3-edge2.uchicago.edu 236459.uct3-edge2.uchicago.edu 236460.uct3-edge2.uchicago.edu 236461.uct3-edge2.uchicago.edu,rectime=1209667585
+
+uct3-c020
+    state = job-exclusive
+    np = 4
+    properties = uct3
+    ntype = cluster
+    jobs = 0/236386.uct3-edge2.uchicago.edu, 1/236387.uct3-edge2.uchicago.edu, 2/236456.uct3-edge2.uchicago.edu, 3/236457.uct3-edge2.uchicago.edu
+    status = opsys=linux,uname=Linux uct3-c020.mwt2.org 2.6.9-42.0.3.EL.cernsmp #1 SMP Fri Oct 6 12:07:54 CEST 2006 i686,sessions=11302 11897 21230 21232,nsessions=4,nusers=2,idletime=605073,totmem=6218980kb,availmem=5489712kb,physmem=8316148kb,ncpus=4,loadave=2.95,netload=2901729351,state=free,jobs=236386.uct3-edge2.uchicago.edu 236387.uct3-edge2.uchicago.edu 236456.uct3-edge2.uchicago.edu 236457.uct3-edge2.uchicago.edu,rectime=1209667572
+

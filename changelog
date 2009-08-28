@@ -1,4 +1,20 @@
 Changelog
+== 1.1.4 ==
+* Ability to advertise local mount points 
+* Publish HEPSPEC if configured
+* If uid=0, drop privileges to daemon (will help prevent root from clobbering
+  daemon-owned files)
+* When vdt-version fails, publish "OLD_VDT"
+* Remove some deprecated Glue attributes
+* More debugging information when srm-ping fails
+* Many SGE bug fixes (thanks, Iwona!)
+* New sge_cell parameter in the [sge] section of config.ini; without it, we presume the SGE
+  commands work are found in the environment and work.
+* New other_ces parameter to publish other CEs in the cluster (for the CE to
+  SE bindings)
+* Enforce condor invariants -- we should do a better job reporting the number
+  of free and running slots 
+
 == 1.1.3 ==
 * If storage_vos is set, ignore the blacklist/whitelist for storage (storage_vos is an explicit whitelist already).
 * Fix bug where we tried to remove duplicate stanzas more than once

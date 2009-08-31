@@ -52,9 +52,10 @@ if not py23:
       os.EX_USAGE = 64
                                                    
 try:
-   import md5
-except:
+   #python 2.5 and above  
    import hashlib as md5
+except ImportError:
+   import md5
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt

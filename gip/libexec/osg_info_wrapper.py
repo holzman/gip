@@ -55,6 +55,7 @@ try:
    #python 2.5 and above  
    import hashlib as md5
 except ImportError:
+   # pylint: disable-msg=F0401
    import md5
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))

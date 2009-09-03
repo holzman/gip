@@ -16,7 +16,7 @@ from plugins_common import search_list_by_name, ConfigurationError, \
 class OIM_XML:
     def __init__(self, args):
         self.cp = getTestConfig(args)
-        self.oim_tests = "Interop_Reporting_Check,Missing_Sites,Validate_GIP_BDII"
+        self.oim_tests = "Missing_Sites,Interop_Reporting_Check,Validate_GIP_BDII"
         self.oim_xml_dir = "" 
         self.oim_summary_xml_file = ""
         self.oim_detail_file_template = ""
@@ -77,20 +77,34 @@ class OIM_XML:
     def buildSummaryXML(self, index_list):
         summary_dom = Document()
         gip = addChild(summary_dom, summary_dom, "gip")
-        status = 0
         
         addChild(summary_dom, gip, "TestRunTime", index_list[0]["TestRunTime"])
+
         for item in index_list:
+            status = 0
+
             resource = addChild(summary_dom, gip, "Resource")
             addChild(summary_dom, resource, "Name", item["Name"])
+
+            #if missing, then only show that as test result and set overallstatus to unknown
             for case in item["TestCases"]:
-                if case["Name"] in self.oim_tests:
+                if case["Name"] == "Missing_Sites" and case["Status"] != "OK":
                     testCase = addChild(summary_dom, resource, "TestCase")
                     addChild(summary_dom, testCase, "Name", case["Name"])
                     addChild(summary_dom, testCase, "Status", case["Status"])
                     addChild(summary_dom, testCase, "Reason")
-                    if not case["Status"] == "OK":
-                        status += 1
+                    OverAllStatus = "NA"
+                    status += 1
+
+            if status == 0:
+                for case in item["TestCases"]:
+                    if case["Name"] in self.oim_tests:
+                        testCase = addChild(summary_dom, resource, "TestCase")
+                        addChild(summary_dom, testCase, "Name", case["Name"])
+                        addChild(summary_dom, testCase, "Status", case["Status"])
+                        addChild(summary_dom, testCase, "Reason")
+                        if not case["Status"] == "OK":
+                            status += 1
             
             if status > 0:
                 OverAllStatus = "FAIL"
@@ -98,7 +112,6 @@ class OIM_XML:
                 OverAllStatus = "OK"
 
             addChild(summary_dom, resource, "OverAllStatus", OverAllStatus)
-            status = 0
             
         writeXML(summary_dom, self.oim_summary_xml_file)
 

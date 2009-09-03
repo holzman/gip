@@ -12,6 +12,7 @@ import sys
 import types
 import unittest
 import time
+import libxml2
 import urlparse
 import GipUnittest
 import ConfigParser
@@ -169,8 +170,20 @@ def interpolateConfig(cp):
 
     grid = cp_get(cp, "site", "group", "")
     if cp_getBoolean(cp, "gip_tests", "oim_aware", False):
-        sitelist_cmd = "wget -O - http://oim.grid.iu.edu/pub/resource/show.php?format=plain-text 2>/dev/null | grep \",%s,\" | grep \",CE\" | cut -f1 -d," % grid
-        sitelist = runCommand(sitelist_cmd).read().split()
+
+        sitelist_tmp = ""
+        ## This is what is cached ## myosg_summary_url = "http://myosg.grid.iu.edu/wizardsummary/xml?datasource=summary&summary_attrs_showservice=on&summary_attrs_showfqdn=on&summary_attrs_showwlcg=on&gip_status_attrs_showfqdn=on&account_type=cumulative_hours&ce_account_type=gip_vo&se_account_type=vo_transfer_volume&start_type=7daysago&start_date=04%2F23%2F2009&end_type=now&end_date=04%2F30%2F2009&all_resources=on&gridtype_1=on&service=on&service_1=on&active=on&active_value=1&disable_value=1"
+        ## agopu to tiradani: Needs to be defined in config file
+        myosg_summary_cache_file = "/tmp/myosg_summary.xml"
+        xml_summary = libxml2.parseFile(myosg_summary_cache_file)
+        for resource_group in xml_summary.xpathEval('//ResourceGroup'):
+            for grid_type in resource_group.xpathEval ('GridType'):
+                if ((grid_type.content.lower() == "osg production resource" and grid=="OSG") or
+                    (grid_type.content.lower() == "osg integration test bed resource" and grid=="OSG-ITB")):
+                    for resource_group_name in resource_group.xpathEval ('GroupName'):
+                        sitelist_tmp = sitelist_tmp + resource_group_name.content + "\n"
+
+        sitelist = sitelist_tmp.split()
         sitelist = ",".join(sitelist)
         cp.set("gip_tests", "site_names", sitelist)
     else:

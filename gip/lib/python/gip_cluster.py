@@ -56,19 +56,23 @@ def getOsStatistics():
     version = runCommand('uname -v').read().strip()
     return name, release, version
 
-lsb_re = re.compile('Description:\s+(.*)\s+[Rr]elease\s+(.*)\s+\((.*)\)')
 def getRelease():
     """
     Get the release information for the node; if the lsb_release command isn't
     found, return generic stats based on uname from getOsStatistics
     
-    This function conforms to the suggestions made by the GLUE schema 1.3.
+    This function conforms to the suggestions made by the GLUE schema 1.3 and
+    EGEE's policy page:
+    http://goc.grid.sinica.edu.tw/gocwiki/How_to_publish_the_OS_name
 
     @returns: OS name, OS release, OS version
     """
-    m = lsb_re.match(runCommand('lsb_release -d').read())
-    if m:
-        return m.groups()
+    name =    (runCommand('lsb_release -i | cut -f2').read()).strip()
+    release = (runCommand('lsb_release -r | cut -f2').read()).strip()
+    version = (runCommand('lsb_release -c | cut -f2').read()).strip()
+
+    if name:
+        return (name, release, version)
     else:
         return getOsStatistics()
 

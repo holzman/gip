@@ -46,7 +46,7 @@ def main():
         print_Locations(cp)
     except Exception, e:
         sys.stdout = sys.stderr
-        log.error(e)
+        log.exception(e)
         raise
 
 if __name__ == '__main__':

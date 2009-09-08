@@ -350,7 +350,7 @@ def main():
         print_CE(cp)
         print_VOViewLocal(cp)
     except Exception, e:
-        log.error(e)
+        log.exception(e)
         raise
 
 if __name__ == '__main__':

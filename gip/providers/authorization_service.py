@@ -118,7 +118,7 @@ def main():
 
     except Exception, e:
         # Log error, then report it via stderr.
-        log.error(e)
+        log.exception(e)
         sys.stdout = sys.stderr
         raise
 

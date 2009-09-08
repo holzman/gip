@@ -162,7 +162,7 @@ def main():
         print_VOViewLocal(queueInfo, cp)
     except Exception, e:
         sys.stdout = sys.stderr
-        log.error(e)
+        log.exception(e)
         raise
 
 if __name__ == '__main__':

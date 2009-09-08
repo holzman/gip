@@ -246,7 +246,7 @@ class VoMapper:
                     continue
                 else:
                     user, vo = line.split()
-                    if vo.startswith('us'):
+                    if (vo.startswith('uscms') or vo.startswith('usatlas')):
                         vo = vo[2:]
                     self.userMap[user] = vo
             except (KeyboardInterrupt, SystemExit):

@@ -15,35 +15,6 @@ from gip_cluster import getClusterName, getClusterID
 
 log = getLogger("GIP.Cluster")
 
-def getOsStatistics():
-    """
-    Gather statistics about the node's operating system
-
-    NOTE: does not conform to the LSB layout that the GLUE schema suggests
-
-    @returns: OS name, OS release, OS version
-    """
-    name = runCommand('uname').read()
-    release = runCommand('uname -r').read()
-    version = runCommand('uname -v').read()
-    return name, release, version
-
-lsb_re = re.compile('Description:\s+(.*)\s+[Rr]elease\s+(.*)\s+\((.*)\)')
-def getRelease():
-    """
-    Get the release information for the node; if the lsb_release command isn't
-    found, return generic stats based on uname from getOsStatistics
-    
-    This function conforms to the suggestions made by the GLUE schema 1.3.
-
-    @returns: OS name, OS release, OS version
-    """
-    m = lsb_re.match(runCommand('lsb_release -d').read())
-    if m:
-        return m.groups()
-    else:
-        return getOsStatistics()
-
 def print_clusters(cp):
     cluster_name = cp_get(cp, 'cluster', 'name', None)
     if not cluster_name:

@@ -467,6 +467,17 @@ def list_modules(dirname):
     return info
 
 def run_child(executable, orig_filename, timeout):
+    """
+    Wrap the actual run_child method (in _run_child) with this method that is
+    designed to catch any exceptions and make sure the child never returns
+    control to the parent function (hence creating a fork bomb).
+    """
+    try:
+        _run_child(executable, orig_filename, timeout)
+    finally:
+        os._exit(os.EX_SOFTWARE)
+
+def _run_child(executable, orig_filename, timeout):
     log.info("Running module %s" % executable)
     os.setpgrp()
     pgrp = os.getpgrp()

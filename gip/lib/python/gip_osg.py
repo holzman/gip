@@ -279,6 +279,7 @@ def configOsg(cp):
     # [Storage]
     __write_config(storage_sec, "app_dir", "osg_dirs", "app")
     __write_config(storage_sec, "data_dir", "osg_dirs", "data")
+    __write_config(storage_sec, "grid_dir", "osg_dirs", "grid_dir")
     __write_config(storage_sec, "worker_node_temp", "osg_dirs", "wn_tmp")
     __write_config(storage_sec, "default_se", "se", "default_se")
 

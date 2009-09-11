@@ -1,4 +1,45 @@
 Changelog
+== 1.1.5 ==
+* Help for debugging: print more python backtraces in logs
+* Add $PBS_LOCATION/bin to pbs path (for PBS/torque)
+* Code that renames VOs now matches only uscms* and usatlas* instead of us*
+* Change GlueHostOperatingSystem{Name,Version,Release} to conform to EGEE standard (http://goc.grid.sinica.edu.tw/gocwiki/How_to_publish_the_OS_name)
+* Publish $OSG_GRID as new GlueLocationName with new osg_info_grid_dirs.py provider
+* Force provider children to always, always exit
+* Set provider log to be module.log instead of module.logs
+* Remove unused libexec/osg_info_provider_cluster.py 	
+* Remove unused code from providers/cluster.py	
+	
+== 1.1.4 ==
+* Ability to advertise local mount points 
+* Publish HEPSPEC if configured
+* If uid=0, drop privileges to daemon (will help prevent root from clobbering
+  daemon-owned files)
+* When vdt-version fails, publish "OLD_VDT"
+* Remove some deprecated Glue attributes
+* More debugging information when srm-ping fails
+* Many SGE bug fixes (thanks, Iwona!)
+* New sge_cell parameter in the [sge] section of config.ini; without it, we presume the SGE
+  commands work are found in the environment and work.
+* New other_ces parameter to publish other CEs in the cluster (for the CE to
+  SE bindings)
+* Enforce condor invariants -- we should do a better job reporting the number
+  of free and running slots 
+
+== 1.1.3 ==
+* If storage_vos is set, ignore the blacklist/whitelist for storage (storage_vos is an explicit whitelist already).
+* Fix bug where we tried to remove duplicate stanzas more than once
+* Insert newlines before stanzas if needed
+* RHEL3 compatibility: fix integer overflows in dCache 1.9 provider
+* RHEL3 compatibility: fix SE-related config bug
+* Check for osg-version in both $VDT_LOCATION and $VDT_LOCATION/osg/bin
+* Condor: Allow (groupname)_blacklist and (groupname)_whitelist in Condor
+* Condor: Parse condor_status correctly for multi-schedd sites 
+* PBS: enforce job slot invariants: 
+	max_total <= max_running 
+	free_slots <= max_running 
+	assigned <= max_running
+	
 == 1.1.2 ==
 * Include both old (voname) and new (VO:voname) ABCRs in GlueSA ACBRs 
 * Now correctly identify the default SE to eliminate false "UNKNOWN" values for the Classic SE

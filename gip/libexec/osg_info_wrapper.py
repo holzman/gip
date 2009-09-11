@@ -52,9 +52,10 @@ if not py23:
       os.EX_USAGE = 64
                                                    
 try:
-   # python 2.5 and above
+   #python 2.5 and above  
    import hashlib as md5
 except ImportError:
+   # pylint: disable-msg=F0401
    import md5
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
@@ -122,7 +123,12 @@ def main(cp = None, return_entries=False):
     response  = cp_getInt(cp, "gip", "response",  240)
     timeout = cp_getInt(cp, "gip",   "timeout",   240)
 
-    os.setpgrp()
+    try:
+        os.setpgrp()
+    except OSError, oe:
+        # If launched from a batch system (condor), we might not have perms
+        if oe.errno != 1:
+            raise
 
     # First, load the static info
     static_info = read_static(static_dir)
@@ -461,6 +467,17 @@ def list_modules(dirname):
     return info
 
 def run_child(executable, orig_filename, timeout):
+    """
+    Wrap the actual run_child method (in _run_child) with this method that is
+    designed to catch any exceptions and make sure the child never returns
+    control to the parent function (hence creating a fork bomb).
+    """
+    try:
+        _run_child(executable, orig_filename, timeout)
+    finally:
+        os._exit(os.EX_SOFTWARE)
+
+def _run_child(executable, orig_filename, timeout):
     log.info("Running module %s" % executable)
     os.setpgrp()
     pgrp = os.getpgrp()
@@ -484,7 +501,7 @@ def run_child(executable, orig_filename, timeout):
             os._exit(os.EX_SOFTWARE)
     log.debug("Set a %.2f second timeout." % timeout)
     t1 = -time.time()
-    sys.stderr = open(os.path.expandvars("$GIP_LOCATION/var/logs/module.logs"), 'a')
+    sys.stderr = open(os.path.expandvars("$GIP_LOCATION/var/logs/module.log"), 'a')
     exec_name = executable.split('/')[-1]
     pid = os.spawnl(os.P_NOWAIT, "/bin/sh", exec_name, "-c", "%s > %s" % \
         (executable, filename))

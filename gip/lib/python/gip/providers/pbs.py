@@ -155,7 +155,11 @@ def print_VOViewLocal(queue_info, cp):
 def main():
     try:
         cp = config()
-        addToPath(cp_get(cp, "pbs", "pbs_path", "."))
+        pbs_path = cp_get(cp, "pbs", "pbs_path", ".") 
+        addToPath(pbs_path)
+        # adding pbs_path/bin to the path as well, since pbs/torque home 
+        # points to /usr/local and the binaries exist in /usr/local/bin
+        addToPath(pbs_path + "/bin")
         vo_map = VoMapper(cp)
         pbsVersion = getLrmsInfo(cp)
         queueInfo, totalCpu, freeCpu, queueCpus = print_CE(cp)

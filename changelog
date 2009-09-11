@@ -1,4 +1,15 @@
 Changelog
+== 1.1.5 ==
+* Help for debugging: print more python backtraces in logs
+* Add $PBS_LOCATION/bin to pbs path (for PBS/torque)
+* Code that renames VOs now matches only uscms* and usatlas* instead of us*
+* Change GlueHostOperatingSystem{Name,Version,Release} to conform to EGEE standard (http://goc.grid.sinica.edu.tw/gocwiki/How_to_publish_the_OS_name)
+* Publish $OSG_GRID as new GlueLocationName with new osg_info_grid_dirs.py provider
+* Force provider children to always, always exit
+* Set provider log to be module.log instead of module.logs
+* Remove unused libexec/osg_info_provider_cluster.py 	
+* Remove unused code from providers/cluster.py	
+	
 == 1.1.4 ==
 * Ability to advertise local mount points 
 * Publish HEPSPEC if configured

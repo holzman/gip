@@ -267,8 +267,14 @@ def getApplications(cp):
             locations.append(info)
     osg_ver = getOSGVersion(cp)
     if osg_ver:
+        # old method: will deprecate in a future version, but leave
+        # for backwards compatibility
         info = {'locationId': osg_ver, 'locationName': osg_ver, 'version': \
             osg_ver, 'path': os.environ.get('VDT_LOCATION', '/UNKNOWN')}
+        locations.append(info)
+        # new method
+        info = {'locationId': 'OSG_VERSION', 'locationName': 'OSG_VERSION',
+                'version': osg_ver, 'path': os.environ.get('VDT_LOCATION', '/UNKNOWN')}
         locations.append(info)
     try:
         locations += getApplicationsV1(cp)

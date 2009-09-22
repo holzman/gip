@@ -187,7 +187,28 @@ def config(*args):
     if 'GIP_DUMP_CONFIG' in os.environ:
         configContents(cp)
 
+    verify_cp(cp)
     return cp
+
+class GIPConfigError(Exception):
+    def __init__(self, value):
+        msg = "Illegal characters in the following options in config.ini: %s"
+        msg = msg % value
+        Exception.__init__(self, msg)
+        self.parameter = msg
+    def __str__(self):
+        return repr(self.parameter)
+
+def verify_cp(cp):
+    illegalchars_re = re.compile("\n")
+    illegal_options = []
+    for section in cp.sections():
+        for option in cp.options(section):
+            value = cp.get(section, option)
+            m = illegalchars_re.search(value)
+            if m: illegal_options.append({"section": section, "option":option, "value":value})
+    if len(illegal_options) > 0: 
+        raise GIPConfigError(illegal_options)
 
 def __write_config(cp, override, dict_object, key, section, option): \
         #pylint: disable-msg=C0103

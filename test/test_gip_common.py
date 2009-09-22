@@ -121,7 +121,6 @@ class TestGipCommon(unittest.TestCase):
             if val != "uscms1.fltech-grid3.fit.edu/jobmanager-condor":
                 raise Exception("Did not load config.ini")
         except Exception, e:
-            raise
             self.failIf(e.message == "Did not load config.ini", \
                 msg = "Failed to load the test config.ini file!")
             didFail = True

@@ -293,15 +293,27 @@ def compareDN(ldif1, ldif2):
 
     if (dn1_startswith_suffix and dn2_startswith_suffix):
         for idx in range(len(ldif1.dn)):
-            dn1 = ldif1.dn[idx]
-            dn2 = ldif2.dn[idx]
+            # if we try to compare dn's with different lengths, an exception
+            # occurs, catch that and return False
+            try:
+                dn1 = ldif1.dn[idx]
+                dn2 = ldif2.dn[idx]
+            except IndexError:
+                return False
+                 
             if dn1 != dn2:
                 return False
         return True
     elif (dn1_startswith_suffix == False and dn2_startswith_suffix == False):
         for idx in range(len(ldif1.dn)):
-            dn1 = ldif1.dn[idx]
-            dn2 = ldif2.dn[idx]
+            # if we try to compare dn's with different lengths, an exception
+            # occurs, catch that and return False
+            try:
+                dn1 = ldif1.dn[idx]
+                dn2 = ldif2.dn[idx]
+            except IndexError:
+                return False
+
             if dn1.lower().find("mds-vo-name") >= 0 or \
                     dn1.lower().find("o=grid") >=0:
                 continue

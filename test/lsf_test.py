@@ -19,7 +19,7 @@ class TestLsfDynamic(unittest.TestCase):
         """
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
-                                  "--config=test_configs/red.conf")
+                                  "--config=test_configs/lsf_test.conf")
         print path
         fd = os.popen(path)
         fd.read()
@@ -28,7 +28,7 @@ class TestLsfDynamic(unittest.TestCase):
     def test_contact_string(self):
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
-                                  "--config=test_configs/red.conf")
+                                  "--config=test_configs/lsf_test.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)

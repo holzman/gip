@@ -93,8 +93,8 @@ def print_CE(cp):
         info['ceImpl'] = 'Globus'
         info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')
         info['contact_string'] = contact_string
-        info['app_dir'] = cp.get('osg_dirs', 'app')
-        info['data_dir'] = cp.get('osg_dirs', 'data')
+        info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP")
+        info['data_dir'] = cp_get(cp, 'osg_dirs', 'data', "/UNKNOWN_DATA")
         info['default_se'] = getDefaultSE(cp)
         info['max_waiting'] = 999999
         info['max_slots'] = 1
@@ -111,7 +111,7 @@ def print_CE(cp):
             continue
         #print info
         info['acbr'] = acbr[:-1]
-        info['bdii'] = cp.get('bdii', 'endpoint')
+        info['bdii'] = cp_get(cp, 'bdii', 'endpoint', "")
         info['gramVersion'] = '2.0'
         info['port'] = 2119
         info['waiting'] = info.get('wait', 0)
@@ -158,8 +158,8 @@ def print_VOViewLocal(queue_info, cp):
             'max_running' : info2.get('max_running', 0),
             'priority'    : queue_info.get(queue, {}).get('priority', 0),
             'waiting'     : info2.get('waiting', 0),
-            'data'        : cp.get("osg_dirs", "data"),
-            'app'         : cp.get("osg_dirs", "app"),
+            'data'        : cp_get(cp, 'osg_dirs', 'data', "/UNKNOWN_DATA"),
+            'app'         : cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP"),
             'default_se'  : getDefaultSE(cp),
             'ert'         : ert,
             'wrt'         : wrt,

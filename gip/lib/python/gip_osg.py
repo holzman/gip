@@ -420,6 +420,7 @@ def configSubclusters(cp, cp2):
     translation = { \
         "swap_mb": "swap_size",
         "ram_mb":  "ram_size",
+        "cpu_platform": "platform",
     }
     for section in cp.sections():
         my_sect = section.lower()

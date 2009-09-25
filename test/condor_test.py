@@ -23,8 +23,7 @@ class TestCondorProvider(unittest.TestCase):
         Does not check for correctness.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
-            "condor.py")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py")
         fd = os.popen(path + " --config=test_configs/condor_test.conf")
         fd.read()
         self.assertEquals(fd.close(), None)
@@ -35,8 +34,8 @@ class TestCondorProvider(unittest.TestCase):
         a "simple" Condor setup, no groups or priorities.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
-            "condor.py --config=test_configs/condor_test.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/condor_test.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.assertEquals(fd.close(), None)
@@ -55,8 +54,8 @@ class TestCondorProvider(unittest.TestCase):
 
     def test_contact_string(self):
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
-            "condor.py --config=test_configs/condor_test.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/condor_test.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -90,8 +89,8 @@ class TestCondorProvider(unittest.TestCase):
         """
         ce = 'fnpcfg1.fnal.gov:2119/jobmanager-condor-group_nysgrid'
         os.environ['GIP_TESTING'] = 'suffix=fnal'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
-            "condor.py --config=test_configs/fnal_condor.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/fnal_condor.conf")
         fd = os.popen(path)
         entries = read_ldap(fd, multi=True)
         entry = self.check_for_ce(ce, entries)
@@ -109,8 +108,8 @@ class TestCondorProvider(unittest.TestCase):
                (FreeSlots should not be more than group quota).
         """
         os.environ['GIP_TESTING'] = 'suffix=ucsd'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
-            "condor.py --config=test_configs/ucsd_condor.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/ucsd_condor.conf")
         fd = os.popen(path)
         entries = read_ldap(fd, multi=True)
         tmpl = "osg-gw-2.t2.ucsd.edu:2119/jobmanager-condor-%s"

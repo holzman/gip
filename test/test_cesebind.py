@@ -24,8 +24,8 @@ class TestCESEBind(unittest.TestCase):
          cp = config(self.filename)
          self.ces = getCEList(cp)
          self.ses = getSEList(cp)
-         cese_provider_path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-             "osg_info_cesebind.py --config %s" % self.filename)
+         cese_provider_path = os.path.expandvars("$GIP_LOCATION/providers/" \
+                                "ce_to_se_map.py --config %s" % self.filename)
          print >> sys.stderr, "Used command", cese_provider_path
          fd = os.popen(cese_provider_path)
          self.entries = read_ldap(fd, multi=True)

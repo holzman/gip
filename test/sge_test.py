@@ -23,16 +23,16 @@ class TestSGEDynamic(unittest.TestCase):
         Does not check for correctness.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg-info-provider-"\
-            "sge.py --config=test_configs/pf-sge.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/pf-sge.conf")
         fd = os.popen(path)
         fd.read()
         self.assertEquals(fd.close(), None)
 
     def test_contact_string(self):
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-sge.py --config=test_configs/pf-sge.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/pf-sge.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)

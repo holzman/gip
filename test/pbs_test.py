@@ -36,8 +36,8 @@ class TestPbsDynamic(unittest.TestCase):
         Does not check for correctness.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg-info-provider-pbs"\
-            ".py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         fd.read()
         self.assertEquals(fd.close(), None)
@@ -58,8 +58,8 @@ class TestPbsDynamic(unittest.TestCase):
         old_commands = dict(gip_testing.commands)
         try:
             os.environ['GIP_TESTING'] = 'suffix=lbl'
-            path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-                "osg-info-provider-pbs.py --config=test_configs/red.conf")
+            path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py"\
+                                      " --config=test_configs/red.conf")
             fd = os.popen(path)
             entries = read_ldap(fd)
             self.assertEquals(fd.close(), None)
@@ -81,8 +81,8 @@ class TestPbsDynamic(unittest.TestCase):
         Make sure that VOLocal gets the correct queue information.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -100,8 +100,8 @@ class TestPbsDynamic(unittest.TestCase):
         Regression test for the max_queuable attribute.  Ticket #10.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -119,8 +119,8 @@ class TestPbsDynamic(unittest.TestCase):
         Regression test for the max_queuable attribute.  Ticket #22.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -146,8 +146,8 @@ class TestPbsDynamic(unittest.TestCase):
         & total reported is never greater than the # of max running.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -168,8 +168,8 @@ class TestPbsDynamic(unittest.TestCase):
         reported is never greater than the # of max queuable
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -186,8 +186,8 @@ class TestPbsDynamic(unittest.TestCase):
 
     def test_contact_string(self):
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -206,8 +206,8 @@ class TestPbsDynamic(unittest.TestCase):
             """ % site
             # Switch commands over to the site ones:
             os.environ['GIP_TESTING'] = 'suffix=%s' % site
-            path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-                "osg-info-provider-pbs.py --config=test_configs/%s.conf" % site)
+            path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py"\
+                                      " --config=test_configs/%s.conf" % site)
             fd = os.popen(path)
             entries = read_ldap(fd)
             self.assertEquals(fd.close(), None)

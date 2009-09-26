@@ -7,8 +7,12 @@ outline of how this is computed is given here:
 https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/GipCeInfo
 """
 
-import gip_sets as sets
+import os
+import pwd
 import sys
+import time
+
+import gip_sets as sets
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
 if not py23:
         import operator
@@ -22,7 +26,9 @@ from gip_cluster import getClusterID
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
 from gip_storage import getDefaultSE
 
-from gip_sections import ce, se
+from gip_sections import ce, se, site
+
+import gip.gratia
 
 log = getLogger("GIP.Condor")
 
@@ -33,9 +39,9 @@ log = getLogger("GIP.Condor")
 has_gratia_capacity = True
 try:
     # Try hard to bootstrap paths.
-    paths = ['/opt/vdt/gratia/probe/common', '$VDT_LOCATION/gratia/probe/'\
-        'common', '/opt/vdt/gratia/probe/service', '$VDT_LOCATION/gratia/probe'\
-        '/service']
+    paths = ['/opt/vdt/gratia/probe/common', '$VDT_LOCATION/gratia/probe/' \
+        'common', '/opt/vdt/gratia/probe/services', '$VDT_LOCATION/gratia/' \
+        '/probe/services']
     for path in paths:
         path = os.path.expandvars(path)
         if os.path.exists(path) and path not in sys.path:
@@ -45,9 +51,10 @@ try:
     import Gratia
     import ComputeElement
     import ComputeElementRecord
-except:
+except Exception, e:
     has_gratia_capacity = False
     log.warning("Could not import the Gratia CE modules.")
+    log.warning("Non-fatal error: %s" % str(e))
 
 def print_CE(cp):
     """
@@ -260,10 +267,29 @@ def print_CE(cp):
         if has_gratia_capacity:
             try:
                 Gratia.Initialize('ProbeConfig')
+                probeName = 'gip_CE:%s' % info['hostName']
+                siteName = cp_get(cp, site, "name", "UNKNOWN")
+                Gratia.Config.setSiteName(site)
+                Gratia.Config.setMeterName(probeName)
+                time_now = time.time()
                 desc = ComputeElement.ComputeElement()
-                desc = UniqueID(info['ceUniqueID'])
-            except:
-                pass
+                desc.UniqueID(info['ceUniqueID'])
+                desc.CEName(group)
+                desc.Cluster(info['hostingCluster'])
+                desc.HostName(info['hostName'])
+                desc.Timestamp(time.time())
+                desc.LrmsType("condor")
+                desc.LrmsVersion(info['lrmsVersion'])
+                desc.MaxRunningJobs(max_running)
+                desc.MaxTotalJobs(info['max_total'])
+                desc.AssignedJobSlots(assigned)
+                desc.Status(status)
+                result = Gratia.Send(desc)
+                log.debug("CE description for Gratia: %s" % desc)
+                log.debug("Gratia sending result: %s" % result)
+            except Exception, e:
+                log.warning("Non-fatal exception occurred during formation of" \
+                    " Gratia CE record: %s" % str(e))
         printTemplate(ce_template, info)
     return total_nodes, claimed, unclaimed
 
@@ -366,6 +392,8 @@ def print_VOViewLocal(cp):
                 'app'     : cp_get(cp, 'osg_dirs', 'app', '/Unknown'),
                 "data"    : cp_get(cp, "osg_dirs", "data", "/Unknown"),
                 }
+            gip.gratia.vo_record(cp, info)
+
             printTemplate(VOView, info)
 
 def main():
@@ -378,7 +406,8 @@ def main():
         if condor_path != None:
             addToPath(condor_path)
         #vo_map = VoMapper(cp)
-        getLrmsInfo(cp) 
+        getLrmsInfo(cp)
+        gip.gratia.initialize(cp)
         print_CE(cp)
         print_VOViewLocal(cp)
     except Exception, e:

@@ -12,3 +12,5 @@ DeferralWindow = 99999999
 DeferralPrepTime = 180
 PeriodicRelease = HoldReasonCode =!= 1
 Queue
+# TODO: Make sure that this runs no more than once every 60 seconds
+# TODO: Limit total runtime to 10 minutes

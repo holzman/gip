@@ -25,6 +25,7 @@ class TestSGEDynamic(unittest.TestCase):
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
                                   "--config=test_configs/pf-sge.conf")
+        print path
         fd = os.popen(path)
         fd.read()
         self.assertEquals(fd.close(), None)
@@ -33,6 +34,7 @@ class TestSGEDynamic(unittest.TestCase):
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
                                   "--config=test_configs/pf-sge.conf")
+        print path
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)

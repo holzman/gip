@@ -33,7 +33,7 @@ srm_ping2: srm-ping 2 -proxyfile /tmp/http_proxy
 grid_proxy_info: grid-proxy-info -f /tmp/http_proxy
 grid_proxy_init: grid-proxy-init -valid 00:05 -cert /etc/grid-security/http/httpcert.pem -key /etc/grid-security/http/httpkey.pem -out /tmp/http_proxy
 qstat_help: qstat -help
-qstat_xml: qstat -xml
+qstat_xml: qstat -xml -u \*
 qstat_f_xml: qstat -f -xml
 qconf_sq_all: qconf -sq all.q
 qconf_sq_chandra: qconf -sq chandra

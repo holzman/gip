@@ -64,7 +64,12 @@ def initialize(cp):
                     (name, ', '.join(locs)))
             log.debug("Attempting to initialize Gratia using config %s" % \
                 probeConfig)
-            Gratia.Initialize(probeConfig)
+            old_stdout = sys.stdout
+            sys.stdout = sys.stderr
+            try:
+                Gratia.Initialize(probeConfig)
+            finally:
+                sys.stdout = old_stdout
             siteName = cp_get(cp, site, "name", "UNKNOWN")
             ce_name = cp_get(cp, ce, "name", "UNKNOWN_CE")
             hostName = cp_get(cp, ce, "host_name", ce_name)
@@ -79,9 +84,6 @@ def initialize(cp):
 def ce_record(cp, info):
     if has_gratia_capacity:
         try:
-            Gratia.Initialize('ProbeConfig')
-            probeName = 'gip_CE:%s' % info['hostName']
-            siteName = cp_get(cp, site, "name", "UNKNOWN")
             desc = ComputeElement.ComputeElement()
             desc.UniqueID(info['ceUniqueID'])
             desc.CEName(info['queue'])
@@ -94,6 +96,13 @@ def ce_record(cp, info):
             desc.MaxTotalJobs(info['max_total'])
             desc.AssignedJobSlots(info['assigned'])
             desc.Status(info['status'])
+            old_stdout = sys.stdout
+            sys.stdout = sys.stderr
+            result = None
+            try:
+                result = Gratia.Send(desc)
+            finally:
+                sys.stdout = old_stdout
             result = Gratia.Send(desc)
             log.debug("CE description for Gratia: %s" % desc)
             log.debug("Gratia sending result: %s" % result)
@@ -104,20 +113,31 @@ def ce_record(cp, info):
 def vo_record(cp, info):
     if has_gratia_capacity:
         try:
+            log.debug("Starting creation of VOView record.")
             cer = ComputeElementRecord.ComputeElementRecord()
             cer.UniqueID(info['ceUniqueID'])
-            cer.VO(info['vo'])
+            cer.VO(info['voLocalID'])
             cer.Timestamp(time_now)
             try:
                 if int(info['running']) == 0 and int(info['total']) \
                         == 0 and int(info['waiting']) == 0:
+                    log.debug("Skipping VO record because VO %s is inactive" \
+                        % info['voLocalID'])
                     return
-            except:
+            except Exception, e:
+                log.warning("Non-fatal exception while skipping empty VO " \
+                    "record: %s" % str(e))
                 return
             cer.RunningJobs(info['running'])
             cer.TotalJobs(info['total'])
             cer.WaitingJobs(info['waiting'])
-            result = Gratia.Send(cer)
+            old_stdout = sys.stdout
+            sys.stdout = sys.stderr
+            result = None
+            try:
+                result = Gratia.Send(cer)
+            finally:
+                sys.stdout = old_stdout
             log.debug("Gratia description of VOView: %s" % str(cer))
             log.debug("Gratia sending result: %s" % result)
         except Exception, e:

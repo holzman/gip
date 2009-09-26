@@ -6,6 +6,8 @@ import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
+import gip.gratia
+
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, printTemplate, cp_get
 from gip_cluster import getClusterID
 from gip_sections import ce
@@ -83,6 +85,7 @@ def print_CE(cp):
             "waiting" : queue['waiting'],
             "referenceSI00": referenceSI00,
         }
+        gip.gratia.ce_record(cp, info)
         printTemplate(ce_template, info)
     return queueInfo
 
@@ -111,6 +114,7 @@ def print_VOViewLocal(cp):
             'data'        : cp_get(cp, "osg_dirs", "data", "/OSG_DATA_UNKNOWN"),
         }
         info['total'] = info['waiting'] + info['running']
+        gip.gratia.vo_record(cp, info)
         printTemplate(VOView, info)
 
 def bootstrapSGE(cp):
@@ -153,6 +157,7 @@ def main():
         addToPath(cp_get(cp, "sge", "sge_path", "."))
         vo_map = VoMapper(cp)
         pbsVersion = getLrmsInfo(cp)
+        gip.gratia.initialize(cp)
         print_CE(cp)
         print_VOViewLocal(cp)
     except Exception, e:

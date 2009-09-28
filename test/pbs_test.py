@@ -47,10 +47,20 @@ class TestPbsDynamic(unittest.TestCase):
     def test_vo_queues(self):
         os.environ['GIP_TESTING'] = '1'
         cp = config("test_configs/red.conf")
-        vo_queues = Set(getVoQueues(cp))
+        old_globus_loc = os.environ.get("GLOBUS_LOCATION", None)
+        if old_globus_loc != None:
+            del os.environ['GLOBUS_LOCATION']
+        try:
+            vo_queues = Set(getVoQueues(cp))
+        finally:
+            if old_globus_loc != None:
+                os.environ['GLOBUS_LOCATION'] = old_globus_loc
         diff = vo_queues.symmetric_difference(example_queues)
-        self.assertEquals(len(diff), 0, msg="The following VO-queues are " \
-            "different between the expected and actual: %s" % str(diff))
+        self.failIf(diff, msg="The following VO-queues are " \
+            "different between the expected and actual:\n%s\nExpected:\n%s"\
+            "\nActual:\n%s." % (", ".join([str(i) for i in diff]),
+             ", ".join([str(i) for i in example_queues]),
+            ", ".join([str(i) for i in vo_queues])))
 
     def test_lbl_entries(self):
         """
@@ -169,10 +179,15 @@ class TestPbsDynamic(unittest.TestCase):
         Regression test for the RVF files.
         """
         os.environ['GIP_TESTING'] = '1'
-        os.environ['GLOBUS_LOCATION'] = 'test_configs/globus'
-        cp = config('test_configs/pbs_rvf.conf')
-        queue_set = Set(getQueueList(cp))
-        vo_queues = getVoQueues(cp)
+        old_globus_loc = os.environ.get('GLOBUS_LOCATION', None)
+        try:
+            os.environ['GLOBUS_LOCATION'] = 'test_configs/globus'
+            cp = config('test_configs/pbs_rvf.conf')
+            queue_set = Set(getQueueList(cp))
+            vo_queues = getVoQueues(cp)
+        finally:
+            if old_globus_loc != None:
+                os.environ['GLOBUS_LOCATION'] = old_globus_loc
         queue_set2 = Set([i[1] for i in vo_queues])
         diff = queue_set.symmetric_difference(queue_set2)
         self.failIf(diff, msg="Disagreement in queue list between getVoQueues"\

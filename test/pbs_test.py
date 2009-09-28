@@ -8,7 +8,7 @@ os.environ['GIP_TESTING'] = '1'
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_sets import Set
 from gip_common import config, cp_get
-from pbs_common import getVoQueues
+from pbs_common import getVoQueues, getQueueList
 from gip_ldap import read_ldap
 from gip_testing import runTest, streamHandler
 import gip_testing
@@ -25,6 +25,8 @@ example_queues = \
     
 
 example_queues = Set(example_queues)
+
+rvf_example_queues = Set(['lcgadmin', 'atlas', 'workq'])
 
 class TestPbsDynamic(unittest.TestCase):
 
@@ -161,6 +163,23 @@ class TestPbsDynamic(unittest.TestCase):
                 self.failUnless(entry.glue['CEStateFreeJobSlots'] == '158')
                 has_dzero_ce = True
         self.failUnless(has_dzero_ce, msg="dzero queue's CE was not found!")
+
+    def test_rvf_queues(self):
+        """
+        Regression test for the RVF files.
+        """
+        os.environ['GIP_TESTING'] = '1'
+        os.environ['GLOBUS_LOCATION'] = 'test_configs/globus'
+        cp = config('test_configs/pbs_rvf.conf')
+        queue_set = Set(getQueueList(cp))
+        vo_queues = getVoQueues(cp)
+        queue_set2 = Set([i[1] for i in vo_queues])
+        diff = queue_set.symmetric_difference(queue_set2)
+        self.failIf(diff, msg="Disagreement in queue list between getVoQueues"\
+            " and getQueueList: %s" % ", ".join(diff))
+        diff = queue_set.symmetric_difference(rvf_example_queues)
+        self.failIf(diff, msg="Disagreement between queue list and reference"\
+            " values: %s" % ", ".join(diff))
 
     def test_max_queuable_26(self):
         """

@@ -1,0 +1,46 @@
+Attribute: email_address
+Description: "Set the email address to receive notifications. See the
+             email_on_abort, email_on_execution, and emailontermination attributes."
+ValidWhen: GLOBUS_GRAM_JOB_SUBMIT
+
+Attribute: email_on_abort
+Description: "Send email to the job submitter (or the address specified in the
+             email_address RSL attribute if present) if the job is aborted by the
+             scheduler."
+Values: yes no
+ValidWhen: GLOBUS_GRAM_JOB_SUBMIT
+
+Attribute: email_on_execution
+Description: "Send email to the job submitter (or the address specified in the
+             email_address RSL attribute if present) when the job begins execution."
+Values: yes no
+ValidWhen: GLOBUS_GRAM_JOB_SUBMIT
+
+Attribute: email_on_termination
+Description: "Send email to the job submitter (or the address specified in the
+             email_address RSL attribute if present) when the job terminates."
+Values: yes no
+ValidWhen: GLOBUS_GRAM_JOB_SUBMIT
+
+Attribute: xcount
+Description: "Defines the number of processes desired.  It is a list that is relative to the RSL paramters host_xcount and host_types, or host_names. Only applies to compute clusters."
+ValidWhen: GLOBUS_GRAM_JOB_SUBMIT
+
+Attribute: host_xcount
+Description: "Defines the number of nodes desired.  It is a list that is relative to the RSL paramters xcount and host_types. Only applies to compute clusters."
+ValidWhen: GLOBUS_GRAM_JOB_SUBMIT
+
+Attribute: host_types
+Description: "Defines the types of nodes desired.  It is a list that is relative to the RSL paramters xcount and host_xcount. Only applies to compute clusters."
+ValidWhen: GLOBUS_GRAM_JOB_SUBMIT
+
+Attribute: host_names
+Description: "Defines the names of nodes desired.  It is a list that is relative to the RSL paramters xcount. Only applies to compute clusters."
+ValidWhen: GLOBUS_GRAM_JOB_SUBMIT
+
+Attribute: reservation_id
+Description: "Defines the reservation this job should run under"
+ValidWhen: GLOBUS_GRAM_JOB_SUBMIT
+
+Attribute: queue
+Values: lcgadmin atlas workq pushpa

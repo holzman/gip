@@ -9,7 +9,7 @@ import types
 import tempfile
 import cStringIO
 import xml.dom.minidom
-from gip_ldap import read_ldap
+from lib.gip_ldap import read_ldap
 
 def safeGet(dictionary, key, default=""):
     try:

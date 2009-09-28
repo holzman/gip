@@ -8,7 +8,15 @@ __author__ = "Brian Bockelman"
 import os
 import re
 import sys
-import gip_sets as sets
+
+py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
+
+if not py23:
+    from sets24 import *
+    from sets24 import _TemporarilyImmutableSet
+else:
+    from sets import *
+    from sets import _TemporarilyImmutableSet
 
 class _hdict(dict): #pylint: disable-msg=C0103
     """

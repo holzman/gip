@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+w #!/usr/bin/env python
 # pylint: disable-msg=E1101
 import os
 from pretty_gip_info_common import safeGet, LdifToXML, write_file, getTempFilename
@@ -11,7 +11,7 @@ class SiteInfoToXml(LdifToXML):
         LdifToXML.__init__(self, source="gip", source_path="")
         self.site = {"Name" : "", "cluster":[], "se":[], "service":[]}
         self.xml_file = getTempFilename()
-        self.xsl_file = "$GIP_LOCATION/templates/pretty_gip_info.xsl"
+        self.xsl_file = "$PRETTY_GIP_LOCATION/xsl/pretty_gip_info.xsl"
         self.html_file = "$VDT_LOCATION/apache/htdocs/pretty_gip_info.html" 
         
     def main(self):
@@ -220,6 +220,8 @@ class SiteInfoToXml(LdifToXML):
         return self.doc.toxml()
 
 def main():
+    os.environ["PRETTY_GIP_LOCATION"] = os.path.abspath(sys.path[0])
+
     xmlBuilder = SiteInfoToXml()
     xmlBuilder.main()
 

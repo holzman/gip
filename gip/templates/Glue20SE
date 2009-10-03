@@ -1,0 +1,79 @@
+
+dn: GLUE2ToComputingServiceID=%(tcsUniqueID)s,GLUE2StorageServiceID=%(sseUniqueID)s,GlueDomainID=%(resourceGroup)s,o=top
+1 GLUE2ToComputingServiceID: %(tcsUniqueID)s
+1 GLUE2ToComputingServiceComputingServiceForeignKey: %(csUniqueID)s
+1 GLUE2ToComputingServiceStorageServiceForeignKey: %(sseUniqueID)s
+* GLUE2ToComputingServiceStorageAccessProtocolForeignKey: %(apUniqueID)s
+
+dn: GLUE2StorageShareCapacityID=%(sscUniqueID)s,GLUE2StorageShareID=%(sshUniqueID)s,GLUE2StorageServiceID=%(sseUniqueID)s,GlueDomainID=%(resourceGroup)s,o=top
+objectClass: GLUE2Entity
+objectClass: GLUE2StorageShareCapacity
+1 GLUE2StorageShareCapacityID: %(sscUniqueID)s
+1 GLUE2StorageShareCapacityType: %(type)s
+? GLUE2StorageShareCapacityFreeSize: %(freeSize)s
+? GLUE2StorageShareCapacityUsedSize: %(usedSize)s
+? GLUE2StorageShareCapacityReservedSize: %(reservedSize)s
+1 GLUE2StorageShareCapacityStorageShareForeignKey: %(sshUniqueID)s
+
+dn: GLUE2StorageShareID=%(sshUniqueID)s,GLUE2StorageServiceID=%(sseUniqueID)s,GlueDomainID=%(resourceGroup)s,o=top
+objectClass: GLUE2Share
+objectClass: GLUE2StorageShare
+1 GLUE2StorageShareSharingID: %(ID)s
+1 GLUE2StorageShareServingState: %(status)s
+1 GLUE2StorageShareAccessLatency: %(accessLatency)s
+? GLUE2StorageShareTag: %(tag)s
+1 GLUE2StorageShareStorageServiceForeignKey: %(sseUniqueID)s
+* GLUE2StorageShareDataStoreForeignKey: %(dsUniqueID)s
+
+dn: GLUE2DataStoreID=%(dsUniqueID)s,GLUE2StorageServiceID=%(sseUniqueID)s,GlueDomainID=%(resourceGroup)s,o=top
+objectClass: GLUE2Resource
+objectClass: GLUE2DataStore
+1 GLUE2DataStoreID=%(dsUniqueID)s
+1 GLUE2DataStoreType=%(type)s
+1 GLUE2DataStoreLatency=%(latency)s
+? GLUE2DataStoreTotalSize=%(totalSize)s
+? GLUE2DataStoreFreeSize=%(freeSize)s
+? GLUE2DataStoreUsedSize=%(usedSize)s
+1 GLUE2DataStoreStorageManagerForeignKey: %(smUniqueID)s
+* GLUE2DataStoreStorageShareForeignKey: %(ssUniqueID)s
+
+dn: GLUE2StorageManagerID=%(smUniqueID),GLUE2StorageServiceID=%(sseUniqueID)s,GlueDomainID=%(resourceGroup)s,o=top
+objectClass: GLUE2Manager
+objectClass: GLUE2StorageManager
+1 GLUE2StorageManagerID=%(smUniqueID)s
+1 GLUE2StorageManagerName=%(name)s
+1 GLUE2StorageManagerProductName=%(implementation)s
+1 GLUE2StorageManagerProductVersion=%(implementationVersion)s
+
+dn: GLUE2StorageEndpointID=%(seUniqueID)s,GLUE2StorageServiceID=%(sseUniqueID)s,GlueDomainID=%(resourceGroup)s,o=top
+objectClass: GLUE2Endpoint
+objectClass: GLUE2StorageEndpoint
+1 GLUE2StorageEndpointStorageServiceForeignKey=%(sseUniqeuID)s
+1 GLUE2EndpointID: %(seUniqueID)s
+1 GLUE2EndpointURL: %(endpoint)s
+1 GLUE2EndpointInterfaceName: %(interface)s
+1 GLUE2EndpointQualityLevel: %(quality)s
+1 GLUE2EndpointHealthState: %(status)s
+1 GLUE2EndpointServingState: %(serving)s
+* GLUE2EndpointInterfaceVersion: %(version)s
+* GLUE2EndpointSupportedProfile: %(profile)s
+? GLUE2EndpointImplementationName: %(implementation)s
+? GLUE2EndpointImpelmentationVersion: %(implementationVersion)s
+* GLUE2EndpointWSDL: %(wsdl)s
+
+dn: GLUE2StorageAccessProtocolID=%(apUniqueID)s,GLUE2StorageServiceID=%(sseUniqueID)s,GlueDomainID=%(resourceGroup)s,o=top
+objectClass GLUE2StorageAccessProtocol
+objectClass: GLUE2Entity
+1 GLUE2StorageAccessProtocolID: %(apUniqueID)s
+1 GLUE2StorageAccessProtocolType: %(protocol)s
+1 GLUE2StorageAccessProtocolVersion: %(version)s
+1 GLUE2StorageAccessProtocolStorageServiceForeignKey: %(sseUniqueID)s
+
+dn: GLUE2StorageServiceID=%(sseUniqueID)s,GlueDomainID=%(resourceGroup)s,o=top
+objectClass: GLUE2Service
+objectClass: GLUE2StorageService
+1 GLUE2StorageServiceID: %(sseUniqueID)s
+1 GLUE2StorageServiceType: %(type)s
+1 GLUE2StorageServiceQualityLevel: %(quality)s
+1 GLUE2StorageServiceName: %(name)s
+

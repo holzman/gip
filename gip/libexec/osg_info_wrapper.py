@@ -473,7 +473,11 @@ def run_child(executable, orig_filename, timeout):
     control to the parent function (hence creating a fork bomb).
     """
     try:
-        _run_child(executable, orig_filename, timeout)
+        try:
+            _run_child(executable, orig_filename, timeout)
+        except Exception, e:
+            log.error("Fatal exception while running child")
+            log.exception(e)
     finally:
         os._exit(os.EX_SOFTWARE)
 
@@ -501,7 +505,14 @@ def _run_child(executable, orig_filename, timeout):
             os._exit(os.EX_SOFTWARE)
     log.debug("Set a %.2f second timeout." % timeout)
     t1 = -time.time()
-    sys.stderr = open(os.path.expandvars("$GIP_LOCATION/var/logs/module.log"), 'a')
+    module_log_loc = os.path.expandvars("$GIP_LOCATION/var/logs/module.log")
+    try:
+        sys.stderr = open(module_log_loc, 'a')
+    except:
+        log.warning("Unable to open %s; this might be a permissions error in" \
+            " your GIP install if you are running as daemon." % module_log_loc)
+        log.warning("Sending stderr to /dev/null")
+        sys.stderr = open("/dev/null", "a")
     exec_name = executable.split('/')[-1]
     pid = os.spawnl(os.P_NOWAIT, "/bin/sh", exec_name, "-c", "%s > %s" % \
         (executable, filename))

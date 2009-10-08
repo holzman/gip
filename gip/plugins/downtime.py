@@ -20,6 +20,19 @@ log = getLogger("GIP.Downtime")
 default_url = "https://myosg.grid.iu.edu/rgdowntime/xml?datasource=downtime" \
     "&all_resources=on"
 
+# If the GlueDowntime template is not available, we will fall back to these
+# entries.  This is done so downtime.py can be a standalone plugin on existing
+# GIP installs
+ce_template = """\
+dn: GlueCEUniqueID=%(ceUniqueID)s,mds-vo-name=local,o=grid
+GlueCEStateStatus: %(status)s
+"""
+
+se_template = """\
+dn: GlueSEUniqueID=%(seUniqueID)s,mds-vo-name=local,o=grid
+GlueSEStatus: %(status)s
+"""
+
 class Downtime(object):
 
     def __init__(self):
@@ -188,7 +201,10 @@ class ExternalDowntimePlugin(object):
             raise Exception("Unable to get any downtime information")
 
     def publishCEList(self):
-        template = getTemplate("GlueDowntime", "GlueCEUniqueID")
+        try:
+            template = getTemplate("GlueDowntime", "GlueCEUniqueID")
+        except:
+            template = ce_template
         for downtime in self.downtimes:
             if not downtime.isActive():
                 continue
@@ -199,7 +215,10 @@ class ExternalDowntimePlugin(object):
                     printTemplate(template, info)
 
     def publishSEList(self):
-        template = getTemplate("GlueDowntime", "GlueSEUniqueID")
+        try:
+            template = getTemplate("GlueDowntime", "GlueSEUniqueID")
+        except:
+            template = se_template
         for downtime in self.downtimes:
             if not downtime.isActive():
                 continue
@@ -208,7 +227,6 @@ class ExternalDowntimePlugin(object):
                 if se.endswith("_classicSE"):
                     test_name = se[:-10]
                 hostname = test_name.split(':')[0].split("/")[0]
-                log.info("Checking SE %s, host %s" % (se, hostname))
                 if downtime.matchCE(hostname) or \
                         downtime.matchResource(hostname):
                     info = {'seUniqueID': se, 'status': 'Closed'}

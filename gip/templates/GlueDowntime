@@ -1,0 +1,7 @@
+
+dn: GlueCEUniqueID=%(ceUniqueID)s,mds-vo-name=local,o=grid
+GlueCEStateStatus: %(status)s
+
+dn: GlueSEUniqueID=%(seUniqueID)s,mds-vo-name=local,o=grid
+GlueSEStatus: %(status)s
+

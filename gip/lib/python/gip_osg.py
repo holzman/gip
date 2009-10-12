@@ -424,15 +424,6 @@ def configSubclusters(cp, cp2):
     }
     siteName = cp_get(cp, site_sec, "site_name", "UNKNOWN")
 
-    if 'name' in options:
-        try:
-            name = cp2.get(my_sect, 'name')
-            cp2.set(my_sect, 'unique_name', name+"-"+siteName)
-        except SystemExit, KeyboardInterrupt:
-            raise
-        except Exception, e:
-            log.exception(e)
-
     for section in cp.sections():
         my_sect = section.lower()
         if not my_sect.startswith(subcluster):
@@ -445,6 +436,16 @@ def configSubclusters(cp, cp2):
             gip_option = translation.get(option, option)
             cp2.set(my_sect, gip_option, cp.get(section, option))
         options = cp2.options(my_sect)
+        
+        if 'name' in options:
+            try:
+                name = cp2.get(my_sect, 'name')
+                cp2.set(my_sect, 'unique_name', name+"-"+siteName)
+            except SystemExit, KeyboardInterrupt:
+                raise
+            except Exception, e:
+                log.exception(e)
+
         if 'node_count' in options and 'cpus_per_node':
             try:
                 cp2.set(my_sect, "total_cpus", str(int(float(cp2.get(my_sect,

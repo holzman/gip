@@ -422,6 +422,17 @@ def configSubclusters(cp, cp2):
         "ram_mb":  "ram_size",
         "cpu_platform": "platform",
     }
+    siteName = cp_get(cp, site_sec, "site_name", "UNKNOWN")
+
+    if 'name' in options:
+        try:
+            name = cp2.get(my_sect, 'name')
+            cp2.set(my_sect, 'unique_name', name+"-"+siteName)
+        except SystemExit, KeyboardInterrupt:
+            raise
+        except Exception, e:
+            log.exception(e)
+
     for section in cp.sections():
         my_sect = section.lower()
         if not my_sect.startswith(subcluster):

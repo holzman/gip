@@ -10,7 +10,7 @@ import gip_sets as sets
 
 from gip_common import HMSToMin, getLogger, VoMapper, voList, parseRvf
 from gip_testing import runCommand
-from batch_system import BatchSystem
+from gip.batch_systems.batch_system import BatchSystem
 
 log = getLogger("GIP.PBS")
 

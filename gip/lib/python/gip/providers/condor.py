@@ -22,7 +22,7 @@ if not py23:
 import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes
-from gip_cluster import getClusterID
+from gip_cluster import getClusterID, getClusterName
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
 from gip_storage import getDefaultSE
 
@@ -65,7 +65,7 @@ def print_CE(cp):
        * condor.status.  The status of the condor LRMS.  Defaults to
           "Production".
        * ce.globus_version.  The used Globus version.  Defaults to 4.0.6
-       * ce.hosting_cluster.  The attached cluster name.  Defaults to ce.name
+       * ce.cluster.  The attached cluster name.  Defaults to ce.name
        * ce.host_name.  The CE's host name.  Default to ce.name
        * condor.preemption.  Whether or not condor allows preemption.  Defaults
           to False
@@ -224,7 +224,7 @@ def print_CE(cp):
             'contact_string' : contact_string,
             "ceImpl"         : "Globus",
             "ceImplVersion"  : cp_get(cp, ce, 'globus_version', '4.0.6'),
-            "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name),
+            "hostingCluster" : getClusterName(cp),
             "hostName"       : cp_get(cp, ce, "host_name", ce_name),
             "gramVersion"    : '2.0',
             "lrmsType"       : "condor",

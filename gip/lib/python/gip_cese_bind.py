@@ -28,7 +28,8 @@ def getCEList(cp, extraCEs=[]):
     hostnames = [cp.get(ce, 'name')] 
     hostnames += extraCEs
 
-    ce_names = ['%s:2119/jobmanager-%s-%%s' % (hostname, jobman) for hostname in hostnames]
+    ce_names = ['%s:2119/jobmanager-%s-%%s' % (hostname, jobman) for \
+        hostname in hostnames]
 
     ce_list = []
     if jobman == 'pbs':
@@ -44,7 +45,7 @@ def getCEList(cp, extraCEs=[]):
     for queue in queue_entries:
         for ce_name in ce_names:
             ce_list.append(ce_name % queue)
-    return ce_list
+    return list(Set(ce_list))
 
 def getClassicSEList(cp):
     """

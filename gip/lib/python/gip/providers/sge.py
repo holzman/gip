@@ -9,7 +9,7 @@ import gip_cluster
 import gip.gratia
 
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, printTemplate, cp_get
-from gip_cluster import getClusterID
+from gip_cluster import getClusterID, getClusterName
 from gip_sections import ce
 from gip_storage import getDefaultSE
 
@@ -65,7 +65,7 @@ def print_CE(cp):
             "total" : queue['slots_used'] + queue['waiting'],
             "ert" : 3600,
             "wrt" : 3600,
-            "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name),
+            "hostingCluster" : getClusterName(cp),
             "hostName" : cp_get(cp, ce, 'host_name', ce_name),
             "contact_string" : contact_string,
             "app_dir" : cp_get(cp, 'osg_dirs', 'app', "/OSG_APP_UNKNOWN"),

@@ -8,12 +8,12 @@ sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
 from gip_common import config, getLogger, getTemplate, \
     printTemplate, cp_get, responseTimes
-from gip_cluster import getClusterID
+from gip_cluster import getClusterID, getClusterName
 from gip_sections import ce
 from gip_storage import getDefaultSE
 
-from batch_systems.pbs import PbsBatchSystem
-from batch_systems.forwarding import Forwarding
+from gip.batch_systems.pbs import PbsBatchSystem
+from gip.batch_systems.forwarding import Forwarding
 
 log = getLogger("GIP.Batch")
 
@@ -64,7 +64,7 @@ def print_CE(batch):
         info["job_slots"] = min(totalCpu, info["job_slots"])
         info['ert'] = ert
         info['wrt'] = wrt
-        info['hostingCluster'] = cp_get(cp, ce, 'hosting_cluster', ce_name)
+        info['hostingCluster'] = getClusterName(cp)
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
         info['ceImpl'] = 'Globus'
         info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')

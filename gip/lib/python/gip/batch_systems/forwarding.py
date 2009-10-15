@@ -13,7 +13,7 @@ from gip_cluster import getClusterID
 from condor_common import condorCommand, condor_version
 from gip_ldap import read_bdii, read_ldap
 from gip_sections import forwarding
-from batch_system import BatchSystem
+from gip.batch_systems.batch_system import BatchSystem
 import gip_sets as sets
 
 log = getLogger("GIP.Batch.Forwarding")

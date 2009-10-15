@@ -11,7 +11,7 @@ sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     printTemplate, cp_get, cp_getInt, responseTimes
-from gip_cluster import getClusterID
+from gip_cluster import getClusterID, getClusterName
 from lsf_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
 from gip_sections import ce
@@ -88,7 +88,7 @@ def print_CE(cp):
 
         info['ert'] = ert
         info['wrt'] = wrt
-        info['hostingCluster'] = cp_get(cp, ce, 'hosting_cluster', ce_name)
+        info['hostingCluster'] = getClusterName(cp)
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
         info['ceImpl'] = 'Globus'
         info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')

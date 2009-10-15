@@ -9,7 +9,7 @@ sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_sets import Set
 from gip_common import config, cp_get
 #from pbs_common import getVoQueues, getQueueList
-from batch_systems.pbs import PbsBatchSystem
+from gip.batch_systems.pbs import PbsBatchSystem
 from gip_ldap import read_ldap
 from gip_testing import runTest, streamHandler
 import gip_testing

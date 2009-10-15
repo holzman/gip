@@ -9,4 +9,5 @@ pbs = 'pbs'
 condor = 'condor'
 sge = 'sge'
 lsf = 'lsf'
+forwarding = 'forwarding'
 

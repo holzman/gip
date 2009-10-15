@@ -8,7 +8,8 @@ os.environ['GIP_TESTING'] = '1'
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_sets import Set
 from gip_common import config, cp_get
-from pbs_common import getVoQueues, getQueueList
+#from pbs_common import getVoQueues, getQueueList
+from batch_systems.pbs import PbsBatchSystem
 from gip_ldap import read_ldap
 from gip_testing import runTest, streamHandler
 import gip_testing
@@ -51,7 +52,8 @@ class TestPbsDynamic(unittest.TestCase):
         if old_globus_loc != None:
             del os.environ['GLOBUS_LOCATION']
         try:
-            vo_queues = Set(getVoQueues(cp))
+            pbs = PbsBatchSystem(cp)
+            vo_queues = Set(pbs.getVoQueues())
         finally:
             if old_globus_loc != None:
                 os.environ['GLOBUS_LOCATION'] = old_globus_loc
@@ -183,8 +185,9 @@ class TestPbsDynamic(unittest.TestCase):
         try:
             os.environ['GLOBUS_LOCATION'] = 'test_configs/globus'
             cp = config('test_configs/pbs_rvf.conf')
-            queue_set = Set(getQueueList(cp))
-            vo_queues = getVoQueues(cp)
+            pbs = PbsBatchSystem(cp)
+            queue_set = Set(pbs.getQueueList())
+            vo_queues = pbs.getVoQueues()
         finally:
             if old_globus_loc != None:
                 os.environ['GLOBUS_LOCATION'] = old_globus_loc

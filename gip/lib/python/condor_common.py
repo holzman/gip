@@ -24,9 +24,9 @@ from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
 from gip_testing import runCommand
 
 condor_version = "condor_version"
-condor_group = "condor_config_val GROUP_NAMES"
-condor_quota = "condor_config_val GROUP_QUOTA_%(group)s"
-condor_prio = "condor_config_val GROUP_PRIO_FACTOR_%(group)s"
+condor_group = "condor_config_val -negotiator GROUP_NAMES"
+condor_quota = "condor_config_val -negotiator GROUP_QUOTA_%(group)s"
+condor_prio = "condor_config_val -negotiator GROUP_PRIO_FACTOR_%(group)s"
 condor_status = "condor_status -xml -constraint '%(constraint)s'"
 condor_status_submitter = "condor_status -submitter -xml"
 condor_job_status = "condor_q -xml -constraint '%(constraint)s'"

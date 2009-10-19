@@ -35,8 +35,8 @@ def lookupCommand(cmd):
     if m:
         suffix = m.groups()[0]
     if cmd not in commands:
-        fd = open(os.path.expandvars("$VDT_LOCATION/test/command_output/" \
-            "commands"))
+        cmd_dir = os.path.expandvars("$VDT_LOCATION/test/command_output/")
+        fd = open(os.path.join(cmd_dir, "commands"))
         for line in fd:
             if line.startswith("#") or len(line.strip()) == 0:
                 continue
@@ -44,7 +44,9 @@ def lookupCommand(cmd):
             val = val.strip()
             command = command.strip()
             if suffix:
-                command = '%s_%s' % (command, suffix)
+                new_command = '%s_%s' % (command, suffix)
+                if os.path.exists(os.path.join(cmd_dir, new_command)):
+                    command = new_command
             commands[val.strip()] = command
     return commands[cmd]
 

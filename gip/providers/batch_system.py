@@ -5,8 +5,6 @@ import sys
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getLogger, cp_get
-from gip.providers.pbs import main as pbs_main
-from gip.providers.condor import main as condor_main
 from gip.providers.sge import main as sge_main
 from gip.providers.lsf import main as lsf_main
 from gip.providers.generic_batch_system import main as generic_main
@@ -19,11 +17,9 @@ def main():
     if job_manager:
         log.info("Using job manager %s" % job_manager)
     else:
-       log.error("Job manager not specified!")
-       sys.exit(2)
-    if job_manager == 'condor':
-        condor_main()
-    elif job_manager == 'sge':
+        log.error("Job manager not specified!")
+        sys.exit(2)
+    if job_manager == 'sge':
         sge_main()
     elif job_manager == 'lsf':
         lsf_main()

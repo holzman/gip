@@ -20,7 +20,8 @@ import sys
 
 from gip_common import  getLogger, VoMapper, voList, parseRvf
 from xml_common import parseXmlSax
-from sge_sax_handler import QueueInfoParser, JobInfoParser
+from gip.batch_systems.sge_sax_handler import QueueInfoParser, JobInfoParser, \
+    sgeCommand
 from gip_testing import runCommand
 from UserDict import UserDict
 import gip_sets as sets
@@ -34,78 +35,6 @@ sge_job_info_cmd = 'qstat -xml -u \*'
 sge_queue_list_cmd = 'qconf -sql'
 
 # h_rt - hard real time limit (max_walltime)
-
-
-def sgeOutputFilter(fp):
-    """
-    SGE's 'qconf' command has a line-continuation format which we will want to
-    parse.  To accomplish this, we use this filter on the output file stream.
-
-    You should "scrub" SGE output like this::
-
-        fp = runCommand(<pbs command>)
-        for line in pbsOutputFilter(fp):
-           ... parse line ...
-
-    Or simply,
-
-       for line in sgeCommand(<pbs command>):
-           ... parse line ...
-    """
-    class SGEIter:
-        """
-        An iterator for the SGE output.
-        """
-
-        def __init__(self, fp):
-            self.fp = fp
-            self.fp_iter = fp.__iter__()
-            self.prevline = ''
-            self.done = False
-
-        def next(self):
-            """
-            Return the next full line of output for the iterator.
-            """
-            try:
-                line = self.fp_iter.next()
-                if not line.endswith('\\'):
-                    result = self.prevline + line
-                    self.prevline = ''
-                    return result
-                line = line.strip()[:-1]
-                self.prevline = self.prevline + line
-                return self.next()
-            except StopIteration:
-                if self.prevline:
-                    results = self.prevline
-                    self.prevline = ''
-                    return results
-                raise
-
-    class SGEFilter:
-        """
-        An iterable object based upon the SGEIter iterator.
-        """
-
-        def __init__(self, myiter):
-            self.iter = myiter
-
-        def __iter__(self):
-            return self.iter
-
-    return SGEFilter(SGEIter(fp))
-
-def sgeCommand(command, cp):
-    """
-    Run a command against the SGE batch system.
-    
-    Use this when talking to SGE; not only does it allow for integration into
-    the GIP test framework, but it also filters and expands SGE-style line
-    continuations.
-    """
-    fp = runCommand(command)
-    return sgeOutputFilter(fp)
 
 def getLrmsInfo(cp):
     for line in runCommand(sge_version_cmd):

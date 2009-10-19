@@ -25,7 +25,7 @@ class TestSGEDynamic(unittest.TestCase):
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
                                   "--config=test_configs/pf-sge.conf")
-        print path
+
         fd = os.popen(path)
         fd.read()
         self.assertEquals(fd.close(), None)
@@ -34,17 +34,20 @@ class TestSGEDynamic(unittest.TestCase):
         os.environ['GIP_TESTING'] = '1'
         path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
                                   "--config=test_configs/pf-sge.conf")
-        print path
+
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
-        
+
+        has_ce = False        
         for entry in entries:
             if 'GlueCE' in entry.objectClass:
                 contact_string = entry.glue['CEInfoContactString']
                 self.failIf(contact_string == "", "Contact string is missing")
                 self.failIf(contact_string.endswith("jobmanager-sge"), \
                     "Contact string must include the queue.")
+                has_ce = True
+        self.failUnless(has_ce, msg="No GLUE CE object emitted.")
 
 def main():
     """

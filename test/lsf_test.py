@@ -33,12 +33,15 @@ class TestLsfDynamic(unittest.TestCase):
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
 
+        has_ce = False
         for entry in entries:
             if 'GlueCE' in entry.objectClass:
                 contact_string = entry.glue['CEInfoContactString']
                 self.failIf(contact_string == "", "Contact string is missing")
                 self.failIf(contact_string.endswith("jobmanager-lsf"), \
                     "Contact string must include the queue.")
+                has_ce = True
+        self.failUnless(has_ce, msg="No GLUE CE has been emitted.")
 
 def main():
     """

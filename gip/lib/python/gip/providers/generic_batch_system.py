@@ -13,6 +13,7 @@ from gip_sections import ce
 from gip_storage import getDefaultSE
 
 from gip.batch_systems.pbs import PbsBatchSystem
+from gip.batch_systems.condor import CondorBatchSystem
 from gip.batch_systems.forwarding import Forwarding
 
 log = getLogger("GIP.Batch")
@@ -30,6 +31,8 @@ def print_CE(batch):
     except:
         excludeQueues = []
     vo_queues = batch.getVoQueues()
+    log.info("The following queues were returned from the batch system: %s" % \
+        ", ".join(queueInfo))
     for queue, info in queueInfo.items():
         if queue in excludeQueues:
             continue
@@ -47,13 +50,13 @@ def print_CE(batch):
         unique_id = '%s:2119/jobmanager-%s-%s' % (ce_name, system_name, queue)
         info['ceUniqueID'] = unique_id
         if "job_slots" not in info:
-            if queue in queueCpus:
-                info['job_slots'] = queueCpus[queue][0]
-            else:
-                info["job_slots"] = totalCpu
+            info['job_slots'] = queueCpus.get(queue, [totalCpu])[0]
+        # INVARIANT: job_slots <= totalCpu
+        info['job_slots'] = min(info['job_slots'], totalCpu)
         if "priority" not in info:
             info["priority"] = 0
-        if "max_running" not in info:
+        # note: if max_running == 0, then it was undefined.
+        if "max_running" not in info or info['max_running'] == 0:
             info["max_running"] = info["job_slots"]
         if "max_wall" not in info:
             info["max_wall"] = 1440
@@ -61,7 +64,6 @@ def print_CE(batch):
         ert, wrt = responseTimes(cp, info.get("running", 0),
             info.get("wait", 0), max_job_time=info["max_wall"])
 
-        info["job_slots"] = min(totalCpu, info["job_slots"])
         info['ert'] = ert
         info['wrt'] = wrt
         info['hostingCluster'] = getClusterName(cp)
@@ -77,23 +79,34 @@ def print_CE(batch):
             info['max_waiting'] = 999999
         if 'max_queuable' in info:
             info['max_total'] = info['max_queuable']
+            # free_slots <= max_queuable
             info['free_slots'] = min(info['free_slots'], info['max_queuable'])
         else:
             info['max_total'] = info['max_waiting'] + info['max_running']
+            # free_slots <= max_total
             info['free_slots'] = min(info['free_slots'], info['max_total'])
         info['max_slots'] = 1
 
-        # Enforce invariants:
-        # max_total <= max_running
+        # INVARIANTS:
+        # assigned <= max_running
+        info['job_slots'] = min(info['job_slots'], info['max_running'])
+        # max_running >= running
+        info['max_running'] = max(info['running'], info['max_running'])
+        # max_total (jobs in system) >= max_running
+        info['max_total'] = max(info['max_total'], info['max_running'])
         # free_slots <= max_running
-        info['max_total'] = min(info['max_total'], info['max_running'])
         info['free_slots'] = min(info['free_slots'], info['max_running'])
+        # free_slots <= freeCpu
+        info['free_slots'] = min(info['free_slots'], freeCpu)
+        # free_slots <= job_slots - running, >= 0
+        info['free_slots'] = min(info['free_slots'], info['job_slots'] - \
+            info['running'])
+        if info['free_slots'] < 0:
+            info['free_slots'] = 0
+        # job_slots >= running
+        info['job_slots'] = max(info['job_slots'], info['running'])
 
         info['assigned'] = info['job_slots']
-
-        # Enforce invariants:
-        # assigned <= max_running
-        info['assigned'] = min(info['assigned'], info['max_running'])
 
         info['lrmsType'] = system_name
         info['preemption'] = cp_get(cp, system_name, 'preemption', '0')
@@ -104,6 +117,7 @@ def print_CE(batch):
                 acbr += 'GlueCEAccessControlBaseRule: VO:%s\n' % vo
                 has_vo = True
         if not has_vo:
+            log.info("No VOs in queue %s; not printing." % queue)
             continue
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
@@ -132,6 +146,10 @@ def print_VOViewLocal(queue_info, batch):
             info2.get("wait", 0),
             max_job_time=my_queue_info.get("max_wall", 0))
 
+        max_running = info2.get('max_running', my_queue_info.get('job_slots',
+            0))
+        max_running = min(max_running, my_queue_info.get('max_running', 99999))
+
         info = {
             'ceUniqueID'  : ce_unique_id,
             'job_slots'   : my_queue_info.get('job_slots', 0),
@@ -142,7 +160,7 @@ def print_VOViewLocal(queue_info, batch):
             'voLocalID'   : vo,
             'job_manager' : system_name,
             'running'     : info2.get('running', 0),
-            'max_running' : info2.get('max_running', 0),
+            'max_running' : max_running,
             'priority'    : queue_info.get(queue, {}).get('priority', 0),
             'waiting'     : info2.get('wait', 0),
             'data'        : cp_get(cp, "osg_dirs", "data", "UNKNOWN_DATA"),
@@ -163,6 +181,8 @@ def main():
             batch = Forwarding(cp)
         if impl == 'pbs':
             batch = PbsBatchSystem(cp)
+        elif impl == 'condor':
+            batch = CondorBatchSystem(cp)
         else:
             log.error("Unknown job manager: %s" % impl)
             sys.exit(1)

@@ -15,6 +15,7 @@ from gip_storage import getDefaultSE
 from gip.batch_systems.pbs import PbsBatchSystem
 from gip.batch_systems.condor import CondorBatchSystem
 from gip.batch_systems.forwarding import Forwarding
+from gip.batch_systems.sge import SgeBatchSystem
 
 log = getLogger("GIP.Batch")
 
@@ -85,7 +86,8 @@ def print_CE(batch):
             info['max_total'] = info['max_waiting'] + info['max_running']
             # free_slots <= max_total
             info['free_slots'] = min(info['free_slots'], info['max_total'])
-        info['max_slots'] = 1
+        if 'max_slots' not in info:
+            info['max_slots'] = 1
 
         # INVARIANTS:
         # assigned <= max_running
@@ -183,6 +185,8 @@ def main():
             batch = PbsBatchSystem(cp)
         elif impl == 'condor':
             batch = CondorBatchSystem(cp)
+        elif impl == 'sge':
+            batch = SgeBatchSystem(cp)
         else:
             log.error("Unknown job manager: %s" % impl)
             sys.exit(1)

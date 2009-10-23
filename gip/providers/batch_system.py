@@ -19,9 +19,7 @@ def main():
     else:
         log.error("Job manager not specified!")
         sys.exit(2)
-    if job_manager == 'sge':
-        sge_main()
-    elif job_manager == 'lsf':
+    if job_manager == 'lsf':
         lsf_main()
     else:
         generic_main()

@@ -1,6 +1,8 @@
 
-from gip_testing import runCommand
+import copy
 from xml.sax.handler import ContentHandler
+
+from gip_testing import runCommand
 
 class QueueInfoParser(ContentHandler):
     def __init__(self):
@@ -37,7 +39,6 @@ class QueueInfoParser(ContentHandler):
             pass
 
     def endElement(self, name):
-        import copy
         if name == 'Queue-List':
             self.currentQueueInfo['jobs'] = copy.deepcopy(self.currentJobList)
             self.QueueList[self.currentQueueInfo['name']] = copy.deepcopy(\
@@ -85,7 +86,6 @@ class JobInfoParser(ContentHandler):
             self.elmContents = ''
 
     def endElement(self, name):
-        import copy
         if name == 'job_list':
             self.JobList.append(copy.deepcopy(self.currentJobInfo))
         elif name in self.currentJobInfoElmList:
@@ -99,6 +99,37 @@ class JobInfoParser(ContentHandler):
 
     def getJobInfo(self):
         return self.JobList
+
+class HostInfoParser(ContentHandler):
+
+    def __init__(self):
+        self.hosts = {}
+        self.curHostInfo = {}
+        self.curHost = None
+        self.curAtt = None
+        self.curVal = None
+
+    def startElement(self, name, attrs):
+        if name == 'host':
+            self.curHost = attrs.get('name', 'UNKNOWN')
+            self.curHostInfo = {}
+        elif name == 'hostvalue':
+            self.curAtt = attrs.get('name', 'UNKNOWN')
+            self.curVal = ''
+
+    def characters(self, ch):
+        if self.curAtt:
+            self.curVal += str(ch)
+
+    def endElement(self, name):
+        if name == 'host':
+            self.hosts[self.curHost] = self.curHostInfo
+        elif name == 'hostvalue':
+            self.curHostInfo[self.curAtt] = self.curVal
+            self.curAtt, self.curVal = None, None
+
+    def getHosts(self):
+        return self.hosts
 
 def sgeOutputFilter(fp):
     """

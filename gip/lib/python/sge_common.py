@@ -33,6 +33,7 @@ sge_queue_info_cmd = 'qstat -f -xml'
 sge_queue_config_cmd = 'qconf -sq %s'
 sge_job_info_cmd = 'qstat -xml -u \*'
 sge_queue_list_cmd = 'qconf -sql'
+sge_host_cmd = 'qhost -xml'
 
 # h_rt - hard real time limit (max_walltime)
 

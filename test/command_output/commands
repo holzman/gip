@@ -42,4 +42,17 @@ qconf_sq_lsdyna: qconf -sq lsdyna
 qconf_sq_myrinet: qconf -sq myrinet
 qconf_sq_pf24h: qconf -sq pf24h
 qconf_sq_schorr_a: qconf -sq schorr_a
+qconf_sq_lsdyna_ib_a: qconf -sq lsdyna-ib_a
+qconf_sq_lsdyna_ib_b: qconf -sq lsdyna-ib_b
+qconf_sq_pf240h: qconf -sq pf240h
+qconf_sq_pf240h_ib: qconf -sq pf240h_ib
+qconf_sq_hod: qconf -sq hod
+qconf_sq_pf-grid: qconf -sq pf-grid
+qconf_sq_ib_b: qconf -sq ib_b
+qconf_sq_reid-mm: qconf -sq reid-mm
+qconf_sq_reid_ib: qconf -sq reid_ib
+qconf_sq_smp: qconf -sq smp
+qconf_sq_ib_a: qconf -sq ib_a
+qconf_sq_geo_ib: qconf -sq geo_ib
 qconf_sql: qconf -sql
+qhost_xml: qhost -xml

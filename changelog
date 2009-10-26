@@ -1,4 +1,12 @@
 Changelog
+== 1.1.6 ==
+* Add GlueLocationLocalID OSG_VERSION to publish OSG version in friendlier way
+* Add cpu_platform publication capability
+* Add -SITENAME to the end of Subcluster Unique IDs in an attempt to make them globally unique
+* Improved error message on logfile permission problems
+* SL3 bugfix for try/except/finally block
+* Update unit tests	
+	
 == 1.1.5 ==
 * Help for debugging: print more python backtraces in logs
 * Add $PBS_LOCATION/bin to pbs path (for PBS/torque)

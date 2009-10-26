@@ -242,6 +242,8 @@ def configOsg(cp):
     __write_config(site_sec, "host_name", ce, "unique_name")
     __write_config(site_sec, "site_name", site, "name")
     __write_config(site_sec, "site_name", site, "unique_name")
+    __write_config(site_sec, "resource_group_name", site, "name")
+    __write_config(site_sec, "resource_group_name", site, "unique_name")
     __write_config(site_sec, "sponsor", site, "sponsor")
     __write_config(site_sec, "site_policy", site, "sitepolicy")
     __write_config(site_sec, "contact", site, "contact")

@@ -54,5 +54,12 @@ qconf_sq_reid_ib: qconf -sq reid_ib
 qconf_sq_smp: qconf -sq smp
 qconf_sq_ib_a: qconf -sq ib_a
 qconf_sq_geo_ib: qconf -sq geo_ib
+qconf_sq_starprod.q: qconf -sq starprod.q
+qconf_sq_all.q: qconf -sq all.q
+qconf_sq_adm.q: qconf -sq adm.q
+qconf_sq_test.q: qconf -sq test.q
+qconf_sq_starprod.64bit.q: qconf -sq starprod.64bit.q
+qconf_sq_all.64bit.q: qconf -sq all.64bit.q
+qconf_sq_debug.q: qconf -sq debug.q
 qconf_sql: qconf -sql
 qhost_xml: qhost -xml

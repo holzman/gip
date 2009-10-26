@@ -43,6 +43,13 @@ class SgeBatchSystem(BatchSystem):
     def __init__(self, cp):
         super(SgeBatchSystem, self).__init__(cp)
         self._version = None
+        self._qconf_cache = {}
+        self._nodes_cache = None
+        self._voqueues_cache = None
+        self._sge_job_cache = None
+        self._jobs_cache = None
+        self._queue_cache = None
+        self._pending_cache = {}
 
     def getLrmsInfo(self):
         if self._version != None:
@@ -52,7 +59,7 @@ class SgeBatchSystem(BatchSystem):
             return self._version
         raise Exception("Unable to determine LRMS version info.")
 
-    def parseNodes(cp):
+    def parseNodes(self):
         """
         Parse the node information from SGE.  Using the output from qhost, 
         determine:
@@ -62,6 +69,8 @@ class SgeBatchSystem(BatchSystem):
             - A dictionary mapping PBS queue names to a tuple containing the
                 (totalCPUs, freeCPUs).
         """
+        if self._nodes_cache != None:
+            return self._nodes_cache
         xml = runCommand(sge_qhost_cmd)
         handler = HostInfoParser()
         parseXmlSax(xml, handler)
@@ -75,10 +84,7 @@ class SgeBatchSystem(BatchSystem):
             except:
                 pass
 
-        xml = runCommand(sge_job_info_cmd)
-        handler = JobInfoParser()
-        parseXmlSax(xml, handler)
-        job_info = handler.getJobInfo()
+        job_info = self._getJobsInfo()
         free = total
         for job in job_info:
             try:
@@ -90,6 +96,7 @@ class SgeBatchSystem(BatchSystem):
                 pass
         free = max(free, 0)
         log.info("There were %i cores total, %i free." % (total, free))
+        self._nodes_cache = total, free, {}
         return total, free, {}
 
     def getQueueList(self):
@@ -106,6 +113,8 @@ class SgeBatchSystem(BatchSystem):
         return queues
 
     def getVoQueues(self):
+        if self._voqueues_cache != None:
+            return self._voqueues_cache
         voMap = self.vo_map
         try:
             queue_exclude = [i.strip() for i in self.cp.get("sge",
@@ -153,13 +162,13 @@ class SgeBatchSystem(BatchSystem):
                         ((len(whitelist) == 0) or vo not in whitelist):
                     continue
                 vo_queues.append((vo, queue))
+        self._voqueues_cache = vo_queues
         return vo_queues
 
     def getJobsInfo(self):
-        xml = runCommand(sge_job_info_cmd)
-        handler = JobInfoParser()
-        parseXmlSax(xml, handler)
-        job_info = handler.getJobInfo()
+        if self._jobs_cache != None:
+            return self._jobs_cache
+        job_info = self._getJobsInfo()
         queue_jobs = {}
 
         for job in job_info:
@@ -184,7 +193,20 @@ class SgeBatchSystem(BatchSystem):
                 info["wait"] += 1
             info["total"] += 1
             info["vo"] = vo
+
+        pending_jobs = self._getPendingInfo(queue_jobs.keys())
+        for queue, data in pending_jobs.items():
+            voinfo = queue_jobs.setdefault(queue, {})
+            for user, pending in data.items():
+                try:
+                    vo = self.vo_map[user].lower()
+                except:
+                    continue
+                info = voinfo.setdefault(vo, {"running":0, "wait":0, "total":0})
+                info['wait'] += pending
+
         log.debug("SGE job info: %s" % str(queue_jobs))
+        self._jobs_cache = queue_jobs
         return queue_jobs
 
     def getQueueInfo(self):
@@ -194,6 +216,8 @@ class SgeBatchSystem(BatchSystem):
         @param cp: Configuration of site.
         @returns: A dictionary of queue data and a dictionary of job data.
         """
+        if self._queue_cache != None:
+            return self._queue_cache
         queue_list = {}
         xml = runCommand(sge_queue_info_cmd)
         handler = QueueInfoParser()
@@ -241,8 +265,11 @@ class SgeBatchSystem(BatchSystem):
             q['priority'] = 0  # No such thing that I can find for a queue
 
             # How do you handle queues with no limit?
-            sqc = SGEQueueConfig(sgeCommand(sge_queue_config_cmd % name,
-                self.cp))
+            if name not in self._qconf_cache:
+                sqc = SGEQueueConfig(sgeCommand(sge_queue_config_cmd % name,
+                    self.cp))
+                self._qconf_cache[name] = sqc
+            sqc = self._qconf_cache[name]
 
             try:
                 q['priority'] = int(sqc['priority'])
@@ -271,10 +298,134 @@ class SgeBatchSystem(BatchSystem):
 
             queue_list[name] = q
 
-        waiting_jobs = 0
-        for job in queue_info['waiting']:
-            waiting_jobs += 1
-        queue_list['waiting'] = {'waiting': waiting_jobs}
+        pending_info = self._getPendingInfo(queue_list.keys())
+        for queue, data in pending_info.items():
+            queue_list[queue]['wait'] += sum(data.values())
 
+        self._queue_cache = queue_list
         return queue_list #, queue_info
+
+    def _maxQueue(self, queue_jobs):
+        """
+        Given a dictionary of queues -> # of jobs, determine which queue has
+        the most active queue.
+        This will throw an exception if the queue_jobs parameter is empty
+        """
+        most_active_queue = queue_jobs.keys()[0]
+        max_queue_size = queue_jobs[most_active_queue]
+        for qname, slots in queue_jobs.items():
+            if slots > max_queue_size:
+                most_active_queue = qname
+                max_queue_size = slots
+        return most_active_queue
+
+    def _getJobsInfo(self):
+        if self._sge_job_cache != None:
+            return self._sge_job_cache
+        xml = runCommand(sge_job_info_cmd)
+        handler = JobInfoParser()
+        parseXmlSax(xml, handler)
+        self._sge_job_cache = handler.getJobInfo()
+        return self._sge_job_cache
+
+    def _getPendingInfo(self, queue_list):
+        """
+        SGE doesn't let us know what queue the jobs belong to until the job
+        execution starts.  Hence, we look at what queue the user has the
+        most jobs in and arbitrarily assign the pending jobs there.
+
+        This method takes in a list of valid queue names and returns a dict;
+        the dictionary maps a queue_name to a dictionary mapping usernames to
+        number of pending jobs
+        """
+        queue_set = sets.ImmutableSet(queue_list)
+        if queue_set in self._pending_cache:
+            return self._pending_cache[queue_set]
+        job_info = self._getJobsInfo()
+        pending_jobs = {}
+        running_jobs = {}
+        queue_jobs = {}
+        for job in job_info:
+            user = job['JB_owner']
+            state = job['state']
+            try:
+                slots = int(job['slots'])
+            except:
+                slots = 1
+            queue = job.get('queue_name', '')
+            if queue.strip() == '':
+                queue = 'waiting'
+            queue = queue.split('@')[0]
+            if state == "qw":
+                jobs = pending_jobs.setdefault(user, 0)
+                pending_jobs[user] = jobs + slots
+            else:
+                user_jobs = running_jobs.setdefault(user, {})
+                jobs = user_jobs.setdefault(queue, 0)
+                user_jobs[queue] = jobs + slots
+                jobs = queue_jobs.setdefault(queue, 0)
+                queue_jobs[queue] = jobs + slots
+
+        if not queue_jobs:
+            if not queue_list:
+                log.warning("No queues configured, but pending jobs; " \
+                    "will return nothing.")
+                self._queue_cache = {}
+                return self._queue_cache
+            most_active_queue = queue_list[0]
+            log.warning("No active queues but there are pending jobs; will" \
+                " guess the jobs belong to an arbitrary queue, %s." % \
+                most_active_queue)
+        else:
+            most_active_queue = self._maxQueue(queue_jobs)
+            if most_active_queue not in queue_list:
+                if not queue_list:
+                    log.warning("No queues configured, but pending jobs; " \
+                        "will return nothing.")
+                    self._queue_cache = {}
+                    return self._queue_cache
+                tmp_queue = queue_list[0]
+                log.info("Most active queue %s is not already in queue list; " \
+                    "this may indicate an error.  Arbitrarily picking %s as " \
+                    "the most active queue." % (most_active_queue, tmp_queue))
+                most_active_queue = tmp_queue
+        log.info("Most active queue is %s; any user with only pending jobs " \
+            "will be assigned to this one." % most_active_queue)
+
+        results = {}
+        for user, pending in pending_jobs.items():
+            if user not in running_jobs or not running_jobs[user]:
+                log.info("User %s will have their %i pending jobs assigned to "\
+                    "queue %s because they are not running in any other " \
+                    "queue." % (user, pending, most_active_queue))
+                user_active_queue = most_active_queue
+            else:
+                user_active_queue = self._maxQueue(running_jobs[user])
+                if len(running_jobs[user]) == 1:
+                    log.info("User %s will have their %i pending jobs " \
+                        "assigned to queue %s because they already have %i " \
+                        "jobs running there." % (user, pending,
+                        user_active_queue,
+                        running_jobs[user][user_active_queue]))
+                else:
+                    log.info("User %s will have their %i pending jobs " \
+                        "assigned to queue %s because they already have %i " \
+                        "jobs running there, more than any other queue." % \
+                        (user, pending, user_active_queue,
+                        running_jobs[user][user_active_queue]))
+            if user_active_queue in queue_list:
+                tmp = results.setdefault(user_active_queue, {})
+                tmp.setdefault(user, 0)
+                tmp[user] += pending
+            else:
+                log.warning("Most active user queue is %s, but it wasn't found"\
+                    " in the queue list; this is probably an internal error." \
+                    "  Assigning user %s's %i pending jobs to most active " \
+                    "overall queue, %s" % (user_active_queue, user, pending,
+                    most_active_queue))
+                tmp = results.setdefault(most_active_queue, {}) 
+                tmp.setdefault(user, 0) 
+                tmp[user] += pending
+        self._pending_cache[queue_set] = results
+        return results
 

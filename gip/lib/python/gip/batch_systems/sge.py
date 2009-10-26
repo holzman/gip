@@ -429,3 +429,36 @@ class SgeBatchSystem(BatchSystem):
         self._pending_cache[queue_set] = results
         return results
 
+    def bootstrap(self):
+        """
+        If it exists, source
+        $SGE_ROOT/$SGE_CELL/common/settings.sh
+        """
+        sge_root = cp_get(cp, "sge", "sge_root", "")
+        if not sge_root:
+            log.warning("Could not locate sge_root in config file!  Not " \
+                "bootstrapping SGE environment.")
+            return
+        sge_cell = cp_get(cp, "sge", "sge_cell", "")
+        if not sge_cell:
+            log.warning("Could not locate sge_cell in config file!  Not " \
+                "bootstrapping SGE environment.")
+            return
+        settings = os.path.join(sge_root, sge_cell, "common/settings.sh")
+        if not os.path.exists(settings):
+            log.warning("Could not find the SGE settings file; looked in %s" % \
+                settings)
+            return
+        cmd = "/bin/sh -c 'source %s; /usr/bin/env'" % settings
+        fd = os.popen(cmd)
+        results = fd.read()
+        if fd.close():
+            log.warning("Unable to source the SGE settings file; tried %s." % \
+                settings)
+        for line in results.splitlines():
+            line = line.strip()
+            info = line.split('=', 2)
+            if len(info) != 2:
+                continue
+            os.environ[info[0]] = info[1]
+

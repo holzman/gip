@@ -190,6 +190,7 @@ def main():
         else:
             log.error("Unknown job manager: %s" % impl)
             sys.exit(1)
+        batch.bootstrap()
         queueInfo, totalCpu, freeCpu, queueCpus = print_CE(batch)
         print_VOViewLocal(queueInfo, batch)
         batch.printAdditional()

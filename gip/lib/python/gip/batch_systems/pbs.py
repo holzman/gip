@@ -8,7 +8,8 @@ import grp
 import pwd
 import gip_sets as sets
 
-from gip_common import HMSToMin, getLogger, VoMapper, voList, parseRvf
+from gip_common import HMSToMin, getLogger, VoMapper, voList, parseRvf, \
+    addToPath
 from gip_testing import runCommand
 from gip.batch_systems.batch_system import BatchSystem
 
@@ -416,4 +417,15 @@ class PbsBatchSystem(BatchSystem):
             "%s." % (queue, ', '.join(qinfo.get('users', [])),
             ', '.join(qinfo.get('groups', [])), ', '.join(vos)))
         return vos
+
+    def bootstrap(self):
+        try:
+            pbs_path = cp_get(self.cp, "pbs", "pbs_path", ".")
+            addToPath(pbs_path)
+            # adding pbs_path/bin to the path as well, since pbs/torque home 
+            # points to /usr/local and the binaries exist in /usr/local/bin
+            addToPath(pbs_path + "/bin")
+        except Exception, e:
+            log.exception(e)
+
 

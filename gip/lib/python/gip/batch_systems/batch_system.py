@@ -106,3 +106,9 @@ class BatchSystem(object):
         non-standard to the GLUE stream.
         """
 
+    def bootstrap(self):
+        """
+        This function is called before any others; this is the proper time to
+        do any environment or batch system initialization.
+        """
+

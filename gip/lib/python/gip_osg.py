@@ -375,6 +375,11 @@ def configOsg(cp):
             __write_config(gip_sec, "sc_%s_%i" % (key, idx), sec, val)
         if not cp.has_section(sec):
             continue
+
+        siteName = cp_get(cp2, site_sec, "site_name", "UNKNOWN")
+        name = cp.get(sec, 'name')
+        cp.set(sec, 'unique_name', name+"-"+siteName)
+        
         nodes = cp_getInt(cp, sec, "node_count", "0")
         cpus_per_node = cp_getInt(cp, sec, "cpus_per_node", 2)
         cores_per_node = cp_getInt(cp, sec, "cores_per_node", cpus_per_node*2)

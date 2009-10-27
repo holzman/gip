@@ -16,6 +16,7 @@ from gip.batch_systems.pbs import PbsBatchSystem
 from gip.batch_systems.condor import CondorBatchSystem
 from gip.batch_systems.forwarding import Forwarding
 from gip.batch_systems.sge import SgeBatchSystem
+from gip.batch_systems.lsf import LsfBatchSystem
 
 log = getLogger("GIP.Batch")
 
@@ -187,6 +188,8 @@ def main():
             batch = CondorBatchSystem(cp)
         elif impl == 'sge':
             batch = SgeBatchSystem(cp)
+        elif impl == 'lsf':
+            batch = LsfBatchSystem(cp)
         else:
             log.error("Unknown job manager: %s" % impl)
             sys.exit(1)

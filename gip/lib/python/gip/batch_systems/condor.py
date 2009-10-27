@@ -462,3 +462,11 @@ class CondorBatchSystem(BatchSystem):
         _nodes_cache = total, claimed, unclaimed
         return total, unclaimed, {}
 
+    def bootstrap(self):
+        try:
+            condor_path = cp_get(self.cp, "condor", "condor_path", None)
+            if condor_path != None:
+                addToPath(condor_path)
+        except Exception, e:
+            log.exception(e)
+

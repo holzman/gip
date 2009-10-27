@@ -171,8 +171,14 @@ class TestPbsDynamic(unittest.TestCase):
                     entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
                     '-pbs-dzero':
                 self.failUnless(entry.glue['CEPolicyMaxRunningJobs'] == '158')
-                self.failUnless(entry.glue['CEPolicyMaxTotalJobs'] == '158')
+                # I don't think MaxTotalJobs should be limited; this is the
+                # total number in the system; this isn't necessarily equal to
+                # max running.
+                #self.failUnless(entry.glue['CEPolicyMaxTotalJobs'] == '158')
                 self.failUnless(entry.glue['CEStateFreeJobSlots'] == '158')
+                self.failUnless(entry.glue['CEPolicyAssignedJobSlots'] == \
+                    '158')
+                self.failUnless(entry.glue['CEInfoTotalCPUs'] == '158')
                 has_dzero_ce = True
         self.failUnless(has_dzero_ce, msg="dzero queue's CE was not found!")
 
@@ -216,8 +222,8 @@ class TestPbsDynamic(unittest.TestCase):
                     entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
                     '-pbs-lcgadmin':
                 self.failUnless(entry.glue['CEPolicyMaxWaitingJobs'] == '183')
-                self.failUnless(entry.glue['CEStateFreeCPUs'] == '183')
-                self.failUnless(entry.glue['CEStateFreeJobSlots'] == '183')
+                self.failUnless(entry.glue['CEStateFreeCPUs'] == '4')
+                self.failUnless(entry.glue['CEStateFreeJobSlots'] == '4')
                 has_lcgadmin_ce = True
         self.failUnless(has_lcgadmin_ce, msg="lcgadmin queue's CE was not found!")
 

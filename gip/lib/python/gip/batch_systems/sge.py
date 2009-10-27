@@ -8,7 +8,7 @@ from UserDict import UserDict
 
 import gip_sets as sets
 
-from gip_common import  getLogger, VoMapper, voList, parseRvf
+from gip_common import  getLogger, VoMapper, voList, parseRvf, cp_get
 from xml_common import parseXmlSax
 from gip.batch_systems.sge_sax_handler import QueueInfoParser, JobInfoParser, \
     sgeCommand, convert_time_to_secs, runCommand, HostInfoParser
@@ -434,12 +434,12 @@ class SgeBatchSystem(BatchSystem):
         If it exists, source
         $SGE_ROOT/$SGE_CELL/common/settings.sh
         """
-        sge_root = cp_get(cp, "sge", "sge_root", "")
+        sge_root = cp_get(self.cp, "sge", "sge_root", "")
         if not sge_root:
             log.warning("Could not locate sge_root in config file!  Not " \
                 "bootstrapping SGE environment.")
             return
-        sge_cell = cp_get(cp, "sge", "sge_cell", "")
+        sge_cell = cp_get(self.cp, "sge", "sge_cell", "")
         if not sge_cell:
             log.warning("Could not locate sge_cell in config file!  Not " \
                 "bootstrapping SGE environment.")

@@ -9,7 +9,7 @@ import pwd
 import gip_sets as sets
 
 from gip_common import HMSToMin, getLogger, VoMapper, voList, parseRvf, \
-    addToPath
+    addToPath, cp_get
 from gip_testing import runCommand
 from gip.batch_systems.batch_system import BatchSystem
 

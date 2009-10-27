@@ -84,7 +84,10 @@ def print_CE(batch):
             # free_slots <= max_queuable
             info['free_slots'] = min(info['free_slots'], info['max_queuable'])
         else:
-            info['max_total'] = info['max_waiting'] + info['max_running']
+            if info['max_waiting'] == 999999 or info['max_running'] == 999999:
+                info['max_total'] = 999999
+            else:
+                info['max_total'] = info['max_waiting'] + info['max_running']
             # free_slots <= max_total
             info['free_slots'] = min(info['free_slots'], info['max_total'])
         if 'max_slots' not in info:

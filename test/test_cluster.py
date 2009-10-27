@@ -9,7 +9,7 @@ sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_testing import runTest, streamHandler
 from gip_common import config
 from gip_ldap import read_ldap
-from batch_systems.pbs import PbsBatchSystem
+from gip.batch_systems.pbs import PbsBatchSystem
 
 class TestCluster(unittest.TestCase):
 

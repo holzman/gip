@@ -17,6 +17,7 @@ from xml.sax.saxutils import XMLGenerator
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import osg_info_wrapper
 import gip_common
+import gip_ldap
 
 log = gip_common.getLogger('CEMonUploader')
 
@@ -80,26 +81,38 @@ def join_FK(item, join_list, join_attr, join_fk_name="ForeignKey"):
                     return entry
     raise ValueError("Unable to find matching entry in list.")
 
-def determine_ses(ce, all_cese):
+def determine_ses(ce, all_cese, all_cese_se):
     # Determine CESE binds, if any
     if ce.multi:
         unique = ce.glue['CEUniqueID'][0]
     else:
         unique = ce.glue['CEUniqueID']
     adjacent_ses = []
+    se_to_cese = {}
     for cese in all_cese:
         if cese.multi and unique in cese.glue['CESEBindGroupCEUniqueID']:
             for se in cese.glue['CESEBindGroupSEUniqueID']:
                  adjacent_ses.append(se)
         elif not cese.multi and unique == cese.glue['CESEBindGroupCEUniqueID']:
             adjacent_ses.append(cese.glue['CESEBindGroupSEUniqueID'])
-    return adjacent_ses
+            se_to_cese[se] = cese
+    for cese in all_cese_se:
+        for se in adjacent_ses:
+            if cese.multi and unique in cese.glue['CESEBindCEUniqueID'] \
+                    and se in cese.glue['CESEBindSEUniqueID']:
+                se_to_cese[se] = cese
+            elif not cese.multi and unique==cese.glue['CESEBindCEUniqueID']\
+                    and se in cese.glue['CESEBindSEUniqueID']:
+                se_to_cese[se] = cese
+    return adjacent_ses, se_to_cese
 
 ap_multi_attributes = ['SEAccessProtocolEndpoint', 'SEAccessProtocolVersion',
     'SEAccessProtocolLocalID', 'SEAccessProtocolSupportedSecurity',
     'SEAccessProtocolMaxStreams']
 drop_attrs = ['GlueForeignKey', 'GlueSiteDescription', 'GlueSiteLocation',
-    'GlueSiteWeb', 'GlueSiteSponsor', 'GlueSiteOtherInfo', 'GlueChunkKey']
+    'GlueSiteWeb', 'GlueSiteSponsor', 'GlueSiteOtherInfo', 'GlueChunkKey',
+    'GlueCESEBindSEUniqueID', 'GlueCESEBindCEUniqueID',
+    'GlueCESEBindCEAccesspoint']
 
 
 class ClassAdSink(object):
@@ -353,19 +366,19 @@ class ClassAdEmitter(object):
 
     def add_aps(self, aps, results):
         for ap in aps:
-            self.add_to_results(self, ap, results)
+            self.add_to_results(ap, results)
         for attr in ap_multi_attributes:
             attr_val = []
             for ap in aps:
                 attr_val.append(str(ap.glue[attr][0]))
-            results["Glue" + attr_val] = ",".join(attr_val)
+            results["Glue" + attr] = ",".join(attr_val)
 
     def add_software(self, software, results):
         pass
 
     def emit(self, site=None, cluster=None, ce=None, voview=None, software=None,
             aps=None, service=None, se=None, voinfo=None, sa=None,
-            subcluster=None, **kw):
+            subcluster=None, cese=None, **kw):
 
         if not site or not cluster or not ce:
             return
@@ -385,6 +398,8 @@ class ClassAdEmitter(object):
             self.add_to_results(service, results)
         if se:
             self.add_to_results(se, results)
+        if cese:
+            self.add_to_results(cese, results)
         if subcluster:
             self.add_to_results(subcluster, results)
 
@@ -496,6 +511,8 @@ def configure_emitter():
         " this data to.", action="append")
     parser.add_option("-c", "--certificate", dest="certificate", help="Cert" \
         "ificate file to use.", default=None)
+    parser.add_option("-i", "--uri", dest="uri", help="URI for input data.",
+        default=None)
     parser.add_option("-k", "--keyfile", dest="key", help="Key file to use.",
         default=None)
     options, args = parser.parse_args()
@@ -532,12 +549,16 @@ def configure_emitter():
     else:
         bdii = None
     
-    return cae, bdii
+    return cae, bdii, options.uri
 
 
 def main():
-    cae, bdii = configure_emitter()
-    entries = osg_info_wrapper.main(return_entries=True)
+    cae, bdii, uri = configure_emitter()
+    if not uri:
+        entries = osg_info_wrapper.main(return_entries=True)
+    else:
+        fd = urllib2.urlopen(uri)
+        entries = gip_ldap.read_ldap(fd, multi=True)
     upload(cae, bdii, entries)
 
 def upload(cae, bdii, entries):
@@ -560,6 +581,7 @@ def upload(cae, bdii, entries):
     all_subclusters = filter_by_class(entries, 'GlueSubCluster')
     all_sub = filter_by_class(entries, "GlueSubCluster")
     all_cese = filter_by_class(entries, "GlueCESEBindGroup")
+    all_cese_se = filter_by_class(entries, "GlueCESEBind")
     all_services = filter_by_class(entries, "GlueService")
     all_cps = filter_by_class(entries, "GlueSEControlProtocol")
     all_aps = filter_by_class(entries, "GlueSEAccessProtocol")
@@ -648,10 +670,11 @@ def upload(cae, bdii, entries):
 
         # Determine close SEs, if any
         try:
-            adjacent_ses = determine_ses(ce, all_cese)
+            adjacent_ses, seid_to_cese = determine_ses(ce, all_cese,
+                all_cese_se)
         except:
             raise
-            adjacent_ses = []
+            adjacent_ses, seid_to_cese = [], []
 
         # Determine VOViews on this CE
         voviews = ce_to_voviews.get(ce, [])
@@ -660,14 +683,15 @@ def upload(cae, bdii, entries):
         # various pieces are missing.
         # (thinking about better ways to do this)
         kw = {'site': site, 'cluster': cluster}
-        print >> sys.stderr, "Adjacent SEs %s." % ", ".join(adjacent_ses)
         if adjacent_ses:
             # All SEs
             for se in adjacent_ses:
                 adjacent_sas = se_to_sas.get(se, [])
                 kw['se'] = id_to_se[se]
-                kw['aps'] = se_to_aps.get(se, [])
+                kw['aps'] = se_to_aps.get(id_to_se[se], [])
                 kw['services'] = se_to_services.get(se, [])
+                if se in seid_to_cese:
+                    kw['cese'] = seid_to_cese[se]
                 # All SAs
                 if adjacent_sas:
                     for sa in adjacent_sas:
@@ -692,10 +716,6 @@ def upload(cae, bdii, entries):
             bdii.emit(entry)
         bdii.run()
 
-def main():
-    cae, bdii = configure_emitter()
-    entries = osg_info_wrapper.main(return_entries=True)
-    upload(cae, bdii, entries)
 
 if __name__ == '__main__':
     main()

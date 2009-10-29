@@ -89,7 +89,7 @@ if ($groups !~ m/^Not\sdefined/i){
         }
         $jobs{$tmp_vo}->{'idle'}=0;
         $jobs{$tmp_vo}->{'running'}=0;
-        $jobs{$tmp_vo}->{'prio'}=$prio;
+        $jobs{$tmp_vo}->{'prio'}=int($prio);
         $jobs{$tmp_vo}->{'quota'}=$quota;
 
     }

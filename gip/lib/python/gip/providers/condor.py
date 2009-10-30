@@ -375,7 +375,7 @@ def print_VOViewLocal(cp):
 
             waiting = int(info["idle"]) + int(info["held"])
             if waiting > 0:
-                free_slots = 0
+                free = 0
 
             info = {"vo"      : vo,
                 "acbr"        : acbr,

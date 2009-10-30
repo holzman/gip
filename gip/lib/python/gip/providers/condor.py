@@ -371,6 +371,11 @@ def print_VOViewLocal(cp):
                 info["held"], max_job_time=max_wall*60)
             free = min(unclaimed, assigned-myrunning,
                 assigned-int(info['running']))
+            free = int(free)
+
+            waiting = int(info["idle"]) + int(info["held"])
+            if waiting > 0:
+                free_slots = 0
 
             info = {"vo"      : vo,
                 "acbr"        : acbr,
@@ -382,9 +387,9 @@ def print_VOViewLocal(cp):
                 "running"     : info["running"],
                 # Held jobs are included as "waiting" since the definition is:
                 #    Number of jobs that are in a state different than running
-                "waiting"     : info["idle"] + info["held"],
+                "waiting"     : waiting,
                 "total"       : info["running"] + info["idle"] + info["held"],
-                "free_slots"  : int(free),
+                "free_slots"  : free,
                 "job_slots"   : int(total_nodes),
                 "ert"         : ert,
                 "wrt"         : wrt,

@@ -156,10 +156,15 @@ def print_VOViewLocal(queue_info, batch):
             0))
         max_running = min(max_running, my_queue_info.get('max_running', 99999))
 
+        waiting = info2.get("wait", 0)
+        free_slots = my_queue_info.get('free_slots', 0)
+        if waiting > 0:
+            free_slots = 0
+
         info = {
             'ceUniqueID'  : ce_unique_id,
             'job_slots'   : my_queue_info.get('job_slots', 0),
-            'free_slots'  : my_queue_info.get('free_slots', 0),
+            'free_slots'  : free_slots,
             'ce_name'     : ce_name,
             'queue'       : queue,
             'vo'          : vo,
@@ -168,7 +173,7 @@ def print_VOViewLocal(queue_info, batch):
             'running'     : info2.get('running', 0),
             'max_running' : max_running,
             'priority'    : queue_info.get(queue, {}).get('priority', 0),
-            'waiting'     : info2.get('wait', 0),
+            'waiting'     : waiting,
             'data'        : cp_get(cp, "osg_dirs", "data", "UNKNOWN_DATA"),
             'app'         : cp_get(cp, "osg_dirs", "app", "UNKNOWN_APP"),
             'default_se'  : getDefaultSE(cp),

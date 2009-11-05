@@ -4,10 +4,8 @@ import os
 import sys
 import time
 import pickle
-import socket
 import urllib2
 import calendar
-import tempfile
 import xml.dom.minidom
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
@@ -75,6 +73,10 @@ class Downtime(object):
         if resource == self.resource:
             return True
 
+    def printDowntime(self):
+        print "{resource_group:%s, resource:%s, fqdn:%s, start:%s, end:%s}" % \
+            (self.resource_group, self.resource, self.fqdn, self.start, self.end)
+        
 class ExternalDowntimePlugin(object):
 
     def __init__(self, cp):
@@ -82,8 +84,6 @@ class ExternalDowntimePlugin(object):
         self.downtimes = []
 
     def downloadDowntimes(self):
-        temp_dir = os.path.expandvars(cp_get(self.cp, "gip", "temp_dir", \
-            "$GIP_LOCATION/var/tmp"))
         downtime_url = cp_get(self.cp, "gip", "downtime_url", default_url)
         try:
             fd = urllib2.urlopen(downtime_url)

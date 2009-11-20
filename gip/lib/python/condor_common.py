@@ -437,7 +437,7 @@ def getJobsInfo(vo_map, cp):
     """
     group_jobs = {}
     queue_constraint = cp_get(cp, "condor", "jobs_constraint", "TRUE")
-    if queue_constraint == 'TRUE':
+    if queue_constraint.upper() == 'TRUE':
         fp = condorCommand(condor_status_submitter, cp)
         handler = ClassAdParser(('Name', 'ScheddName'), ['RunningJobs',
             'IdleJobs', 'HeldJobs', 'MaxJobsRunning', 'FlockedJobs'])

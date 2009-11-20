@@ -1,0 +1,450 @@
+<Downtimes>
+  <CurrentDowntimes>
+    <Downtime>
+      <ID>1000382</ID>
+      <ResourceID>121</ResourceID>
+      <ResourceGroup>
+        <GroupName>Nebraska</GroupName>
+      </ResourceGroup>
+      <ResourceName>Nebraska</ResourceName>
+      <ResourceFQDN>red.unl.edu</ResourceFQDN>
+      <StartTime>Feb 13, 2009 15:00:00 UTC</StartTime>
+      <EndTime>Feb 12, 2030 14:59:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Yu Fu 155233</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+      </Services>
+      <Description>UFlorida-IHEPA will be merged into UFlorida-PG.
+      It is scheduled to be shut down at 10am EST (15am GMT/UTC)
+      Feb 13 2009 and will be decommissioned permanently from then
+      on.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000870</ID>
+      <ResourceID>247</ResourceID>
+      <ResourceGroup>
+        <GroupName>Firefly</GroupName>
+      </ResourceGroup>
+      <ResourceName>Firefly-2</ResourceName>
+      <ResourceFQDN>ff-grid2.unl.edu</ResourceFQDN>
+      <StartTime>Oct 7, 2009 08:00:00 UTC</StartTime>
+      <EndTime>Oct 11, 2009 23:00:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Brian Bockelman
+      504307</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+      </Services>
+      <Description>Firefly down for extended
+      maintenance.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000871</ID>
+      <ResourceID>248</ResourceID>
+      <ResourceGroup>
+        <GroupName>Firefly</GroupName>
+      </ResourceGroup>
+      <ResourceName>Firefly-3</ResourceName>
+      <ResourceFQDN>ff-grid3.unl.edu</ResourceFQDN>
+      <StartTime>Oct 7, 2009 08:06:00 UTC</StartTime>
+      <EndTime>Oct 11, 2009 23:06:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Brian Bockelman
+      504307</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+      </Services>
+      <Description>Firefly down for extended
+      maintenance.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000872</ID>
+      <ResourceID>243</ResourceID>
+      <ResourceGroup>
+        <GroupName>Firefly</GroupName>
+      </ResourceGroup>
+      <ResourceName>Firefly_SE</ResourceName>
+      <ResourceFQDN>ff-se.unl.edu</ResourceFQDN>
+      <StartTime>Oct 7, 2009 08:07:00 UTC</StartTime>
+      <EndTime>Oct 11, 2009 23:07:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Brian Bockelman
+      504307</DN>
+      <Services>
+        <Service>
+          <ID>3</ID>
+          <Name>SRMv2</Name>
+          <Description>SRM V2 Storage Element</Description>
+        </Service>
+      </Services>
+      <Description>Firefly down for extended
+      maintenance.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000873</ID>
+      <ResourceID>229</ResourceID>
+      <ResourceGroup>
+        <GroupName>Firefly</GroupName>
+      </ResourceGroup>
+      <ResourceName>Firefly</ResourceName>
+      <ResourceFQDN>ff-grid.unl.edu</ResourceFQDN>
+      <StartTime>Oct 7, 2009 13:02:00 UTC</StartTime>
+      <EndTime>Oct 11, 2009 23:02:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Brian Bockelman
+      504307</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+      </Services>
+      <Description>Extended maintenance of cluster (fire
+      suppression, cluster re-image, performance testing, and
+      network cut).</Description>
+    </Downtime>
+  </CurrentDowntimes>
+  <FutureDowntimes>
+    <Downtime>
+      <ID>1000868</ID>
+      <ResourceID>94</ResourceID>
+      <ResourceGroup>
+        <GroupName>Purdue-Steele</GroupName>
+      </ResourceGroup>
+      <ResourceName>Purdue-Steele</ResourceName>
+      <ResourceFQDN>lepton.rcac.purdue.edu</ResourceFQDN>
+      <StartTime>Oct 9, 2009 14:19:00 UTC</StartTime>
+      <EndTime>Oct 9, 2009 23:19:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Preston M. Smith
+      988980</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+        <Service>
+          <ID>5</ID>
+          <Name>GridFtp</Name>
+          <Description>GridFtp Storage Element</Description>
+        </Service>
+      </Services>
+      <Description>Purdue-Steele will be down for data center power
+      maintenance on Friday, October 9th, from 8:00am to 5:00pm
+      EDT.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000869</ID>
+      <ResourceID>96</ResourceID>
+      <ResourceGroup>
+        <GroupName>Purdue-RCAC</GroupName>
+      </ResourceGroup>
+      <ResourceName>Purdue-RCAC</ResourceName>
+      <ResourceFQDN>osg.rcac.purdue.edu</ResourceFQDN>
+      <StartTime>Oct 9, 2009 15:22:00 UTC</StartTime>
+      <EndTime>Oct 9, 2009 18:22:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Preston M. Smith
+      988980</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+        <Service>
+          <ID>5</ID>
+          <Name>GridFtp</Name>
+          <Description>GridFtp Storage Element</Description>
+        </Service>
+      </Services>
+      <Description>The Purdue-RCAC site will be unavailable for
+      scheduled maintenance from 9:00am to 12:00 noon EDT for
+      firmware upgrades on BlueArc storage and network
+      switch.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000877</ID>
+      <ResourceID>168</ResourceID>
+      <ResourceGroup>
+        <GroupName>Clemson-ciTeam</GroupName>
+      </ResourceGroup>
+      <ResourceName>Clemson-ciTeam</ResourceName>
+      <ResourceFQDN>osgce.cs.clemson.edu</ResourceFQDN>
+      <StartTime>Oct 10, 2009 08:00:00 UTC</StartTime>
+      <EndTime>Oct 11, 2009 12:00:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Intermittent Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Michael Fenn 687928</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+      </Services>
+      <Description>Intermittent outage for network infrastructure
+      maintenance.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000878</ID>
+      <ResourceID>200</ResourceID>
+      <ResourceGroup>
+        <GroupName>Clemson-Birdnest</GroupName>
+      </ResourceGroup>
+      <ResourceName>Clemson-Birdnest</ResourceName>
+      <ResourceFQDN>birdnest.cs.clemson.edu</ResourceFQDN>
+      <StartTime>Oct 10, 2009 08:00:00 UTC</StartTime>
+      <EndTime>Oct 11, 2009 12:00:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Intermittent Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Michael Fenn 687928</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+        <Service>
+          <ID>3</ID>
+          <Name>SRMv2</Name>
+          <Description>SRM V2 Storage Element</Description>
+        </Service>
+      </Services>
+      <Description>Intermittent outage for network infrastructure
+      maintenance.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000860</ID>
+      <ResourceID>228</ResourceID>
+      <ResourceGroup>
+        <GroupName>Nebraska</GroupName>
+      </ResourceGroup>
+      <ResourceName>prairiefire</ResourceName>
+      <ResourceFQDN>pf-grid.unl.edu</ResourceFQDN>
+      <StartTime>Oct 11, 2009 06:00:00 UTC</StartTime>
+      <EndTime>Oct 11, 2009 15:00:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Intermittent Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=David R. Swanson
+      426644</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+      </Services>
+      <Description>Network upgrade will result in intermittent
+      outages.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000861</ID>
+      <ResourceID>104</ResourceID>
+      <ResourceGroup>
+        <GroupName>Nebraska</GroupName>
+      </ResourceGroup>
+      <ResourceName>T2_Nebraska_Storage</ResourceName>
+      <ResourceFQDN>srm.unl.edu</ResourceFQDN>
+      <StartTime>Oct 11, 2009 06:26:00 UTC</StartTime>
+      <EndTime>Oct 11, 2009 15:26:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Intermittent Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=David R. Swanson
+      426644</DN>
+      <Services>
+        <Service>
+          <ID>3</ID>
+          <Name>SRMv2</Name>
+          <Description>SRM V2 Storage Element</Description>
+        </Service>
+      </Services>
+      <Description>Network upgrade will result in intermittent
+      outages.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000859</ID>
+      <ResourceID>71</ResourceID>
+      <ResourceGroup>
+        <GroupName>Nebraska</GroupName>
+      </ResourceGroup>
+      <ResourceName>Nebraska</ResourceName>
+      <ResourceFQDN>red.unl.edu</ResourceFQDN>
+      <StartTime>Oct 11, 2009 12:23:00 UTC</StartTime>
+      <EndTime>Oct 11, 2009 20:30:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Brian Bockelman
+      504307</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+      </Services>
+      <Description>Network upgrade will result in intermittent
+      outages.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000783</ID>
+      <ResourceID>56</ResourceID>
+      <ResourceGroup>
+        <GroupName>IU_OSG</GroupName>
+      </ResourceGroup>
+      <ResourceName>IU_OSG</ResourceName>
+      <ResourceFQDN>m3.quarry.teragrid.iu.edu</ResourceFQDN>
+      <StartTime>Oct 12, 2009 11:00:00 UTC</StartTime>
+      <EndTime>Oct 19, 2009 12:00:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Sarah Williams
+      349314</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+        <Service>
+          <ID>5</ID>
+          <Name>GridFtp</Name>
+          <Description>GridFtp Storage Element</Description>
+        </Service>
+      </Services>
+      <Description>IU_OSG is moving to a new
+      building.</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000821</ID>
+      <ResourceID>3</ResourceID>
+      <ResourceGroup>
+        <GroupName>BNL-ATLAS</GroupName>
+      </ResourceGroup>
+      <ResourceName>BNL_ATLAS_1</ResourceName>
+      <ResourceFQDN>gridgk01.racf.bnl.gov</ResourceFQDN>
+      <StartTime>Oct 13, 2009 12:48:00 UTC</StartTime>
+      <EndTime>Oct 13, 2009 23:00:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Xin Zhao 102397</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+        <Service>
+          <ID>5</ID>
+          <Name>GridFtp</Name>
+          <Description>GridFtp Storage Element</Description>
+        </Service>
+      </Services>
+      <Description>dCache and gatekeeper OSG stack
+      upgrade</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000822</ID>
+      <ResourceID>4</ResourceID>
+      <ResourceGroup>
+        <GroupName>BNL-ATLAS</GroupName>
+      </ResourceGroup>
+      <ResourceName>BNL_ATLAS_2</ResourceName>
+      <ResourceFQDN>gridgk02.racf.bnl.gov</ResourceFQDN>
+      <StartTime>Oct 13, 2009 12:49:00 UTC</StartTime>
+      <EndTime>Oct 13, 2009 23:00:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Xin Zhao 102397</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+        <Service>
+          <ID>5</ID>
+          <Name>GridFtp</Name>
+          <Description>GridFtp Storage Element</Description>
+        </Service>
+      </Services>
+      <Description>dCache and gatekeeper OSG stack
+      upgrade</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000879</ID>
+      <ResourceID>5</ResourceID>
+      <ResourceGroup>
+        <GroupName>BNL-ATLAS</GroupName>
+      </ResourceGroup>
+      <ResourceName>BNL_ATLAS_SE</ResourceName>
+      <ResourceFQDN>dcsrm.usatlas.bnl.gov</ResourceFQDN>
+      <StartTime>Oct 13, 2009 12:56:00 UTC</StartTime>
+      <EndTime>Oct 13, 2009 23:56:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Xin Zhao 102397</DN>
+      <Services>
+        <Service>
+          <ID>3</ID>
+          <Name>SRMv2</Name>
+          <Description>SRM V2 Storage Element</Description>
+        </Service>
+      </Services>
+      <Description>dCache and gatekeeper OSG stack
+      upgrade</Description>
+    </Downtime>
+    <Downtime>
+      <ID>1000874</ID>
+      <ResourceID>200</ResourceID>
+      <ResourceGroup>
+        <GroupName>Clemson-Birdnest</GroupName>
+      </ResourceGroup>
+      <ResourceName>Clemson-Birdnest</ResourceName>
+      <ResourceFQDN>birdnest.cs.clemson.edu</ResourceFQDN>
+      <StartTime>Oct 20, 2009 16:00:00 UTC</StartTime>
+      <EndTime>Oct 22, 2009 00:00:00 UTC</EndTime>
+      <Class>SCHEDULED</Class>
+      <Severity>Outage</Severity>
+      <DN>/DC=org/DC=doegrids/OU=People/CN=Michael Fenn 687928</DN>
+      <Services>
+        <Service>
+          <ID>1</ID>
+          <Name>CE</Name>
+          <Description>Compute Element</Description>
+        </Service>
+        <Service>
+          <ID>3</ID>
+          <Name>SRMv2</Name>
+          <Description>SRM V2 Storage Element</Description>
+        </Service>
+      </Services>
+      <Description>The cluster will be down as part of a move
+      within the facility.</Description>
+    </Downtime>
+  </FutureDowntimes>
+</Downtimes>
+<!-- This XML was generated with a query in following MyOSG page
+https://myosg.grid.iu.edu/rgdowntime/?datasource=downtime&all_resources=on-->

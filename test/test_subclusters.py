@@ -34,7 +34,7 @@ class TestSubclusterConfigs(unittest.TestCase):
         for entry in entries:
             if 'GlueSubCluster' not in entry.objectClass:
                 continue
-            if entry.glue.get('SubClusterUniqueID', [None])[0] != 'red.unl.edu-Nebraska':
+            if entry.glue.get('SubClusterUniqueID', [None])[0] != 'red.unl.edu':
                 continue
             found_entry = True
             self.failUnless(entry.glue['SubClusterPhysicalCPUs'][0] == '120')
@@ -67,7 +67,7 @@ class TestSubclusterConfigs(unittest.TestCase):
         for entry in entries:
             if 'GlueSubCluster' not in entry.objectClass:
                 continue
-            if entry.glue.get('SubClusterUniqueID', [None])[0] != 'Dell Nodes-Nebraska':
+            if entry.glue.get('SubClusterUniqueID', [None])[0] != 'Dell Nodes':
                 continue
             found_entry = True
             self.failUnless(entry.glue['SubClusterPhysicalCPUs'][0] == '106')

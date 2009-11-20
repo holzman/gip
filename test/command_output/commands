@@ -5,22 +5,12 @@ qstat_B_f: qstat -B -f
 qstat: qstat
 pbsnodes_a: pbsnodes -a
 wsrf_query: wsrf-query -a -s https://osg-gw-5.t2.ucsd.edu:9443/wsrf/services/ManagedJobFactoryService --key '{http://www.globus.org/namespaces/2004/10/gram/job}ResourceID' Fork "//*[local-name()='version']"
+condor_q_xml: condor_q -xml -constraint '(1==1)'
 condor_status_xml: condor_status -xml
 condor_status_xml: condor_status -xml -constraint 'TRUE'
 condor_status_submitter_xml: condor_status -submitter -xml
 condor_version: condor_version
-condor_group: condor_config_val GROUP_NAMES
 condor_group: condor_config_val -negotiator GROUP_NAMES
-GROUP_PRIO_FACTOR_group_cdf: condor_config_val GROUP_PRIO_FACTOR_group_cdf
-GROUP_PRIO_FACTOR_group_cms: condor_config_val GROUP_PRIO_FACTOR_group_cms
-GROUP_PRIO_FACTOR_group_cmsprod: condor_config_val GROUP_PRIO_FACTOR_group_cmsprod
-GROUP_PRIO_FACTOR_group_lcgadmin: condor_config_val GROUP_PRIO_FACTOR_group_lcgadmin
-GROUP_PRIO_FACTOR_group_ligo: condor_config_val GROUP_PRIO_FACTOR_group_ligo
-GROUP_QUOTA_group_cdf: condor_config_val GROUP_QUOTA_group_cdf
-GROUP_QUOTA_group_cms: condor_config_val GROUP_QUOTA_group_cms
-GROUP_QUOTA_group_cmsprod: condor_config_val GROUP_QUOTA_group_cmsprod
-GROUP_QUOTA_group_lcgadmin: condor_config_val GROUP_QUOTA_group_lcgadmin
-GROUP_QUOTA_group_ligo: condor_config_val GROUP_QUOTA_group_ligo
 GROUP_PRIO_FACTOR_group_cdf: condor_config_val -negotiator GROUP_PRIO_FACTOR_group_cdf
 GROUP_PRIO_FACTOR_group_cms: condor_config_val -negotiator GROUP_PRIO_FACTOR_group_cms
 GROUP_PRIO_FACTOR_group_cmsprod: condor_config_val -negotiator GROUP_PRIO_FACTOR_group_cmsprod
@@ -44,7 +34,7 @@ srm_ping2: srm-ping 2 -proxyfile /tmp/http_proxy
 grid_proxy_info: grid-proxy-info -f /tmp/http_proxy
 grid_proxy_init: grid-proxy-init -valid 00:05 -cert /etc/grid-security/http/httpcert.pem -key /etc/grid-security/http/httpkey.pem -out /tmp/http_proxy
 qstat_help: qstat -help
-qstat_xml: qstat -xml
+qstat_xml: qstat -xml -u \*
 qstat_f_xml: qstat -f -xml
 qconf_sq_all: qconf -sq all.q
 qconf_sq_chandra: qconf -sq chandra
@@ -53,4 +43,24 @@ qconf_sq_lsdyna: qconf -sq lsdyna
 qconf_sq_myrinet: qconf -sq myrinet
 qconf_sq_pf24h: qconf -sq pf24h
 qconf_sq_schorr_a: qconf -sq schorr_a
+qconf_sq_lsdyna_ib_a: qconf -sq lsdyna-ib_a
+qconf_sq_lsdyna_ib_b: qconf -sq lsdyna-ib_b
+qconf_sq_pf240h: qconf -sq pf240h
+qconf_sq_pf240h_ib: qconf -sq pf240h_ib
+qconf_sq_hod: qconf -sq hod
+qconf_sq_pf-grid: qconf -sq pf-grid
+qconf_sq_ib_b: qconf -sq ib_b
+qconf_sq_reid-mm: qconf -sq reid-mm
+qconf_sq_reid_ib: qconf -sq reid_ib
+qconf_sq_smp: qconf -sq smp
+qconf_sq_ib_a: qconf -sq ib_a
+qconf_sq_geo_ib: qconf -sq geo_ib
+qconf_sq_starprod.q: qconf -sq starprod.q
+qconf_sq_all.q: qconf -sq all.q
+qconf_sq_adm.q: qconf -sq adm.q
+qconf_sq_test.q: qconf -sq test.q
+qconf_sq_starprod.64bit.q: qconf -sq starprod.64bit.q
+qconf_sq_all.64bit.q: qconf -sq all.64bit.q
+qconf_sq_debug.q: qconf -sq debug.q
 qconf_sql: qconf -sql
+qhost_xml: qhost -xml

@@ -9,9 +9,10 @@ import ConfigParser
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_sets import Set
 import gip_sets as sets
-from gip_common import config, cp_getBoolean, voList
+from gip_common import config, cp_getBoolean, voList, cp_get
 from gip_cluster import getOSGVersion, getApplications
 from gip_testing import runTest, streamHandler
+from gip_sections import pbs
 import gip_testing
 import gip_osg
 
@@ -106,6 +107,25 @@ class TestGipCommon(unittest.TestCase):
             self.failUnless(didFail, "Did not fail on missing file.")
         finally:
             pass
+
+    def test_config_ini_multiline(self):
+        """
+        Check that the config object refuses to generate if you have multi-line
+        input for a value in the config.ini
+        """
+        didFail = False
+        try:
+            cp = config("test_configs/fltech-bad.ini")
+            # Test that we did load up the right file by looking for a known entry
+            val = cp_get(cp, pbs, "job_contact", "test")
+            if val != "uscms1.fltech-grid3.fit.edu/jobmanager-condor":
+                raise Exception("Did not load config.ini")
+        except Exception, e:
+            self.failIf(e.message == "Did not load config.ini", \
+                msg = "Failed to load the test config.ini file!")
+            didFail = True
+        self.failUnless(didFail, "Did not fail on invalid multiline input.")
+
     def test_voList(self):
         """
         Make sure voList does indeed load up the correct VOs.

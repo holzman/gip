@@ -8,7 +8,8 @@ os.environ['GIP_TESTING'] = '1'
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_sets import Set
 from gip_common import config, cp_get
-from pbs_common import getVoQueues
+#from pbs_common import getVoQueues, getQueueList
+from gip.batch_systems.pbs import PbsBatchSystem
 from gip_ldap import read_ldap
 from gip_testing import runTest, streamHandler
 import gip_testing
@@ -26,6 +27,8 @@ example_queues = \
 
 example_queues = Set(example_queues)
 
+rvf_example_queues = Set(['lcgadmin', 'atlas', 'workq'])
+
 class TestPbsDynamic(unittest.TestCase):
 
     def test_dynamic_provider(self):
@@ -36,8 +39,8 @@ class TestPbsDynamic(unittest.TestCase):
         Does not check for correctness.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg-info-provider-pbs"\
-            ".py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         fd.read()
         self.assertEquals(fd.close(), None)
@@ -45,10 +48,21 @@ class TestPbsDynamic(unittest.TestCase):
     def test_vo_queues(self):
         os.environ['GIP_TESTING'] = '1'
         cp = config("test_configs/red.conf")
-        vo_queues = Set(getVoQueues(cp))
+        old_globus_loc = os.environ.get("GLOBUS_LOCATION", None)
+        if old_globus_loc != None:
+            del os.environ['GLOBUS_LOCATION']
+        try:
+            pbs = PbsBatchSystem(cp)
+            vo_queues = Set(pbs.getVoQueues())
+        finally:
+            if old_globus_loc != None:
+                os.environ['GLOBUS_LOCATION'] = old_globus_loc
         diff = vo_queues.symmetric_difference(example_queues)
-        self.assertEquals(len(diff), 0, msg="The following VO-queues are " \
-            "different between the expected and actual: %s" % str(diff))
+        self.failIf(diff, msg="The following VO-queues are " \
+            "different between the expected and actual:\n%s\nExpected:\n%s"\
+            "\nActual:\n%s." % (", ".join([str(i) for i in diff]),
+             ", ".join([str(i) for i in example_queues]),
+            ", ".join([str(i) for i in vo_queues])))
 
     def test_lbl_entries(self):
         """
@@ -58,8 +72,8 @@ class TestPbsDynamic(unittest.TestCase):
         old_commands = dict(gip_testing.commands)
         try:
             os.environ['GIP_TESTING'] = 'suffix=lbl'
-            path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-                "osg-info-provider-pbs.py --config=test_configs/red.conf")
+            path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py"\
+                                      " --config=test_configs/red.conf")
             fd = os.popen(path)
             entries = read_ldap(fd)
             self.assertEquals(fd.close(), None)
@@ -81,8 +95,8 @@ class TestPbsDynamic(unittest.TestCase):
         Make sure that VOLocal gets the correct queue information.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -100,8 +114,8 @@ class TestPbsDynamic(unittest.TestCase):
         Regression test for the max_queuable attribute.  Ticket #10.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -119,8 +133,8 @@ class TestPbsDynamic(unittest.TestCase):
         Regression test for the max_queuable attribute.  Ticket #22.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -146,8 +160,8 @@ class TestPbsDynamic(unittest.TestCase):
         & total reported is never greater than the # of max running.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -157,10 +171,39 @@ class TestPbsDynamic(unittest.TestCase):
                     entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
                     '-pbs-dzero':
                 self.failUnless(entry.glue['CEPolicyMaxRunningJobs'] == '158')
-                self.failUnless(entry.glue['CEPolicyMaxTotalJobs'] == '158')
+                # I don't think MaxTotalJobs should be limited; this is the
+                # total number in the system; this isn't necessarily equal to
+                # max running.
+                #self.failUnless(entry.glue['CEPolicyMaxTotalJobs'] == '158')
                 self.failUnless(entry.glue['CEStateFreeJobSlots'] == '158')
+                self.failUnless(entry.glue['CEPolicyAssignedJobSlots'] == \
+                    '158')
+                self.failUnless(entry.glue['CEInfoTotalCPUs'] == '158')
                 has_dzero_ce = True
         self.failUnless(has_dzero_ce, msg="dzero queue's CE was not found!")
+
+    def test_rvf_queues(self):
+        """
+        Regression test for the RVF files.
+        """
+        os.environ['GIP_TESTING'] = '1'
+        old_globus_loc = os.environ.get('GLOBUS_LOCATION', None)
+        try:
+            os.environ['GLOBUS_LOCATION'] = 'test_configs/globus'
+            cp = config('test_configs/pbs_rvf.conf')
+            pbs = PbsBatchSystem(cp)
+            queue_set = Set(pbs.getQueueList())
+            vo_queues = pbs.getVoQueues()
+        finally:
+            if old_globus_loc != None:
+                os.environ['GLOBUS_LOCATION'] = old_globus_loc
+        queue_set2 = Set([i[1] for i in vo_queues])
+        diff = queue_set.symmetric_difference(queue_set2)
+        self.failIf(diff, msg="Disagreement in queue list between getVoQueues"\
+            " and getQueueList: %s" % ", ".join(diff))
+        diff = queue_set.symmetric_difference(rvf_example_queues)
+        self.failIf(diff, msg="Disagreement between queue list and reference"\
+            " values: %s" % ", ".join(diff))
 
     def test_max_queuable_26(self):
         """
@@ -168,8 +211,8 @@ class TestPbsDynamic(unittest.TestCase):
         reported is never greater than the # of max queuable
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -179,15 +222,15 @@ class TestPbsDynamic(unittest.TestCase):
                     entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
                     '-pbs-lcgadmin':
                 self.failUnless(entry.glue['CEPolicyMaxWaitingJobs'] == '183')
-                self.failUnless(entry.glue['CEStateFreeCPUs'] == '183')
-                self.failUnless(entry.glue['CEStateFreeJobSlots'] == '183')
+                self.failUnless(entry.glue['CEStateFreeCPUs'] == '4')
+                self.failUnless(entry.glue['CEStateFreeJobSlots'] == '4')
                 has_lcgadmin_ce = True
         self.failUnless(has_lcgadmin_ce, msg="lcgadmin queue's CE was not found!")
 
     def test_contact_string(self):
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-            "osg-info-provider-pbs.py --config=test_configs/red.conf")
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+                                  "--config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -206,8 +249,8 @@ class TestPbsDynamic(unittest.TestCase):
             """ % site
             # Switch commands over to the site ones:
             os.environ['GIP_TESTING'] = 'suffix=%s' % site
-            path = os.path.expandvars("$GIP_LOCATION/libexec/" \
-                "osg-info-provider-pbs.py --config=test_configs/%s.conf" % site)
+            path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py"\
+                                      " --config=test_configs/%s.conf" % site)
             fd = os.popen(path)
             entries = read_ldap(fd)
             self.assertEquals(fd.close(), None)

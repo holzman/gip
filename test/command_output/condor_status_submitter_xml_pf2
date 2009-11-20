@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<!DOCTYPE classads SYSTEM "classads.dtd">
+<classads>
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill-pf@rcfdata.unl.edu</s></a>
+    <a n="QuillDatabaseName"><s>quilldb-pf</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;rcfdata.unl.edu:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>h6dmIk3R</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;10.147.100.2:47850&gt;</s></a>
+    <a n="MyAddress"><s>&lt;10.147.100.2:47850&gt;</s></a>
+    <a n="MaxJobsRunning"><i>200</i></a>
+    <a n="StartLocalUniverse"><b v="t"/></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8145372</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.1 Feb 26 2008 BuildID: 76180 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1212259502</i></a>
+    <a n="Machine"><s>head.unl.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;10.147.100.2:47850&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1212259442</i></a>
+    <a n="MonitorSelfCPUUsage"><r>8.306000381708145E-03</r></a>
+    <a n="MonitorSelfImageSize"><r>2.765200000000000E+04</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>11160</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1210193416</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>head.unl.edu</s></a>
+    <a n="RunningJobs"><i>6</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>uscms01@prairiefire.unl.edu</s></a>
+    <a n="DaemonStartTime"><i>1210365362</i></a>
+    <a n="UpdateSequenceNumber"><i>6048</i></a>
+    <a n="ServerTime"><i>1212259502</i></a>
+    <a n="LastHeardFrom"><i>1212259502</i></a>
+    <a n="UpdatesTotal"><i>2185</i></a>
+    <a n="UpdatesSequenced"><i>2184</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill-pf@rcfdata.unl.edu</s></a>
+    <a n="QuillDatabaseName"><s>quilldb-pf</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;rcfdata.unl.edu:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>h6dmIk3R</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;10.147.100.2:47850&gt;</s></a>
+    <a n="MyAddress"><s>&lt;10.147.100.2:47850&gt;</s></a>
+    <a n="MaxJobsRunning"><i>200</i></a>
+    <a n="StartLocalUniverse"><b v="t"/></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8145372</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.0.1 Feb 26 2008 BuildID: 76180 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL3 $</s></a>
+    <a n="MyCurrentTime"><i>1212259502</i></a>
+    <a n="Machine"><s>head.unl.edu</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;10.147.100.2:47850&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1212259442</i></a>
+    <a n="MonitorSelfCPUUsage"><r>8.306000381708145E-03</r></a>
+    <a n="MonitorSelfImageSize"><r>2.765200000000000E+04</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>11160</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1210193416</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>head.unl.edu</s></a>
+    <a n="RunningJobs"><i>4</i></a>
+    <a n="IdleJobs"><i>0</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>dzero@prairiefire.unl.edu</s></a>
+    <a n="DaemonStartTime"><i>1210365362</i></a>
+    <a n="UpdateSequenceNumber"><i>3827</i></a>
+    <a n="ServerTime"><i>1212259502</i></a>
+    <a n="LastHeardFrom"><i>1212259502</i></a>
+    <a n="UpdatesTotal"><i>2851</i></a>
+    <a n="UpdatesSequenced"><i>2848</i></a>
+    <a n="UpdatesLost"><i>0</i></a>
+    <a n="UpdatesHistory"><s>0x00000000000000000000000000000000</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+</classads>
+
+

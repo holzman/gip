@@ -11,10 +11,11 @@ easier.
 """
 
 import sys
+import os
 import gip_sets as sets
 import time
 import types
-
+import cStringIO
 import xml
 from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges
@@ -375,12 +376,16 @@ def _getJobsInfoInternal(cp):
     fp2 = condorCommand(condor_status_submitter, cp)
     handler2 = ClassAdParser('Name', ['MaxJobsRunning'])
     try:
-        for i in range(cp_getInt(cp, "condor", "condor_q_header_lines", 3)):
-            fp.readline()
-        parseCondorXml(fp, handler)
+        xmlLine = ''
+        while xmlLine.find('<?xml') == -1: # Throw away junk lines from Condor < 7.3.2
+            xmlLine = fp.readline()
+        condorXml = cStringIO.StringIO(xmlLine+fp.read())
+        parseCondorXml(condorXml, handler)
     except Exception, e:
         log.error("Unable to parse condor output!")
         log.exception(e)
+
+        if 'GIP_TESTING' in os.environ: raise RuntimeError('Could not parse condor_q -xml output!')
         return {}
     try:
         parseCondorXml(fp2, handler2)

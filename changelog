@@ -1,4 +1,10 @@
 Changelog
+== 1.1.7 ==
+* Addition of resource_group_name
+* Set free slots = 0 if jobs are waiting 
+* check for jobs_constraint == 'True' is now case-insensitive
+* condor_q -xml parsing understands both old (pre 7.3.2) and new format
+	
 == 1.1.6 ==
 * Add GlueLocationLocalID OSG_VERSION to publish OSG version in friendlier way
 * Add cpu_platform publication capability

@@ -20,6 +20,7 @@ class DCacheInfo19(StorageElement):
         self.sas = []
         self.vos = []
         self.seen_pools = sets.Set()
+        self.sent_se = False
 
     def run(self):
         endpoint = cp_get(self._cp, self._section, "infoProviderEndpoint", "")
@@ -39,6 +40,17 @@ class DCacheInfo19(StorageElement):
         total = self.handler.summary.get('total', 0) / 1000
         free = self.handler.summary.get('free', 0) / 1000
         used = self.handler.summary.get('used', 0) / 1000
+        se = gip.gratia.new_se()
+        if se and not self.sent_se:
+            unique_id = self.getUniqueID()
+            se.UniqueID("%s:%s:%s" % (unique_id, "SE", unique_id))
+            se.SE(self.getName())
+            se.SpaceType("SE")
+            se.Implementation(self.getImplementation())
+            se.Version(self.getVersion())
+            se.Status(self.getStatus())
+            gip.gratia.send(se)
+            self.sent_se = True
         if gb:
             total /= 1000**2
             free /= 1000**2

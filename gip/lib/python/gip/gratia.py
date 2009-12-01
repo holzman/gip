@@ -145,3 +145,34 @@ def vo_record(cp, info):
             log.warning("Non-fatal exception while sending VOView " \
                 "to Gratia: %s" % str(e))
 
+def new_se():
+    if has_gratia_capacity:
+        try:
+            return StorageElement.StorageElement()
+        except Exception, e:
+            log.warning("Non-fatal exception: %s. Unable to create new Gratia"\
+                " SE record" % str(e))
+            return None
+    return None
+
+def new_se_record():
+    if has_gratia_capacity:
+        try:
+            return StorageElementRecord.StorageElementRecord()
+        except Exception, e:
+            log.warning("Non-fatal exception: %s. Unable to create new Gratia"\
+                " SE record" % str(e))
+            return None
+    return None
+
+def send(record):
+    old_stdout = sys.stdout
+    sys.stdout = sys.stderr
+    result = None
+    try:
+        result = Gratia.Send(record)
+    finally:
+        sys.stdout = old_stdout
+    log.debug("Gratia description of record: %s" % str(cer))
+    log.debug("Gratia sending result: %s" % result)
+

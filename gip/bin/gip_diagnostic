@@ -131,8 +131,8 @@ def pull_remote(command, fdout=sys.stdout, fderr=sys.stderr):
                 msg = "Unable to read stdout chunk... skipping"
                 print msg
                 outchunk = ''
-        if outchunk == '': outeof = 1
-        fdout.write(outchunk)
+            if outchunk == '': outeof = 1
+            fdout.write(outchunk)
         if errfd in ready[0]:
             try:
                 errchunk = errfile.read()
@@ -140,8 +140,8 @@ def pull_remote(command, fdout=sys.stdout, fderr=sys.stderr):
                 msg = "Unable to read stderr chunk... skipping"
                 print msg, str(ex)
                 errchunk = ""
-        if errchunk == '': erreof = 1
-        fderr.write(errchunk)
+            if errchunk == '': erreof = 1
+            fderr.write(errchunk)
         if outeof and erreof: break
         select.select([],[],[],.1) # give a little time for buffers to fill
         

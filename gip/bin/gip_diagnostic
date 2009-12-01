@@ -447,6 +447,26 @@ def gip_check_ldap(cp, outh):
             print >> sys.stderr, e
     return output
 
+def gip_check_rvf(cp, outh):
+    """
+    Go through the Globus RVF files and pick up any interesting ones.
+    """
+    globus_rvf_loc = os.path.expandvars("$GLOBUS_LOCATION/share/" \
+        "globus_gram_job_manager")
+    if not os.path.exists(globus_rvf_loc):
+        return "No RVF files appear to exist."
+    fd = os.popen("ls -lh %s" % globus_rvf_loc)
+    output = "Contents of RVF directory:\n%s" % fd.read()
+    if fd.close():
+        output += "`ls` operation returned non-zero exit code"
+    for file in os.listdir(globus_rvf_loc):
+        try:
+            if file.startswith("."):
+                continue
+            outh.add_file(os.path.join(globus_rvf_loc, file), dirname="globus_rvf")
+        except Exception, e:
+            print >> sys.stderr, e
+    return output
 
 def main():
     opts = parse_args()
@@ -491,6 +511,8 @@ def main():
     output += gip_check_old(cp, out_handler)
     output += "\n"
     output += gip_check_ldap(cp, out_handler)
+    output += "\n"
+    output += gip_check_rvf(cp, out_handler)
     output += "\n"
 
     if opts.talk:

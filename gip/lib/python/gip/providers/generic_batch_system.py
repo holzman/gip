@@ -1,13 +1,12 @@
 #!/usr/bin/python
 
-import re
 import sys
 import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
-from gip_common import config, getLogger, getTemplate, \
-    printTemplate, cp_get, responseTimes
+from gip_common import config, getTemplate, printTemplate, cp_get, responseTimes
+from gip_logging import getLogger
 from gip_cluster import getClusterID, getClusterName
 from gip_sections import ce
 from gip_storage import getDefaultSE

@@ -10,7 +10,8 @@ import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, lsf, se, subcluster, \
     cluster, cesebind
-from gip_common import getLogger, py23
+from gip_common import py23
+from gip_logging import getLogger
 
 log = getLogger("GIP")
 

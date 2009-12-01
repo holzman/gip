@@ -4,11 +4,9 @@ import os
 import sys
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getLogger, cp_get
-from gip.providers.sge import main as sge_main
-from gip.providers.lsf import main as lsf_main
+from gip_common import config, cp_get
 from gip.providers.generic_batch_system import main as generic_main
-
+from gip_logging import getLogger
 log = getLogger("GIP.BatchSystem")
 
 def main():

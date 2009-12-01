@@ -215,7 +215,7 @@ def convert_time_to_secs(entry, infinity=9999999, error=None):
         try:
             hours, mins, secs = int(entry[0]), int(entry[1]), int(entry[2])
         except:
-            log.warning("Invalid time entry: %s" % entry)
+            #log.warning("Invalid time entry: %s" % entry)
             return error
         return hours*3600 + mins*60 + secs
     elif len(entry) == 1:

@@ -8,7 +8,8 @@ import re
 import tempfile
 
 import gip_testing
-from gip_common import cp_get, getLogger
+from gip_common import cp_get
+from gip_logging import getLogger
 from gip_testing import runCommand
 
 log = getLogger('GIP.Storage.Bestman.srm_ping')

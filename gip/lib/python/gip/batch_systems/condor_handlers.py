@@ -12,7 +12,7 @@ import xml
 from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges
 
-from gip_common import getLogger
+from gip_logging import getLogger
 from gip_testing import runCommand
 
 log = getLogger("GIP.Condor")

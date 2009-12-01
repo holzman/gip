@@ -8,7 +8,8 @@ from UserDict import UserDict
 
 import gip_sets as sets
 
-from gip_common import  getLogger, VoMapper, voList, parseRvf, cp_get
+from gip_common import voList, parseRvf, cp_get
+from gip_logging import getLogger
 from xml_common import parseXmlSax
 from gip.batch_systems.sge_sax_handler import QueueInfoParser, JobInfoParser, \
     sgeCommand, convert_time_to_secs, runCommand, HostInfoParser

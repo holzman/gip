@@ -15,8 +15,8 @@ import gip_sets as sets
 import time
 import types
 
-from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
-    VoMapper, cp_getInt
+from gip_logging import getLogger
+from gip_common import voList, cp_getBoolean, cp_get, voList, VoMapper, cp_getInt
 from gip.batch_systems.condor_handlers import *
 
 condor_version = "condor_version"

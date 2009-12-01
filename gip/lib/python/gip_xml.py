@@ -12,7 +12,6 @@ custom XML schema which is designed to be easy to be updated and passed around
 in a decentralized manner.
 """
 import os
-import sys
 
 def getXMLTemplate(template, name):
     """

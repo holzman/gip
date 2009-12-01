@@ -5,7 +5,7 @@ import gip_sets as sets
 from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges
 
-from gip_common import getLogger
+from gip_logging import getLogger
 
 log = getLogger("GIP.Storage.dCache.InfoProviderParser")
 

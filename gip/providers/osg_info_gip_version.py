@@ -5,7 +5,8 @@ import re
 
 # Make sure the gip_common libraries are in our path
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getTemplate, getLogger, printTemplate
+from gip_common import config, getTemplate, printTemplate
+from gip_logging import getLogger
 from gip_testing import runCommand
 from gip_cluster import getSubClusterIDs, getClusterID
 

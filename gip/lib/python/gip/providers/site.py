@@ -4,8 +4,9 @@ import sys
 import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getLogger, getTemplate, printTemplate
+from gip_common import config, getTemplate, printTemplate
 from gip_site import generateGlueSite
+from gip_logging import getLogger
 
 log = getLogger("GIP.Site")
 

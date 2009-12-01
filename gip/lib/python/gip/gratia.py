@@ -4,7 +4,8 @@ import pwd
 import sys
 import time
 
-from gip_common import getLogger, cp_get
+from gip_common import cp_get
+from gip_logging import getLogger
 from gip_sections import site, ce
 
 log = getLogger("GIP.Gratia")

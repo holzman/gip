@@ -9,16 +9,13 @@ outputs from the test/command_output directory.
 import os
 import re
 import sys
-import types
 import unittest
 import time
-import urlparse
 import GipUnittest
-import ConfigParser
 
 from gip_common import cp_get, cp_getBoolean, pathFormatter, parseOpts, config
 from gip_common import strContains
-from gip_ldap import getSiteList, prettyDN
+from gip_ldap import getSiteList
 
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
 if py23: import optparse

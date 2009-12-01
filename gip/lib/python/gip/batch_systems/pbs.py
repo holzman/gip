@@ -8,8 +8,8 @@ import grp
 import pwd
 import gip_sets as sets
 
-from gip_common import HMSToMin, getLogger, VoMapper, voList, parseRvf, \
-    addToPath, cp_get
+from gip_common import HMSToMin, voList, parseRvf, addToPath, cp_get
+from gip_logging import getLogger
 from gip_testing import runCommand
 from gip.batch_systems.batch_system import BatchSystem
 

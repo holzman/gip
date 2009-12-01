@@ -5,10 +5,9 @@ Implementation of a CE for a forwarding node.
 
 import re
 import urllib2
-import cStringIO
 
-from gip_common import cp_get, cp_getList, getLogger, printTemplate, \
-    normalizeFQAN
+from gip_common import cp_getList, printTemplate, normalizeFQAN
+from gip_logging import getLogger
 from gip_cluster import getClusterID
 from condor_common import condorCommand, condor_version
 from gip_ldap import read_bdii, read_ldap
@@ -38,7 +37,7 @@ class Forwarding(BatchSystem):
         """
         self.inputs = cp_getList(self.cp, forwarding, "input", [])
         results = []
-        orig_bdii = self.cp.get("bdii", "endpoint")
+        #orig_bdii = self.cp.get("bdii", "endpoint")
         for input in self.inputs:
             if input.startswith('ldap'):
                 self.cp.set("bdii", "endpoint", input)
@@ -152,7 +151,7 @@ class Forwarding(BatchSystem):
                 val = int(vo.glue[attr][0])
                 ce_dict = results.setdefault(host, {})
                 if ce_id in ce_dict and ce_dict[ce_id] and not val:
-                     continue
+                    continue
                 ce_dict[ce_id] = val
             except:
                 pass

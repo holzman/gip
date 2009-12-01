@@ -4,7 +4,8 @@ import re
 import gip_sections
 sec = gip_sections.site
 
-from gip_common import cp_get, voList, getLogger
+from gip_common import cp_get, voList
+from gip_logging import getLogger
 
 log = getLogger("GIP.Site")
 

@@ -34,32 +34,33 @@ else:
 
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
 if not py23:
-      os.EX_CANTCREAT = 73
-      os.EX_CONFIG = 78
-      os.EX_DATAERR = 65
-      os.EX_IOERR = 74
-      os.EX_NOHOST = 68
-      os.EX_NOINPUT = 66
-      os.EX_NOPERM = 77
-      os.EX_NOUSER = 67
-      os.EX_OK = 0
-      os.EX_OSERR = 71
-      os.EX_OSFILE = 72
-      os.EX_PROTOCOL = 76
-      os.EX_SOFTWARE = 70
-      os.EX_TEMPFAIL = 75
-      os.EX_UNAVAILABLE = 69
-      os.EX_USAGE = 64
+    os.EX_CANTCREAT = 73
+    os.EX_CONFIG = 78
+    os.EX_DATAERR = 65
+    os.EX_IOERR = 74
+    os.EX_NOHOST = 68
+    os.EX_NOINPUT = 66
+    os.EX_NOPERM = 77
+    os.EX_NOUSER = 67
+    os.EX_OK = 0
+    os.EX_OSERR = 71
+    os.EX_OSFILE = 72
+    os.EX_PROTOCOL = 76
+    os.EX_SOFTWARE = 70
+    os.EX_TEMPFAIL = 75
+    os.EX_UNAVAILABLE = 69
+    os.EX_USAGE = 64
                                                    
 try:
-   #python 2.5 and above  
-   import hashlib as md5
+    #python 2.5 and above  
+    import hashlib as md5
 except ImportError:
-   # pylint: disable-msg=F0401
-   import md5
+    # pylint: disable-msg=F0401
+    import md5
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt
+from gip_common import config, cp_get, cp_getBoolean, cp_getInt
+from gip_logging import getLogger
 from gip_ldap import read_ldap, compareDN, LdapData
 import gip_sets as sets
 
@@ -91,14 +92,14 @@ def main(cp = None, return_entries=False):
     log.debug("Starting up the osg-info-wrapper.")
     if cp == None:
         cp = config()
-    temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
-        "$GIP_LOCATION/var/tmp"))
-    plugin_dir = os.path.expandvars(cp_get(cp, "gip", "plugin_dir", \
-        "$GIP_LOCATION/plugins"))
-    provider_dir = os.path.expandvars(cp_get(cp, "gip", "provider_dir", \
-        "$GIP_LOCATION/providers"))
-    static_dir = os.path.expandvars(cp_get(cp, "gip", "static_dir", \
-        "$GIP_LOCATION/var/ldif"))
+    temp_dir = "$GIP_LOCATION/var/tmp"
+    temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", temp_dir))
+    plugin_dir = "$GIP_LOCATION/plugins" 
+    plugin_dir = os.path.expandvars(cp_get(cp, "gip", "plugin_dir", plugin_dir))
+    provider_dir = "$GIP_LOCATION/providers"
+    provider_dir = os.path.expandvars(cp_get(cp, "gip", "provider_dir", provider_dir))
+    static_dir = "$GIP_LOCATION/var/ldif"
+    static_dir = os.path.expandvars(cp_get(cp, "gip", "static_dir", static_dir))
 
     # Make sure that our directories exist.
     create_if_not_exist(temp_dir, plugin_dir, provider_dir, static_dir)
@@ -216,9 +217,9 @@ def handle_providers(entries, providers):
     for entry in sets.Set(remove_entries):
         log.debug("Removing entry %s" % entry)  
         try:
-              entries.remove(entry)
+            entries.remove(entry)
         except ValueError:
-              pass
+            pass
     # Now add all the new entries from the providers
     for p_entry in provider_entries:
         entries.append(p_entry)
@@ -452,18 +453,18 @@ def list_modules(dirname):
     """
     info = {}
     for file in os.listdir(dirname):
-         if os.path.isdir(file):
-             continue
-         if file.startswith('.'):
-             continue
-         mod_info = {}
-         mod_info['name'] = file
-         try:
-             mod_info['cksum'] = calculate_hash(os.path.join(dirname, file))
-         except Exception, e:
-             log.exception(e)
-         info[file] = mod_info
-         log.debug("Found module %s in directory %s" % (file, dirname))
+        if os.path.isdir(file):
+            continue
+        if file.startswith('.'):
+            continue
+        mod_info = {}
+        mod_info['name'] = file
+        try:
+            mod_info['cksum'] = calculate_hash(os.path.join(dirname, file))
+        except Exception, e:
+            log.exception(e)
+        info[file] = mod_info
+        log.debug("Found module %s in directory %s" % (file, dirname))
     return info
 
 def run_child(executable, orig_filename, timeout):

@@ -10,11 +10,11 @@ The GLUE subcluster represents a subset of the cluster which is homogeneous
 hardware.
 """
 
-import re
 import os
 
 from gip_common import cp_get, cp_getInt, ldap_boolean, cp_getBoolean, \
-    notDefined, getLogger, voList
+    notDefined, voList
+from gip_logging import getLogger
 from gip_testing import runCommand
 from gip_sections import cluster, subcluster, ce
 

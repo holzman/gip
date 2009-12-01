@@ -1,7 +1,8 @@
 
 import socket
 
-from gip_common import getLogger, cp_get
+from gip_common import cp_get
+from gip_logging import getLogger
 from gip_storage import StorageElement, voListStorage, getdCacheSESpace
 from admin import connect_admin
 from space_calculator import calculate_spaces

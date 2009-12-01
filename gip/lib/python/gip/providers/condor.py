@@ -20,8 +20,9 @@ if not py23:
 
 # Standard GIP imports
 import gip_cluster
-from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
+from gip_common import config, VoMapper, addToPath, getTemplate, \
     voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes
+from gip_logging import getLogger
 from gip_cluster import getClusterID, getClusterName
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
 from gip_storage import getDefaultSE

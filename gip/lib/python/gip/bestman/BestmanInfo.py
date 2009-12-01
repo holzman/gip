@@ -4,7 +4,8 @@ import re
 import gip_sets as sets
 import statvfs
 
-from gip_common import cp_get, cp_getBoolean, getLogger
+from gip_common import cp_get, cp_getBoolean
+from gip_logging import getLogger
 from gip_storage import StorageElement, voListStorage
 import srm_ping
 

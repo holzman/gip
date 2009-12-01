@@ -10,7 +10,8 @@ import stat
 import statvfs
 
 import gip_testing
-from gip_common import getLogger, cp_get, cp_getBoolean, cp_getInt, matchFQAN
+from gip_common import cp_get, cp_getBoolean, cp_getInt, matchFQAN
+from gip_logging import getLogger
 from gip_sections import se
 from gip.dcache.admin import connect_admin
 from gip.dcache.pools import lookupPoolStorageInfo

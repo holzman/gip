@@ -9,8 +9,9 @@ import re
 import os
 import sys
 import gip_sets as sets
-from gip_common import HMSToMin, getLogger, VoMapper, voList, cp_get, parseRvf
+from gip_common import HMSToMin, VoMapper, voList, cp_get, parseRvf
 from gip_testing import runCommand
+from gip_logging import getLogger
 
 log = getLogger("GIP.LSF")
 

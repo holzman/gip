@@ -4,7 +4,6 @@ import os
 import re
 import sys
 import types
-import urllib
 import urllib2
 import httplib
 import datetime
@@ -18,8 +17,9 @@ sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import osg_info_wrapper
 import gip_common
 import gip_ldap
+from gip_logging import getLogger
 
-log = gip_common.getLogger('CEMonUploader')
+log = getLogger('CEMonUploader')
 
 class HTTPSHandler2(urllib2.HTTPSHandler):
 
@@ -92,7 +92,7 @@ def determine_ses(ce, all_cese, all_cese_se):
     for cese in all_cese:
         if cese.multi and unique in cese.glue['CESEBindGroupCEUniqueID']:
             for se in cese.glue['CESEBindGroupSEUniqueID']:
-                 adjacent_ses.append(se)
+                adjacent_ses.append(se)
         elif not cese.multi and unique == cese.glue['CESEBindGroupCEUniqueID']:
             adjacent_ses.append(cese.glue['CESEBindGroupSEUniqueID'])
             se_to_cese[se] = cese
@@ -406,9 +406,9 @@ class ClassAdEmitter(object):
         # Add the optional SA/VOInfo for this information.  Note that if the
         # SA or VOInfo exists and the corresponding CE/VOView can't access it,
         # we just return.
-        if sa and can_access(voview_acbr, sa, "SAAccessControlBaseRule"):
+        if sa and self.can_access(voview_acbr, sa, "SAAccessControlBaseRule"):
             self.add_to_results(sa, results)
-            if voinfo and can_access(vovoview_acbr, voinfo,
+            if voinfo and self.can_access(voview_acbr, voinfo,
                     "VOInfoAccessControlBaseRule"):
                 self.add_to_results(voinfo, results)
             elif voinfo:

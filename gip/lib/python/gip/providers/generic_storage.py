@@ -9,8 +9,9 @@ import sys
 import time
 import socket
 
-from gip_common import cp_get, getLogger, config, getTemplate, printTemplate, \
+from gip_common import cp_get, config, getTemplate, printTemplate, \
     cp_getBoolean, cp_getInt, normalizeFQAN
+from gip_logging import getLogger
 from gip_storage import voListStorage, getSETape, \
     getClassicSESpace, StorageElement
 from gip.bestman.BestmanInfo import BestmanInfo

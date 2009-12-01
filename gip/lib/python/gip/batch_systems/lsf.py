@@ -4,10 +4,9 @@ Module for interacting with LSF.
 """
 
 import re
-import os
-import sys
 import gip_sets as sets
-from gip_common import HMSToMin, getLogger, VoMapper, voList, cp_get, parseRvf
+from gip_common import voList, cp_get, parseRvf, addToPath
+from gip_logging import getLogger
 from gip_testing import runCommand
 from gip.batch_systems.batch_system import BatchSystem
 
@@ -352,7 +351,7 @@ class LsfBatchSystem(BatchSystem):
             rvf_queue_list = rvf_queue_list.split()
             log.info("The RVF lists the following queues: %s." % ', '.join( \
                 rvf_queue_list))
-        for queue in getQueueInfo(self.cp):
+        for queue in self.getQueueInfo(self.cp):
             if queue not in queue_exclude:
                 queues.append(queue)
             if rvf_queue_list and queue not in rvf_queue_list:

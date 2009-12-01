@@ -10,7 +10,8 @@ import re
 import types
 
 import gip_sets as sets
-from gip_common import cp_get, voList, getLogger, cp_getBoolean
+from gip_common import cp_get, voList, cp_getBoolean, cp_getInt, addToPath
+from gip_logging import getLogger
 
 from condor_handlers import condorCommand, parseCondorXml, ClassAdParser
 from batch_system import BatchSystem
@@ -54,10 +55,10 @@ class CondorBatchSystem(BatchSystem):
                 log.info("Running condor version %s." % self.version)
                 m = self._version_re.match(self.version)
                 if m:
-                   self.version_major, self.version_minor = m.groups()[:2]
+                    self.version_major, self.version_minor = m.groups()[:2]
                 else:
-                   self.version_major = 0
-                   self.version_minor = 0
+                    self.version_major = 0
+                    self.version_minor = 0
                 
                 self._version_cache = "condor", self.version
                 return self._version_cache
@@ -150,7 +151,7 @@ class CondorBatchSystem(BatchSystem):
         # This is the old behavior.  Base everything on (groupname)_vos
         bycp = cp_get(cp, "condor", "%s_vos" % group, None)
         if bycp:
-           return [i.strip() for i in bycp.split(',')]
+            return [i.strip() for i in bycp.split(',')]
 
         # This is the new behavior.  Base everything on (groupname)_blacklist 
         # and (groupname)_whitelist.  Done to mimic the PBS configuration.
@@ -170,7 +171,7 @@ class CondorBatchSystem(BatchSystem):
 
         # Return None if there's no explicit white/black list setting.
         if len(whitelist) == 0 and len(blacklist) == 0:
-           return None
+            return None
 
         # Force any VO in the whitelist to show up in the volist, even if it
         # isn't in the acl_users / acl_groups
@@ -224,17 +225,17 @@ class CondorBatchSystem(BatchSystem):
         _results_cache = self._results_cache
         if _results_cache:
             return dict(_results_cache)
-        constraint = cp_get(cp, "condor", "jobs_constraint", "TRUE")
-        fp = condorCommand(condor_job_status, cp, {'constraint': constraint})
+        constraint = cp_get(self.cp, "condor", "jobs_constraint", "TRUE")
+        fp = condorCommand(condor_job_status, self.cp, {'constraint': constraint})
         handler = ClassAdParser('GlobalJobId', ['JobStatus', 'Owner',
             'AccountingGroup', 'FlockFrom']);
-        fp2 = condorCommand(condor_status_submitter, cp)
+        fp2 = condorCommand(condor_status_submitter, self.cp)
         handler2 = ClassAdParser('Name', ['MaxJobsRunning'])
         try:
             if self.version_major <= 7 and self.version_minor < 3 and \
                     self.version_major != 0:
-                for i in range(cp_getInt(cp, "condor", "condor_q_header_lines",
-                        3)):
+                for i in range(cp_getInt(self.cp, "condor", 
+                        "condor_q_header_lines", 3)):
                     fp.readline()
             parseCondorXml(fp, handler)
         except Exception, e:

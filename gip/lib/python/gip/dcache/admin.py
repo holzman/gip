@@ -7,7 +7,6 @@ Interact with a dCache admin interface through SSH.
 from __future__ import generators
 
 import signal
-import sys
 import os
 import re
 import pty
@@ -15,7 +14,8 @@ import time
 import resource
 import ConfigParser
 
-from gip_common import getLogger, cp_get
+from gip_logging import getLogger
+from gip_common import cp_get
 
 log = getLogger("GIP.dCache.Admin")
 

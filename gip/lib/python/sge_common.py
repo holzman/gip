@@ -15,10 +15,9 @@ Module for interacting with SGE.
 """
 
 import re
-import os
-import sys
 
-from gip_common import  getLogger, VoMapper, voList, parseRvf
+from gip_logging import getLogger
+from gip_common import  VoMapper, voList, parseRvf
 from xml_common import parseXmlSax
 from gip.batch_systems.sge_sax_handler import QueueInfoParser, JobInfoParser, \
     sgeCommand

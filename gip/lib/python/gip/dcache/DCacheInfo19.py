@@ -2,10 +2,12 @@
 import gip_sets as sets
 import urllib2
 
-from gip_common import getLogger, cp_get, normalizeFQAN
+from gip_common import cp_get, normalizeFQAN
 from gip_storage import StorageElement, voListStorage
 from DCacheInfoProviderParser import parse_fp
 from space_calculator import getAllowedVOs, getLGAllowedVOs
+
+from gip_logging import getLogger
 
 log = getLogger("GIP.Storage.dCache")
 

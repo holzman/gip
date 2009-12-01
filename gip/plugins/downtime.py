@@ -10,8 +10,8 @@ import xml.dom.minidom
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_cese_bind import getCEList, getSEList
-from gip_common import config, cp_get, getLogger, getTemplate, \
-    printTemplate
+from gip_common import config, cp_get, getTemplate, printTemplate
+from gip_logging import getLogger
 
 log = getLogger("GIP.Downtime")
 

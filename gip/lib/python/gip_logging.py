@@ -97,10 +97,11 @@ def getLogger(name):
     else:
         return logging.getLogger(name)
 
-def logConfig(log_config, log_file):
-    if py23:
-        try:
-            logging.config.fileConfig(os.path.expandvars(log_config))
-            add_giplog_handler()
-        except:
-            traceback.print_exc(file=sys.stderr)
+if py23:
+    try:
+        log_config = "$GIP_LOCATION/etc/logging.conf"
+        logging.config.fileConfig(os.path.expandvars(log_config))
+        add_giplog_handler()
+    except:
+        traceback.print_exc(file=sys.stderr)
+

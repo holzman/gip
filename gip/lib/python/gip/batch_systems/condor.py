@@ -6,8 +6,12 @@ This provides information about Condor's state in a generic way.
 Meant to be consumed by GLUE 1.3 or GLUE 2.0 providers.
 """
 
+import os
+import sys
 import re
 import types
+
+sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 
 import gip_sets as sets
 from gip_common import cp_get, voList, cp_getBoolean, cp_getInt, addToPath
@@ -202,7 +206,7 @@ class CondorBatchSystem(BatchSystem):
         altname = altname.replace('_', '')
         altname = altname.strip()
         try:
-            bymapper = mapper[altname]
+            bymapper = self.vo_map[altname]
         except:
             bymapper = None
         if bycp != None:

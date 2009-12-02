@@ -18,8 +18,8 @@ class TestLsfDynamic(unittest.TestCase):
         Does not check for correctness.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
-                                  "--config=test_configs/lsf_test.conf")
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_lsf"\
+            ".py --config=test_configs/red.conf")
         print path
         fd = os.popen(path)
         fd.read()
@@ -27,21 +27,18 @@ class TestLsfDynamic(unittest.TestCase):
     
     def test_contact_string(self):
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
-                                  "--config=test_configs/lsf_test.conf")
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "lsf.py --config=test_configs/red.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
 
-        has_ce = False
         for entry in entries:
             if 'GlueCE' in entry.objectClass:
                 contact_string = entry.glue['CEInfoContactString']
                 self.failIf(contact_string == "", "Contact string is missing")
                 self.failIf(contact_string.endswith("jobmanager-lsf"), \
                     "Contact string must include the queue.")
-                has_ce = True
-        self.failUnless(has_ce, msg="No GLUE CE has been emitted.")
 
 def main():
     """

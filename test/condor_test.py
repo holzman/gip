@@ -172,6 +172,28 @@ class TestCondorProvider(unittest.TestCase):
                 self.failUnless(vo_free <= assigned - running, msg="Failed " \
                     "invariant: VO_FREE_SLOTS <= CE_ASSIGNED - VO_RUNNING")
 
+    def test_condorq_parsing(self):
+        """
+        Test the condor_q -xml parsing for Condor format changes
+        """
+
+        # Condor 7.3.2 and above
+        os.environ['GIP_TESTING'] = 'suffix=glow'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py --config=test_configs/glow_condor.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd, multi=True)
+        self.assertEquals(fd.close(), None)
+
+        # Condor 7.3.1 and less
+        os.environ['GIP_TESTING'] = 'suffix=glow-condor72'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py --config=test_configs/glow_condor.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd, multi=True)
+        self.assertEquals(fd.close(), None)
+
+
     def test_collector_host(self):
         """
         Make sure that we can parse non-trivial COLLECTOR_HOST entries.

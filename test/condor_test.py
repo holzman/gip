@@ -8,6 +8,7 @@ import unittest
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_sets import Set
 from gip_common import config, cp_get
+from pbs_common import getVoQueues
 from gip_ldap import read_ldap
 from gip_testing import runTest, streamHandler
 import gip_testing
@@ -22,7 +23,8 @@ class TestCondorProvider(unittest.TestCase):
         Does not check for correctness.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py")
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py")
         fd = os.popen(path + " --config=test_configs/condor_test.conf")
         fd.read()
         self.assertEquals(fd.close(), None)
@@ -33,8 +35,8 @@ class TestCondorProvider(unittest.TestCase):
         a "simple" Condor setup, no groups or priorities.
         """
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
-                                  "--config=test_configs/condor_test.conf")
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py --config=test_configs/condor_test.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.assertEquals(fd.close(), None)
@@ -45,34 +47,7 @@ class TestCondorProvider(unittest.TestCase):
                 has_ce = True
                 self.assertEquals(entry.glue['CEStateTotalJobs'], '6')
                 self.assertEquals(entry.glue['CEStateRunningJobs'], '4')
-                self.assertEquals(entry.glue['CEStateWaitingJobs'], '2')
-                # Free CPUs should be zero as there are waiting jobs
-                self.assertEquals(entry.glue['CEStateFreeCPUs'], '0')
-                self.assertEquals(entry.glue['CEPolicyAssignedJobSlots'], '81')
-                self.assertEquals(entry.glue['CEUniqueID'], \
-                    '%s:2119/jobmanager-condor-default' % ce_name)
-        self.assertEquals(has_ce, True)
-
-    def test_output_pf2(self):
-        """
-        Test the sample output from prairiefire.unl.edu.  Should represent
-        a "simple" Condor setup, no groups or priorities.
-        """
-        os.environ['GIP_TESTING'] = 'suffix=pf2'
-        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
-                                  "--config=test_configs/condor_test.conf")
-        fd = os.popen(path)
-        entries = read_ldap(fd)
-        self.assertEquals(fd.close(), None)
-        has_ce = False
-        ce_name = socket.gethostname()
-        for entry in entries:
-            if 'GlueCE' in entry.objectClass:
-                has_ce = True
-                self.assertEquals(entry.glue['CEStateTotalJobs'], '10')
-                self.assertEquals(entry.glue['CEStateRunningJobs'], '10')
-                self.assertEquals(entry.glue['CEStateWaitingJobs'], '0')
-                self.assertEquals(entry.glue['CEStateFreeCPUs'], '71')
+                self.assertEquals(entry.glue['CEStateFreeCPUs'], '77')
                 self.assertEquals(entry.glue['CEPolicyAssignedJobSlots'], '81')
                 self.assertEquals(entry.glue['CEUniqueID'], \
                     '%s:2119/jobmanager-condor-default' % ce_name)
@@ -80,8 +55,8 @@ class TestCondorProvider(unittest.TestCase):
 
     def test_contact_string(self):
         os.environ['GIP_TESTING'] = '1'
-        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
-                                  "--config=test_configs/condor_test.conf")
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py --config=test_configs/condor_test.conf")
         fd = os.popen(path)
         entries = read_ldap(fd)
         self.failUnless(fd.close() == None)
@@ -115,8 +90,8 @@ class TestCondorProvider(unittest.TestCase):
         """
         ce = 'fnpcfg1.fnal.gov:2119/jobmanager-condor-group_nysgrid'
         os.environ['GIP_TESTING'] = 'suffix=fnal'
-        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
-                                  "--config=test_configs/fnal_condor.conf")
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py --config=test_configs/fnal_condor.conf")
         fd = os.popen(path)
         entries = read_ldap(fd, multi=True)
         entry = self.check_for_ce(ce, entries)
@@ -134,8 +109,8 @@ class TestCondorProvider(unittest.TestCase):
                (FreeSlots should not be more than group quota).
         """
         os.environ['GIP_TESTING'] = 'suffix=ucsd'
-        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
-                                  "--config=test_configs/ucsd_condor.conf")
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py --config=test_configs/ucsd_condor.conf")
         fd = os.popen(path)
         entries = read_ldap(fd, multi=True)
         tmpl = "osg-gw-2.t2.ucsd.edu:2119/jobmanager-condor-%s"
@@ -196,27 +171,6 @@ class TestCondorProvider(unittest.TestCase):
                     "VO_FREE_SLOTS <= CE_FREE_SLOTS")
                 self.failUnless(vo_free <= assigned - running, msg="Failed " \
                     "invariant: VO_FREE_SLOTS <= CE_ASSIGNED - VO_RUNNING")
-
-    def test_condorq_parsing(self):
-        """
-        Test the condor_q -xml parsing for Condor format changes
-        """
-
-        # Condor 7.3.2 and above
-        os.environ['GIP_TESTING'] = 'suffix=glow'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
-            "condor.py --config=test_configs/glow_condor.conf")
-        fd = os.popen(path)
-        entries = read_ldap(fd, multi=True)
-        self.assertEquals(fd.close(), None)
-
-        # Condor 7.3.1 and less
-        os.environ['GIP_TESTING'] = 'suffix=glow-condor72'
-        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
-            "condor.py --config=test_configs/glow_condor.conf")
-        fd = os.popen(path)
-        entries = read_ldap(fd, multi=True)
-        self.assertEquals(fd.close(), None)
 
     def test_collector_host(self):
         """

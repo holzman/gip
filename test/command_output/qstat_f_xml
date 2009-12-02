@@ -2,6 +2,760 @@
 <job_info  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <queue_info>
     <Queue-List>
+      <name>all.q@a1</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>au</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a10</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a11</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a12</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a13</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a14</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a15</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a16</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a17</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a18</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a19</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a2</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a20</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a21</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a22</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a23</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a24</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a25</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a3</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a4</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a5</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a6</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a7</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a8</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@a9</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b1</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b10</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b11</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b12</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b13</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b14</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b15</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b16</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b17</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b18</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b19</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b2</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b20</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b21</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b22</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b23</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b24</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b3</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b4</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>a</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b5</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>a</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b6</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b7</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b8</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@b9</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c1</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c10</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c11</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c19</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>au</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c2</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c20</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c21</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>4</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>a</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c22</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c23</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>a</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c25</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c3</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c4</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c5</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c6</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <state>au</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c7</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c8</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@c9</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@e1</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>a</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@e2</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@e3</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@e4</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@e5</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@e6</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>a</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f1</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f10</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f11</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f2</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f3</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>au</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f4</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f5</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <state>au</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f6</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f7</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <state>au</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f8</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@f9</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@reid01</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@reid02</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>au</state>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@reid03</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@reid04</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@reid05</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@reid06</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@reid07</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@reid08</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@smp01</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>all.q@smp02</name>
+      <qtype>BI</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>1</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
       <name>chandra@a18</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
@@ -66,454 +820,79 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>geo_ib@a14</name>
+      <name>geo@c21</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>4</slots_total>
       <arch>lx24-amd64</arch>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>geo_ib@a15</name>
-      <qtype>BIP</qtype>
-      <slots_used>8</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>geo_ib@a16</name>
+      <name>geo@c23</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>4</slots_total>
       <arch>lx24-amd64</arch>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>geo_ib@a17</name>
-      <qtype>BIP</qtype>
-      <slots_used>8</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@a01</name>
+      <name>geo@e1</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>4</slots_total>
       <arch>lx24-amd64</arch>
-      <state>au</state>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>hod@a02</name>
+      <name>geo@e2</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <state>au</state>
+      <slots_total>4</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>hod@a03</name>
+      <name>geo@e3</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>4</slots_total>
       <arch>lx24-amd64</arch>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>hod@a04</name>
+      <name>geo@e4</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>4</slots_total>
       <arch>lx24-amd64</arch>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>hod@a05</name>
+      <name>geo@e5</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>4</slots_total>
       <arch>lx24-amd64</arch>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>hod@b01</name>
+      <name>geo@e6</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>4</slots_total>
       <arch>lx24-amd64</arch>
-      <state>au</state>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>hod@b02</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b03</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b04</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b05</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b06</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b07</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b08</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b09</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b10</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b11</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b12</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b13</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b14</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b15</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b16</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b17</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b18</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b20</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b22</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>au</state>
-    </Queue-List>
-    <Queue-List>
-      <name>hod@b23</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_a@a03</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_a@a04</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_a@a05</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b02</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b03</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b04</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b05</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b06</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b07</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b08</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b09</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b10</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>d</state>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b11</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b12</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b13</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b14</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b15</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b16</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b17</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b18</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>d</state>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b19</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b20</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>d</state>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b21</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b23</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>ib_b@b25</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>lsdyna@a10</name>
+      <name>lsdyna@reid01</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -521,7 +900,16 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna@a11</name>
+      <name>lsdyna@reid02</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>4</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>u</state>
+    </Queue-List>
+    <Queue-List>
+      <name>lsdyna@reid03</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -529,7 +917,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna@a12</name>
+      <name>lsdyna@reid04</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -537,7 +925,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna@a13</name>
+      <name>lsdyna@reid05</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -545,613 +933,301 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_a@a03</name>
+      <name>lsdyna@reid06</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>4</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_a@a04</name>
+      <name>lsdyna@reid07</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>4</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_a@a05</name>
+      <name>lsdyna@reid08</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>4</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b02</name>
+      <name>myrinet@c1</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b03</name>
+      <name>myrinet@c10</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b04</name>
+      <name>myrinet@c11</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b05</name>
+      <name>myrinet@c19</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
+      <state>au</state>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b06</name>
+      <name>myrinet@c2</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b07</name>
+      <name>myrinet@c20</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b08</name>
+      <name>myrinet@c21</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b09</name>
+      <name>myrinet@c22</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b10</name>
+      <name>myrinet@c23</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b11</name>
+      <name>myrinet@c25</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b12</name>
+      <name>myrinet@c3</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b13</name>
+      <name>myrinet@c4</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b14</name>
+      <name>myrinet@c5</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>lsdyna-ib_b@b15</name>
+      <name>myrinet@c6</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>lsdyna-ib_b@b16</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>lsdyna-ib_b@b17</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>lsdyna-ib_b@b18</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>lsdyna-ib_b@b19</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>lsdyna-ib_b@b20</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>lsdyna-ib_b@b21</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>lsdyna-ib_b@b23</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>lsdyna-ib_b@b25</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf-grid@c04</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf-grid@c05</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf-grid@c06</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf-grid@c07</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf-grid@c08</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf-grid@c09</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf-grid@c10</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c01</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c02</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c03</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c04</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c05</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c06</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c07</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c08</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c09</name>
-      <qtype>BIP</qtype>
-      <slots_used>1</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c10</name>
-      <qtype>BIP</qtype>
-      <slots_used>1</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c11</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c12</name>
-      <qtype>BIP</qtype>
-      <slots_used>1</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c13</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c14</name>
-      <qtype>BIP</qtype>
-      <slots_used>1</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c15</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c16</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c17</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c18</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c19</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h@c20</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
+      <slots_total>1</slots_total>
+      <state>au</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h@c21</name>
+      <name>myrinet@c7</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
-      <state>E</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h@c22</name>
+      <name>myrinet@c8</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
-      <state>E</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h@c23</name>
+      <name>myrinet@c9</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>2</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
-      <state>E</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b02</name>
+      <name>myrinet@e1</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b03</name>
+      <name>myrinet@e2</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b04</name>
+      <name>myrinet@e3</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b05</name>
+      <name>myrinet@e4</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b06</name>
+      <name>myrinet@e5</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b07</name>
+      <name>myrinet@e6</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
+      <state>a</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b08</name>
+      <name>myrinet@f10</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b09</name>
+      <name>myrinet@f11</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
-      <state>E</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b10</name>
+      <name>myrinet@f2</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b11</name>
+      <name>myrinet@f3</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
+      <state>au</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b12</name>
+      <name>myrinet@f4</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
-      <state>E</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b13</name>
+      <name>myrinet@f5</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>E</state>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h_ib@b14</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
+      <slots_total>1</slots_total>
+      <state>au</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b15</name>
+      <name>myrinet@f6</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b16</name>
+      <name>myrinet@f7</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf240h_ib@b17</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
+      <slots_total>1</slots_total>
+      <state>au</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b18</name>
+      <name>myrinet@f8</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b20</name>
+      <name>myrinet@f9</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
+      <slots_total>1</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b22</name>
+      <name>pf24h@a1</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1160,7 +1236,67 @@
       <state>u</state>
     </Queue-List>
     <Queue-List>
-      <name>pf240h_ib@b23</name>
+      <name>pf24h@a10</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>E</state>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@a11</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>E</state>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@a12</name>
+      <qtype>BIP</qtype>
+      <slots_used>8</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@a13</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>E</state>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@a14</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>E</state>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@a16</name>
+      <qtype>BIP</qtype>
+      <slots_used>8</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@a17</name>
+      <qtype>BIP</qtype>
+      <slots_used>8</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@a25</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1168,90 +1304,61 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf24h@a03</name>
+      <name>pf24h@a4</name>
       <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
+      <slots_used>8</slots_used>
       <slots_resv>0</slots_resv>
       <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf24h@a04</name>
+      <name>pf24h@a5</name>
       <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
+      <slots_used>8</slots_used>
       <slots_resv>0</slots_resv>
       <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>pf24h@a05</name>
-      <qtype>BIP</qtype>
-      <slots_used>1</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf24h@b01</name>
+      <name>pf24h@a6</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
       <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
-      <state>u</state>
+      <state>E</state>
     </Queue-List>
     <Queue-List>
-      <name>pf24h@b02</name>
+      <name>pf24h@a7</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
       <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
+      <state>E</state>
     </Queue-List>
     <Queue-List>
-      <name>pf24h@b03</name>
+      <name>pf24h@a8</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
       <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
+      <state>E</state>
     </Queue-List>
     <Queue-List>
-      <name>pf24h@b04</name>
+      <name>pf24h@a9</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
       <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
+      <state>E</state>
     </Queue-List>
     <Queue-List>
-      <name>pf24h@b05</name>
+      <name>pf24h@b1</name>
       <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf24h@b06</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf24h@b07</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>8</slots_total>
-      <arch>lx24-amd64</arch>
-    </Queue-List>
-    <Queue-List>
-      <name>pf24h@b09</name>
-      <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
+      <slots_used>8</slots_used>
       <slots_resv>0</slots_resv>
       <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
@@ -1283,7 +1390,7 @@
     <Queue-List>
       <name>pf24h@b13</name>
       <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
+      <slots_used>8</slots_used>
       <slots_resv>0</slots_resv>
       <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
@@ -1291,7 +1398,7 @@
     <Queue-List>
       <name>pf24h@b14</name>
       <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
+      <slots_used>8</slots_used>
       <slots_resv>0</slots_resv>
       <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
@@ -1331,7 +1438,15 @@
     <Queue-List>
       <name>pf24h@b19</name>
       <qtype>BIP</qtype>
-      <slots_used>0</slots_used>
+      <slots_used>8</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@b2</name>
+      <qtype>BIP</qtype>
+      <slots_used>8</slots_used>
       <slots_resv>0</slots_resv>
       <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
@@ -1346,6 +1461,14 @@
     </Queue-List>
     <Queue-List>
       <name>pf24h@b21</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@b22</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1369,7 +1492,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>reid-mm@a06</name>
+      <name>pf24h@b3</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1377,7 +1500,23 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>reid-mm@a07</name>
+      <name>pf24h@b4</name>
+      <qtype>BIP</qtype>
+      <slots_used>8</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@b5</name>
+      <qtype>BIP</qtype>
+      <slots_used>8</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>pf24h@b6</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1385,7 +1524,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>reid-mm@a08</name>
+      <name>pf24h@b7</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1393,7 +1532,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>reid-mm@a09</name>
+      <name>pf24h@b8</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1401,7 +1540,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>reid_ib@a10</name>
+      <name>pf24h@b9</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1409,7 +1548,16 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>reid_ib@a11</name>
+      <name>schorr_a@a1</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+      <state>u</state>
+    </Queue-List>
+    <Queue-List>
+      <name>schorr_a@a10</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1417,7 +1565,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>reid_ib@a12</name>
+      <name>schorr_a@a11</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1425,7 +1573,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>reid_ib@a13</name>
+      <name>schorr_a@a12</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1433,7 +1581,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>schorr_a@a03</name>
+      <name>schorr_a@a13</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1441,7 +1589,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>schorr_a@a04</name>
+      <name>schorr_a@a14</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1449,7 +1597,7 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>schorr_a@a05</name>
+      <name>schorr_a@a16</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
@@ -1457,28 +1605,59 @@
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>smp@smp01</name>
+      <name>schorr_a@a17</name>
       <qtype>BIP</qtype>
       <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>16</slots_total>
-      <arch>lx24-amd64</arch>
-      <state>au</state>
-    </Queue-List>
-    <Queue-List>
-      <name>smp@smp02</name>
-      <qtype>BIP</qtype>
-      <slots_used>16</slots_used>
-      <slots_resv>0</slots_resv>
-      <slots_total>16</slots_total>
+      <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
     <Queue-List>
-      <name>smp@smp03</name>
+      <name>schorr_a@a4</name>
       <qtype>BIP</qtype>
-      <slots_used>1</slots_used>
+      <slots_used>0</slots_used>
       <slots_resv>0</slots_resv>
-      <slots_total>16</slots_total>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>schorr_a@a5</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>schorr_a@a6</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>schorr_a@a7</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>schorr_a@a8</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
+      <arch>lx24-amd64</arch>
+    </Queue-List>
+    <Queue-List>
+      <name>schorr_a@a9</name>
+      <qtype>BIP</qtype>
+      <slots_used>0</slots_used>
+      <slots_resv>0</slots_resv>
+      <slots_total>8</slots_total>
       <arch>lx24-amd64</arch>
     </Queue-List>
   </queue_info>

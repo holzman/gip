@@ -4,6 +4,7 @@ Module for interacting with SGE.
 """
 
 import re
+import os
 from UserDict import UserDict
 
 import gip_sets as sets

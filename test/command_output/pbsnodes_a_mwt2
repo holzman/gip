@@ -1,0 +1,1790 @@
+uct2-c001.mwt2.org
+     state = down,offline
+     np = 3
+     properties = uct2
+     ntype = cluster
+
+uct2-c002.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170795.uct2-grid6.uchicago.edu, 1/8172416.uct2-grid6.uchicago.edu, 2/8174694.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c002.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=10974 18933 27022,nsessions=3,nusers=1,idletime=435463,totmem=10219744kb,availmem=8019952kb,physmem=8122608kb,ncpus=4,loadave=3.03,netload=2173201851802,state=free,jobs=8170795.uct2-grid6.uchicago.edu 8172416.uct2-grid6.uchicago.edu 8174694.uct2-grid6.uchicago.edu,rectime=1260313284
+
+uct2-c003.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171844.uct2-grid6.uchicago.edu, 1/8178908.uct2-grid6.uchicago.edu, 2/8175406.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c003.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=28252 1826 20849,nsessions=3,nusers=1,idletime=485246,totmem=10219744kb,availmem=7935500kb,physmem=8122608kb,ncpus=4,loadave=3.01,netload=1827560272318,state=free,jobs=8178908.uct2-grid6.uchicago.edu 8175406.uct2-grid6.uchicago.edu 8171844.uct2-grid6.uchicago.edu,rectime=1260313261
+
+uct2-c004.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8175370.uct2-grid6.uchicago.edu, 1/8172841.uct2-grid6.uchicago.edu, 2/8170670.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c004.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=29534 3707 23781,nsessions=3,nusers=1,idletime=485249,totmem=10219744kb,availmem=7935964kb,physmem=8122608kb,ncpus=4,loadave=2.99,netload=2186627976526,state=free,jobs=8012413.uct2-grid6.uchicago.edu 8170670.uct2-grid6.uchicago.edu 8175370.uct2-grid6.uchicago.edu 8172841.uct2-grid6.uchicago.edu,rectime=1260313264
+
+uct2-c005.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174755.uct2-grid6.uchicago.edu, 1/8181374.uct2-grid6.uchicago.edu, 2/8173634.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c005.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=29515 3157 23736,nsessions=3,nusers=1,idletime=110190,totmem=10219744kb,availmem=8256108kb,physmem=8122608kb,ncpus=4,loadave=3.00,netload=45365457242,state=free,jobs=8181374.uct2-grid6.uchicago.edu 8173634.uct2-grid6.uchicago.edu 8174755.uct2-grid6.uchicago.edu,rectime=1260313300
+
+uct2-c006.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170527.uct2-grid6.uchicago.edu, 1/8170574.uct2-grid6.uchicago.edu, 2/8170489.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c006.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=14820 19116 23510,nsessions=3,nusers=1,idletime=2793053,totmem=10285268kb,availmem=8145448kb,physmem=8188132kb,ncpus=4,loadave=3.00,netload=2584857416450,state=free,jobs=8170489.uct2-grid6.uchicago.edu 8170527.uct2-grid6.uchicago.edu 8170574.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c007.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168957.uct2-grid6.uchicago.edu, 1/8171874.uct2-grid6.uchicago.edu, 2/8174696.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c007.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=3273 11001 19024,nsessions=3,nusers=1,idletime=485251,totmem=10219732kb,availmem=8009928kb,physmem=8122596kb,ncpus=4,loadave=3.00,netload=2514873993543,state=free,jobs=8168957.uct2-grid6.uchicago.edu 8171874.uct2-grid6.uchicago.edu 8174696.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c008.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8175858.uct2-grid6.uchicago.edu, 1/8170757.uct2-grid6.uchicago.edu, 2/8172999.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c008.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=8558 10016 15128,nsessions=3,nusers=1,idletime=2793065,totmem=10219732kb,availmem=7878216kb,physmem=8122596kb,ncpus=4,loadave=3.00,netload=2230878024450,state=free,jobs=8170757.uct2-grid6.uchicago.edu 8175858.uct2-grid6.uchicago.edu 8172999.uct2-grid6.uchicago.edu,rectime=1260313264
+
+uct2-c009.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171809.uct2-grid6.uchicago.edu, 1/8170707.uct2-grid6.uchicago.edu, 2/8171763.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c009.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=491 20887 27248,nsessions=3,nusers=1,idletime=485247,totmem=10219744kb,availmem=7949272kb,physmem=8122608kb,ncpus=4,loadave=3.00,netload=89490924212,state=free,jobs=8170707.uct2-grid6.uchicago.edu 8171763.uct2-grid6.uchicago.edu 8171809.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c010.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171034.uct2-grid6.uchicago.edu, 1/8174940.uct2-grid6.uchicago.edu, 2/8171852.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c010.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=5549 11853 19936,nsessions=3,nusers=1,idletime=485247,totmem=10219744kb,availmem=8098432kb,physmem=8122608kb,ncpus=4,loadave=3.00,netload=127089260914,state=free,jobs=8171034.uct2-grid6.uchicago.edu 8171852.uct2-grid6.uchicago.edu 8174940.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c011.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173736.uct2-grid6.uchicago.edu, 1/8172988.uct2-grid6.uchicago.edu, 2/8170678.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c011.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=28630 8227 16243,nsessions=3,nusers=1,idletime=485354,totmem=10219744kb,availmem=8062444kb,physmem=8122608kb,ncpus=4,loadave=3.00,netload=68300459295,state=free,jobs=8170678.uct2-grid6.uchicago.edu 8172988.uct2-grid6.uchicago.edu 8173736.uct2-grid6.uchicago.edu,rectime=1260313261
+
+uct2-c012.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173614.uct2-grid6.uchicago.edu, 1/8178621.uct2-grid6.uchicago.edu, 2/8168186.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c012.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=30644 14454 18815,nsessions=3,nusers=1,idletime=485244,totmem=10219744kb,availmem=8181996kb,physmem=8122608kb,ncpus=4,loadave=2.99,netload=115461366610,state=free,jobs=8168186.uct2-grid6.uchicago.edu 8178621.uct2-grid6.uchicago.edu 8173614.uct2-grid6.uchicago.edu,rectime=1260313259
+
+uct2-c013.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174670.uct2-grid6.uchicago.edu, 1/8172947.uct2-grid6.uchicago.edu, 2/8172898.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c013.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=764 6651 14200,nsessions=3,nusers=1,idletime=485355,totmem=10156088kb,availmem=8068424kb,physmem=8058952kb,ncpus=4,loadave=2.99,netload=83513514072,state=free,jobs=8172898.uct2-grid6.uchicago.edu 8172947.uct2-grid6.uchicago.edu 8174670.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c014.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173600.uct2-grid6.uchicago.edu, 1/8172949.uct2-grid6.uchicago.edu, 2/8172445.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c014.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=32597 12194 18255,nsessions=3,nusers=1,idletime=435754,totmem=10219744kb,availmem=8124076kb,physmem=8122608kb,ncpus=4,loadave=3.00,netload=78856168080,state=free,jobs=8172445.uct2-grid6.uchicago.edu 8172949.uct2-grid6.uchicago.edu 8173600.uct2-grid6.uchicago.edu,rectime=1260313261
+
+uct2-c015.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8180847.uct2-grid6.uchicago.edu, 1/8172903.uct2-grid6.uchicago.edu, 2/8178520.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c015.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=25367 25528 10721,nsessions=3,nusers=1,idletime=2793148,totmem=10219732kb,availmem=8076772kb,physmem=8122596kb,ncpus=4,loadave=3.00,netload=3363725954798,state=free,jobs=8172903.uct2-grid6.uchicago.edu 8178520.uct2-grid6.uchicago.edu 8180847.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c016.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168936.uct2-grid6.uchicago.edu, 1/8171455.uct2-grid6.uchicago.edu, 2/8168929.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c016.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=688 20600 25812,nsessions=3,nusers=1,idletime=2793174,totmem=10219740kb,availmem=8012956kb,physmem=8122604kb,ncpus=4,loadave=3.00,netload=3513726738182,state=free,jobs=8168929.uct2-grid6.uchicago.edu 8168936.uct2-grid6.uchicago.edu 8171455.uct2-grid6.uchicago.edu,rectime=1260313293
+
+uct2-c017.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8175002.uct2-grid6.uchicago.edu, 1/8168267.uct2-grid6.uchicago.edu, 2/8170733.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c017.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=28928 3702 13093,nsessions=3,nusers=1,idletime=2793096,totmem=10219732kb,availmem=8015480kb,physmem=8122596kb,ncpus=4,loadave=3.00,netload=2134917550447,state=free,jobs=8168267.uct2-grid6.uchicago.edu 8170733.uct2-grid6.uchicago.edu 8175002.uct2-grid6.uchicago.edu,rectime=1260313274
+
+uct2-c018.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170745.uct2-grid6.uchicago.edu, 1/8172421.uct2-grid6.uchicago.edu, 2/8171793.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c018.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=8468 14456 20431,nsessions=3,nusers=1,idletime=92436,totmem=10219740kb,availmem=8149512kb,physmem=8122604kb,ncpus=4,loadave=3.00,netload=147550606561,state=free,jobs=8170745.uct2-grid6.uchicago.edu 8171793.uct2-grid6.uchicago.edu 8172421.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c019.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171787.uct2-grid6.uchicago.edu, 1/8171745.uct2-grid6.uchicago.edu, 2/8168923.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c019.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=3906 11167 16861,nsessions=3,nusers=1,idletime=2793143,totmem=10219740kb,availmem=8062712kb,physmem=8122604kb,ncpus=4,loadave=3.00,netload=2594358525926,state=free,jobs=8168923.uct2-grid6.uchicago.edu 8171745.uct2-grid6.uchicago.edu 8171787.uct2-grid6.uchicago.edu,rectime=1260313264
+
+uct2-c020.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173618.uct2-grid6.uchicago.edu, 1/8169719.uct2-grid6.uchicago.edu, 2/8173619.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c020.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=31327 15905 15915,nsessions=3,nusers=1,idletime=2793142,totmem=10219740kb,availmem=8050828kb,physmem=8122604kb,ncpus=4,loadave=3.00,netload=2709783820830,state=free,jobs=8169719.uct2-grid6.uchicago.edu 8173618.uct2-grid6.uchicago.edu 8173619.uct2-grid6.uchicago.edu,rectime=1260313258
+
+uct2-c021.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173010.uct2-grid6.uchicago.edu, 1/8171277.uct2-grid6.uchicago.edu, 2/8171777.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c021.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=18556 20399 24229,nsessions=3,nusers=1,idletime=2793163,totmem=10219740kb,availmem=8038480kb,physmem=8122604kb,ncpus=4,loadave=3.02,netload=2952587622086,state=free,jobs=8171277.uct2-grid6.uchicago.edu 8171777.uct2-grid6.uchicago.edu 8173010.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c022.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173008.uct2-grid6.uchicago.edu, 1/8168095.uct2-grid6.uchicago.edu, 2/8181216.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c022.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=11575 17342 23661,nsessions=3,nusers=1,idletime=1575994,totmem=10219740kb,availmem=8005536kb,physmem=8122604kb,ncpus=4,loadave=3.01,netload=2708351810939,state=free,jobs=8168095.uct2-grid6.uchicago.edu 8173008.uct2-grid6.uchicago.edu 8181216.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c023.mwt2.org
+     state = down,offline
+     np = 3
+     properties = uct2
+     ntype = cluster
+
+uct2-c024.mwt2.org
+     state = offline
+     np = 3
+     properties = uct2
+     ntype = cluster
+     status = opsys=linux,uname=Linux uct2-c024.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=? 15201,nsessions=? 15201,nusers=0,idletime=13748,totmem=10219740kb,availmem=10075216kb,physmem=8122604kb,ncpus=4,loadave=0.18,netload=8183313924884,state=free,jobs=? 15201,rectime=1260313281
+
+uct2-c025.mwt2.org
+     state = offline
+     np = 3
+     properties = uct2
+     ntype = cluster
+     status = opsys=linux,uname=Linux uct2-c025.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=6471,nsessions=1,nusers=1,idletime=16480,totmem=10219740kb,availmem=10168156kb,physmem=8122604kb,ncpus=4,loadave=0.03,netload=928302636,state=free,jobs=? 0,rectime=1260313266
+
+uct2-c026.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169715.uct2-grid6.uchicago.edu, 1/8180848.uct2-grid6.uchicago.edu, 2/8174772.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c026.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=29455 29721 19779,nsessions=3,nusers=1,idletime=16434,totmem=10219740kb,availmem=7907864kb,physmem=8122604kb,ncpus=4,loadave=3.00,netload=3146726333240,state=free,jobs=8169715.uct2-grid6.uchicago.edu 8174772.uct2-grid6.uchicago.edu 8180848.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c027.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168119.uct2-grid6.uchicago.edu, 1/8172890.uct2-grid6.uchicago.edu, 2/8160198.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c027.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=6954 13993 23133,nsessions=3,nusers=1,idletime=2793144,totmem=10219740kb,availmem=8121088kb,physmem=8122604kb,ncpus=4,loadave=3.00,netload=3412538603803,state=free,jobs=8160198.uct2-grid6.uchicago.edu 8168119.uct2-grid6.uchicago.edu 8172890.uct2-grid6.uchicago.edu,rectime=1260313261
+
+uct2-c028.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174736.uct2-grid6.uchicago.edu, 1/8174665.uct2-grid6.uchicago.edu, 2/8173000.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c028.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=4641 10484 16329,nsessions=3,nusers=1,idletime=2793144,totmem=10090560kb,availmem=7941140kb,physmem=7993424kb,ncpus=4,loadave=3.00,netload=2380958178021,state=free,jobs=8173000.uct2-grid6.uchicago.edu 8174665.uct2-grid6.uchicago.edu 8174736.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c029.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172883.uct2-grid6.uchicago.edu, 1/8168935.uct2-grid6.uchicago.edu, 2/8174688.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c029.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=31334 7293 14871,nsessions=3,nusers=1,idletime=2793099,totmem=10219740kb,availmem=7937064kb,physmem=8122604kb,ncpus=4,loadave=2.99,netload=3486455160624,state=free,jobs=8168935.uct2-grid6.uchicago.edu 8172883.uct2-grid6.uchicago.edu 8174688.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c030.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168337.uct2-grid6.uchicago.edu, 1/8168225.uct2-grid6.uchicago.edu, 2/8171802.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c030.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=29362 2879 10515,nsessions=3,nusers=1,idletime=2793144,totmem=10219740kb,availmem=7987796kb,physmem=8122604kb,ncpus=4,loadave=3.03,netload=2893170383446,state=free,jobs=8168225.uct2-grid6.uchicago.edu 8168337.uct2-grid6.uchicago.edu 8171802.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c031.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173001.uct2-grid6.uchicago.edu, 1/8170627.uct2-grid6.uchicago.edu, 2/8172894.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c031.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=11204 15653 22670,nsessions=3,nusers=1,idletime=2793137,totmem=10219740kb,availmem=7997356kb,physmem=8122604kb,ncpus=4,loadave=3.00,netload=2892923891428,state=free,jobs=8170627.uct2-grid6.uchicago.edu 8172894.uct2-grid6.uchicago.edu 8173001.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c032.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173030.uct2-grid6.uchicago.edu, 1/8174775.uct2-grid6.uchicago.edu, 2/8170669.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c032.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=31273 7005 24299,nsessions=3,nusers=1,idletime=2793159,totmem=10219740kb,availmem=8206132kb,physmem=8122604kb,ncpus=4,loadave=3.00,netload=3749419069401,state=free,jobs=8170669.uct2-grid6.uchicago.edu 8173030.uct2-grid6.uchicago.edu 8174775.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c033.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168924.uct2-grid6.uchicago.edu, 1/8171875.uct2-grid6.uchicago.edu, 2/8176926.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c033.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=7557 15201 21408,nsessions=3,nusers=1,idletime=2793146,totmem=10219740kb,availmem=8047584kb,physmem=8122604kb,ncpus=4,loadave=3.00,netload=2579453814720,state=free,jobs=8171875.uct2-grid6.uchicago.edu 8176926.uct2-grid6.uchicago.edu 8168924.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c034.mwt2.org
+     state = job-exclusive
+     np = 3
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171854.uct2-grid6.uchicago.edu, 1/8171813.uct2-grid6.uchicago.edu, 2/8168189.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c034.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=31040 4337 22887,nsessions=3,nusers=1,idletime=2793103,totmem=10219740kb,availmem=7925604kb,physmem=8122604kb,ncpus=4,loadave=3.00,netload=3262229333506,state=free,jobs=8168189.uct2-grid6.uchicago.edu 8171813.uct2-grid6.uchicago.edu 8171854.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c035.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171818.uct2-grid6.uchicago.edu, 1/8168971.uct2-grid6.uchicago.edu, 2/8171831.uct2-grid6.uchicago.edu, 3/8172424.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c035.mwt2.org 2.6.9-89.0.16.EL.cernsmp #1 SMP Wed Nov 4 09:12:48 CET 2009 i686,sessions=7879 14103 19664 25607,nsessions=4,nusers=1,idletime=485459,totmem=6147784kb,availmem=3599260kb,physmem=8310512kb,ncpus=4,loadave=4.00,netload=132663827,state=free,jobs=8168971.uct2-grid6.uchicago.edu 8171818.uct2-grid6.uchicago.edu 8171831.uct2-grid6.uchicago.edu 8172424.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c036.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170494.uct2-grid6.uchicago.edu, 1/8170551.uct2-grid6.uchicago.edu, 2/8171806.uct2-grid6.uchicago.edu, 3/8174715.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c036.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29520 11710 16019 22238,nsessions=4,nusers=1,idletime=485460,totmem=6213312kb,availmem=3685844kb,physmem=8310512kb,ncpus=4,loadave=4.04,gres=analy_slots:2,netload=1472999588,state=free,jobs=8170494.uct2-grid6.uchicago.edu 8170551.uct2-grid6.uchicago.edu 8171806.uct2-grid6.uchicago.edu 8174715.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c037.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170752.uct2-grid6.uchicago.edu, 1/8175466.uct2-grid6.uchicago.edu, 2/8172943.uct2-grid6.uchicago.edu, 3/8169619.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c037.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32297 14392 20241 26206,nsessions=4,nusers=1,idletime=485459,totmem=6147784kb,availmem=3613124kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3060574767,state=free,jobs=8175466.uct2-grid6.uchicago.edu 8169619.uct2-grid6.uchicago.edu 8170752.uct2-grid6.uchicago.edu 8172943.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c038.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170743.uct2-grid6.uchicago.edu, 1/8173633.uct2-grid6.uchicago.edu, 2/8170756.uct2-grid6.uchicago.edu, 3/8170746.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c038.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=24724 28832 17789 19486,nsessions=4,nusers=1,idletime=485456,totmem=6147784kb,availmem=3680616kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3721011900,state=free,jobs=8170743.uct2-grid6.uchicago.edu 8170746.uct2-grid6.uchicago.edu 8170756.uct2-grid6.uchicago.edu 8173633.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c039.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172925.uct2-grid6.uchicago.edu, 1/8180869.uct2-grid6.uchicago.edu, 2/8168152.uct2-grid6.uchicago.edu, 3/8170722.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c039.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31464 5151 23607 25295,nsessions=4,nusers=1,idletime=485462,totmem=6147784kb,availmem=3625492kb,physmem=8310512kb,ncpus=4,loadave=3.99,gres=analy_slots:2,netload=3748042954,state=free,jobs=8168152.uct2-grid6.uchicago.edu 8170722.uct2-grid6.uchicago.edu 8172925.uct2-grid6.uchicago.edu 8180869.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c040.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8177764.uct2-grid6.uchicago.edu, 1/8176995.uct2-grid6.uchicago.edu, 2/8172852.uct2-grid6.uchicago.edu, 3/8171826.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c040.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=9595 11966 16086 17673,nsessions=4,nusers=1,idletime=485469,totmem=6147784kb,availmem=3639408kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=1564674476,state=free,jobs=8171826.uct2-grid6.uchicago.edu 8172852.uct2-grid6.uchicago.edu 8177764.uct2-grid6.uchicago.edu 8176995.uct2-grid6.uchicago.edu,rectime=1260313273
+
+uct2-c041.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172918.uct2-grid6.uchicago.edu, 1/8170728.uct2-grid6.uchicago.edu, 2/8172966.uct2-grid6.uchicago.edu, 3/8175762.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c041.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=805 15341 21441 27066,nsessions=4,nusers=1,idletime=485461,totmem=6147784kb,availmem=3667276kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=1974451559,state=free,jobs=8170728.uct2-grid6.uchicago.edu 8172918.uct2-grid6.uchicago.edu 8172966.uct2-grid6.uchicago.edu 8175762.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c042.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8176290.uct2-grid6.uchicago.edu, 1/8173680.uct2-grid6.uchicago.edu, 2/8170739.uct2-grid6.uchicago.edu, 3/8171803.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c042.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29335 10964 17119 22885,nsessions=4,nusers=1,idletime=485459,totmem=6147784kb,availmem=3622240kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3861981820,state=free,jobs=8176290.uct2-grid6.uchicago.edu 8170739.uct2-grid6.uchicago.edu 8171803.uct2-grid6.uchicago.edu 8173680.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c043.mwt2.org
+     state = down,offline
+     np = 4
+     properties = uct2
+     ntype = cluster
+
+uct2-c044.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170706.uct2-grid6.uchicago.edu, 1/8172439.uct2-grid6.uchicago.edu, 2/8174765.uct2-grid6.uchicago.edu, 3/8170512.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c044.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=659 6949 14127 28550,nsessions=4,nusers=1,idletime=485454,totmem=6147784kb,availmem=3764108kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=4146840284,state=free,jobs=8170512.uct2-grid6.uchicago.edu 8170706.uct2-grid6.uchicago.edu 8172439.uct2-grid6.uchicago.edu 8174765.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c045.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170885.uct2-grid6.uchicago.edu, 1/8171868.uct2-grid6.uchicago.edu, 2/8168184.uct2-grid6.uchicago.edu, 3/8170534.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c045.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29386 12634 18589 23451,nsessions=4,nusers=1,idletime=485460,totmem=6213312kb,availmem=3678616kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=4037009422,state=free,jobs=8168184.uct2-grid6.uchicago.edu 8170534.uct2-grid6.uchicago.edu 8170885.uct2-grid6.uchicago.edu 8171868.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c046.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170793.uct2-grid6.uchicago.edu, 1/8170517.uct2-grid6.uchicago.edu, 2/8172957.uct2-grid6.uchicago.edu, 3/8172868.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c046.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31401 3674 9797 15643,nsessions=4,nusers=1,idletime=507059,totmem=6147784kb,availmem=3619520kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=1828151774,state=free,jobs=8170517.uct2-grid6.uchicago.edu 8170793.uct2-grid6.uchicago.edu 8172868.uct2-grid6.uchicago.edu 8172957.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c047.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169724.uct2-grid6.uchicago.edu, 1/8175264.uct2-grid6.uchicago.edu, 2/8181630.uct2-grid6.uchicago.edu, 3/8173685.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c047.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=5496 12139 17803 23471,nsessions=4,nusers=1,idletime=485464,totmem=6147784kb,availmem=3654640kb,physmem=8310512kb,ncpus=4,loadave=4.02,gres=analy_slots:2,netload=3236256803,state=free,jobs=8169724.uct2-grid6.uchicago.edu 8175264.uct2-grid6.uchicago.edu 8181630.uct2-grid6.uchicago.edu 8173685.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c048.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8176913.uct2-grid6.uchicago.edu, 1/8175179.uct2-grid6.uchicago.edu, 2/8171798.uct2-grid6.uchicago.edu, 3/8168317.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c048.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=8380 13975 20323 26109,nsessions=4,nusers=1,idletime=485459,totmem=6147784kb,availmem=3634444kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=578226727,state=free,jobs=8176913.uct2-grid6.uchicago.edu 8168317.uct2-grid6.uchicago.edu 8175179.uct2-grid6.uchicago.edu 8171798.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c049.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171848.uct2-grid6.uchicago.edu, 1/8172873.uct2-grid6.uchicago.edu, 2/8168318.uct2-grid6.uchicago.edu, 3/8170697.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c049.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=4948 11034 16914 22625,nsessions=4,nusers=1,idletime=485461,totmem=6147784kb,availmem=3645216kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2263753584,state=free,jobs=8168318.uct2-grid6.uchicago.edu 8170697.uct2-grid6.uchicago.edu 8171848.uct2-grid6.uchicago.edu 8172873.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c050.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168122.uct2-grid6.uchicago.edu, 1/8178047.uct2-grid6.uchicago.edu, 2/8168321.uct2-grid6.uchicago.edu, 3/8166984.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c050.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1394 13358 19006 26107,nsessions=4,nusers=1,idletime=2769516,totmem=6147784kb,availmem=3592536kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3824162142,state=free,jobs=8166984.uct2-grid6.uchicago.edu 8168122.uct2-grid6.uchicago.edu 8168321.uct2-grid6.uchicago.edu 8178047.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c051.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173610.uct2-grid6.uchicago.edu, 1/8173608.uct2-grid6.uchicago.edu, 2/8171863.uct2-grid6.uchicago.edu, 3/8180501.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c051.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1529 1688 2000 7706,nsessions=4,nusers=1,idletime=2401777,totmem=6147784kb,availmem=3668620kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3274174766,state=free,jobs=8171863.uct2-grid6.uchicago.edu 8180501.uct2-grid6.uchicago.edu 8173608.uct2-grid6.uchicago.edu 8173610.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c052.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8180731.uct2-grid6.uchicago.edu, 1/8175162.uct2-grid6.uchicago.edu, 2/8170618.uct2-grid6.uchicago.edu, 3/8168136.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c052.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30860 11899 19476 24744,nsessions=4,nusers=1,idletime=2769513,totmem=6147784kb,availmem=3672324kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=1102218329,state=free,jobs=8168136.uct2-grid6.uchicago.edu 8175162.uct2-grid6.uchicago.edu 8170618.uct2-grid6.uchicago.edu 8180731.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c053.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172926.uct2-grid6.uchicago.edu, 1/8171847.uct2-grid6.uchicago.edu, 2/8174707.uct2-grid6.uchicago.edu, 3/8171053.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c053.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30641 4098 9910 16088,nsessions=4,nusers=1,idletime=2793213,totmem=6147784kb,availmem=3657640kb,physmem=8310512kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2447965166,state=free,jobs=8171053.uct2-grid6.uchicago.edu 8171847.uct2-grid6.uchicago.edu 8172926.uct2-grid6.uchicago.edu 8174707.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c054.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173701.uct2-grid6.uchicago.edu, 1/8172008.uct2-grid6.uchicago.edu, 2/8180849.uct2-grid6.uchicago.edu, 3/8176577.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c054.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=2418 8653 13908 19561,nsessions=4,nusers=1,idletime=2793220,totmem=6147784kb,availmem=3676528kb,physmem=8310512kb,ncpus=4,loadave=4.01,gres=analy_slots:2,netload=3447645785,state=free,jobs=8172008.uct2-grid6.uchicago.edu 8176577.uct2-grid6.uchicago.edu 8180849.uct2-grid6.uchicago.edu 8173701.uct2-grid6.uchicago.edu,rectime=1260313271
+
+uct2-c055.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171821.uct2-grid6.uchicago.edu, 1/8171462.uct2-grid6.uchicago.edu, 2/8170659.uct2-grid6.uchicago.edu, 3/8180850.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c055.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28288 3608 9660 15338,nsessions=4,nusers=1,idletime=2793210,totmem=6078280kb,availmem=3542756kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=810089566,state=free,jobs=8170659.uct2-grid6.uchicago.edu 8171462.uct2-grid6.uchicago.edu 8171821.uct2-grid6.uchicago.edu 8180850.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c056.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171747.uct2-grid6.uchicago.edu, 1/8173667.uct2-grid6.uchicago.edu, 2/8171036.uct2-grid6.uchicago.edu, 3/8171814.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c056.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1024 15777 21340 26956,nsessions=4,nusers=1,idletime=2793212,totmem=6215496kb,availmem=3699428kb,physmem=8312696kb,ncpus=4,loadave=4.05,gres=analy_slots:2,netload=3698729096,state=free,jobs=8171036.uct2-grid6.uchicago.edu 8171747.uct2-grid6.uchicago.edu 8171814.uct2-grid6.uchicago.edu 8173667.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c057.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172882.uct2-grid6.uchicago.edu, 1/8171871.uct2-grid6.uchicago.edu, 2/8168906.uct2-grid6.uchicago.edu, 3/8170696.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c057.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31308 13368 19545 25563,nsessions=4,nusers=1,idletime=2793211,totmem=6078280kb,availmem=3571164kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2587910218,state=free,jobs=8168906.uct2-grid6.uchicago.edu 8170696.uct2-grid6.uchicago.edu 8171871.uct2-grid6.uchicago.edu 8172882.uct2-grid6.uchicago.edu,rectime=1260313261
+
+uct2-c058.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171795.uct2-grid6.uchicago.edu, 1/8172973.uct2-grid6.uchicago.edu, 2/8173002.uct2-grid6.uchicago.edu, 3/8174741.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c058.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28524 28532 2179 28701,nsessions=4,nusers=1,idletime=2793212,totmem=6078280kb,availmem=3570500kb,physmem=8312696kb,ncpus=4,loadave=3.99,gres=analy_slots:2,netload=1812410009,state=free,jobs=8171795.uct2-grid6.uchicago.edu 8172973.uct2-grid6.uchicago.edu 8174741.uct2-grid6.uchicago.edu 8173002.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c059.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172021.uct2-grid6.uchicago.edu, 1/8170603.uct2-grid6.uchicago.edu, 2/8168270.uct2-grid6.uchicago.edu, 3/8168319.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c059.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29510 11289 16906 22988,nsessions=4,nusers=1,idletime=2793228,totmem=6078280kb,availmem=3559532kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3004783952,state=free,jobs=8168270.uct2-grid6.uchicago.edu 8168319.uct2-grid6.uchicago.edu 8170603.uct2-grid6.uchicago.edu 8172021.uct2-grid6.uchicago.edu,rectime=1260313283
+
+uct2-c060.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171857.uct2-grid6.uchicago.edu, 1/8170569.uct2-grid6.uchicago.edu, 2/8168891.uct2-grid6.uchicago.edu, 3/8170805.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c060.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28036 1328 16332 22289,nsessions=4,nusers=1,idletime=2793213,totmem=6078280kb,availmem=3520296kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3165496598,state=free,jobs=8168891.uct2-grid6.uchicago.edu 8170569.uct2-grid6.uchicago.edu 8170805.uct2-grid6.uchicago.edu 8171857.uct2-grid6.uchicago.edu,rectime=1260313269
+
+uct2-c061.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174748.uct2-grid6.uchicago.edu, 1/8173692.uct2-grid6.uchicago.edu, 2/8168894.uct2-grid6.uchicago.edu, 3/8174701.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c061.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28702 1896 7528 21541,nsessions=4,nusers=1,idletime=2793216,totmem=6078280kb,availmem=3594428kb,physmem=8312696kb,ncpus=4,loadave=3.99,gres=analy_slots:2,netload=675920249,state=free,jobs=8168894.uct2-grid6.uchicago.edu 8173692.uct2-grid6.uchicago.edu 8174701.uct2-grid6.uchicago.edu 8174748.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c062.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172905.uct2-grid6.uchicago.edu, 1/8173038.uct2-grid6.uchicago.edu, 2/8179042.uct2-grid6.uchicago.edu, 3/8170516.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c062.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28695 2200 7768 27518,nsessions=4,nusers=1,idletime=2793211,totmem=6078280kb,availmem=3588500kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=491357304,state=free,jobs=8179042.uct2-grid6.uchicago.edu 8170516.uct2-grid6.uchicago.edu 8172905.uct2-grid6.uchicago.edu 8173038.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c063.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172987.uct2-grid6.uchicago.edu, 1/8174902.uct2-grid6.uchicago.edu, 2/8173743.uct2-grid6.uchicago.edu, 3/8165549.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c063.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30387 3965 4581 24219,nsessions=4,nusers=1,idletime=2793222,totmem=6078280kb,availmem=4137068kb,physmem=8312696kb,ncpus=4,loadave=3.58,gres=analy_slots:2,netload=112098583,state=free,jobs=8165549.uct2-grid6.uchicago.edu 8172987.uct2-grid6.uchicago.edu 8173743.uct2-grid6.uchicago.edu 8174902.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c064.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168885.uct2-grid6.uchicago.edu, 1/8173095.uct2-grid6.uchicago.edu, 2/8169708.uct2-grid6.uchicago.edu, 3/8173007.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c064.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31545 5017 7099 7271,nsessions=4,nusers=1,idletime=2793225,totmem=6078280kb,availmem=3605700kb,physmem=8312696kb,ncpus=4,loadave=4.01,gres=analy_slots:2,netload=3071767350,state=free,jobs=8168885.uct2-grid6.uchicago.edu 8169708.uct2-grid6.uchicago.edu 8173007.uct2-grid6.uchicago.edu 8173095.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c065.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8179991.uct2-grid6.uchicago.edu, 1/8171764.uct2-grid6.uchicago.edu, 2/8172893.uct2-grid6.uchicago.edu, 3/8173672.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c065.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=7813 14330 20039 26341,nsessions=4,nusers=1,idletime=2793214,totmem=6078280kb,availmem=3572196kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=648822471,state=free,jobs=8179991.uct2-grid6.uchicago.edu 8171764.uct2-grid6.uchicago.edu 8172893.uct2-grid6.uchicago.edu 8173672.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c066.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8177117.uct2-grid6.uchicago.edu, 1/8171796.uct2-grid6.uchicago.edu, 2/8177134.uct2-grid6.uchicago.edu, 3/8171531.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c066.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30155 12901 13196 24493,nsessions=4,nusers=1,idletime=2793215,totmem=6078280kb,availmem=3559208kb,physmem=8312696kb,ncpus=4,loadave=4.01,gres=analy_slots:2,netload=184989972,state=free,jobs=8177117.uct2-grid6.uchicago.edu 8177134.uct2-grid6.uchicago.edu 8171531.uct2-grid6.uchicago.edu 8171796.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c067.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169666.uct2-grid6.uchicago.edu, 1/8172875.uct2-grid6.uchicago.edu, 2/8172847.uct2-grid6.uchicago.edu, 3/8173609.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c067.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=2258 8785 14412 27626,nsessions=4,nusers=1,idletime=2793214,totmem=6078280kb,availmem=3561788kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=696079108,state=free,jobs=8169666.uct2-grid6.uchicago.edu 8172847.uct2-grid6.uchicago.edu 8172875.uct2-grid6.uchicago.edu 8173609.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c068.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172005.uct2-grid6.uchicago.edu, 1/8170890.uct2-grid6.uchicago.edu, 2/8170628.uct2-grid6.uchicago.edu, 3/8172996.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c068.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=14127 19884 25140 25766,nsessions=4,nusers=1,idletime=2793210,totmem=6078284kb,availmem=3605244kb,physmem=8312700kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3069561520,state=free,jobs=8170628.uct2-grid6.uchicago.edu 8170890.uct2-grid6.uchicago.edu 8172005.uct2-grid6.uchicago.edu 8172996.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c069.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170649.uct2-grid6.uchicago.edu, 1/8173011.uct2-grid6.uchicago.edu, 2/8174740.uct2-grid6.uchicago.edu, 3/8170598.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c069.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=524 6357 7411 13026,nsessions=4,nusers=1,idletime=2793212,totmem=6078280kb,availmem=3626796kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3473614368,state=free,jobs=8170598.uct2-grid6.uchicago.edu 8170649.uct2-grid6.uchicago.edu 8173011.uct2-grid6.uchicago.edu 8174740.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c070.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8176038.uct2-grid6.uchicago.edu, 1/8170547.uct2-grid6.uchicago.edu, 2/8176150.uct2-grid6.uchicago.edu, 3/8176095.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c070.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=20774 21330 26287 27084,nsessions=4,nusers=1,idletime=2793209,totmem=6078280kb,availmem=3601656kb,physmem=8312696kb,ncpus=4,loadave=4.04,gres=analy_slots:2,netload=2893499330,state=free,jobs=8170547.uct2-grid6.uchicago.edu 8176150.uct2-grid6.uchicago.edu 8176038.uct2-grid6.uchicago.edu 8176095.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c071.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8166279.uct2-grid6.uchicago.edu, 1/8168887.uct2-grid6.uchicago.edu, 2/8168904.uct2-grid6.uchicago.edu, 3/8171758.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c071.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=2144 2519 21957 27563,nsessions=4,nusers=1,idletime=2746042,totmem=6078280kb,availmem=2527948kb,physmem=8312696kb,ncpus=4,loadave=4.01,gres=analy_slots:2,netload=3480150473,state=free,jobs=8166279.uct2-grid6.uchicago.edu 8168887.uct2-grid6.uchicago.edu 8168904.uct2-grid6.uchicago.edu 8171758.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c072.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8175666.uct2-grid6.uchicago.edu, 1/8179038.uct2-grid6.uchicago.edu, 2/8175363.uct2-grid6.uchicago.edu, 3/8174762.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c072.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=12087 18128 23992 24841,nsessions=4,nusers=1,idletime=2793211,totmem=6078280kb,availmem=3557768kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3164528844,state=free,jobs=8174762.uct2-grid6.uchicago.edu 8175666.uct2-grid6.uchicago.edu 8175363.uct2-grid6.uchicago.edu 8179038.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c073.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173016.uct2-grid6.uchicago.edu, 1/8170073.uct2-grid6.uchicago.edu, 2/8176096.uct2-grid6.uchicago.edu, 3/8172976.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c073.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=6068 12244 20180 20483,nsessions=4,nusers=1,idletime=2793218,totmem=6078280kb,availmem=3552208kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2224819232,state=free,jobs=7212493.uct2-grid6.uchicago.edu 8170073.uct2-grid6.uchicago.edu 8172976.uct2-grid6.uchicago.edu 8176096.uct2-grid6.uchicago.edu 8173016.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c074.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8181182.uct2-grid6.uchicago.edu, 1/8172931.uct2-grid6.uchicago.edu, 2/8173665.uct2-grid6.uchicago.edu, 3/8171841.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c074.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29618 3222 4466 10409,nsessions=4,nusers=1,idletime=2793227,totmem=6078280kb,availmem=3611408kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3796963573,state=free,jobs=8171841.uct2-grid6.uchicago.edu 8172931.uct2-grid6.uchicago.edu 8181182.uct2-grid6.uchicago.edu 8173665.uct2-grid6.uchicago.edu,rectime=1260313272
+
+uct2-c075.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170703.uct2-grid6.uchicago.edu, 1/8172909.uct2-grid6.uchicago.edu, 2/8172912.uct2-grid6.uchicago.edu, 3/8170747.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c075.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28944 2057 17146 22787,nsessions=4,nusers=1,idletime=2793215,totmem=6078280kb,availmem=3545092kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3874658225,state=free,jobs=8170703.uct2-grid6.uchicago.edu 8170747.uct2-grid6.uchicago.edu 8172909.uct2-grid6.uchicago.edu 8172912.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c076.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170596.uct2-grid6.uchicago.edu, 1/8171807.uct2-grid6.uchicago.edu, 2/8175255.uct2-grid6.uchicago.edu, 3/8178420.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c076.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32500 6137 12396 18375,nsessions=4,nusers=1,idletime=2793211,totmem=6078280kb,availmem=3567084kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=1670604732,state=free,jobs=8175255.uct2-grid6.uchicago.edu 8178420.uct2-grid6.uchicago.edu 8170596.uct2-grid6.uchicago.edu 8171807.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c077.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171804.uct2-grid6.uchicago.edu, 1/8171784.uct2-grid6.uchicago.edu, 2/8171819.uct2-grid6.uchicago.edu, 3/8176097.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c077.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=612 14557 20142 25923,nsessions=4,nusers=1,idletime=2793212,totmem=6078280kb,availmem=3555572kb,physmem=8312696kb,ncpus=4,loadave=3.99,gres=analy_slots:2,netload=2195030279,state=free,jobs=8171784.uct2-grid6.uchicago.edu 8171804.uct2-grid6.uchicago.edu 8171819.uct2-grid6.uchicago.edu 8176097.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c078.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171829.uct2-grid6.uchicago.edu, 1/8171808.uct2-grid6.uchicago.edu, 2/8173753.uct2-grid6.uchicago.edu, 3/8173620.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c078.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=816 21745 27337 27613,nsessions=4,nusers=1,idletime=2793213,totmem=6078280kb,availmem=3621296kb,physmem=8312696kb,ncpus=4,loadave=4.07,gres=analy_slots:2,netload=3317604092,state=free,jobs=8171808.uct2-grid6.uchicago.edu 8171829.uct2-grid6.uchicago.edu 8173620.uct2-grid6.uchicago.edu 8173753.uct2-grid6.uchicago.edu,rectime=1260313261
+
+uct2-c079.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8180567.uct2-grid6.uchicago.edu, 1/8173713.uct2-grid6.uchicago.edu, 2/8174663.uct2-grid6.uchicago.edu, 3/8176041.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c079.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=6971 12711 14480 26916,nsessions=4,nusers=1,idletime=2793217,totmem=6078280kb,availmem=3573796kb,physmem=8312696kb,ncpus=4,loadave=3.99,gres=analy_slots:2,netload=1899103441,state=free,jobs=8180567.uct2-grid6.uchicago.edu 8174663.uct2-grid6.uchicago.edu 8176041.uct2-grid6.uchicago.edu 8173713.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c080.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168150.uct2-grid6.uchicago.edu, 1/8172011.uct2-grid6.uchicago.edu, 2/8171862.uct2-grid6.uchicago.edu, 3/8170738.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c080.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30976 4672 10478 16053,nsessions=4,nusers=1,idletime=2793214,totmem=4121028kb,availmem=1594196kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3831642257,state=free,jobs=8168150.uct2-grid6.uchicago.edu 8170738.uct2-grid6.uchicago.edu 8171862.uct2-grid6.uchicago.edu 8172011.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c081.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174674.uct2-grid6.uchicago.edu, 1/8170643.uct2-grid6.uchicago.edu, 2/8173017.uct2-grid6.uchicago.edu, 3/8170612.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c081.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=16587 16766 22325 22379,nsessions=4,nusers=1,idletime=2793216,totmem=6078280kb,availmem=3626000kb,physmem=8312696kb,ncpus=4,loadave=4.01,gres=analy_slots:2,netload=3331208681,state=free,jobs=8170612.uct2-grid6.uchicago.edu 8170643.uct2-grid6.uchicago.edu 8173017.uct2-grid6.uchicago.edu 8174674.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c082.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8176039.uct2-grid6.uchicago.edu, 1/8170440.uct2-grid6.uchicago.edu, 2/8168942.uct2-grid6.uchicago.edu, 3/8176072.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c082.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31545 5256 10625 25704,nsessions=4,nusers=1,idletime=443621,totmem=6078280kb,availmem=3545820kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2271603352,state=free,jobs=8176072.uct2-grid6.uchicago.edu 8168942.uct2-grid6.uchicago.edu 8170440.uct2-grid6.uchicago.edu 8176039.uct2-grid6.uchicago.edu,rectime=1260313290
+
+uct2-c083.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171832.uct2-grid6.uchicago.edu, 1/8172865.uct2-grid6.uchicago.edu, 2/8174768.uct2-grid6.uchicago.edu, 3/8170507.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c083.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30519 4017 13756 25275,nsessions=4,nusers=1,idletime=2793212,totmem=6078280kb,availmem=3775516kb,physmem=8312696kb,ncpus=4,loadave=4.04,gres=analy_slots:2,netload=2561475706,state=free,jobs=8170507.uct2-grid6.uchicago.edu 8171832.uct2-grid6.uchicago.edu 8172865.uct2-grid6.uchicago.edu 8174768.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c084.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172901.uct2-grid6.uchicago.edu, 1/8169585.uct2-grid6.uchicago.edu, 2/8168344.uct2-grid6.uchicago.edu, 3/8177160.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c084.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32532 627 7392 27023,nsessions=4,nusers=1,idletime=2793222,totmem=6078280kb,availmem=3561328kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=467920672,state=free,jobs=8168344.uct2-grid6.uchicago.edu 8169585.uct2-grid6.uchicago.edu 8172901.uct2-grid6.uchicago.edu 8177160.uct2-grid6.uchicago.edu,rectime=1260313270
+
+uct2-c085.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173577.uct2-grid6.uchicago.edu, 1/8169679.uct2-grid6.uchicago.edu, 2/8175081.uct2-grid6.uchicago.edu, 3/8177833.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c085.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28750 30867 3968 9346,nsessions=4,nusers=1,idletime=2793209,totmem=6078280kb,availmem=3600836kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2211282609,state=free,jobs=8169679.uct2-grid6.uchicago.edu 8175081.uct2-grid6.uchicago.edu 8177833.uct2-grid6.uchicago.edu 8173577.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c086.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174780.uct2-grid6.uchicago.edu, 1/8168333.uct2-grid6.uchicago.edu, 2/8168939.uct2-grid6.uchicago.edu, 3/8177093.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c086.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=632 6549 19554 25085,nsessions=4,nusers=1,idletime=2793211,totmem=6078280kb,availmem=3826308kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3097058112,state=free,jobs=8168333.uct2-grid6.uchicago.edu 8168939.uct2-grid6.uchicago.edu 8177093.uct2-grid6.uchicago.edu 8174780.uct2-grid6.uchicago.edu,rectime=1260313264
+
+uct2-c087.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174914.uct2-grid6.uchicago.edu, 1/8170620.uct2-grid6.uchicago.edu, 2/8173640.uct2-grid6.uchicago.edu, 3/8178469.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c087.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=612 30035 4410 24596,nsessions=4,nusers=1,idletime=2793221,totmem=6078280kb,availmem=3593080kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2995679672,state=free,jobs=8174914.uct2-grid6.uchicago.edu 8178469.uct2-grid6.uchicago.edu 8170620.uct2-grid6.uchicago.edu 8173640.uct2-grid6.uchicago.edu,rectime=1260313272
+
+uct2-c088.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168275.uct2-grid6.uchicago.edu, 1/8168909.uct2-grid6.uchicago.edu, 2/8172969.uct2-grid6.uchicago.edu, 3/8168937.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c088.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30263 3362 8955 22543,nsessions=4,nusers=1,idletime=2793217,totmem=6078280kb,availmem=3536964kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=1398336798,state=free,jobs=8168275.uct2-grid6.uchicago.edu 8168909.uct2-grid6.uchicago.edu 8168937.uct2-grid6.uchicago.edu 8172969.uct2-grid6.uchicago.edu,rectime=1260313261
+
+uct2-c089.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8178674.uct2-grid6.uchicago.edu, 1/8172907.uct2-grid6.uchicago.edu, 2/8175117.uct2-grid6.uchicago.edu, 3/8173623.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c089.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30612 3955 23293 24487,nsessions=4,nusers=1,idletime=2793212,totmem=6078280kb,availmem=3608892kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3055945158,state=free,jobs=8175117.uct2-grid6.uchicago.edu 8178674.uct2-grid6.uchicago.edu 8172907.uct2-grid6.uchicago.edu 8173623.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c090.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168213.uct2-grid6.uchicago.edu, 1/8171746.uct2-grid6.uchicago.edu, 2/8176515.uct2-grid6.uchicago.edu, 3/8168153.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c090.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29431 10102 17785 21466,nsessions=4,nusers=1,idletime=2793218,totmem=6078280kb,availmem=3566480kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2462244691,state=free,jobs=8176515.uct2-grid6.uchicago.edu 8168153.uct2-grid6.uchicago.edu 8168213.uct2-grid6.uchicago.edu 8171746.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c091.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170700.uct2-grid6.uchicago.edu, 1/8173133.uct2-grid6.uchicago.edu, 2/8169680.uct2-grid6.uchicago.edu, 3/8174698.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c091.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28509 28936 22718 22794,nsessions=4,nusers=1,idletime=2793214,totmem=6078280kb,availmem=3569916kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=1715015274,state=free,jobs=8169680.uct2-grid6.uchicago.edu 8170700.uct2-grid6.uchicago.edu 8173133.uct2-grid6.uchicago.edu 8174698.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c092.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172950.uct2-grid6.uchicago.edu, 1/8173029.uct2-grid6.uchicago.edu, 2/8168215.uct2-grid6.uchicago.edu, 3/8173041.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c092.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=10441 16546 17313 23124,nsessions=4,nusers=1,idletime=2793221,totmem=6078280kb,availmem=3616352kb,physmem=8312696kb,ncpus=4,loadave=4.07,gres=analy_slots:2,netload=4192594695,state=free,jobs=8168215.uct2-grid6.uchicago.edu 8173029.uct2-grid6.uchicago.edu 8172950.uct2-grid6.uchicago.edu 8173041.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c093.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168926.uct2-grid6.uchicago.edu, 1/8178758.uct2-grid6.uchicago.edu, 2/8172886.uct2-grid6.uchicago.edu, 3/8170657.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c093.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=27949 2185 15331 21737,nsessions=4,nusers=1,idletime=2793209,totmem=6078280kb,availmem=3598568kb,physmem=8312696kb,ncpus=4,loadave=4.02,gres=analy_slots:2,netload=3891958410,state=free,jobs=8168926.uct2-grid6.uchicago.edu 8170657.uct2-grid6.uchicago.edu 8172886.uct2-grid6.uchicago.edu 8178758.uct2-grid6.uchicago.edu,rectime=1260313264
+
+uct2-c094.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170803.uct2-grid6.uchicago.edu, 1/8173018.uct2-grid6.uchicago.edu, 2/8170675.uct2-grid6.uchicago.edu, 3/8169682.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c094.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1046 5983 12530 18220,nsessions=4,nusers=1,idletime=2793210,totmem=6078280kb,availmem=3523508kb,physmem=8312696kb,ncpus=4,loadave=4.01,gres=analy_slots:2,netload=2866170995,state=free,jobs=8169682.uct2-grid6.uchicago.edu 8170675.uct2-grid6.uchicago.edu 8170803.uct2-grid6.uchicago.edu 8173018.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c095.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172972.uct2-grid6.uchicago.edu, 1/8169710.uct2-grid6.uchicago.edu, 2/8173013.uct2-grid6.uchicago.edu, 3/8172900.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c095.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28103 1348 7716 21480,nsessions=4,nusers=1,idletime=2793211,totmem=6078280kb,availmem=3579880kb,physmem=8312696kb,ncpus=4,loadave=4.07,gres=analy_slots:2,netload=3127679144,state=free,jobs=8169710.uct2-grid6.uchicago.edu 8172900.uct2-grid6.uchicago.edu 8172972.uct2-grid6.uchicago.edu 8173013.uct2-grid6.uchicago.edu,rectime=1260313261
+
+uct2-c096.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8175585.uct2-grid6.uchicago.edu, 1/8174744.uct2-grid6.uchicago.edu, 2/8171860.uct2-grid6.uchicago.edu, 3/8174968.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c096.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28506 15299 15700 20580,nsessions=4,nusers=1,idletime=614712,totmem=6078280kb,availmem=3483184kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3827671380,state=free,jobs=8171860.uct2-grid6.uchicago.edu 8174968.uct2-grid6.uchicago.edu 8175585.uct2-grid6.uchicago.edu 8174744.uct2-grid6.uchicago.edu,rectime=1260313269
+
+uct2-c097.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172866.uct2-grid6.uchicago.edu, 1/8173728.uct2-grid6.uchicago.edu, 2/8167180.uct2-grid6.uchicago.edu, 3/8168121.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c097.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29450 8004 16231 22861,nsessions=4,nusers=1,idletime=2793209,totmem=6078280kb,availmem=2554660kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=4230686889,state=free,jobs=8167180.uct2-grid6.uchicago.edu 8168121.uct2-grid6.uchicago.edu 8172866.uct2-grid6.uchicago.edu 8173728.uct2-grid6.uchicago.edu,rectime=1260313264
+
+uct2-c098.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8176881.uct2-grid6.uchicago.edu, 1/8173019.uct2-grid6.uchicago.edu, 2/8177007.uct2-grid6.uchicago.edu, 3/8170891.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c098.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=17097 17420 23130 23716,nsessions=4,nusers=1,idletime=2793208,totmem=6078280kb,availmem=3575760kb,physmem=8312696kb,ncpus=4,loadave=4.04,gres=analy_slots:2,netload=1266852846,state=free,jobs=8176881.uct2-grid6.uchicago.edu 8170891.uct2-grid6.uchicago.edu 8177007.uct2-grid6.uchicago.edu 8173019.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c099.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8177135.uct2-grid6.uchicago.edu, 1/8169711.uct2-grid6.uchicago.edu, 2/8170782.uct2-grid6.uchicago.edu, 3/8174778.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c099.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1995 15744 19448 27326,nsessions=4,nusers=1,idletime=2793213,totmem=6078280kb,availmem=3820208kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2982036348,state=free,jobs=8169711.uct2-grid6.uchicago.edu 8177135.uct2-grid6.uchicago.edu 8170782.uct2-grid6.uchicago.edu 8174778.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c100.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173617.uct2-grid6.uchicago.edu, 1/8171766.uct2-grid6.uchicago.edu, 2/8171870.uct2-grid6.uchicago.edu, 3/8170567.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c100.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=360 6167 12919 26885,nsessions=4,nusers=1,idletime=1064693,totmem=6078280kb,availmem=3540428kb,physmem=8312696kb,ncpus=4,loadave=4.01,gres=analy_slots:2,netload=2621751592,state=free,jobs=8170567.uct2-grid6.uchicago.edu 8171766.uct2-grid6.uchicago.edu 8171870.uct2-grid6.uchicago.edu 8173617.uct2-grid6.uchicago.edu,rectime=1260313264
+
+uct2-c101.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170570.uct2-grid6.uchicago.edu, 1/8177784.uct2-grid6.uchicago.edu, 2/8170492.uct2-grid6.uchicago.edu, 3/8168443.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c101.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=2115 8425 12873 19371,nsessions=4,nusers=1,idletime=2793212,totmem=6078280kb,availmem=3524744kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2955943244,state=free,jobs=8168443.uct2-grid6.uchicago.edu 8170492.uct2-grid6.uchicago.edu 8170570.uct2-grid6.uchicago.edu 8177784.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c102.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170767.uct2-grid6.uchicago.edu, 1/8178018.uct2-grid6.uchicago.edu, 2/8175450.uct2-grid6.uchicago.edu, 3/8172984.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c102.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29905 3140 9499 15415,nsessions=4,nusers=1,idletime=2793224,totmem=6078280kb,availmem=3571204kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2423448135,state=free,jobs=8175450.uct2-grid6.uchicago.edu 8170767.uct2-grid6.uchicago.edu 8172984.uct2-grid6.uchicago.edu 8178018.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c103.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168893.uct2-grid6.uchicago.edu, 1/8176595.uct2-grid6.uchicago.edu, 2/8173590.uct2-grid6.uchicago.edu, 3/8173712.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c103.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=13263 18576 24214 24910,nsessions=4,nusers=1,idletime=1134085,totmem=6078280kb,availmem=3612700kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2072570112,state=free,jobs=8168893.uct2-grid6.uchicago.edu 8176595.uct2-grid6.uchicago.edu 8173590.uct2-grid6.uchicago.edu 8173712.uct2-grid6.uchicago.edu,rectime=1260313265
+
+uct2-c104.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173048.uct2-grid6.uchicago.edu, 1/8173020.uct2-grid6.uchicago.edu, 2/8168167.uct2-grid6.uchicago.edu, 3/8174745.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c104.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=24009 23843 24181 19987,nsessions=4,nusers=1,idletime=2793211,totmem=6078280kb,availmem=3582536kb,physmem=8312696kb,ncpus=4,loadave=4.02,gres=analy_slots:2,netload=898066898,state=free,jobs=8168167.uct2-grid6.uchicago.edu 8174745.uct2-grid6.uchicago.edu 8173020.uct2-grid6.uchicago.edu 8173048.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c105.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174742.uct2-grid6.uchicago.edu, 1/8172963.uct2-grid6.uchicago.edu, 2/8173622.uct2-grid6.uchicago.edu, 3/8173054.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c105.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31067 6581 6884 17260,nsessions=4,nusers=1,idletime=2793218,totmem=6078280kb,availmem=3613408kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=1374081105,state=free,jobs=8172963.uct2-grid6.uchicago.edu 8174742.uct2-grid6.uchicago.edu 8173054.uct2-grid6.uchicago.edu 8173622.uct2-grid6.uchicago.edu,rectime=1260313270
+
+uct2-c106.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168327.uct2-grid6.uchicago.edu, 1/8181273.uct2-grid6.uchicago.edu, 2/8170731.uct2-grid6.uchicago.edu, 3/8176482.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c106.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=491 6848 20074 25887,nsessions=4,nusers=1,idletime=2793231,totmem=6078280kb,availmem=3626668kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2781811745,state=free,jobs=8168327.uct2-grid6.uchicago.edu 8170731.uct2-grid6.uchicago.edu 8181273.uct2-grid6.uchicago.edu 8176482.uct2-grid6.uchicago.edu,rectime=1260313271
+
+uct2-c107.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172417.uct2-grid6.uchicago.edu, 1/8170548.uct2-grid6.uchicago.edu, 2/8171873.uct2-grid6.uchicago.edu, 3/8172995.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c107.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28352 14471 20642 26245,nsessions=4,nusers=1,idletime=2793209,totmem=6078280kb,availmem=3565008kb,physmem=8312696kb,ncpus=4,loadave=4.02,gres=analy_slots:2,netload=3769682877,state=free,jobs=8170548.uct2-grid6.uchicago.edu 8171873.uct2-grid6.uchicago.edu 8172417.uct2-grid6.uchicago.edu 8172995.uct2-grid6.uchicago.edu,rectime=1260313261
+
+uct2-c108.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170558.uct2-grid6.uchicago.edu, 1/8172948.uct2-grid6.uchicago.edu, 2/8170582.uct2-grid6.uchicago.edu, 3/8172968.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c108.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29753 3238 17516 23303,nsessions=4,nusers=1,idletime=2793229,totmem=6078280kb,availmem=3544840kb,physmem=8312696kb,ncpus=4,loadave=4.01,gres=analy_slots:2,netload=2525868292,state=free,jobs=8170558.uct2-grid6.uchicago.edu 8170582.uct2-grid6.uchicago.edu 8172948.uct2-grid6.uchicago.edu 8172968.uct2-grid6.uchicago.edu,rectime=1260313271
+
+uct2-c109.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168898.uct2-grid6.uchicago.edu, 1/8168892.uct2-grid6.uchicago.edu, 2/8168304.uct2-grid6.uchicago.edu, 3/8181003.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c109.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=311 778 4417 27260,nsessions=4,nusers=1,idletime=1289538,totmem=6078280kb,availmem=3565404kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2697332035,state=free,jobs=8168304.uct2-grid6.uchicago.edu 8168892.uct2-grid6.uchicago.edu 8168898.uct2-grid6.uchicago.edu 8181003.uct2-grid6.uchicago.edu,rectime=1260313260
+
+uct2-c110.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170442.uct2-grid6.uchicago.edu, 1/8170522.uct2-grid6.uchicago.edu, 2/8168309.uct2-grid6.uchicago.edu, 3/8166283.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c110.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=7944 14650 18991 27903,nsessions=4,nusers=1,idletime=2793222,totmem=6078280kb,availmem=2518536kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=4056553193,state=free,jobs=8166283.uct2-grid6.uchicago.edu 8168309.uct2-grid6.uchicago.edu 8170442.uct2-grid6.uchicago.edu 8170522.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c111.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173751.uct2-grid6.uchicago.edu, 1/8174727.uct2-grid6.uchicago.edu, 2/8179044.uct2-grid6.uchicago.edu, 3/8170749.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c111.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32354 6298 13258 18919,nsessions=4,nusers=1,idletime=2793210,totmem=6078280kb,availmem=3592272kb,physmem=8312696kb,ncpus=4,loadave=4.03,gres=analy_slots:2,netload=700560638,state=free,jobs=8179044.uct2-grid6.uchicago.edu 8170749.uct2-grid6.uchicago.edu 8173751.uct2-grid6.uchicago.edu 8174727.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c112.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170546.uct2-grid6.uchicago.edu, 1/8169735.uct2-grid6.uchicago.edu, 2/8168961.uct2-grid6.uchicago.edu, 3/8168279.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c112.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32017 5492 20493 26230,nsessions=4,nusers=1,idletime=2793213,totmem=6078280kb,availmem=3559732kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=4094617385,state=free,jobs=8168279.uct2-grid6.uchicago.edu 8168961.uct2-grid6.uchicago.edu 8169735.uct2-grid6.uchicago.edu 8170546.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c113.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172938.uct2-grid6.uchicago.edu, 1/8169713.uct2-grid6.uchicago.edu, 2/8172906.uct2-grid6.uchicago.edu, 3/8171526.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c113.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31899 5520 11132 25811,nsessions=4,nusers=1,idletime=1060930,totmem=6078284kb,availmem=3548856kb,physmem=8312700kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3781195411,state=free,jobs=8169713.uct2-grid6.uchicago.edu 8171526.uct2-grid6.uchicago.edu 8172906.uct2-grid6.uchicago.edu 8172938.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c114.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172853.uct2-grid6.uchicago.edu, 1/8171786.uct2-grid6.uchicago.edu, 2/8172913.uct2-grid6.uchicago.edu, 3/8174700.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c114.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31951 5901 20426 26254,nsessions=4,nusers=1,idletime=2793217,totmem=6078280kb,availmem=3562856kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=910739442,state=free,jobs=8171786.uct2-grid6.uchicago.edu 8172853.uct2-grid6.uchicago.edu 8172913.uct2-grid6.uchicago.edu 8174700.uct2-grid6.uchicago.edu,rectime=1260313263
+
+uct2-c115.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170595.uct2-grid6.uchicago.edu, 1/8171762.uct2-grid6.uchicago.edu, 2/8171855.uct2-grid6.uchicago.edu, 3/8177161.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c115.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28803 9317 17191 23059,nsessions=4,nusers=1,idletime=2793217,totmem=6078280kb,availmem=3540480kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=2235899215,state=free,jobs=8170595.uct2-grid6.uchicago.edu 8171762.uct2-grid6.uchicago.edu 8171855.uct2-grid6.uchicago.edu 8177161.uct2-grid6.uchicago.edu,rectime=1260313269
+
+uct2-c116.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174692.uct2-grid6.uchicago.edu, 1/8168915.uct2-grid6.uchicago.edu, 2/8178237.uct2-grid6.uchicago.edu, 3/8172444.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c116.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31273 5939 12678 25513,nsessions=4,nusers=1,idletime=2793217,totmem=6078280kb,availmem=3606584kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=4124997356,state=free,jobs=8168915.uct2-grid6.uchicago.edu 8172444.uct2-grid6.uchicago.edu 8178237.uct2-grid6.uchicago.edu 8174692.uct2-grid6.uchicago.edu,rectime=1260313270
+
+uct2-c117.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170556.uct2-grid6.uchicago.edu, 1/8168175.uct2-grid6.uchicago.edu, 2/8170560.uct2-grid6.uchicago.edu, 3/8168145.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c117.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29411 12634 17568 23858,nsessions=4,nusers=1,idletime=2793221,totmem=6078280kb,availmem=3563584kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=633134576,state=free,jobs=8168145.uct2-grid6.uchicago.edu 8168175.uct2-grid6.uchicago.edu 8170556.uct2-grid6.uchicago.edu 8170560.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c118.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8176203.uct2-grid6.uchicago.edu, 1/8171794.uct2-grid6.uchicago.edu, 2/8172942.uct2-grid6.uchicago.edu, 3/8172434.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c118.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=10476 16139 17162 22943,nsessions=4,nusers=1,idletime=2793226,totmem=6078280kb,availmem=3564724kb,physmem=8312696kb,ncpus=4,loadave=4.01,gres=analy_slots:2,netload=1308056115,state=free,jobs=8171794.uct2-grid6.uchicago.edu 8172434.uct2-grid6.uchicago.edu 8172942.uct2-grid6.uchicago.edu 8176203.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c119.mwt2.org
+     state = job-exclusive
+     np = 4
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171846.uct2-grid6.uchicago.edu, 1/8172027.uct2-grid6.uchicago.edu, 2/8172980.uct2-grid6.uchicago.edu, 3/8172854.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c119.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29612 2845 8467 14394,nsessions=4,nusers=1,idletime=2793220,totmem=6078280kb,availmem=3564348kb,physmem=8312696kb,ncpus=4,loadave=4.00,gres=analy_slots:2,netload=3247626895,state=free,jobs=8171846.uct2-grid6.uchicago.edu 8172027.uct2-grid6.uchicago.edu 8172854.uct2-grid6.uchicago.edu 8172980.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c120.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173745.uct2-grid6.uchicago.edu, 1/8166223.uct2-grid6.uchicago.edu, 2/8170601.uct2-grid6.uchicago.edu, 3/8175298.uct2-grid6.uchicago.edu, 4/8168228.uct2-grid6.uchicago.edu, 5/8171748.uct2-grid6.uchicago.edu, 6/8169565.uct2-grid6.uchicago.edu, 7/8167236.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c120.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28624 30118 5550 10949 16748 18616 22750 24416,nsessions=8,nusers=1,idletime=2793222,totmem=8246568kb,availmem=7548484kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=914120029,state=free,jobs=8166223.uct2-grid6.uchicago.edu 8167236.uct2-grid6.uchicago.edu 8175298.uct2-grid6.uchicago.edu 8168228.uct2-grid6.uchicago.edu 8169565.uct2-grid6.uchicago.edu 8170601.uct2-grid6.uchicago.edu 8171748.uct2-grid6.uchicago.edu 8173745.uct2-grid6.uchicago.edu,rectime=1260313277
+
+uct2-c121.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173750.uct2-grid6.uchicago.edu, 1/8170673.uct2-grid6.uchicago.edu, 2/8170602.uct2-grid6.uchicago.edu, 3/8178577.uct2-grid6.uchicago.edu, 4/8170648.uct2-grid6.uchicago.edu, 5/8178466.uct2-grid6.uchicago.edu, 6/8168100.uct2-grid6.uchicago.edu, 7/8166083.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c121.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1365 2825 6982 12547 14600 19726 21268 27500,nsessions=8,nusers=1,idletime=2793215,totmem=8246568kb,availmem=8097876kb,physmem=16635264kb,ncpus=8,loadave=7.84,gres=analy_slots:2,netload=428464777,state=free,jobs=8166083.uct2-grid6.uchicago.edu 8168100.uct2-grid6.uchicago.edu 8178466.uct2-grid6.uchicago.edu 8178577.uct2-grid6.uchicago.edu 8170602.uct2-grid6.uchicago.edu 8170648.uct2-grid6.uchicago.edu 8170673.uct2-grid6.uchicago.edu 8173750.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c122.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168303.uct2-grid6.uchicago.edu, 1/8172864.uct2-grid6.uchicago.edu, 2/8167207.uct2-grid6.uchicago.edu, 3/8173740.uct2-grid6.uchicago.edu, 4/8170580.uct2-grid6.uchicago.edu, 5/8168110.uct2-grid6.uchicago.edu, 6/8168895.uct2-grid6.uchicago.edu, 7/8168308.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c122.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29665 2708 3543 10038 12632 12881 13162 23564,nsessions=8,nusers=1,idletime=2793218,totmem=8246568kb,availmem=7556724kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3583429390,state=free,jobs=8167207.uct2-grid6.uchicago.edu 8168110.uct2-grid6.uchicago.edu 8168303.uct2-grid6.uchicago.edu 8168308.uct2-grid6.uchicago.edu 8168895.uct2-grid6.uchicago.edu 8170580.uct2-grid6.uchicago.edu 8172864.uct2-grid6.uchicago.edu 8173740.uct2-grid6.uchicago.edu,rectime=1260313273
+
+uct2-c123.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173005.uct2-grid6.uchicago.edu, 1/8179041.uct2-grid6.uchicago.edu, 2/8168310.uct2-grid6.uchicago.edu, 3/8174758.uct2-grid6.uchicago.edu, 4/8170524.uct2-grid6.uchicago.edu, 5/8178792.uct2-grid6.uchicago.edu, 6/8173003.uct2-grid6.uchicago.edu, 7/8168180.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c123.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29793 5570 5718 12899 16609 17967 23679 24505,nsessions=8,nusers=1,idletime=2793224,totmem=8246568kb,availmem=7640388kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=4265572586,state=free,jobs=8178792.uct2-grid6.uchicago.edu 8168180.uct2-grid6.uchicago.edu 8179041.uct2-grid6.uchicago.edu 8168310.uct2-grid6.uchicago.edu 8170524.uct2-grid6.uchicago.edu 8173003.uct2-grid6.uchicago.edu 8173005.uct2-grid6.uchicago.edu 8174758.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c124.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8176801.uct2-grid6.uchicago.edu, 1/8173629.uct2-grid6.uchicago.edu, 2/8171800.uct2-grid6.uchicago.edu, 3/8168969.uct2-grid6.uchicago.edu, 4/8177112.uct2-grid6.uchicago.edu, 5/8168912.uct2-grid6.uchicago.edu, 6/8169690.uct2-grid6.uchicago.edu, 7/8172993.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c124.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29434 2497 31588 4884 11164 17105 20263 26072,nsessions=8,nusers=1,idletime=2793225,totmem=8246568kb,availmem=7569372kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3739619637,state=free,jobs=8177112.uct2-grid6.uchicago.edu 8168912.uct2-grid6.uchicago.edu 8168969.uct2-grid6.uchicago.edu 8169690.uct2-grid6.uchicago.edu 8171800.uct2-grid6.uchicago.edu 8172993.uct2-grid6.uchicago.edu 8176801.uct2-grid6.uchicago.edu 8173629.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c125.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168340.uct2-grid6.uchicago.edu, 1/8177725.uct2-grid6.uchicago.edu, 2/8172438.uct2-grid6.uchicago.edu, 3/8168916.uct2-grid6.uchicago.edu, 4/8167259.uct2-grid6.uchicago.edu, 5/8168911.uct2-grid6.uchicago.edu, 6/8178206.uct2-grid6.uchicago.edu, 7/8172985.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c125.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=27754 31371 7402 13446 15401 19350 21840 25320,nsessions=8,nusers=1,idletime=2793216,totmem=8246568kb,availmem=7565060kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1249854499,state=free,jobs=8167259.uct2-grid6.uchicago.edu 8168340.uct2-grid6.uchicago.edu 8168911.uct2-grid6.uchicago.edu 8168916.uct2-grid6.uchicago.edu 8172438.uct2-grid6.uchicago.edu 8172985.uct2-grid6.uchicago.edu 8177725.uct2-grid6.uchicago.edu 8178206.uct2-grid6.uchicago.edu,rectime=1260313272
+
+uct2-c126.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170552.uct2-grid6.uchicago.edu, 1/8174761.uct2-grid6.uchicago.edu, 2/8173015.uct2-grid6.uchicago.edu, 3/8175229.uct2-grid6.uchicago.edu, 4/8172967.uct2-grid6.uchicago.edu, 5/8174737.uct2-grid6.uchicago.edu, 6/8169517.uct2-grid6.uchicago.edu, 7/8175425.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c126.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29388 28657 2106 3431 7720 11196 17380 23324,nsessions=8,nusers=1,idletime=2793220,totmem=8246568kb,availmem=7681100kb,physmem=16635264kb,ncpus=8,loadave=8.01,gres=analy_slots:2,netload=3222762486,state=free,jobs=8175425.uct2-grid6.uchicago.edu 8169517.uct2-grid6.uchicago.edu 8170552.uct2-grid6.uchicago.edu 8175229.uct2-grid6.uchicago.edu 8172967.uct2-grid6.uchicago.edu 8173015.uct2-grid6.uchicago.edu 8174737.uct2-grid6.uchicago.edu 8174761.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c127.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172889.uct2-grid6.uchicago.edu, 1/8171849.uct2-grid6.uchicago.edu, 2/8180732.uct2-grid6.uchicago.edu, 3/8176692.uct2-grid6.uchicago.edu, 4/8168277.uct2-grid6.uchicago.edu, 5/8168919.uct2-grid6.uchicago.edu, 6/8170443.uct2-grid6.uchicago.edu, 7/8169570.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c127.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29212 31432 2670 4862 10148 16110 20104 25816,nsessions=8,nusers=1,idletime=2793211,totmem=8246568kb,availmem=7469864kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2772883352,state=free,jobs=8168277.uct2-grid6.uchicago.edu 8168919.uct2-grid6.uchicago.edu 8169570.uct2-grid6.uchicago.edu 8170443.uct2-grid6.uchicago.edu 8171849.uct2-grid6.uchicago.edu 8172889.uct2-grid6.uchicago.edu 8176692.uct2-grid6.uchicago.edu 8180732.uct2-grid6.uchicago.edu,rectime=1260313274
+
+uct2-c128.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170886.uct2-grid6.uchicago.edu, 1/8174411.uct2-grid6.uchicago.edu, 2/8173613.uct2-grid6.uchicago.edu, 3/8172990.uct2-grid6.uchicago.edu, 4/8168301.uct2-grid6.uchicago.edu, 5/8172935.uct2-grid6.uchicago.edu, 6/8177744.uct2-grid6.uchicago.edu, 7/8168239.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c128.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28118 29964 4032 10375 16407 18964 22460 24409,nsessions=8,nusers=1,idletime=2793204,totmem=8246568kb,availmem=7520068kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=481332358,state=free,jobs=8177744.uct2-grid6.uchicago.edu 8168239.uct2-grid6.uchicago.edu 8168301.uct2-grid6.uchicago.edu 8170886.uct2-grid6.uchicago.edu 8172935.uct2-grid6.uchicago.edu 8172990.uct2-grid6.uchicago.edu 8173613.uct2-grid6.uchicago.edu 8174411.uct2-grid6.uchicago.edu,rectime=1260313269
+
+uct2-c129.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170565.uct2-grid6.uchicago.edu, 1/8171822.uct2-grid6.uchicago.edu, 2/8169601.uct2-grid6.uchicago.edu, 3/8168974.uct2-grid6.uchicago.edu, 4/8168188.uct2-grid6.uchicago.edu, 5/8172902.uct2-grid6.uchicago.edu, 6/8175167.uct2-grid6.uchicago.edu, 7/8170716.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c129.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=27990 1412 31538 4989 7544 10772 16405 22275,nsessions=8,nusers=1,idletime=2793229,totmem=8246568kb,availmem=7468728kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=870747527,state=free,jobs=8175167.uct2-grid6.uchicago.edu 8168188.uct2-grid6.uchicago.edu 8168974.uct2-grid6.uchicago.edu 8169601.uct2-grid6.uchicago.edu 8170565.uct2-grid6.uchicago.edu 8170716.uct2-grid6.uchicago.edu 8171822.uct2-grid6.uchicago.edu 8172902.uct2-grid6.uchicago.edu,rectime=1260313285
+
+uct2-c130.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8167201.uct2-grid6.uchicago.edu, 1/8169725.uct2-grid6.uchicago.edu, 2/8174915.uct2-grid6.uchicago.edu, 3/8173744.uct2-grid6.uchicago.edu, 4/8168240.uct2-grid6.uchicago.edu, 5/8177150.uct2-grid6.uchicago.edu, 6/8169689.uct2-grid6.uchicago.edu, 7/8176761.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c130.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29680 2729 8648 9556 11574 20168 24015 27671,nsessions=8,nusers=1,idletime=2793207,totmem=8246568kb,availmem=7503544kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2214931514,state=free,jobs=8167201.uct2-grid6.uchicago.edu 8174915.uct2-grid6.uchicago.edu 8177150.uct2-grid6.uchicago.edu 8168240.uct2-grid6.uchicago.edu 8169689.uct2-grid6.uchicago.edu 8176761.uct2-grid6.uchicago.edu 8169725.uct2-grid6.uchicago.edu 8173744.uct2-grid6.uchicago.edu,rectime=1260313270
+
+uct2-c131.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8177103.uct2-grid6.uchicago.edu, 1/8172930.uct2-grid6.uchicago.edu, 2/8176512.uct2-grid6.uchicago.edu, 3/8168102.uct2-grid6.uchicago.edu, 4/8174776.uct2-grid6.uchicago.edu, 5/8168282.uct2-grid6.uchicago.edu, 6/8169638.uct2-grid6.uchicago.edu, 7/8171751.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c131.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29904 1550 3379 5528 7451 19215 21269 25311,nsessions=8,nusers=1,idletime=2793212,totmem=8246568kb,availmem=7813288kb,physmem=16635264kb,ncpus=8,loadave=8.09,gres=analy_slots:2,netload=194569274,state=free,jobs=8168102.uct2-grid6.uchicago.edu 8168282.uct2-grid6.uchicago.edu 8169638.uct2-grid6.uchicago.edu 8171751.uct2-grid6.uchicago.edu 8172930.uct2-grid6.uchicago.edu 8176512.uct2-grid6.uchicago.edu 8177103.uct2-grid6.uchicago.edu 8174776.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c132.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174676.uct2-grid6.uchicago.edu, 1/8169605.uct2-grid6.uchicago.edu, 2/8171769.uct2-grid6.uchicago.edu, 3/8167183.uct2-grid6.uchicago.edu, 4/8168982.uct2-grid6.uchicago.edu, 5/8177126.uct2-grid6.uchicago.edu, 6/8171842.uct2-grid6.uchicago.edu, 7/8174732.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c132.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30562 30937 3738 4616 10302 17324 19649 23081,nsessions=8,nusers=1,idletime=2793220,totmem=8246568kb,availmem=7604428kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=4073433431,state=free,jobs=8167183.uct2-grid6.uchicago.edu 8177126.uct2-grid6.uchicago.edu 8168982.uct2-grid6.uchicago.edu 8169605.uct2-grid6.uchicago.edu 8171769.uct2-grid6.uchicago.edu 8171842.uct2-grid6.uchicago.edu 8174676.uct2-grid6.uchicago.edu 8174732.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c133.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174916.uct2-grid6.uchicago.edu, 1/8174447.uct2-grid6.uchicago.edu, 2/8173725.uct2-grid6.uchicago.edu, 3/8168253.uct2-grid6.uchicago.edu, 4/8168902.uct2-grid6.uchicago.edu, 5/8172442.uct2-grid6.uchicago.edu, 6/8172885.uct2-grid6.uchicago.edu, 7/8171843.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c133.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=24303 32172 3666 5213 10125 10897 15987 17558,nsessions=8,nusers=1,idletime=2795988,totmem=8246568kb,availmem=7483776kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1414145127,state=free,jobs=7686021.uct2-grid6.uchicago.edu 8174916.uct2-grid6.uchicago.edu 8168253.uct2-grid6.uchicago.edu 8168902.uct2-grid6.uchicago.edu 8171843.uct2-grid6.uchicago.edu 8172442.uct2-grid6.uchicago.edu 8172885.uct2-grid6.uchicago.edu 8173725.uct2-grid6.uchicago.edu 8174447.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c134.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170719.uct2-grid6.uchicago.edu, 1/8168953.uct2-grid6.uchicago.edu, 2/8173690.uct2-grid6.uchicago.edu, 3/8168903.uct2-grid6.uchicago.edu, 4/8173626.uct2-grid6.uchicago.edu, 5/8176898.uct2-grid6.uchicago.edu, 6/8171823.uct2-grid6.uchicago.edu, 7/8172449.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c134.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28656 30685 4484 8940 10387 16185 23060 25067,nsessions=8,nusers=1,idletime=2793214,totmem=8246568kb,availmem=7544088kb,physmem=16635264kb,ncpus=8,loadave=7.99,gres=analy_slots:2,netload=2706775603,state=free,jobs=8176898.uct2-grid6.uchicago.edu 8168903.uct2-grid6.uchicago.edu 8168953.uct2-grid6.uchicago.edu 8170719.uct2-grid6.uchicago.edu 8171823.uct2-grid6.uchicago.edu 8172449.uct2-grid6.uchicago.edu 8173626.uct2-grid6.uchicago.edu 8173690.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c135.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169630.uct2-grid6.uchicago.edu, 1/8170526.uct2-grid6.uchicago.edu, 2/8170509.uct2-grid6.uchicago.edu, 3/8173671.uct2-grid6.uchicago.edu, 4/8169650.uct2-grid6.uchicago.edu, 5/8175915.uct2-grid6.uchicago.edu, 6/8172895.uct2-grid6.uchicago.edu, 7/8170769.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c135.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30684 32021 3382 9061 13185 18094 24521 24830,nsessions=8,nusers=1,idletime=2793216,totmem=8246568kb,availmem=7516352kb,physmem=16635264kb,ncpus=8,loadave=8.03,gres=analy_slots:2,netload=3032629065,state=free,jobs=8175915.uct2-grid6.uchicago.edu 8169630.uct2-grid6.uchicago.edu 8169650.uct2-grid6.uchicago.edu 8170509.uct2-grid6.uchicago.edu 8170526.uct2-grid6.uchicago.edu 8170769.uct2-grid6.uchicago.edu 8172895.uct2-grid6.uchicago.edu 8173671.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c136.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173576.uct2-grid6.uchicago.edu, 1/8169101.uct2-grid6.uchicago.edu, 2/8169593.uct2-grid6.uchicago.edu, 3/8170721.uct2-grid6.uchicago.edu, 4/8181461.uct2-grid6.uchicago.edu, 5/8171770.uct2-grid6.uchicago.edu, 6/8168263.uct2-grid6.uchicago.edu, 7/8180336.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c136.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1844 2865 7164 9724 12552 15848 20214 21656,nsessions=8,nusers=1,idletime=2793211,totmem=8246568kb,availmem=7505564kb,physmem=16635264kb,ncpus=8,loadave=8.01,gres=analy_slots:2,netload=3086032793,state=free,jobs=8168263.uct2-grid6.uchicago.edu 8169101.uct2-grid6.uchicago.edu 8169593.uct2-grid6.uchicago.edu 8170721.uct2-grid6.uchicago.edu 8171770.uct2-grid6.uchicago.edu 8181461.uct2-grid6.uchicago.edu 8180336.uct2-grid6.uchicago.edu 8173576.uct2-grid6.uchicago.edu,rectime=1260313274
+
+uct2-c137.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8167190.uct2-grid6.uchicago.edu, 1/8168884.uct2-grid6.uchicago.edu, 2/8177902.uct2-grid6.uchicago.edu, 3/8178889.uct2-grid6.uchicago.edu, 4/8169676.uct2-grid6.uchicago.edu, 5/8171781.uct2-grid6.uchicago.edu, 6/8173594.uct2-grid6.uchicago.edu, 7/8168297.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c137.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30317 3260 4147 4910 10360 14087 18639 24488,nsessions=8,nusers=1,idletime=2793195,totmem=8246624kb,availmem=7499480kb,physmem=16635320kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=632640696,state=free,jobs=8167190.uct2-grid6.uchicago.edu 8168297.uct2-grid6.uchicago.edu 8168884.uct2-grid6.uchicago.edu 8169676.uct2-grid6.uchicago.edu 8171781.uct2-grid6.uchicago.edu 8177902.uct2-grid6.uchicago.edu 8173594.uct2-grid6.uchicago.edu 8178889.uct2-grid6.uchicago.edu,rectime=1260313281
+
+uct2-c138.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168262.uct2-grid6.uchicago.edu, 1/8168260.uct2-grid6.uchicago.edu, 2/8176897.uct2-grid6.uchicago.edu, 3/8167265.uct2-grid6.uchicago.edu, 4/8170590.uct2-grid6.uchicago.edu, 5/8169764.uct2-grid6.uchicago.edu, 6/8173612.uct2-grid6.uchicago.edu, 7/8168285.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c138.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=507 6510 7076 13197 16690 16838 23100 27566,nsessions=8,nusers=1,idletime=2793235,totmem=8246568kb,availmem=7484864kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2249438793,state=free,jobs=8167265.uct2-grid6.uchicago.edu 8176897.uct2-grid6.uchicago.edu 8168260.uct2-grid6.uchicago.edu 8168262.uct2-grid6.uchicago.edu 8168285.uct2-grid6.uchicago.edu 8169764.uct2-grid6.uchicago.edu 8170590.uct2-grid6.uchicago.edu 8173612.uct2-grid6.uchicago.edu,rectime=1260313296
+
+uct2-c139.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169641.uct2-grid6.uchicago.edu, 1/8168958.uct2-grid6.uchicago.edu, 2/8169701.uct2-grid6.uchicago.edu, 3/8172923.uct2-grid6.uchicago.edu, 4/8169718.uct2-grid6.uchicago.edu, 5/8168925.uct2-grid6.uchicago.edu, 6/8175410.uct2-grid6.uchicago.edu, 7/8173580.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c139.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29592 32048 5277 10887 16443 20559 23145 26438,nsessions=8,nusers=1,idletime=2793210,totmem=8246568kb,availmem=7482576kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2804984617,state=free,jobs=8175410.uct2-grid6.uchicago.edu 8168925.uct2-grid6.uchicago.edu 8168958.uct2-grid6.uchicago.edu 8169641.uct2-grid6.uchicago.edu 8169701.uct2-grid6.uchicago.edu 8169718.uct2-grid6.uchicago.edu 8172923.uct2-grid6.uchicago.edu 8173580.uct2-grid6.uchicago.edu,rectime=1260313271
+
+uct2-c140.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168278.uct2-grid6.uchicago.edu, 1/8167562.uct2-grid6.uchicago.edu, 2/8167273.uct2-grid6.uchicago.edu, 3/8168203.uct2-grid6.uchicago.edu, 4/8167291.uct2-grid6.uchicago.edu, 5/8167206.uct2-grid6.uchicago.edu, 6/8171782.uct2-grid6.uchicago.edu, 7/8171783.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c140.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30336 31852 4817 5057 5233 20619 24946 26248,nsessions=8,nusers=1,idletime=2774856,totmem=8246568kb,availmem=7564840kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3133742170,state=free,jobs=8167206.uct2-grid6.uchicago.edu 8167273.uct2-grid6.uchicago.edu 8167291.uct2-grid6.uchicago.edu 8167562.uct2-grid6.uchicago.edu 8168203.uct2-grid6.uchicago.edu 8168278.uct2-grid6.uchicago.edu 8171782.uct2-grid6.uchicago.edu 8171783.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c141.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170775.uct2-grid6.uchicago.edu, 1/8170575.uct2-grid6.uchicago.edu, 2/8167186.uct2-grid6.uchicago.edu, 3/8173637.uct2-grid6.uchicago.edu, 4/8168218.uct2-grid6.uchicago.edu, 5/8171449.uct2-grid6.uchicago.edu, 6/8167218.uct2-grid6.uchicago.edu, 7/8172915.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c141.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30930 4638 12883 17505 19098 19920 25116 25519,nsessions=8,nusers=1,idletime=2793220,totmem=8246568kb,availmem=8036328kb,physmem=16635264kb,ncpus=8,loadave=7.91,gres=analy_slots:2,netload=3214884365,state=free,jobs=8167186.uct2-grid6.uchicago.edu 8167218.uct2-grid6.uchicago.edu 8168218.uct2-grid6.uchicago.edu 8170575.uct2-grid6.uchicago.edu 8170775.uct2-grid6.uchicago.edu 8171449.uct2-grid6.uchicago.edu 8172915.uct2-grid6.uchicago.edu 8173637.uct2-grid6.uchicago.edu,rectime=1260313283
+
+uct2-c142.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168123.uct2-grid6.uchicago.edu, 1/8174767.uct2-grid6.uchicago.edu, 2/8178545.uct2-grid6.uchicago.edu, 3/8168135.uct2-grid6.uchicago.edu, 4/8169602.uct2-grid6.uchicago.edu, 5/8175080.uct2-grid6.uchicago.edu, 6/8181004.uct2-grid6.uchicago.edu, 7/8171824.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c142.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=27883 28309 2580 8559 14962 14968 21998 23915,nsessions=8,nusers=1,idletime=2774846,totmem=8246568kb,availmem=7753436kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1200463994,state=free,jobs=8178545.uct2-grid6.uchicago.edu 8175080.uct2-grid6.uchicago.edu 8168123.uct2-grid6.uchicago.edu 8168135.uct2-grid6.uchicago.edu 8169602.uct2-grid6.uchicago.edu 8171824.uct2-grid6.uchicago.edu 8181004.uct2-grid6.uchicago.edu 8174767.uct2-grid6.uchicago.edu,rectime=1260313270
+
+uct2-c143.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8175793.uct2-grid6.uchicago.edu, 1/8168222.uct2-grid6.uchicago.edu, 2/8170071.uct2-grid6.uchicago.edu, 3/8168959.uct2-grid6.uchicago.edu, 4/8170741.uct2-grid6.uchicago.edu, 5/8168922.uct2-grid6.uchicago.edu, 6/8169340.uct2-grid6.uchicago.edu, 7/8169731.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c143.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29298 2546 7118 8178 12652 12944 18080 23816,nsessions=8,nusers=1,idletime=2793217,totmem=8246568kb,availmem=7515828kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2067531472,state=free,jobs=8168222.uct2-grid6.uchicago.edu 8168922.uct2-grid6.uchicago.edu 8168959.uct2-grid6.uchicago.edu 8169340.uct2-grid6.uchicago.edu 8175793.uct2-grid6.uchicago.edu 8169731.uct2-grid6.uchicago.edu 8170071.uct2-grid6.uchicago.edu 8170741.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c144.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174729.uct2-grid6.uchicago.edu, 1/8180044.uct2-grid6.uchicago.edu, 2/8167242.uct2-grid6.uchicago.edu, 3/8168125.uct2-grid6.uchicago.edu, 4/8172994.uct2-grid6.uchicago.edu, 5/8170623.uct2-grid6.uchicago.edu, 6/8169683.uct2-grid6.uchicago.edu, 7/8174655.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c144.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=4437 11390 15970 17440 21715 23367 27348 29971,nsessions=8,nusers=1,idletime=2774849,totmem=8246568kb,availmem=8145040kb,physmem=16635264kb,ncpus=8,loadave=7.56,gres=analy_slots:2,netload=533082884,state=free,jobs=8167242.uct2-grid6.uchicago.edu 8168125.uct2-grid6.uchicago.edu 8169683.uct2-grid6.uchicago.edu 8170623.uct2-grid6.uchicago.edu 8172994.uct2-grid6.uchicago.edu 8180044.uct2-grid6.uchicago.edu 8174655.uct2-grid6.uchicago.edu 8174729.uct2-grid6.uchicago.edu,rectime=1260313271
+
+uct2-c145.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169672.uct2-grid6.uchicago.edu, 1/8170631.uct2-grid6.uchicago.edu, 2/8170583.uct2-grid6.uchicago.edu, 3/8173596.uct2-grid6.uchicago.edu, 4/8169705.uct2-grid6.uchicago.edu, 5/8174691.uct2-grid6.uchicago.edu, 6/8170579.uct2-grid6.uchicago.edu, 7/8173605.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c145.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28410 4340 4501 6127 12004 15138 17818 22607,nsessions=8,nusers=1,idletime=2793218,totmem=8246568kb,availmem=7576304kb,physmem=16635264kb,ncpus=8,loadave=7.99,gres=analy_slots:2,netload=169921435,state=free,jobs=8169672.uct2-grid6.uchicago.edu 8169705.uct2-grid6.uchicago.edu 8170579.uct2-grid6.uchicago.edu 8170583.uct2-grid6.uchicago.edu 8170631.uct2-grid6.uchicago.edu 8173596.uct2-grid6.uchicago.edu 8173605.uct2-grid6.uchicago.edu 8174691.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c146.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168096.uct2-grid6.uchicago.edu, 1/8170607.uct2-grid6.uchicago.edu, 2/8173597.uct2-grid6.uchicago.edu, 3/8168254.uct2-grid6.uchicago.edu, 4/8170592.uct2-grid6.uchicago.edu, 5/8168336.uct2-grid6.uchicago.edu, 6/8171774.uct2-grid6.uchicago.edu, 7/8170759.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c146.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29591 914 30294 3610 6976 12588 18768 24332,nsessions=8,nusers=1,idletime=2774861,totmem=8246568kb,availmem=7498776kb,physmem=16635264kb,ncpus=8,loadave=8.01,gres=analy_slots:2,netload=1079934418,state=free,jobs=8168096.uct2-grid6.uchicago.edu 8168254.uct2-grid6.uchicago.edu 8168336.uct2-grid6.uchicago.edu 8170592.uct2-grid6.uchicago.edu 8170607.uct2-grid6.uchicago.edu 8170759.uct2-grid6.uchicago.edu 8171774.uct2-grid6.uchicago.edu 8173597.uct2-grid6.uchicago.edu,rectime=1260313283
+
+uct2-c147.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172910.uct2-grid6.uchicago.edu, 1/8169671.uct2-grid6.uchicago.edu, 2/8175955.uct2-grid6.uchicago.edu, 3/8174756.uct2-grid6.uchicago.edu, 4/8169572.uct2-grid6.uchicago.edu, 5/8175670.uct2-grid6.uchicago.edu, 6/8167577.uct2-grid6.uchicago.edu, 7/8168094.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c147.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32057 6421 13370 14421 20376 21321 26394 26886,nsessions=8,nusers=1,idletime=2793225,totmem=8246568kb,availmem=7584420kb,physmem=16635264kb,ncpus=8,loadave=8.08,gres=analy_slots:2,netload=731440477,state=free,jobs=8167577.uct2-grid6.uchicago.edu 8168094.uct2-grid6.uchicago.edu 8175670.uct2-grid6.uchicago.edu 8175955.uct2-grid6.uchicago.edu 8169572.uct2-grid6.uchicago.edu 8169671.uct2-grid6.uchicago.edu 8172910.uct2-grid6.uchicago.edu 8174756.uct2-grid6.uchicago.edu,rectime=1260313281
+
+uct2-c148.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170587.uct2-grid6.uchicago.edu, 1/8167233.uct2-grid6.uchicago.edu, 2/8172970.uct2-grid6.uchicago.edu, 3/8168970.uct2-grid6.uchicago.edu, 4/8167208.uct2-grid6.uchicago.edu, 5/8168933.uct2-grid6.uchicago.edu, 6/8173715.uct2-grid6.uchicago.edu, 7/8168954.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c148.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28190 1343 32349 5903 12535 18809 21413 26959,nsessions=8,nusers=1,idletime=366798,totmem=8246568kb,availmem=7595760kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3059474150,state=free,jobs=8167208.uct2-grid6.uchicago.edu 8167233.uct2-grid6.uchicago.edu 8168933.uct2-grid6.uchicago.edu 8168954.uct2-grid6.uchicago.edu 8168970.uct2-grid6.uchicago.edu 8170587.uct2-grid6.uchicago.edu 8172970.uct2-grid6.uchicago.edu 8173715.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c149.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173638.uct2-grid6.uchicago.edu, 1/8172964.uct2-grid6.uchicago.edu, 2/8173687.uct2-grid6.uchicago.edu, 3/8166230.uct2-grid6.uchicago.edu, 4/8174749.uct2-grid6.uchicago.edu, 5/8175538.uct2-grid6.uchicago.edu, 6/8171447.uct2-grid6.uchicago.edu, 7/8174739.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c149.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30401 4097 5684 7785 12279 18576 24821 25761,nsessions=8,nusers=1,idletime=2766522,totmem=8246568kb,availmem=7597512kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2811817936,state=free,jobs=8166230.uct2-grid6.uchicago.edu 8175538.uct2-grid6.uchicago.edu 8171447.uct2-grid6.uchicago.edu 8172964.uct2-grid6.uchicago.edu 8173638.uct2-grid6.uchicago.edu 8173687.uct2-grid6.uchicago.edu 8174739.uct2-grid6.uchicago.edu 8174749.uct2-grid6.uchicago.edu,rectime=1260313271
+
+uct2-c150.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8177977.uct2-grid6.uchicago.edu, 1/8169677.uct2-grid6.uchicago.edu, 2/8174710.uct2-grid6.uchicago.edu, 3/8166252.uct2-grid6.uchicago.edu, 4/8169604.uct2-grid6.uchicago.edu, 5/8168930.uct2-grid6.uchicago.edu, 6/8168127.uct2-grid6.uchicago.edu, 7/8168940.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c150.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29276 2320 3302 8082 13652 13771 19793 23467,nsessions=8,nusers=1,idletime=2774854,totmem=8246568kb,availmem=7474332kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2818947193,state=free,jobs=8166252.uct2-grid6.uchicago.edu 8168127.uct2-grid6.uchicago.edu 8168930.uct2-grid6.uchicago.edu 8168940.uct2-grid6.uchicago.edu 8169604.uct2-grid6.uchicago.edu 8169677.uct2-grid6.uchicago.edu 8177977.uct2-grid6.uchicago.edu 8174710.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c151.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8181287.uct2-grid6.uchicago.edu, 1/8174921.uct2-grid6.uchicago.edu, 2/8170539.uct2-grid6.uchicago.edu, 3/8177005.uct2-grid6.uchicago.edu, 4/8169631.uct2-grid6.uchicago.edu, 5/8167278.uct2-grid6.uchicago.edu, 6/8168274.uct2-grid6.uchicago.edu, 7/8167061.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c151.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=26976 3366 8987 9374 17208 15008 21003 21697,nsessions=8,nusers=1,idletime=2793225,totmem=8246568kb,availmem=8025688kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=555890637,state=free,jobs=8167061.uct2-grid6.uchicago.edu 8167278.uct2-grid6.uchicago.edu 8174921.uct2-grid6.uchicago.edu 8168274.uct2-grid6.uchicago.edu 8169631.uct2-grid6.uchicago.edu 8170539.uct2-grid6.uchicago.edu 8181287.uct2-grid6.uchicago.edu 8177005.uct2-grid6.uchicago.edu,rectime=1260313282
+
+uct2-c152.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169611.uct2-grid6.uchicago.edu, 1/8180744.uct2-grid6.uchicago.edu, 2/8171765.uct2-grid6.uchicago.edu, 3/8180162.uct2-grid6.uchicago.edu, 4/8167205.uct2-grid6.uchicago.edu, 5/8168348.uct2-grid6.uchicago.edu, 6/8168882.uct2-grid6.uchicago.edu, 7/8169734.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c152.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30919 32136 4262 5493 6675 11174 17325 26730,nsessions=8,nusers=1,idletime=2774857,totmem=8246568kb,availmem=7480368kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1137678118,state=free,jobs=8167205.uct2-grid6.uchicago.edu 8168348.uct2-grid6.uchicago.edu 8168882.uct2-grid6.uchicago.edu 8169611.uct2-grid6.uchicago.edu 8169734.uct2-grid6.uchicago.edu 8171765.uct2-grid6.uchicago.edu 8180162.uct2-grid6.uchicago.edu 8180744.uct2-grid6.uchicago.edu,rectime=1260313281
+
+uct2-c153.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168111.uct2-grid6.uchicago.edu, 1/8169688.uct2-grid6.uchicago.edu, 2/8172927.uct2-grid6.uchicago.edu, 3/8172934.uct2-grid6.uchicago.edu, 4/8175005.uct2-grid6.uchicago.edu, 5/8179893.uct2-grid6.uchicago.edu, 6/8171834.uct2-grid6.uchicago.edu, 7/8168181.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c153.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=25492 29230 28811 29088 7379 17081 19205 21508,nsessions=8,nusers=1,idletime=2793207,totmem=8246568kb,availmem=7471980kb,physmem=16635264kb,ncpus=8,loadave=8.01,gres=analy_slots:2,netload=2622408683,state=free,jobs=8168111.uct2-grid6.uchicago.edu 8168181.uct2-grid6.uchicago.edu 8179893.uct2-grid6.uchicago.edu 8169688.uct2-grid6.uchicago.edu 8171834.uct2-grid6.uchicago.edu 8172927.uct2-grid6.uchicago.edu 8172934.uct2-grid6.uchicago.edu 8175005.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c154.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8176573.uct2-grid6.uchicago.edu, 1/8171772.uct2-grid6.uchicago.edu, 2/8179043.uct2-grid6.uchicago.edu, 3/8171448.uct2-grid6.uchicago.edu, 4/8174690.uct2-grid6.uchicago.edu, 5/8179980.uct2-grid6.uchicago.edu, 6/8168888.uct2-grid6.uchicago.edu, 7/8174959.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c154.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=801 3875 15558 8730 9419 15096 21894 27581,nsessions=8,nusers=1,idletime=1376759,totmem=8246568kb,availmem=7531236kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=170551794,state=free,jobs=8174959.uct2-grid6.uchicago.edu 8176573.uct2-grid6.uchicago.edu 8179043.uct2-grid6.uchicago.edu 8168888.uct2-grid6.uchicago.edu 8179980.uct2-grid6.uchicago.edu 8171448.uct2-grid6.uchicago.edu 8171772.uct2-grid6.uchicago.edu 8174690.uct2-grid6.uchicago.edu,rectime=1260313276
+
+uct2-c155.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8175903.uct2-grid6.uchicago.edu, 1/8166278.uct2-grid6.uchicago.edu, 2/8174724.uct2-grid6.uchicago.edu, 3/8168156.uct2-grid6.uchicago.edu, 4/8168198.uct2-grid6.uchicago.edu, 5/8167772.uct2-grid6.uchicago.edu, 6/8167283.uct2-grid6.uchicago.edu, 7/8168107.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c155.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=27225 23626 30182 3371 11407 16116 25680 17713,nsessions=8,nusers=1,idletime=2793219,totmem=8246820kb,availmem=7541788kb,physmem=16635516kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2555346913,state=free,jobs=8166278.uct2-grid6.uchicago.edu 8167283.uct2-grid6.uchicago.edu 8167772.uct2-grid6.uchicago.edu 8168107.uct2-grid6.uchicago.edu 8168156.uct2-grid6.uchicago.edu 8168198.uct2-grid6.uchicago.edu 8175903.uct2-grid6.uchicago.edu 8174724.uct2-grid6.uchicago.edu,rectime=1260313269
+
+uct2-c156.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174905.uct2-grid6.uchicago.edu, 1/8170283.uct2-grid6.uchicago.edu, 2/8174678.uct2-grid6.uchicago.edu, 3/8168900.uct2-grid6.uchicago.edu, 4/8168934.uct2-grid6.uchicago.edu, 5/8173652.uct2-grid6.uchicago.edu, 6/8171790.uct2-grid6.uchicago.edu, 7/8169741.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c156.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=460 29533 2687 8801 14376 21338 23791 27047,nsessions=8,nusers=1,idletime=2774849,totmem=8246568kb,availmem=8095764kb,physmem=16635264kb,ncpus=8,loadave=7.05,gres=analy_slots:2,netload=2637336324,state=free,jobs=8171790.uct2-grid6.uchicago.edu 8168900.uct2-grid6.uchicago.edu 8168934.uct2-grid6.uchicago.edu 8169741.uct2-grid6.uchicago.edu 8170283.uct2-grid6.uchicago.edu 8173652.uct2-grid6.uchicago.edu 8174678.uct2-grid6.uchicago.edu 8182478.uct2-grid6.uchicago.edu,rectime=1260313273
+
+uct2-c157.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173574.uct2-grid6.uchicago.edu, 1/8168955.uct2-grid6.uchicago.edu, 2/8169706.uct2-grid6.uchicago.edu, 3/8173031.uct2-grid6.uchicago.edu, 4/8173705.uct2-grid6.uchicago.edu, 5/8176632.uct2-grid6.uchicago.edu, 6/8170503.uct2-grid6.uchicago.edu, 7/8169571.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c157.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=4970 5865 6023 14862 16602 18019 20458 26165,nsessions=8,nusers=1,idletime=2793214,totmem=8246568kb,availmem=7590156kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3626816158,state=free,jobs=8168955.uct2-grid6.uchicago.edu 8169571.uct2-grid6.uchicago.edu 8169706.uct2-grid6.uchicago.edu 8170503.uct2-grid6.uchicago.edu 8176632.uct2-grid6.uchicago.edu 8173031.uct2-grid6.uchicago.edu 8173574.uct2-grid6.uchicago.edu 8173705.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c158.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171850.uct2-grid6.uchicago.edu, 1/8168932.uct2-grid6.uchicago.edu, 2/8170801.uct2-grid6.uchicago.edu, 3/8170802.uct2-grid6.uchicago.edu, 4/8173718.uct2-grid6.uchicago.edu, 5/8176073.uct2-grid6.uchicago.edu, 6/8173668.uct2-grid6.uchicago.edu, 7/8172848.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c158.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32670 7115 7287 10576 16277 17952 23642 26811,nsessions=8,nusers=1,idletime=2774846,totmem=8246568kb,availmem=7526552kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=371749808,state=free,jobs=8176073.uct2-grid6.uchicago.edu 8168932.uct2-grid6.uchicago.edu 8170801.uct2-grid6.uchicago.edu 8170802.uct2-grid6.uchicago.edu 8171850.uct2-grid6.uchicago.edu 8172848.uct2-grid6.uchicago.edu 8173668.uct2-grid6.uchicago.edu 8173718.uct2-grid6.uchicago.edu,rectime=1260313270
+
+uct2-c159.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170654.uct2-grid6.uchicago.edu, 1/8169722.uct2-grid6.uchicago.edu, 2/8168890.uct2-grid6.uchicago.edu, 3/8168445.uct2-grid6.uchicago.edu, 4/8171776.uct2-grid6.uchicago.edu, 5/8175110.uct2-grid6.uchicago.edu, 6/8169584.uct2-grid6.uchicago.edu, 7/8176606.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c159.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=2689 31627 5914 7973 13833 14938 19720 25569,nsessions=8,nusers=1,idletime=2793220,totmem=8246568kb,availmem=7539872kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=229513989,state=free,jobs=8175110.uct2-grid6.uchicago.edu 8168445.uct2-grid6.uchicago.edu 8168890.uct2-grid6.uchicago.edu 8169584.uct2-grid6.uchicago.edu 8169722.uct2-grid6.uchicago.edu 8170654.uct2-grid6.uchicago.edu 8171776.uct2-grid6.uchicago.edu 8176606.uct2-grid6.uchicago.edu,rectime=1260313282
+
+uct2-c160.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8175956.uct2-grid6.uchicago.edu, 1/8168098.uct2-grid6.uchicago.edu, 2/8180521.uct2-grid6.uchicago.edu, 3/8169737.uct2-grid6.uchicago.edu, 4/8170794.uct2-grid6.uchicago.edu, 5/8174779.uct2-grid6.uchicago.edu, 6/8170571.uct2-grid6.uchicago.edu, 7/8168886.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c160.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30539 3858 6157 9689 16948 19131 24641 26906,nsessions=8,nusers=1,idletime=2774851,totmem=8246568kb,availmem=8296768kb,physmem=16635264kb,ncpus=8,loadave=7.28,gres=analy_slots:2,netload=1682790366,state=free,jobs=8166118.uct2-grid6.uchicago.edu 8168098.uct2-grid6.uchicago.edu 8175956.uct2-grid6.uchicago.edu 8168886.uct2-grid6.uchicago.edu 8169737.uct2-grid6.uchicago.edu 8170571.uct2-grid6.uchicago.edu 8170794.uct2-grid6.uchicago.edu 8174779.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c161.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169207.uct2-grid6.uchicago.edu, 1/8173024.uct2-grid6.uchicago.edu, 2/8175591.uct2-grid6.uchicago.edu, 3/8171780.uct2-grid6.uchicago.edu, 4/8169483.uct2-grid6.uchicago.edu, 5/8174897.uct2-grid6.uchicago.edu, 6/8175438.uct2-grid6.uchicago.edu, 7/8171788.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c161.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28654 31756 5988 10417 16286 16901 22213 23201,nsessions=8,nusers=1,idletime=2793218,totmem=8246568kb,availmem=7909120kb,physmem=16635264kb,ncpus=8,loadave=8.05,gres=analy_slots:2,netload=4009475229,state=free,jobs=8175591.uct2-grid6.uchicago.edu 8169207.uct2-grid6.uchicago.edu 8169483.uct2-grid6.uchicago.edu 8175438.uct2-grid6.uchicago.edu 8171780.uct2-grid6.uchicago.edu 8171788.uct2-grid6.uchicago.edu 8173024.uct2-grid6.uchicago.edu 8174897.uct2-grid6.uchicago.edu,rectime=1260313276
+
+uct2-c162.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173581.uct2-grid6.uchicago.edu, 1/8174746.uct2-grid6.uchicago.edu, 2/8171778.uct2-grid6.uchicago.edu, 3/8174899.uct2-grid6.uchicago.edu, 4/8168328.uct2-grid6.uchicago.edu, 5/8173012.uct2-grid6.uchicago.edu, 6/8171864.uct2-grid6.uchicago.edu, 7/8172989.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c162.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28283 30544 2446 30738 31126 7722 8209 14280,nsessions=8,nusers=1,idletime=2774855,totmem=8246568kb,availmem=8039028kb,physmem=16635264kb,ncpus=8,loadave=8.42,gres=analy_slots:2,netload=3641427940,state=free,jobs=8168328.uct2-grid6.uchicago.edu 8171778.uct2-grid6.uchicago.edu 8171864.uct2-grid6.uchicago.edu 8172989.uct2-grid6.uchicago.edu 8174746.uct2-grid6.uchicago.edu 8173012.uct2-grid6.uchicago.edu 8173581.uct2-grid6.uchicago.edu 8174899.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c163.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170581.uct2-grid6.uchicago.edu, 1/8169642.uct2-grid6.uchicago.edu, 2/8168899.uct2-grid6.uchicago.edu, 3/8171753.uct2-grid6.uchicago.edu, 4/8167227.uct2-grid6.uchicago.edu, 5/8175894.uct2-grid6.uchicago.edu, 6/8170653.uct2-grid6.uchicago.edu, 7/8174672.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c163.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=841 5330 11187 15301 17163 21818 24832 27568,nsessions=8,nusers=1,idletime=2793220,totmem=8246568kb,availmem=7518876kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=273302254,state=free,jobs=8014212.uct2-grid6.uchicago.edu 8167227.uct2-grid6.uchicago.edu 8168899.uct2-grid6.uchicago.edu 8169642.uct2-grid6.uchicago.edu 8175894.uct2-grid6.uchicago.edu 8170581.uct2-grid6.uchicago.edu 8170653.uct2-grid6.uchicago.edu 8171753.uct2-grid6.uchicago.edu 8174672.uct2-grid6.uchicago.edu,rectime=1260313281
+
+uct2-c164.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168881.uct2-grid6.uchicago.edu, 1/8173719.uct2-grid6.uchicago.edu, 2/8166237.uct2-grid6.uchicago.edu, 3/8169591.uct2-grid6.uchicago.edu, 4/8170698.uct2-grid6.uchicago.edu, 5/8168124.uct2-grid6.uchicago.edu, 6/8171775.uct2-grid6.uchicago.edu, 7/8174257.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c164.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31416 4813 7433 11624 13876 17375 19622 25351,nsessions=8,nusers=1,idletime=2774855,totmem=8246568kb,availmem=7554064kb,physmem=16635264kb,ncpus=8,loadave=8.01,gres=analy_slots:2,netload=673600307,state=free,jobs=8166237.uct2-grid6.uchicago.edu 8168124.uct2-grid6.uchicago.edu 8168881.uct2-grid6.uchicago.edu 8169591.uct2-grid6.uchicago.edu 8170698.uct2-grid6.uchicago.edu 8171775.uct2-grid6.uchicago.edu 8173719.uct2-grid6.uchicago.edu 8174257.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c165.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8175930.uct2-grid6.uchicago.edu, 1/8170554.uct2-grid6.uchicago.edu, 2/8168952.uct2-grid6.uchicago.edu, 3/8168126.uct2-grid6.uchicago.edu, 4/8167298.uct2-grid6.uchicago.edu, 5/8168920.uct2-grid6.uchicago.edu, 6/8179903.uct2-grid6.uchicago.edu, 7/8180286.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c165.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=400 32584 6162 12232 20280 21523 25249 27140,nsessions=8,nusers=1,idletime=2793213,totmem=8246568kb,availmem=7473164kb,physmem=16635264kb,ncpus=8,loadave=8.02,gres=analy_slots:2,netload=1465884868,state=free,jobs=8167298.uct2-grid6.uchicago.edu 8175930.uct2-grid6.uchicago.edu 8168126.uct2-grid6.uchicago.edu 8168920.uct2-grid6.uchicago.edu 8168952.uct2-grid6.uchicago.edu 8170554.uct2-grid6.uchicago.edu 8179903.uct2-grid6.uchicago.edu 8180286.uct2-grid6.uchicago.edu,rectime=1260313273
+
+uct2-c166.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8167731.uct2-grid6.uchicago.edu, 1/8168099.uct2-grid6.uchicago.edu, 2/8174721.uct2-grid6.uchicago.edu, 3/8169626.uct2-grid6.uchicago.edu, 4/8168237.uct2-grid6.uchicago.edu, 5/8170617.uct2-grid6.uchicago.edu, 6/8173739.uct2-grid6.uchicago.edu, 7/8168300.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c166.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29612 28598 1985 8006 9762 15246 20942 23166,nsessions=8,nusers=1,idletime=2774846,totmem=8246568kb,availmem=7574136kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=46823181,state=free,jobs=8167731.uct2-grid6.uchicago.edu 8168099.uct2-grid6.uchicago.edu 8168237.uct2-grid6.uchicago.edu 8168300.uct2-grid6.uchicago.edu 8169626.uct2-grid6.uchicago.edu 8170617.uct2-grid6.uchicago.edu 8173739.uct2-grid6.uchicago.edu 8174721.uct2-grid6.uchicago.edu,rectime=1260313270
+
+uct2-c167.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174716.uct2-grid6.uchicago.edu, 1/8166236.uct2-grid6.uchicago.edu, 2/8168670.uct2-grid6.uchicago.edu, 3/8170532.uct2-grid6.uchicago.edu, 4/8168272.uct2-grid6.uchicago.edu, 5/8173006.uct2-grid6.uchicago.edu, 6/8169693.uct2-grid6.uchicago.edu, 7/8171869.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c167.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=632 5417 11305 13210 18940 20850 24180 27443,nsessions=8,nusers=1,idletime=2793182,totmem=8246568kb,availmem=7492088kb,physmem=16635264kb,ncpus=8,loadave=8.02,gres=analy_slots:2,netload=2936443644,state=free,jobs=8166236.uct2-grid6.uchicago.edu 8168272.uct2-grid6.uchicago.edu 8168670.uct2-grid6.uchicago.edu 8169693.uct2-grid6.uchicago.edu 8170532.uct2-grid6.uchicago.edu 8171869.uct2-grid6.uchicago.edu 8173006.uct2-grid6.uchicago.edu 8174716.uct2-grid6.uchicago.edu,rectime=1260313274
+
+uct2-c168.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173615.uct2-grid6.uchicago.edu, 1/8178181.uct2-grid6.uchicago.edu, 2/8169636.uct2-grid6.uchicago.edu, 3/8172872.uct2-grid6.uchicago.edu, 4/8173639.uct2-grid6.uchicago.edu, 5/8173632.uct2-grid6.uchicago.edu, 6/8168908.uct2-grid6.uchicago.edu, 7/8168138.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c168.mwt2.org 2.6.18-164.6.1.el5 #1 SMP Tue Nov 3 23:02:51 EST 2009 x86_64,sessions=27865 30982 25447 4337 25064 10070 16826 22405,nsessions=8,nusers=1,idletime=2772595,totmem=18475452kb,availmem=13151156kb,physmem=16378316kb,ncpus=8,loadave=8.01,netload=640686776917,state=free,jobs=8168138.uct2-grid6.uchicago.edu 8168908.uct2-grid6.uchicago.edu 8169636.uct2-grid6.uchicago.edu 8178181.uct2-grid6.uchicago.edu 8172872.uct2-grid6.uchicago.edu 8173615.uct2-grid6.uchicago.edu 8173632.uct2-grid6.uchicago.edu 8173639.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c169.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170606.uct2-grid6.uchicago.edu, 1/8166905.uct2-grid6.uchicago.edu, 2/8174759.uct2-grid6.uchicago.edu, 3/8170708.uct2-grid6.uchicago.edu, 4/8168976.uct2-grid6.uchicago.edu, 5/8167181.uct2-grid6.uchicago.edu, 6/8173025.uct2-grid6.uchicago.edu, 7/8170504.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c169.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=3106 9486 10277 14183 25085 27505 16552 19963,nsessions=8,nusers=1,idletime=2757304,totmem=8246568kb,availmem=7612692kb,physmem=16635264kb,ncpus=8,loadave=8.01,gres=analy_slots:2,netload=2728531516,state=free,jobs=8166905.uct2-grid6.uchicago.edu 8167181.uct2-grid6.uchicago.edu 8168976.uct2-grid6.uchicago.edu 8170504.uct2-grid6.uchicago.edu 8170606.uct2-grid6.uchicago.edu 8170708.uct2-grid6.uchicago.edu 8173025.uct2-grid6.uchicago.edu 8174759.uct2-grid6.uchicago.edu,rectime=1260313276
+
+uct2-c170.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168118.uct2-grid6.uchicago.edu, 1/8168938.uct2-grid6.uchicago.edu, 2/8170725.uct2-grid6.uchicago.edu, 3/8166261.uct2-grid6.uchicago.edu, 4/8168997.uct2-grid6.uchicago.edu, 5/8166280.uct2-grid6.uchicago.edu, 6/8169675.uct2-grid6.uchicago.edu, 7/8170750.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c170.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30530 4170 6580 9784 12131 15507 22007 24507,nsessions=8,nusers=1,idletime=2774856,totmem=6152100kb,availmem=5372132kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3876086777,state=free,jobs=8166261.uct2-grid6.uchicago.edu 8166280.uct2-grid6.uchicago.edu 8168118.uct2-grid6.uchicago.edu 8170725.uct2-grid6.uchicago.edu 8168938.uct2-grid6.uchicago.edu 8168997.uct2-grid6.uchicago.edu 8169675.uct2-grid6.uchicago.edu 8170750.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c171.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8176690.uct2-grid6.uchicago.edu, 1/8174730.uct2-grid6.uchicago.edu, 2/8176075.uct2-grid6.uchicago.edu, 3/8177962.uct2-grid6.uchicago.edu, 4/8173734.uct2-grid6.uchicago.edu, 5/8175479.uct2-grid6.uchicago.edu, 6/8172430.uct2-grid6.uchicago.edu, 7/8169673.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c171.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=955 2717 6693 8307 12363 13890 19834 26827,nsessions=8,nusers=1,idletime=2793221,totmem=8246568kb,availmem=8116048kb,physmem=16635264kb,ncpus=8,loadave=7.06,gres=analy_slots:2,netload=1200351970,state=free,jobs=8175479.uct2-grid6.uchicago.edu 8176075.uct2-grid6.uchicago.edu 8177962.uct2-grid6.uchicago.edu 8169673.uct2-grid6.uchicago.edu 8172430.uct2-grid6.uchicago.edu 8173734.uct2-grid6.uchicago.edu 8174730.uct2-grid6.uchicago.edu 8182477.uct2-grid6.uchicago.edu,rectime=1260313274
+
+uct2-c172.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168320.uct2-grid6.uchicago.edu, 1/8170538.uct2-grid6.uchicago.edu, 2/8170789.uct2-grid6.uchicago.edu, 3/8170732.uct2-grid6.uchicago.edu, 4/8168130.uct2-grid6.uchicago.edu, 5/8170764.uct2-grid6.uchicago.edu, 6/8168913.uct2-grid6.uchicago.edu, 7/8175165.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c172.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30653 31278 3472 4434 9412 15019 21030 25653,nsessions=8,nusers=1,idletime=2774853,totmem=8246568kb,availmem=7465228kb,physmem=16635264kb,ncpus=8,loadave=8.06,gres=analy_slots:2,netload=971575713,state=free,jobs=8168130.uct2-grid6.uchicago.edu 8175165.uct2-grid6.uchicago.edu 8168320.uct2-grid6.uchicago.edu 8168913.uct2-grid6.uchicago.edu 8170538.uct2-grid6.uchicago.edu 8170732.uct2-grid6.uchicago.edu 8170764.uct2-grid6.uchicago.edu 8170789.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c173.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8163320.uct2-grid6.uchicago.edu, 1/8167224.uct2-grid6.uchicago.edu, 2/8168113.uct2-grid6.uchicago.edu, 3/8168315.uct2-grid6.uchicago.edu, 4/8168334.uct2-grid6.uchicago.edu, 5/8169574.uct2-grid6.uchicago.edu, 6/8169660.uct2-grid6.uchicago.edu, 7/8169663.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c173.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=2814 3186 3199 3223 3425 3457 3490 3527,nsessions=8,nusers=1,idletime=18387,totmem=8246568kb,availmem=7552812kb,physmem=16635264kb,ncpus=8,loadave=8.04,gres=analy_slots:2,netload=998181339,state=free,jobs=8163320.uct2-grid6.uchicago.edu 8167224.uct2-grid6.uchicago.edu 8168113.uct2-grid6.uchicago.edu 8168315.uct2-grid6.uchicago.edu 8168334.uct2-grid6.uchicago.edu 8169574.uct2-grid6.uchicago.edu 8169660.uct2-grid6.uchicago.edu 8169663.uct2-grid6.uchicago.edu,rectime=1260313293
+
+uct2-c174.mwt2.org
+     state = down,offline
+     np = 8
+     properties = uct2
+     ntype = cluster
+
+uct2-c175.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171839.uct2-grid6.uchicago.edu, 1/8170786.uct2-grid6.uchicago.edu, 2/8177145.uct2-grid6.uchicago.edu, 3/8168905.uct2-grid6.uchicago.edu, 4/8166281.uct2-grid6.uchicago.edu, 5/8166160.uct2-grid6.uchicago.edu, 6/8174675.uct2-grid6.uchicago.edu, 7/8171840.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c175.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29082 3150 4072 9014 14921 17807 21387 27358,nsessions=8,nusers=1,idletime=3994,totmem=8246624kb,availmem=7504196kb,physmem=16635320kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2214063833,state=free,jobs=8166160.uct2-grid6.uchicago.edu 8166281.uct2-grid6.uchicago.edu 8171839.uct2-grid6.uchicago.edu 8168905.uct2-grid6.uchicago.edu 8177145.uct2-grid6.uchicago.edu 8170786.uct2-grid6.uchicago.edu 8171840.uct2-grid6.uchicago.edu 8174675.uct2-grid6.uchicago.edu,rectime=1260313273
+
+uct2-c176.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8176585.uct2-grid6.uchicago.edu, 1/8168322.uct2-grid6.uchicago.edu, 2/8168232.uct2-grid6.uchicago.edu, 3/8173698.uct2-grid6.uchicago.edu, 4/8174735.uct2-grid6.uchicago.edu, 5/8168174.uct2-grid6.uchicago.edu, 6/8175911.uct2-grid6.uchicago.edu, 7/8170671.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c176.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1652 31566 4885 5334 12194 18484 25876 25966,nsessions=8,nusers=1,idletime=2774847,totmem=8246568kb,availmem=7552148kb,physmem=16635264kb,ncpus=8,loadave=8.06,gres=analy_slots:2,netload=716481631,state=free,jobs=8175911.uct2-grid6.uchicago.edu 8168174.uct2-grid6.uchicago.edu 8168232.uct2-grid6.uchicago.edu 8168322.uct2-grid6.uchicago.edu 8170671.uct2-grid6.uchicago.edu 8176585.uct2-grid6.uchicago.edu 8173698.uct2-grid6.uchicago.edu 8174735.uct2-grid6.uchicago.edu,rectime=1260313271
+
+uct2-c177.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171779.uct2-grid6.uchicago.edu, 1/8168269.uct2-grid6.uchicago.edu, 2/8168114.uct2-grid6.uchicago.edu, 3/8176266.uct2-grid6.uchicago.edu, 4/8168339.uct2-grid6.uchicago.edu, 5/8162793.uct2-grid6.uchicago.edu, 6/8173709.uct2-grid6.uchicago.edu, 7/8168103.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c177.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28603 31147 4352 9755 15582 18570 21843 25000,nsessions=8,nusers=1,idletime=2793214,totmem=8246568kb,availmem=7542716kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1989017583,state=free,jobs=8162793.uct2-grid6.uchicago.edu 8168103.uct2-grid6.uchicago.edu 8168114.uct2-grid6.uchicago.edu 8168269.uct2-grid6.uchicago.edu 8168339.uct2-grid6.uchicago.edu 8176266.uct2-grid6.uchicago.edu 8171779.uct2-grid6.uchicago.edu 8173709.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c178.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173657.uct2-grid6.uchicago.edu, 1/8168230.uct2-grid6.uchicago.edu, 2/8173704.uct2-grid6.uchicago.edu, 3/8173021.uct2-grid6.uchicago.edu, 4/8174904.uct2-grid6.uchicago.edu, 5/8168927.uct2-grid6.uchicago.edu, 6/8169707.uct2-grid6.uchicago.edu, 7/8169684.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c178.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30456 31091 3590 4591 9461 10159 24303 24514,nsessions=8,nusers=1,idletime=2774860,totmem=8246568kb,availmem=8101788kb,physmem=16635264kb,ncpus=8,loadave=7.28,gres=analy_slots:2,netload=1867553348,state=free,jobs=8168927.uct2-grid6.uchicago.edu 8168230.uct2-grid6.uchicago.edu 8169684.uct2-grid6.uchicago.edu 8169707.uct2-grid6.uchicago.edu 8173021.uct2-grid6.uchicago.edu 8173657.uct2-grid6.uchicago.edu 8173704.uct2-grid6.uchicago.edu 8174904.uct2-grid6.uchicago.edu,rectime=1260313284
+
+uct2-c179.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172997.uct2-grid6.uchicago.edu, 1/8181709.uct2-grid6.uchicago.edu, 2/8174770.uct2-grid6.uchicago.edu, 3/8170591.uct2-grid6.uchicago.edu, 4/8168109.uct2-grid6.uchicago.edu, 5/8168889.uct2-grid6.uchicago.edu, 6/8166264.uct2-grid6.uchicago.edu, 7/8166577.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c179.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28533 1219 1653 6592 12327 12490 18626 25063,nsessions=8,nusers=1,idletime=1253049,totmem=8246568kb,availmem=7828840kb,physmem=16635264kb,ncpus=8,loadave=8.01,gres=analy_slots:2,netload=1294325916,state=free,jobs=7448087.uct2-grid6.uchicago.edu 8166264.uct2-grid6.uchicago.edu 8166577.uct2-grid6.uchicago.edu 8168109.uct2-grid6.uchicago.edu 8168889.uct2-grid6.uchicago.edu 8170591.uct2-grid6.uchicago.edu 8172997.uct2-grid6.uchicago.edu 8181709.uct2-grid6.uchicago.edu 8174770.uct2-grid6.uchicago.edu,rectime=1260313274
+
+uct2-c180.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173582.uct2-grid6.uchicago.edu, 1/8179046.uct2-grid6.uchicago.edu, 2/8169621.uct2-grid6.uchicago.edu, 3/8175492.uct2-grid6.uchicago.edu, 4/8174673.uct2-grid6.uchicago.edu, 5/8172892.uct2-grid6.uchicago.edu, 6/8174684.uct2-grid6.uchicago.edu, 7/8168342.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c180.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29365 28663 3682 11726 17393 17976 23108 23572,nsessions=8,nusers=1,idletime=2774848,totmem=8246568kb,availmem=7518344kb,physmem=16635264kb,ncpus=8,loadave=8.01,gres=analy_slots:2,netload=3094840362,state=free,jobs=8175492.uct2-grid6.uchicago.edu 8179046.uct2-grid6.uchicago.edu 8168342.uct2-grid6.uchicago.edu 8169621.uct2-grid6.uchicago.edu 8172892.uct2-grid6.uchicago.edu 8173582.uct2-grid6.uchicago.edu 8174673.uct2-grid6.uchicago.edu 8174684.uct2-grid6.uchicago.edu,rectime=1260313276
+
+uct2-c181.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173587.uct2-grid6.uchicago.edu, 1/8170785.uct2-grid6.uchicago.edu, 2/8168335.uct2-grid6.uchicago.edu, 3/8172978.uct2-grid6.uchicago.edu, 4/8170783.uct2-grid6.uchicago.edu, 5/8171453.uct2-grid6.uchicago.edu, 6/8181710.uct2-grid6.uchicago.edu, 7/8178576.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c181.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29170 28911 2243 8658 16834 22308 22451 22497,nsessions=8,nusers=1,idletime=2793227,totmem=8246568kb,availmem=7563980kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3051741706,state=free,jobs=8178576.uct2-grid6.uchicago.edu 8170785.uct2-grid6.uchicago.edu 8168335.uct2-grid6.uchicago.edu 8170783.uct2-grid6.uchicago.edu 8171453.uct2-grid6.uchicago.edu 8172978.uct2-grid6.uchicago.edu 8173587.uct2-grid6.uchicago.edu 8181710.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c182.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168960.uct2-grid6.uchicago.edu, 1/8168931.uct2-grid6.uchicago.edu, 2/8171767.uct2-grid6.uchicago.edu, 3/8169607.uct2-grid6.uchicago.edu, 4/8174747.uct2-grid6.uchicago.edu, 5/8170572.uct2-grid6.uchicago.edu, 6/8174680.uct2-grid6.uchicago.edu, 7/8170615.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c182.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30947 4139 9982 14209 17014 19621 22658 25085,nsessions=8,nusers=1,idletime=2793213,totmem=8246568kb,availmem=7602160kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3847266909,state=free,jobs=8168931.uct2-grid6.uchicago.edu 8168960.uct2-grid6.uchicago.edu 8169607.uct2-grid6.uchicago.edu 8170572.uct2-grid6.uchicago.edu 8170615.uct2-grid6.uchicago.edu 8171767.uct2-grid6.uchicago.edu 8174680.uct2-grid6.uchicago.edu 8174747.uct2-grid6.uchicago.edu,rectime=1260313268
+
+uct2-c183.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168343.uct2-grid6.uchicago.edu, 1/8176553.uct2-grid6.uchicago.edu, 2/8167197.uct2-grid6.uchicago.edu, 3/8169600.uct2-grid6.uchicago.edu, 4/8170723.uct2-grid6.uchicago.edu, 5/8178390.uct2-grid6.uchicago.edu, 6/8169653.uct2-grid6.uchicago.edu, 7/8168983.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c183.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=31855 5022 10443 16769 20218 21262 25562 26061,nsessions=8,nusers=1,idletime=2793224,totmem=8246568kb,availmem=7474276kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1251703686,state=free,jobs=8178390.uct2-grid6.uchicago.edu 8167197.uct2-grid6.uchicago.edu 8176553.uct2-grid6.uchicago.edu 8168343.uct2-grid6.uchicago.edu 8168983.uct2-grid6.uchicago.edu 8169600.uct2-grid6.uchicago.edu 8169653.uct2-grid6.uchicago.edu 8170723.uct2-grid6.uchicago.edu,rectime=1260313277
+
+uct2-c184.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8180913.uct2-grid6.uchicago.edu, 1/8172991.uct2-grid6.uchicago.edu, 2/8174681.uct2-grid6.uchicago.edu, 3/8166490.uct2-grid6.uchicago.edu, 4/8173586.uct2-grid6.uchicago.edu, 5/8175423.uct2-grid6.uchicago.edu, 6/8174251.uct2-grid6.uchicago.edu, 7/8175588.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c184.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32415 29366 28141 2674 6573 8764 9718 23045,nsessions=8,nusers=1,idletime=2793219,totmem=8246568kb,availmem=7627120kb,physmem=16635264kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1019802415,state=free,jobs=8166490.uct2-grid6.uchicago.edu 8175423.uct2-grid6.uchicago.edu 8175588.uct2-grid6.uchicago.edu 8172991.uct2-grid6.uchicago.edu 8173586.uct2-grid6.uchicago.edu 8174251.uct2-grid6.uchicago.edu 8174681.uct2-grid6.uchicago.edu 8180913.uct2-grid6.uchicago.edu,rectime=1260313284
+
+uct2-c185.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172944.uct2-grid6.uchicago.edu, 1/8169617.uct2-grid6.uchicago.edu, 2/8174702.uct2-grid6.uchicago.edu, 3/8171281.uct2-grid6.uchicago.edu, 4/8172953.uct2-grid6.uchicago.edu, 5/8172887.uct2-grid6.uchicago.edu, 6/8170787.uct2-grid6.uchicago.edu, 7/8168314.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c185.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29532 2692 8970 12210 14729 20323 22949 27222,nsessions=8,nusers=1,idletime=485436,totmem=4046484kb,availmem=3871100kb,physmem=16626792kb,ncpus=8,loadave=7.63,gres=analy_slots:2,netload=1069871573,state=free,jobs=7673391.uct2-grid6.uchicago.edu 8168314.uct2-grid6.uchicago.edu 8169617.uct2-grid6.uchicago.edu 8170787.uct2-grid6.uchicago.edu 8171281.uct2-grid6.uchicago.edu 8172887.uct2-grid6.uchicago.edu 8172944.uct2-grid6.uchicago.edu 8172953.uct2-grid6.uchicago.edu 8174702.uct2-grid6.uchicago.edu,rectime=1260313273
+
+uct2-c186.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8177446.uct2-grid6.uchicago.edu, 1/8168941.uct2-grid6.uchicago.edu, 2/8172840.uct2-grid6.uchicago.edu, 3/8177915.uct2-grid6.uchicago.edu, 4/8172879.uct2-grid6.uchicago.edu, 5/8170709.uct2-grid6.uchicago.edu, 6/8170491.uct2-grid6.uchicago.edu, 7/8169717.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c186.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1577 30498 3817 7572 10961 13307 18816 23667,nsessions=8,nusers=1,idletime=485413,totmem=8238096kb,availmem=7350716kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3391923474,state=free,jobs=8177446.uct2-grid6.uchicago.edu 8168941.uct2-grid6.uchicago.edu 8169717.uct2-grid6.uchicago.edu 8170491.uct2-grid6.uchicago.edu 8170709.uct2-grid6.uchicago.edu 8172840.uct2-grid6.uchicago.edu 8172879.uct2-grid6.uchicago.edu 8177915.uct2-grid6.uchicago.edu,rectime=1260313282
+
+uct2-c187.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172939.uct2-grid6.uchicago.edu, 1/8178687.uct2-grid6.uchicago.edu, 2/8169575.uct2-grid6.uchicago.edu, 3/8179881.uct2-grid6.uchicago.edu, 4/8172877.uct2-grid6.uchicago.edu, 5/8170715.uct2-grid6.uchicago.edu, 6/8171861.uct2-grid6.uchicago.edu, 7/8170765.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c187.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28604 1881 4739 7628 13425 16831 22531 25874,nsessions=8,nusers=1,idletime=485420,totmem=8238096kb,availmem=7405624kb,physmem=16626792kb,ncpus=8,loadave=7.99,gres=analy_slots:2,netload=124011404,state=free,jobs=8169575.uct2-grid6.uchicago.edu 8170715.uct2-grid6.uchicago.edu 8170765.uct2-grid6.uchicago.edu 8171861.uct2-grid6.uchicago.edu 8179881.uct2-grid6.uchicago.edu 8172877.uct2-grid6.uchicago.edu 8172939.uct2-grid6.uchicago.edu 8178687.uct2-grid6.uchicago.edu,rectime=1260313291
+
+uct2-c188.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174705.uct2-grid6.uchicago.edu, 1/8174703.uct2-grid6.uchicago.edu, 2/8174757.uct2-grid6.uchicago.edu, 3/8173681.uct2-grid6.uchicago.edu, 4/8172974.uct2-grid6.uchicago.edu, 5/8170748.uct2-grid6.uchicago.edu, 6/8173630.uct2-grid6.uchicago.edu, 7/8172888.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c188.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29523 2665 8825 10272 12180 17038 19689 22976,nsessions=8,nusers=1,idletime=485419,totmem=8238096kb,availmem=7535108kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2357242605,state=free,jobs=8170748.uct2-grid6.uchicago.edu 8172888.uct2-grid6.uchicago.edu 8172974.uct2-grid6.uchicago.edu 8173630.uct2-grid6.uchicago.edu 8173681.uct2-grid6.uchicago.edu 8174703.uct2-grid6.uchicago.edu 8174705.uct2-grid6.uchicago.edu 8174757.uct2-grid6.uchicago.edu,rectime=1260313289
+
+uct2-c189.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174743.uct2-grid6.uchicago.edu, 1/8172876.uct2-grid6.uchicago.edu, 2/8177094.uct2-grid6.uchicago.edu, 3/8168312.uct2-grid6.uchicago.edu, 4/8171756.uct2-grid6.uchicago.edu, 5/8174771.uct2-grid6.uchicago.edu, 6/8180057.uct2-grid6.uchicago.edu, 7/8172899.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c189.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32724 5869 11505 12811 17507 17730 24117 26552,nsessions=8,nusers=1,idletime=485411,totmem=8235024kb,availmem=7523136kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=90363460,state=free,jobs=8168312.uct2-grid6.uchicago.edu 8171756.uct2-grid6.uchicago.edu 8180057.uct2-grid6.uchicago.edu 8172876.uct2-grid6.uchicago.edu 8172899.uct2-grid6.uchicago.edu 8177094.uct2-grid6.uchicago.edu 8174743.uct2-grid6.uchicago.edu 8174771.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c190.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172849.uct2-grid6.uchicago.edu, 1/8169582.uct2-grid6.uchicago.edu, 2/8170531.uct2-grid6.uchicago.edu, 3/8170680.uct2-grid6.uchicago.edu, 4/8174685.uct2-grid6.uchicago.edu, 5/8170613.uct2-grid6.uchicago.edu, 6/8175501.uct2-grid6.uchicago.edu, 7/8170624.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c190.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=25413 30420 30444 3678 4266 10639 14833 20664,nsessions=8,nusers=1,idletime=485430,totmem=8238096kb,availmem=7524844kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3024846780,state=free,jobs=8169582.uct2-grid6.uchicago.edu 8170531.uct2-grid6.uchicago.edu 8170613.uct2-grid6.uchicago.edu 8170624.uct2-grid6.uchicago.edu 8170680.uct2-grid6.uchicago.edu 8172849.uct2-grid6.uchicago.edu 8175501.uct2-grid6.uchicago.edu 8174685.uct2-grid6.uchicago.edu,rectime=1260313299
+
+uct2-c191.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8173722.uct2-grid6.uchicago.edu, 1/8171037.uct2-grid6.uchicago.edu, 2/8174734.uct2-grid6.uchicago.edu, 3/8172954.uct2-grid6.uchicago.edu, 4/8172921.uct2-grid6.uchicago.edu, 5/8170779.uct2-grid6.uchicago.edu, 6/8172570.uct2-grid6.uchicago.edu, 7/8172916.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c191.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28178 30162 1575 3922 10164 15639 21423 24554,nsessions=8,nusers=1,idletime=485422,totmem=8238096kb,availmem=7492524kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3122756838,state=free,jobs=8170779.uct2-grid6.uchicago.edu 8171037.uct2-grid6.uchicago.edu 8172570.uct2-grid6.uchicago.edu 8172916.uct2-grid6.uchicago.edu 8172921.uct2-grid6.uchicago.edu 8172954.uct2-grid6.uchicago.edu 8173722.uct2-grid6.uchicago.edu 8174734.uct2-grid6.uchicago.edu,rectime=1260313292
+
+uct2-c192.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170518.uct2-grid6.uchicago.edu, 1/8170762.uct2-grid6.uchicago.edu, 2/8166021.uct2-grid6.uchicago.edu, 3/8174722.uct2-grid6.uchicago.edu, 4/8174683.uct2-grid6.uchicago.edu, 5/8172016.uct2-grid6.uchicago.edu, 6/8170676.uct2-grid6.uchicago.edu, 7/8171038.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c192.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=301 32534 805 6169 11870 18748 26837 28040,nsessions=8,nusers=1,idletime=485393,totmem=8172560kb,availmem=7374424kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1335349676,state=free,jobs=8166021.uct2-grid6.uchicago.edu 8170518.uct2-grid6.uchicago.edu 8170676.uct2-grid6.uchicago.edu 8170762.uct2-grid6.uchicago.edu 8171038.uct2-grid6.uchicago.edu 8172016.uct2-grid6.uchicago.edu 8174683.uct2-grid6.uchicago.edu 8174722.uct2-grid6.uchicago.edu,rectime=1260313262
+
+uct2-c193.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171820.uct2-grid6.uchicago.edu, 1/8172880.uct2-grid6.uchicago.edu, 2/8172951.uct2-grid6.uchicago.edu, 3/8170510.uct2-grid6.uchicago.edu, 4/8174896.uct2-grid6.uchicago.edu, 5/8172908.uct2-grid6.uchicago.edu, 6/8171810.uct2-grid6.uchicago.edu, 7/8173026.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c193.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29120 32421 3957 5103 10342 11271 16825 23102,nsessions=8,nusers=1,idletime=485432,totmem=8225808kb,availmem=7616496kb,physmem=16626792kb,ncpus=8,loadave=8.46,gres=analy_slots:2,netload=2400107367,state=free,jobs=8170510.uct2-grid6.uchicago.edu 8172908.uct2-grid6.uchicago.edu 8171810.uct2-grid6.uchicago.edu 8171820.uct2-grid6.uchicago.edu 8172880.uct2-grid6.uchicago.edu 8172951.uct2-grid6.uchicago.edu 8173026.uct2-grid6.uchicago.edu 8174896.uct2-grid6.uchicago.edu,rectime=1260313301
+
+uct2-c194.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169658.uct2-grid6.uchicago.edu, 1/8170774.uct2-grid6.uchicago.edu, 2/8174708.uct2-grid6.uchicago.edu, 3/8170490.uct2-grid6.uchicago.edu, 4/8169730.uct2-grid6.uchicago.edu, 5/8174723.uct2-grid6.uchicago.edu, 6/8174588.uct2-grid6.uchicago.edu, 7/8172940.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c194.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1518 9154 10227 14848 15745 20452 21666 26803,nsessions=8,nusers=1,idletime=485433,totmem=8238096kb,availmem=7555324kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1922439526,state=free,jobs=8169658.uct2-grid6.uchicago.edu 8169730.uct2-grid6.uchicago.edu 8170490.uct2-grid6.uchicago.edu 8170774.uct2-grid6.uchicago.edu 8172940.uct2-grid6.uchicago.edu 8174588.uct2-grid6.uchicago.edu 8174708.uct2-grid6.uchicago.edu 8174723.uct2-grid6.uchicago.edu,rectime=1260313301
+
+uct2-c195.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170633.uct2-grid6.uchicago.edu, 1/8169592.uct2-grid6.uchicago.edu, 2/8168948.uct2-grid6.uchicago.edu, 3/8174751.uct2-grid6.uchicago.edu, 4/8170799.uct2-grid6.uchicago.edu, 5/8170561.uct2-grid6.uchicago.edu, 6/8171041.uct2-grid6.uchicago.edu, 7/8170342.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c195.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30235 32112 3961 9544 15556 20504 21187 26199,nsessions=8,nusers=1,idletime=485429,totmem=8238096kb,availmem=7520916kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2312236427,state=free,jobs=8168948.uct2-grid6.uchicago.edu 8169592.uct2-grid6.uchicago.edu 8170342.uct2-grid6.uchicago.edu 8170561.uct2-grid6.uchicago.edu 8170633.uct2-grid6.uchicago.edu 8170799.uct2-grid6.uchicago.edu 8171041.uct2-grid6.uchicago.edu 8174751.uct2-grid6.uchicago.edu,rectime=1260313299
+
+uct2-c196.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8180584.uct2-grid6.uchicago.edu, 1/8174815.uct2-grid6.uchicago.edu, 2/8168907.uct2-grid6.uchicago.edu, 3/8172945.uct2-grid6.uchicago.edu, 4/8173644.uct2-grid6.uchicago.edu, 5/8174731.uct2-grid6.uchicago.edu, 6/8171872.uct2-grid6.uchicago.edu, 7/8170771.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c196.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30250 30351 4374 5167 11573 17971 24478,nsessions=7,nusers=1,idletime=485423,totmem=8238096kb,availmem=8193892kb,physmem=16626792kb,ncpus=8,loadave=7.12,gres=analy_slots:2,netload=3932581444,state=free,jobs=8168907.uct2-grid6.uchicago.edu 8170771.uct2-grid6.uchicago.edu 8171872.uct2-grid6.uchicago.edu 8172945.uct2-grid6.uchicago.edu 8173644.uct2-grid6.uchicago.edu 8174731.uct2-grid6.uchicago.edu 8174815.uct2-grid6.uchicago.edu 8174900.uct2-grid6.uchicago.edu,rectime=1260313294
+
+uct2-c197.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172979.uct2-grid6.uchicago.edu, 1/8171833.uct2-grid6.uchicago.edu, 2/8169608.uct2-grid6.uchicago.edu, 3/8172023.uct2-grid6.uchicago.edu, 4/8170798.uct2-grid6.uchicago.edu, 5/8172869.uct2-grid6.uchicago.edu, 6/8169609.uct2-grid6.uchicago.edu, 7/8172845.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c197.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30876 4509 10263 13478 13621 15881 21562 27665,nsessions=8,nusers=1,idletime=485433,totmem=8238096kb,availmem=7302144kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1431632254,state=free,jobs=8169608.uct2-grid6.uchicago.edu 8169609.uct2-grid6.uchicago.edu 8170798.uct2-grid6.uchicago.edu 8171833.uct2-grid6.uchicago.edu 8172023.uct2-grid6.uchicago.edu 8172845.uct2-grid6.uchicago.edu 8172869.uct2-grid6.uchicago.edu 8172979.uct2-grid6.uchicago.edu,rectime=1260313302
+
+uct2-c198.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169699.uct2-grid6.uchicago.edu, 1/8179001.uct2-grid6.uchicago.edu, 2/8169694.uct2-grid6.uchicago.edu, 3/8170559.uct2-grid6.uchicago.edu, 4/8174764.uct2-grid6.uchicago.edu, 5/8174750.uct2-grid6.uchicago.edu, 6/8159442.uct2-grid6.uchicago.edu, 7/8168345.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c198.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=24431 9975 15224 16098 21237 21269 26816 27032,nsessions=8,nusers=1,idletime=485395,totmem=8238096kb,availmem=7529608kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1812918852,state=free,jobs=8159442.uct2-grid6.uchicago.edu 8168345.uct2-grid6.uchicago.edu 8169694.uct2-grid6.uchicago.edu 8169699.uct2-grid6.uchicago.edu 8170559.uct2-grid6.uchicago.edu 8179001.uct2-grid6.uchicago.edu 8174750.uct2-grid6.uchicago.edu 8174764.uct2-grid6.uchicago.edu,rectime=1260313266
+
+uct2-c199.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169598.uct2-grid6.uchicago.edu, 1/8168977.uct2-grid6.uchicago.edu, 2/8171830.uct2-grid6.uchicago.edu, 3/8174709.uct2-grid6.uchicago.edu, 4/8169739.uct2-grid6.uchicago.edu, 5/8172960.uct2-grid6.uchicago.edu, 6/8177940.uct2-grid6.uchicago.edu, 7/8160055.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c199.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1498 4367 7472 13426 16096 21548 25924 27353,nsessions=8,nusers=1,idletime=485428,totmem=8238096kb,availmem=7469788kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3344385455,state=free,jobs=8160055.uct2-grid6.uchicago.edu 8168977.uct2-grid6.uchicago.edu 8169598.uct2-grid6.uchicago.edu 8169739.uct2-grid6.uchicago.edu 8171830.uct2-grid6.uchicago.edu 8177940.uct2-grid6.uchicago.edu 8172960.uct2-grid6.uchicago.edu 8174709.uct2-grid6.uchicago.edu,rectime=1260313297
+
+uct2-c200.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8169588.uct2-grid6.uchicago.edu, 1/8173004.uct2-grid6.uchicago.edu, 2/8168847.uct2-grid6.uchicago.edu, 3/8174654.uct2-grid6.uchicago.edu, 4/8174898.uct2-grid6.uchicago.edu, 5/8166195.uct2-grid6.uchicago.edu, 6/8168951.uct2-grid6.uchicago.edu, 7/8170594.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c200.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29295 29019 2475 8690 9504 17047 22839 23609,nsessions=8,nusers=1,idletime=485406,totmem=8238096kb,availmem=7869772kb,physmem=16626792kb,ncpus=8,loadave=8.51,gres=analy_slots:2,netload=2728525830,state=free,jobs=8166195.uct2-grid6.uchicago.edu 8168847.uct2-grid6.uchicago.edu 8168951.uct2-grid6.uchicago.edu 8169588.uct2-grid6.uchicago.edu 8170594.uct2-grid6.uchicago.edu 8173004.uct2-grid6.uchicago.edu 8174654.uct2-grid6.uchicago.edu 8174898.uct2-grid6.uchicago.edu,rectime=1260313275
+
+uct2-c201.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172982.uct2-grid6.uchicago.edu, 1/8181093.uct2-grid6.uchicago.edu, 2/8169623.uct2-grid6.uchicago.edu, 3/8171877.uct2-grid6.uchicago.edu, 4/8174704.uct2-grid6.uchicago.edu, 5/8175889.uct2-grid6.uchicago.edu, 6/8174717.uct2-grid6.uchicago.edu, 7/8174738.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c201.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=2207 8611 9028 14214 16067 19803 22402 25380,nsessions=8,nusers=1,idletime=2793187,totmem=8238096kb,availmem=7545956kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2833481225,state=free,jobs=8169623.uct2-grid6.uchicago.edu 8171877.uct2-grid6.uchicago.edu 8172982.uct2-grid6.uchicago.edu 8181093.uct2-grid6.uchicago.edu 8175889.uct2-grid6.uchicago.edu 8174704.uct2-grid6.uchicago.edu 8174717.uct2-grid6.uchicago.edu 8174738.uct2-grid6.uchicago.edu,rectime=1260313286
+
+uct2-c202.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8182479.uct2-grid6.uchicago.edu, 1/8171815.uct2-grid6.uchicago.edu, 2/8169595.uct2-grid6.uchicago.edu, 3/8174699.uct2-grid6.uchicago.edu, 4/8174712.uct2-grid6.uchicago.edu, 5/8174697.uct2-grid6.uchicago.edu, 6/8170888.uct2-grid6.uchicago.edu, 7/8176098.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c202.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29517 28670 2856 3293 5353 8682 14088 19948,nsessions=8,nusers=1,idletime=2793179,totmem=8238096kb,availmem=8115440kb,physmem=16626792kb,ncpus=8,loadave=7.08,gres=analy_slots:2,netload=2418946164,state=free,jobs=8169595.uct2-grid6.uchicago.edu 8170888.uct2-grid6.uchicago.edu 8171815.uct2-grid6.uchicago.edu 8176098.uct2-grid6.uchicago.edu 8174697.uct2-grid6.uchicago.edu 8174699.uct2-grid6.uchicago.edu 8174712.uct2-grid6.uchicago.edu 8182479.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c203.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170686.uct2-grid6.uchicago.edu, 1/8173624.uct2-grid6.uchicago.edu, 2/8173746.uct2-grid6.uchicago.edu, 3/8170562.uct2-grid6.uchicago.edu, 4/8173654.uct2-grid6.uchicago.edu, 5/8169599.uct2-grid6.uchicago.edu, 6/8170699.uct2-grid6.uchicago.edu, 7/8170652.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c203.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32734 2571 8695 14415 20333 21974 24137 26902,nsessions=8,nusers=1,idletime=1612719,totmem=8238096kb,availmem=7501036kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3673240737,state=free,jobs=8169599.uct2-grid6.uchicago.edu 8170562.uct2-grid6.uchicago.edu 8170652.uct2-grid6.uchicago.edu 8170686.uct2-grid6.uchicago.edu 8170699.uct2-grid6.uchicago.edu 8173624.uct2-grid6.uchicago.edu 8173654.uct2-grid6.uchicago.edu 8173746.uct2-grid6.uchicago.edu,rectime=1260313276
+
+uct2-c204.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8180439.uct2-grid6.uchicago.edu, 1/8170597.uct2-grid6.uchicago.edu, 2/8174760.uct2-grid6.uchicago.edu, 3/8174774.uct2-grid6.uchicago.edu, 4/8171828.uct2-grid6.uchicago.edu, 5/8170766.uct2-grid6.uchicago.edu, 6/8170736.uct2-grid6.uchicago.edu, 7/8170773.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c204.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1086 7132 10720 14403 16499 20181 22407 26185,nsessions=8,nusers=1,idletime=2793186,totmem=8238096kb,availmem=7584768kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1432150833,state=free,jobs=8170597.uct2-grid6.uchicago.edu 8170736.uct2-grid6.uchicago.edu 8170766.uct2-grid6.uchicago.edu 8170773.uct2-grid6.uchicago.edu 8171828.uct2-grid6.uchicago.edu 8180439.uct2-grid6.uchicago.edu 8174760.uct2-grid6.uchicago.edu 8174774.uct2-grid6.uchicago.edu,rectime=1260313283
+
+uct2-c205.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171836.uct2-grid6.uchicago.edu, 1/8172870.uct2-grid6.uchicago.edu, 2/8172855.uct2-grid6.uchicago.edu, 3/8180003.uct2-grid6.uchicago.edu, 4/8171835.uct2-grid6.uchicago.edu, 5/8170881.uct2-grid6.uchicago.edu, 6/8170770.uct2-grid6.uchicago.edu, 7/8180997.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c205.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32717 6427 10173 17435 21572 23011 23061 27147,nsessions=8,nusers=1,idletime=2793158,totmem=8238096kb,availmem=7537288kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2258827935,state=free,jobs=8180003.uct2-grid6.uchicago.edu 8170770.uct2-grid6.uchicago.edu 8170881.uct2-grid6.uchicago.edu 8171835.uct2-grid6.uchicago.edu 8171836.uct2-grid6.uchicago.edu 8172855.uct2-grid6.uchicago.edu 8172870.uct2-grid6.uchicago.edu 8180997.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c206.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172860.uct2-grid6.uchicago.edu, 1/8174668.uct2-grid6.uchicago.edu, 2/8177171.uct2-grid6.uchicago.edu, 3/8181338.uct2-grid6.uchicago.edu, 4/8171789.uct2-grid6.uchicago.edu, 5/8172422.uct2-grid6.uchicago.edu, 6/8171856.uct2-grid6.uchicago.edu, 7/8170536.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c206.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29644 2997 8764 14447 15313 20813 24394 26729,nsessions=8,nusers=1,idletime=1388284,totmem=8238096kb,availmem=7658340kb,physmem=16626792kb,ncpus=8,loadave=7.99,gres=analy_slots:2,netload=3881521779,state=free,jobs=8170536.uct2-grid6.uchicago.edu 8171789.uct2-grid6.uchicago.edu 8171856.uct2-grid6.uchicago.edu 8172422.uct2-grid6.uchicago.edu 8172860.uct2-grid6.uchicago.edu 8181338.uct2-grid6.uchicago.edu 8177171.uct2-grid6.uchicago.edu 8174668.uct2-grid6.uchicago.edu,rectime=1260313285
+
+uct2-c207.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172850.uct2-grid6.uchicago.edu, 1/8170519.uct2-grid6.uchicago.edu, 2/8174669.uct2-grid6.uchicago.edu, 3/8172437.uct2-grid6.uchicago.edu, 4/8181487.uct2-grid6.uchicago.edu, 5/8170525.uct2-grid6.uchicago.edu, 6/8173034.uct2-grid6.uchicago.edu, 7/8170521.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c207.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28925 2311 8025 16629 19969 22234 22915 27805,nsessions=8,nusers=1,idletime=2793159,totmem=8238096kb,availmem=7391276kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2188490711,state=free,jobs=8170519.uct2-grid6.uchicago.edu 8170521.uct2-grid6.uchicago.edu 8170525.uct2-grid6.uchicago.edu 8172437.uct2-grid6.uchicago.edu 8172850.uct2-grid6.uchicago.edu 8181487.uct2-grid6.uchicago.edu 8173034.uct2-grid6.uchicago.edu 8174669.uct2-grid6.uchicago.edu,rectime=1260313282
+
+uct2-c208.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172962.uct2-grid6.uchicago.edu, 1/8172937.uct2-grid6.uchicago.edu, 2/8168914.uct2-grid6.uchicago.edu, 3/8168330.uct2-grid6.uchicago.edu, 4/8174413.uct2-grid6.uchicago.edu, 5/8180335.uct2-grid6.uchicago.edu, 6/8173726.uct2-grid6.uchicago.edu, 7/8170529.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c208.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32103 32192 5479 8513 11362 14145 20239 26492,nsessions=8,nusers=1,idletime=2793154,totmem=8238096kb,availmem=7579136kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=1001562900,state=free,jobs=8168330.uct2-grid6.uchicago.edu 8168914.uct2-grid6.uchicago.edu 8170529.uct2-grid6.uchicago.edu 8172937.uct2-grid6.uchicago.edu 8172962.uct2-grid6.uchicago.edu 8180335.uct2-grid6.uchicago.edu 8173726.uct2-grid6.uchicago.edu 8174413.uct2-grid6.uchicago.edu,rectime=1260313277
+
+uct2-c209.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8168880.uct2-grid6.uchicago.edu, 1/8170635.uct2-grid6.uchicago.edu, 2/8166187.uct2-grid6.uchicago.edu, 3/8172871.uct2-grid6.uchicago.edu, 4/8171760.uct2-grid6.uchicago.edu, 5/8170705.uct2-grid6.uchicago.edu, 6/8176089.uct2-grid6.uchicago.edu, 7/8173645.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c209.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29459 31653 4850 10744 16902 23614 25116 25918,nsessions=8,nusers=1,idletime=1612704,totmem=8238096kb,availmem=7515912kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=2991565782,state=free,jobs=8166187.uct2-grid6.uchicago.edu 8168880.uct2-grid6.uchicago.edu 8170635.uct2-grid6.uchicago.edu 8170705.uct2-grid6.uchicago.edu 8171760.uct2-grid6.uchicago.edu 8172871.uct2-grid6.uchicago.edu 8176089.uct2-grid6.uchicago.edu 8173645.uct2-grid6.uchicago.edu,rectime=1260313282
+
+uct2-c210.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172946.uct2-grid6.uchicago.edu, 1/8174777.uct2-grid6.uchicago.edu, 2/8170735.uct2-grid6.uchicago.edu, 3/8174706.uct2-grid6.uchicago.edu, 4/8172928.uct2-grid6.uchicago.edu, 5/8170690.uct2-grid6.uchicago.edu, 6/8176700.uct2-grid6.uchicago.edu, 7/8173658.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c210.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29449 639 3695 6433 9318 21478 23780 27274,nsessions=8,nusers=1,idletime=2793155,totmem=8238096kb,availmem=7628564kb,physmem=16626792kb,ncpus=8,loadave=7.99,gres=analy_slots:2,netload=3846403787,state=free,jobs=8170690.uct2-grid6.uchicago.edu 8170735.uct2-grid6.uchicago.edu 8172928.uct2-grid6.uchicago.edu 8172946.uct2-grid6.uchicago.edu 8176700.uct2-grid6.uchicago.edu 8173658.uct2-grid6.uchicago.edu 8174706.uct2-grid6.uchicago.edu 8174777.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c211.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171197.uct2-grid6.uchicago.edu, 1/8175579.uct2-grid6.uchicago.edu, 2/8178603.uct2-grid6.uchicago.edu, 3/8180998.uct2-grid6.uchicago.edu, 4/8172986.uct2-grid6.uchicago.edu, 5/8174185.uct2-grid6.uchicago.edu, 6/8172911.uct2-grid6.uchicago.edu, 7/8175598.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c211.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28227 30030 1764 31285 3169 5332 17945 18688,nsessions=8,nusers=1,idletime=2793161,totmem=8238096kb,availmem=7533196kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=3607774555,state=free,jobs=8175598.uct2-grid6.uchicago.edu 8171197.uct2-grid6.uchicago.edu 8172911.uct2-grid6.uchicago.edu 8172986.uct2-grid6.uchicago.edu 8175579.uct2-grid6.uchicago.edu 8178603.uct2-grid6.uchicago.edu 8180998.uct2-grid6.uchicago.edu 8174185.uct2-grid6.uchicago.edu,rectime=1260313281
+
+uct2-c212.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172861.uct2-grid6.uchicago.edu, 1/8172896.uct2-grid6.uchicago.edu, 2/8172858.uct2-grid6.uchicago.edu, 3/8175415.uct2-grid6.uchicago.edu, 4/8170637.uct2-grid6.uchicago.edu, 5/8172936.uct2-grid6.uchicago.edu, 6/8174720.uct2-grid6.uchicago.edu, 7/8174766.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c212.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29220 2783 32457 8944 9232 19659 23211 25410,nsessions=8,nusers=1,idletime=1612699,totmem=8238096kb,availmem=7491052kb,physmem=16626792kb,ncpus=8,loadave=7.99,gres=analy_slots:2,netload=652190044,state=free,jobs=8170637.uct2-grid6.uchicago.edu 8175415.uct2-grid6.uchicago.edu 8174720.uct2-grid6.uchicago.edu 8172858.uct2-grid6.uchicago.edu 8172861.uct2-grid6.uchicago.edu 8172896.uct2-grid6.uchicago.edu 8172936.uct2-grid6.uchicago.edu 8174766.uct2-grid6.uchicago.edu,rectime=1260313277
+
+uct2-c213.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172867.uct2-grid6.uchicago.edu, 1/8172004.uct2-grid6.uchicago.edu, 2/8173703.uct2-grid6.uchicago.edu, 3/8171801.uct2-grid6.uchicago.edu, 4/8174718.uct2-grid6.uchicago.edu, 5/8170630.uct2-grid6.uchicago.edu, 6/8171845.uct2-grid6.uchicago.edu, 7/8172851.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c213.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28372 1736 7429 13049 16101 19810 22567 25605,nsessions=8,nusers=1,idletime=2793161,totmem=8238096kb,availmem=7536604kb,physmem=16626792kb,ncpus=8,loadave=7.99,gres=analy_slots:2,netload=1376975567,state=free,jobs=8170630.uct2-grid6.uchicago.edu 8171801.uct2-grid6.uchicago.edu 8171845.uct2-grid6.uchicago.edu 8172004.uct2-grid6.uchicago.edu 8172851.uct2-grid6.uchicago.edu 8172867.uct2-grid6.uchicago.edu 8173703.uct2-grid6.uchicago.edu 8174718.uct2-grid6.uchicago.edu,rectime=1260313282
+
+uct2-c214.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172843.uct2-grid6.uchicago.edu, 1/8174903.uct2-grid6.uchicago.edu, 2/8174682.uct2-grid6.uchicago.edu, 3/8171851.uct2-grid6.uchicago.edu, 4/8177978.uct2-grid6.uchicago.edu, 5/8168766.uct2-grid6.uchicago.edu, 6/8178713.uct2-grid6.uchicago.edu, 7/8171865.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c214.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=801 30398 30770 5366 5643 19483 24465 25086,nsessions=8,nusers=1,idletime=2793163,totmem=8238096kb,availmem=4407740kb,physmem=16626792kb,ncpus=8,loadave=6.73,gres=analy_slots:2,netload=2508383247,state=free,jobs=8168766.uct2-grid6.uchicago.edu 8171851.uct2-grid6.uchicago.edu 8171865.uct2-grid6.uchicago.edu 8172843.uct2-grid6.uchicago.edu 8177978.uct2-grid6.uchicago.edu 8174682.uct2-grid6.uchicago.edu 8178713.uct2-grid6.uchicago.edu 8174903.uct2-grid6.uchicago.edu,rectime=1260313283
+
+uct2-c215.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172998.uct2-grid6.uchicago.edu, 1/8175458.uct2-grid6.uchicago.edu, 2/8173689.uct2-grid6.uchicago.edu, 3/8170645.uct2-grid6.uchicago.edu, 4/8177197.uct2-grid6.uchicago.edu, 5/8175103.uct2-grid6.uchicago.edu, 6/8170761.uct2-grid6.uchicago.edu, 7/8171759.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c215.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29320 9977 11469 16079 17824 21757 23569 27577,nsessions=8,nusers=1,idletime=1612703,totmem=8238096kb,availmem=7604608kb,physmem=16626792kb,ncpus=8,loadave=8.07,gres=analy_slots:2,netload=1628648065,state=free,jobs=8177197.uct2-grid6.uchicago.edu 8170645.uct2-grid6.uchicago.edu 8170761.uct2-grid6.uchicago.edu 8171759.uct2-grid6.uchicago.edu 8175458.uct2-grid6.uchicago.edu 8172998.uct2-grid6.uchicago.edu 8173689.uct2-grid6.uchicago.edu 8175103.uct2-grid6.uchicago.edu,rectime=1260313281
+
+uct2-c216.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170882.uct2-grid6.uchicago.edu, 1/8172956.uct2-grid6.uchicago.edu, 2/8174725.uct2-grid6.uchicago.edu, 3/8173087.uct2-grid6.uchicago.edu, 4/8180948.uct2-grid6.uchicago.edu, 5/8170622.uct2-grid6.uchicago.edu, 6/8177944.uct2-grid6.uchicago.edu, 7/8170717.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c216.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29594 3130 12235 14430 17855 20129 24012 25898,nsessions=8,nusers=1,idletime=2793165,totmem=8238096kb,availmem=7617172kb,physmem=16626792kb,ncpus=8,loadave=7.99,gres=analy_slots:2,netload=1929811487,state=free,jobs=8170622.uct2-grid6.uchicago.edu 8170717.uct2-grid6.uchicago.edu 8170882.uct2-grid6.uchicago.edu 8172956.uct2-grid6.uchicago.edu 8177944.uct2-grid6.uchicago.edu 8180948.uct2-grid6.uchicago.edu 8173087.uct2-grid6.uchicago.edu 8174725.uct2-grid6.uchicago.edu,rectime=1260313288
+
+uct2-c217.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172955.uct2-grid6.uchicago.edu, 1/8172958.uct2-grid6.uchicago.edu, 2/8174677.uct2-grid6.uchicago.edu, 3/8176352.uct2-grid6.uchicago.edu, 4/8175794.uct2-grid6.uchicago.edu, 5/8174791.uct2-grid6.uchicago.edu, 6/8171859.uct2-grid6.uchicago.edu, 7/8173699.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c217.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=1294 3569 6970 9312 12976 15217 21514 26385,nsessions=8,nusers=1,idletime=2793160,totmem=8238096kb,availmem=7853700kb,physmem=16626792kb,ncpus=8,loadave=7.99,gres=analy_slots:2,netload=1539084625,state=free,jobs=8173699.uct2-grid6.uchicago.edu 8171859.uct2-grid6.uchicago.edu 8175794.uct2-grid6.uchicago.edu 8172955.uct2-grid6.uchicago.edu 8172958.uct2-grid6.uchicago.edu 8176352.uct2-grid6.uchicago.edu 8174677.uct2-grid6.uchicago.edu 8174791.uct2-grid6.uchicago.edu,rectime=1260313284
+
+uct2-c218.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174711.uct2-grid6.uchicago.edu, 1/8169596.uct2-grid6.uchicago.edu, 2/8170593.uct2-grid6.uchicago.edu, 3/8173128.uct2-grid6.uchicago.edu, 4/8174714.uct2-grid6.uchicago.edu, 5/8174969.uct2-grid6.uchicago.edu, 6/8172941.uct2-grid6.uchicago.edu, 7/8170742.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c218.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32719 29751 1861 3511 9618 16342 19161 26242,nsessions=8,nusers=1,idletime=1612701,totmem=8238096kb,availmem=7537680kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=273124480,state=free,jobs=8169596.uct2-grid6.uchicago.edu 8170593.uct2-grid6.uchicago.edu 8170742.uct2-grid6.uchicago.edu 8172941.uct2-grid6.uchicago.edu 8174969.uct2-grid6.uchicago.edu 8173128.uct2-grid6.uchicago.edu 8174711.uct2-grid6.uchicago.edu 8174714.uct2-grid6.uchicago.edu,rectime=1260313278
+
+uct2-c219.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170790.uct2-grid6.uchicago.edu, 1/8173648.uct2-grid6.uchicago.edu, 2/8172933.uct2-grid6.uchicago.edu, 3/8170658.uct2-grid6.uchicago.edu, 4/8174753.uct2-grid6.uchicago.edu, 5/8171768.uct2-grid6.uchicago.edu, 6/8172846.uct2-grid6.uchicago.edu, 7/8158791.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c219.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=32503 6395 12063 12290 19821 20982 25703 26779,nsessions=8,nusers=1,idletime=2793157,totmem=8238096kb,availmem=7569616kb,physmem=16626792kb,ncpus=8,loadave=7.99,gres=analy_slots:2,netload=3621690016,state=free,jobs=8158791.uct2-grid6.uchicago.edu 8170658.uct2-grid6.uchicago.edu 8170790.uct2-grid6.uchicago.edu 8171768.uct2-grid6.uchicago.edu 8172846.uct2-grid6.uchicago.edu 8172933.uct2-grid6.uchicago.edu 8173648.uct2-grid6.uchicago.edu 8174753.uct2-grid6.uchicago.edu,rectime=1260313280
+
+uct2-c220.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170718.uct2-grid6.uchicago.edu, 1/8175127.uct2-grid6.uchicago.edu, 2/8169648.uct2-grid6.uchicago.edu, 3/8174687.uct2-grid6.uchicago.edu, 4/8170763.uct2-grid6.uchicago.edu, 5/8172992.uct2-grid6.uchicago.edu, 6/8170550.uct2-grid6.uchicago.edu, 7/8173669.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c220.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29606 28702 2469 3316 12039 18037 22866 23907,nsessions=8,nusers=1,idletime=2793152,totmem=8238096kb,availmem=7477908kb,physmem=16626792kb,ncpus=8,loadave=7.96,gres=analy_slots:2,netload=2694444937,state=free,jobs=8169648.uct2-grid6.uchicago.edu 8170550.uct2-grid6.uchicago.edu 8170718.uct2-grid6.uchicago.edu 8170763.uct2-grid6.uchicago.edu 8175127.uct2-grid6.uchicago.edu 8172992.uct2-grid6.uchicago.edu 8173669.uct2-grid6.uchicago.edu 8174687.uct2-grid6.uchicago.edu,rectime=1260313273
+
+uct2-c221.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174901.uct2-grid6.uchicago.edu, 1/8171771.uct2-grid6.uchicago.edu, 2/8172897.uct2-grid6.uchicago.edu, 3/8173695.uct2-grid6.uchicago.edu, 4/8172965.uct2-grid6.uchicago.edu, 5/8169586.uct2-grid6.uchicago.edu, 6/8174752.uct2-grid6.uchicago.edu, 7/8172961.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c221.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=28462 4686 8422 11245 16709 18024 22645 24259,nsessions=8,nusers=1,idletime=1389265,totmem=8238096kb,availmem=8027492kb,physmem=16626792kb,ncpus=8,loadave=7.61,gres=analy_slots:2,netload=2163375836,state=free,jobs=8169586.uct2-grid6.uchicago.edu 8171771.uct2-grid6.uchicago.edu 8172897.uct2-grid6.uchicago.edu 8172961.uct2-grid6.uchicago.edu 8172965.uct2-grid6.uchicago.edu 8173695.uct2-grid6.uchicago.edu 8174752.uct2-grid6.uchicago.edu 8174901.uct2-grid6.uchicago.edu,rectime=1260313293
+
+uct2-c222.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8171858.uct2-grid6.uchicago.edu, 1/8172856.uct2-grid6.uchicago.edu, 2/8172929.uct2-grid6.uchicago.edu, 3/8171749.uct2-grid6.uchicago.edu, 4/8169686.uct2-grid6.uchicago.edu, 5/8172443.uct2-grid6.uchicago.edu, 6/8175557.uct2-grid6.uchicago.edu, 7/8175856.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c222.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30961 4163 7110 9812 12877 15666 19455 25341,nsessions=8,nusers=1,idletime=1612727,totmem=8238096kb,availmem=7483100kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=4162533699,state=free,jobs=8175856.uct2-grid6.uchicago.edu 8169686.uct2-grid6.uchicago.edu 8171749.uct2-grid6.uchicago.edu 8171858.uct2-grid6.uchicago.edu 8175557.uct2-grid6.uchicago.edu 8172443.uct2-grid6.uchicago.edu 8172856.uct2-grid6.uchicago.edu 8172929.uct2-grid6.uchicago.edu,rectime=1260313274
+
+uct2-c223.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8172917.uct2-grid6.uchicago.edu, 1/8173660.uct2-grid6.uchicago.edu, 2/8172919.uct2-grid6.uchicago.edu, 3/8170751.uct2-grid6.uchicago.edu, 4/8170711.uct2-grid6.uchicago.edu, 5/8171853.uct2-grid6.uchicago.edu, 6/8173756.uct2-grid6.uchicago.edu, 7/8173023.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c223.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30369 4316 9196 15677 18626 21704 24248 27354,nsessions=8,nusers=1,idletime=2793159,totmem=8238096kb,availmem=7507324kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=155148493,state=free,jobs=8170711.uct2-grid6.uchicago.edu 8170751.uct2-grid6.uchicago.edu 8171853.uct2-grid6.uchicago.edu 8172917.uct2-grid6.uchicago.edu 8172919.uct2-grid6.uchicago.edu 8173023.uct2-grid6.uchicago.edu 8173660.uct2-grid6.uchicago.edu 8173756.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c224.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8174728.uct2-grid6.uchicago.edu, 1/8171538.uct2-grid6.uchicago.edu, 2/8176623.uct2-grid6.uchicago.edu, 3/8173621.uct2-grid6.uchicago.edu, 4/8172922.uct2-grid6.uchicago.edu, 5/8173674.uct2-grid6.uchicago.edu, 6/8170674.uct2-grid6.uchicago.edu, 7/8172952.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c224.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=29393 2507 31448 4965 8389 11089 16981 22696,nsessions=8,nusers=1,idletime=1284485,totmem=8238096kb,availmem=7524752kb,physmem=16626792kb,ncpus=8,loadave=8.00,gres=analy_slots:2,netload=427574506,state=free,jobs=8170674.uct2-grid6.uchicago.edu 8171538.uct2-grid6.uchicago.edu 8176623.uct2-grid6.uchicago.edu 8172922.uct2-grid6.uchicago.edu 8172952.uct2-grid6.uchicago.edu 8173621.uct2-grid6.uchicago.edu 8173674.uct2-grid6.uchicago.edu 8174728.uct2-grid6.uchicago.edu,rectime=1260313279
+
+uct2-c225.mwt2.org
+     state = job-exclusive
+     np = 8
+     properties = uct2
+     ntype = cluster
+     jobs = 0/8170564.uct2-grid6.uchicago.edu, 1/8170655.uct2-grid6.uchicago.edu, 2/8173009.uct2-grid6.uchicago.edu, 3/8174773.uct2-grid6.uchicago.edu, 4/8176099.uct2-grid6.uchicago.edu, 5/8172418.uct2-grid6.uchicago.edu, 6/8169709.uct2-grid6.uchicago.edu, 7/8170495.uct2-grid6.uchicago.edu
+     status = opsys=linux,uname=Linux uct2-c225.mwt2.org 2.6.9-89.0.16.ELsmp #1 SMP Tue Nov 3 23:35:16 CST 2009 i686,sessions=30495 2483 8315 9322 14811 14837 20731 24480,nsessions=8,nusers=1,idletime=1612692,totmem=8238096kb,availmem=7491772kb,physmem=16626792kb,ncpus=8,loadave=8.03,gres=analy_slots:2,netload=994183369,state=free,jobs=8169709.uct2-grid6.uchicago.edu 8170495.uct2-grid6.uchicago.edu 8170564.uct2-grid6.uchicago.edu 8170655.uct2-grid6.uchicago.edu 8173009.uct2-grid6.uchicago.edu 8172418.uct2-grid6.uchicago.edu 8174773.uct2-grid6.uchicago.edu 8176099.uct2-grid6.uchicago.edu,rectime=1260313270
+

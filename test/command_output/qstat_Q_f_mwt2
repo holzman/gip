@@ -1,0 +1,65 @@
+Queue: analy_short
+    queue_type = Execution
+    Priority = 5
+    total_jobs = 0
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0
+    max_running = 1
+    resources_max.walltime = 120:00:00
+    resources_default.nodes = 1
+    resources_default.walltime = 10:00:00
+    mtime = 1256134492
+    enabled = False
+    started = False
+
+Queue: analy_x
+    queue_type = Execution
+    Priority = 5
+    total_jobs = 0
+    state_count = Transit:0 Queued:0 Held:0 Waiting:0 Running:0 Exiting:0
+    max_running = 10
+    resources_max.walltime = 120:00:00
+    resources_default.nodes = 1
+    resources_default.walltime = 10:00:00
+    mtime = 1259787569
+
+Queue: analy
+    queue_type = Execution
+    Priority = 5
+    total_jobs = 12
+    state_count = Transit:0 Queued:10 Held:0 Waiting:0 Running:2 Exiting:0
+    max_running = 1100
+    resources_max.walltime = 120:00:00
+    resources_default.nodes = 1
+    resources_default.walltime = 10:00:00
+    mtime = 1256694562
+    resources_assigned.nodect = 2
+    enabled = True
+    started = True
+
+Queue: uct2
+    queue_type = Execution
+    Priority = 10
+    total_jobs = 2
+    state_count = Transit:0 Queued:2 Held:0 Waiting:0 Running:0 Exiting:0
+    resources_max.walltime = 120:00:00
+    resources_default.nodes = 1
+    resources_default.walltime = 75:00:00
+    mtime = 1256173203
+    resources_assigned.nodect = 0
+    enabled = True
+    started = True
+
+Queue: prod
+    queue_type = Execution
+    Priority = 1
+    total_jobs = 8963
+    state_count = Transit:0 Queued:7699 Held:0 Waiting:0 Running:1264 Exiting:
+	0
+    resources_max.walltime = 120:00:00
+    resources_default.nodes = 1
+    resources_default.walltime = 75:00:00
+    mtime = 1248312266
+    resources_assigned.nodect = 1264
+    enabled = True
+    started = True
+

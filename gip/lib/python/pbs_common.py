@@ -195,16 +195,23 @@ def getQueueInfo(cp):
         line = orig_line.strip()
         if line.startswith("Queue: "):
             if queue_data != None:
-                if queue_data["started"] and queue_data["enabled"]:
-                    queue_data["status"] = "Production"
-                elif queue_data["enabled"]:
-                    queue_data["status"] = "Queueing"
-                elif queue_data["started"]:
-                    queue_data["status"] = "Draining"
-                else:
+                try:
+                    if queue_data["started"] and queue_data["enabled"]:
+                        queue_data["status"] = "Production"
+                    elif queue_data["enabled"]:
+                        queue_data["status"] = "Queueing"
+                    elif queue_data["started"]:
+                        queue_data["status"] = "Draining"
+                    else:
+                        queue_data["status"] = "Closed"
+                except:
                     queue_data["status"] = "Closed"
-                del queue_data["started"]
-                del queue_data['enabled']
+                    msg = "The 'Started' and/or 'enabled' attributes do not " \
+                          "exist for the %s queue." % queue_name 
+                    log.warning(msg)
+                    
+                if "started" in queue_data.keys(): del queue_data["started"]
+                if "enabled" in queue_data.keys(): del queue_data['enabled']
             queue_data = {}
             queue_name = line[7:]
             queueInfo[queue_name] = queue_data

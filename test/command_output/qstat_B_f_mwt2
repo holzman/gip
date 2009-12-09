@@ -1,0 +1,23 @@
+Server: uct2-grid6.uchicago.edu
+    server_state = Active
+    scheduling = True
+    total_jobs = 6791
+    state_count = Transit:0 Queued:5525 Held:0 Waiting:0 Running:1266 Exiting:
+    0 
+    acl_hosts = uct2-grid6.uchicago.edu
+    managers = root@uct2-grid6.uchicago.edu,root@uct2-grid2.uchicago.edu,
+    root@uct2-grid2.mwt2.org
+    operators = root@uct2-grid6.uchicago.edu
+    default_queue = uct2
+    log_events = 127
+    mail_from = adm
+    query_other_jobs = True
+    resources_assigned.nodect = 1266
+    scheduler_iteration = 600
+    node_check_rate = 600
+    tcp_timeout = 300
+    job_stat_rate = 300
+    poll_jobs = True
+    log_level = 1
+    down_on_error = True
+    pbs_version = 2.1.2

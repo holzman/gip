@@ -75,6 +75,21 @@ class TestPbsDynamic(unittest.TestCase):
                 self.assertEquals(entry.glue['CEUniqueID'], \
                     'red.unl.edu:2119/jobmanager-pbs-batch')
 
+    def test_mwt2_uc__entries(self):
+        """
+        Checks the LBL information, as they don't have PBSPro
+        """
+        # Switch commands over to the LBL ones:
+        old_commands = dict(gip_testing.commands)
+        try:
+            os.environ['GIP_TESTING'] = 'suffix=mwt2'
+            path = os.path.expandvars("$GIP_LOCATION/libexec/" \
+                "osg-info-provider-pbs.py --config=test_configs/red.conf")
+            fd = os.popen(path)
+            entries = read_ldap(fd)
+            self.assertEquals(fd.close(), None)
+        finally:
+            gip_testing.commands = old_commands
 
     def test_red_entries(self):
         """

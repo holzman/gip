@@ -163,10 +163,10 @@ class TestSEConfigs(unittest.TestCase):
                     'dcache07.unl.edu'):
                 continue
             found_se = True
-            self.failUnless(entry.glue['SEName'][0] == 'T2_Nebraska_Storage')
-            self.failUnless(entry.glue['SEImplementationName'][0] == 'dcache')
+            self.failUnless(entry.glue['SEName'][0] == 'T2_Nebraska_Hadoop')
+            self.failUnless(entry.glue['SEImplementationName'][0] == 'bestman')
             self.failUnless(entry.glue['SEImplementationVersion'][0] == \
-                '1.8.0-15p6')
+                '2.2.1.2.e1')
             self.failUnless(entry.glue['SEPort'][0] == '8443')
         self.failUnless(found_se, msg="GlueSE entry for dcache07.unl.edu " \
             "missing.")
@@ -181,7 +181,7 @@ class TestSEConfigs(unittest.TestCase):
                 continue
             found_se = True
             self.failUnless(entry.glue['SARoot'][0] == '/')
-            self.failUnless(entry.glue['SAPath'][0] == '/pnfs/unl.edu/data4/')
+            self.failUnless(entry.glue['SAPath'][0] == '/user/')
             self.failUnless(entry.glue['SAType'][0] == 'permanent')
             self.failUnless(entry.glue['SARetentionPolicy'][0] == 'replica')
             self.failUnless(entry.glue['SAAccessLatency'][0] == 'online')
@@ -259,11 +259,10 @@ class TestSEConfigs(unittest.TestCase):
         self.check_srmcp_1_ldif(entries)
 
     def check_se_2(self, entries, cp):
-        pass
         self.check_se_2_ldif(entries)
         self.check_sa_2_ldif(entries, cp)
         #self.check_aps_2_ldif(entries)
-        self.check_srm_2_ldif(entries)
+        self.check_srm_2_ldif(entries, cp)
         self.check_srmcp_2_ldif(entries)
 
     def test_old_se_config(self):
@@ -274,7 +273,7 @@ class TestSEConfigs(unittest.TestCase):
     def test_new_se_config(self):
         entries, cp = self.run_test_config("red-se-test2.conf")
         self.check_se_1(entries, cp)
-        #self.check_se_2(entries, cp)
+        self.check_se_2(entries, cp)
 
     def test_bestman_space(self):
         """
@@ -441,6 +440,65 @@ class TestSEConfigs(unittest.TestCase):
         self.verify_bestman_output(info)
         srm_ping.bestman_srm_ping(cp, "2")
         self.verify_bestman_output(info)
+
+    def check_srm_3_ldif(self, entries, cp):
+        vos = voList(cp)
+        found_srm = False
+        for entry in entries:
+            if 'GlueService' not in entry.objectClass:
+                continue
+            if 'httpg://srm.unl.edu:8443/srm/v2/server' not in \
+                    entry.glue['ServiceName']:
+                continue
+            found_srm = True
+            for vo in vos:
+                self.failIf(vo not in entry.glue['ServiceAccessControlRule'])
+                self.failIf("VO:%s" % vo not in \
+                    entry.glue['ServiceAccessControlRule'], msg="String `" \
+                    "VO:%s` not in ACBR" % vo)
+                self.failUnless("OK" in entry.glue["ServiceStatus"])
+            self.failUnless(entry.glue['ServiceEndpoint'] == \
+                entry.glue['ServiceName'])
+            self.failUnless(entry.glue['ServiceAccessPointURL'] == \
+                entry.glue['ServiceName'])
+            self.failUnless(entry.glue['ServiceURI'] == \
+                entry.glue['ServiceName'])
+            self.failUnless("GlueSiteUniqueID=Nebraska" in \
+                entry.glue['ForeignKey'])
+            self.failUnless(entry.glue["ServiceType"][0] == 'SRM')
+            self.failUnless(entry.glue["ServiceVersion"][0] == '2.2.0')
+        self.failUnless(found_srm, msg="Could not find the SRM entity.")
+
+    def check_srmcp_3_ldif(self, entries):
+        found_cp = False
+        for entry in entries:
+            if 'GlueSEControlProtocol' not in entry.objectClass:
+                continue
+            if entry.glue['SEControlProtocolLocalID'][0] != 'srm.unl.edu_srmv2':
+                continue
+            found_cp = True
+            self.failUnless('httpg://srm.unl.edu:8443/srm/v2/server' in \
+                entry.glue['SEControlProtocolEndpoint'])
+            self.failUnless('2.2.0' in entry.glue['SEControlProtocolVersion'])
+            self.failUnless('SRM' in entry.glue['SEControlProtocolType'])
+            self.failUnless('GlueSEUniqueID=dcache07.unl.edu' in \
+                entry.glue['ChunkKey'])
+        self.failUnless(found_cp, msg="Could not find the SRM Control Prot.")
+
+    def test_multisrm_output(self):
+        """
+        Verify that the SRM section in the config.ini can accept a comma-sep
+        list of SRM endpoints.
+        """
+        entries, cp = self.run_test_config("red-se-test-multisrm.conf")
+        self.check_srm_3_ldif(entries, cp)
+        self.check_srm_2_ldif(entries, cp)
+        self.check_srmcp_3_ldif(entries)
+        self.check_srmcp_2_ldif(entries)
+        self.check_se_2_ldif(entries)
+        self.check_sa_2_ldif(entries, cp)
+        self.check_voview_2_ldif(entries, cp)
+        
 
 def main():
     os.environ['GIP_TESTING'] = '1'

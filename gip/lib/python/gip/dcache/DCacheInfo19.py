@@ -2,6 +2,7 @@
 import gip_sets as sets
 import urllib2
 
+import gip.gratia
 from gip_common import cp_get, normalizeFQAN
 from gip_storage import StorageElement, voListStorage
 from DCacheInfoProviderParser import parse_fp
@@ -154,6 +155,13 @@ class DCacheInfo19(StorageElement):
             "accessLatency": "online",
             "retention": "replica",
         }
+        def itemgetter(x, y):
+            return cmp(x.get('total', 0), y.get('total', ))
+        log.info(self.handler.links)
+        sorted_poolgroups = self.handler.poolgroups.values()
+        sorted_poolgroups.sort(itemgetter)
+        has_seen_matching_poolgroup = False
+
         has_links = False
         for linkgroup in self.handler.linkgroups.values():
             has_links = True
@@ -182,8 +190,24 @@ class DCacheInfo19(StorageElement):
             info['acbr'] = acbr
             if len(acbr) == 0:
                 continue
+
+            # Look at all the pool groups and see if the size of any one of them
+            # is approximately the size of our link group.  If so, assume we've
+            # seen the pools in the pool group.
+            # Do not do this if the total size is zero.
+            if not info['totalOnline']:
+                continue
+            for pool_group in sorted_poolgroups:
+                if abs(pool_group.get('total', 0) - linkgroup['total']) / \
+                        float(linkgroup['total']) <= 0.01:
+                    self.seen_pools.update(pool_group.get('pools', sets.Set()))
+                    has_seen_matching_poolgroup = True
+                    break
             self.sas.append(info)
-        if has_links:
+        # Unfortunately, the info provider has no mechanism for matching link
+        # groups to pool groups.  Hence, if we haven't matched the link group
+        # then we assume that we've seen the whole SE.
+        if has_links and not has_seen_matching_poolgroup:
             self.seen_pools.update(self.handler.pools.keys())
 
     def parseSAs_fromPG(self):
@@ -220,7 +244,8 @@ class DCacheInfo19(StorageElement):
             if total <= 0:
                 continue
             or_func = lambda x, y: x or y
-            log.info(poolgroup['links'])
+            log.debug("Links for poolgroup %s: %s" % (info['name'],
+                ', '.join(poolgroup['links'])))
             can_write = reduce(or_func, [self.handler.links.get(i, {}).get('write', 0) \
                 > 0 for i in poolgroup['links']], False)
             can_read = reduce(or_func, [self.handler.links.get(i, {}).get('read', 0) \

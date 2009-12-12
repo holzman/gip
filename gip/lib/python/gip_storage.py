@@ -495,7 +495,7 @@ class StorageElement(object):
         versions = self.split_re.split(version_str)
         while len(versions) <= len(srmhosts):
             versions.append(versions[-1])
-        port_str = cp_get(self._cp, self._section, "srm_port", 8443)
+        port_str = cp_get(self._cp, self._section, "srm_port", "8443")
         ports = self.split_re.split(port_str)
         while len(ports) <= len(srmhosts):
             ports.append(ports[-1])
@@ -516,6 +516,7 @@ class StorageElement(object):
 
         srms = []
         idx = 0
+        srmname_re = re.compile("://(.*?):")
         for endpoint in endpoints:
             acbr_tmpl = '\nGlueServiceAccessControlRule: %s\n' \
                 'GlueServiceAccessControlRule: VO:%s'
@@ -524,11 +525,16 @@ class StorageElement(object):
             for vo in vos:
                 acbr += acbr_tmpl % (vo, vo)
        
+            name = endpoint
+            m = srmname_re.search(endpoint)
+            if m:
+                name = m.groups()[0]
+
             info = {'acbr': acbr[1:],
                     'status': 'OK',
                     'version': versions[idx],
                     'endpoint': endpoint,
-                    'name': endpoint,
+                    'name': name,
                    }
             idx += 1
             srms.append(info)

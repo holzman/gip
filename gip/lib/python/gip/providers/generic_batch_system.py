@@ -5,6 +5,7 @@ import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
+import gip.gratia
 from gip_common import config, getTemplate, printTemplate, cp_get, responseTimes
 from gip_logging import getLogger
 from gip_cluster import getClusterID, getClusterName
@@ -131,7 +132,9 @@ def print_CE(batch):
         info['waiting'] = info['wait']
         info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)
         info['clusterUniqueID'] = getClusterID(cp)
-        print CE % info
+        gip.gratia.ce_record(cp, info)
+
+        printTemplate(CE, info)
     return queueInfo, totalCpu, freeCpu, queueCpus
 
 def print_VOViewLocal(queue_info, batch):
@@ -181,11 +184,14 @@ def print_VOViewLocal(queue_info, batch):
             'acbr'        : 'VO:%s' % vo
         }
         info['total'] = info['waiting'] + info['running']
+        gip.gratia.vo_record(cp, info)
+
         printTemplate(VOView, info)
 
 def main():
     try:
         cp = config()
+        gip.gratia.initialize(cp)
         impl = cp_get(cp, ce, "job_manager", None)
         if impl == 'forwarding':
             batch = Forwarding(cp)

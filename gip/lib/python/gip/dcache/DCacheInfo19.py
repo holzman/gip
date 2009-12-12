@@ -143,7 +143,7 @@ class DCacheInfo19(StorageElement):
                         'seUniqueID': seUniqueID,
                         'name': id,
                         'path': path,
-                        'tag': '%s with no reserved space' % vo,
+                        'tag': '__GIP_DELETEME',
                         'acbr': 'GlueSAAccessControlBaseRule: VO:%s' % vo,
                         'saLocalID': sa['saLocalID'],
                        }
@@ -297,8 +297,7 @@ class DCacheInfo19(StorageElement):
                     'seUniqueID': seUniqueID,
                     'name': id,
                     'path': path,
-                    'tag': 'VOInfo associated with poolgroup %s; no space' \
-                        ' reservation' % poolgroup['name'],
+                    'tag': '__GIP_DELETEME',
                     'acbr': acbr,
                     'saLocalID': info['saName']
                 }

@@ -466,6 +466,7 @@ class StorageElement(object):
         """
         return cp_getBoolean(self._cp, self._section, "srm_present", True)
 
+    split_re = re.compile("\s*,?\s*")
     def getSRMs(self):
         """
         Return a list of dictionaries containing information about the SRM
@@ -485,35 +486,52 @@ class StorageElement(object):
            - se.srm_port (8443)
            - se.srm_endpoint 
              (httpg://(se.srm_host):(se.srm_port)/srm/managerv2)
+        Any of the above may be a comma- or space-separated list.
         """
-        srmname = cp_get(self._cp, self._section, "srm_host",
+        srmhost_str = cp_get(self._cp, self._section, "srm_host",
             "UNKNOWN.example.com")
-        version = cp_get(self._cp, self._section, "srm_version", "2")
-        port = cp_getInt(self._cp, self._section, "srm_port", 8443)
-        if version.find('2') >= 0:
-            default_endpoint = 'httpg://%s:%i/srm/managerv2' % \
-                (srmname, int(port))
+        srmhosts = self.split_re.split(srmhost_str)
+        version_str = cp_get(self._cp, self._section, "srm_version", "2")
+        versions = self.split_re.split(version_str)
+        while len(versions) < len(srmhosts):
+            versions.append(versions[-1])
+        port_str = cp_get(self._cp, self._section, "srm_port", 8443)
+        ports = self.split_re.split(port_str)
+        while len(ports) < len(srmhosts):
+            ports.append(ports[-1])
+        default_endpoints = []
+        for idx in range(len(srmhosts)):
+            if versions[idx].find('2') >= 0:
+                default_endpoint = 'httpg://%s:%i/srm/managerv2' % \
+                    (srmhosts[idx], int(ports[idx]))
+            else:
+                default_endpoint = 'httpg://%s:%i/srm/managerv1' % \
+                    (srmhosts[idx], int(ports[idx]))
+            default_endpoints.append(default_endpoint)
+        endpoint_str = cp_get(self._cp, self._section, "srm_endpoint", None)
+        if endpoints:
+            endpoints = self.split_re.split(endpoint_str)
         else:
-            default_endpoint = 'httpg://%s:%i/srm/managerv1' % \
-                (srmname, int(port))
-        endpoint = cp_get(self._cp, self._section, "srm_endpoint",
-            default_endpoint)
+            endpoints = default_endpoints
 
-        acbr_tmpl = '\nGlueServiceAccessControlRule: %s\n' \
-            'GlueServiceAccessControlRule: VO:%s'
-        acbr = ''
-        vos = voListStorage(self._cp, self._section)
-        for vo in vos:
-            acbr += acbr_tmpl % (vo, vo)
+        srms = []
+        for endpoint in endpoints:
+            acbr_tmpl = '\nGlueServiceAccessControlRule: %s\n' \
+                'GlueServiceAccessControlRule: VO:%s'
+            acbr = ''
+            vos = voListStorage(self._cp, self._section)
+            for vo in vos:
+                acbr += acbr_tmpl % (vo, vo)
        
-        info = {'acbr': acbr[1:],
-                'status': 'OK',
-                'version': version,
-                'endpoint': endpoint,
-                'name': srmname,
-               }
+            info = {'acbr': acbr[1:],
+                    'status': 'OK',
+                    'version': version,
+                    'endpoint': endpoint,
+                    'name': srmname,
+                   }
+            srms.append(info)
 
-        return [info]
+        return srms
  
     def getName(self):
         """
@@ -692,7 +710,7 @@ class StorageElement(object):
                 info = {'voInfoID': myid,
                         'name': myid,
                         'path': path,
-                        'tag': 'Not A Space Reservation',
+                        'tag': '__GIP_DELETEME',
                         'acbr': acbr,
                         'saLocalID': sa_info.get('saLocalID', 'UNKNOWN'),
                        }

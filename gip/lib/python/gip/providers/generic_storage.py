@@ -9,6 +9,7 @@ import sys
 import time
 import socket
 
+import gip.gratia
 from gip_common import cp_get, config, getTemplate, printTemplate, \
     cp_getBoolean, cp_getInt, normalizeFQAN
 from gip_logging import getLogger
@@ -21,28 +22,11 @@ import gip_sets as sets
 
 log = getLogger("GIP.Storage.Generic")
 
-# Try to load up the Gratia StorageElement and StorageElementRecord modules.
-# If successful, the GIP has the capability to send information to Gratia.
-# The information we can send to Gratia is ultimately above and beyond the info
-# which we can fit in the BDII schema.
-has_gratia_capacity = True
-try:
-    # Try hard to bootstrap paths.
-    paths = ['/opt/vdt/gratia/probe/common', '$VDT_LOCATION/gratia/probe/'\
-        'common', '/opt/vdt/gratia/probe/service', '$VDT_LOCATION/gratia/probe'\
-        '/service']
-    for path in paths:
-        path = os.path.expandvars(path)
-        if os.path.exists(path) and path not in sys.path:
-            sys.path.append(path)
-
-    # Try to import the necessary Gratia modules.
-    import Gratia
-    import StorageElement
-    import StorageElementRecord
-except:
-    has_gratia_capacity = False
-    log.warning("Could not import the Gratia StorageElement modules.")
+has_gratia_capacity = gip.gratia.has_gratia_capacity
+if has_gratia_capacity:
+    Gratia = gip.gratia.Gratia
+    StorageElement = gip.gratia.StorageElement
+    StorageElementRecord = gip.gratia.StorageElementRecord
 
 def print_SA(se, cp, section="se"): #pylint: disable-msg=W0613
     """
@@ -166,7 +150,7 @@ def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
             desc.Implementation(se.getImplementation())
             desc.Version(se.getVersion())
             desc.Status(se.getStatus())
-            Gratia.Send(desc)
+            gip.gratia.send(desc)
 
             if int(info['totalNearline']) > 0:
                 state = StorageElementRecord.StorageElementRecord()
@@ -176,7 +160,7 @@ def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
                 state.TotalSpace(str(info['totalNearline']))
                 state.FreeSpace(str(info['freeNearline']))
                 state.UsedSpace(str(info['usedNearline']))
-                Gratia.Send(state)
+                gip.gratia.send(state)
             if int(info['totalOnline']) > 0:
                 state = StorageElementRecord.StorageElementRecord()
                 state.UniqueID(uniqueID)
@@ -185,7 +169,7 @@ def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
                 state.TotalSpace(str(info['totalOnline']))
                 state.FreeSpace(str(info['freeOnline']))
                 state.UsedSpace(str(info['usedOnline']))
-                Gratia.Send(state)
+                gip.gratia.send(state)
         except Exception, e:
             log.exception(e)
     printTemplate(saTemplate, info)
@@ -267,7 +251,7 @@ def print_single_VOInfo(voinfo, se, cp): #pylint: disable-msg=W0613
     voinfoTemplate = getTemplate('GlueSE', 'GlueVOInfoLocalID')
     voinfo.setdefault('acbr', 'GlueVOInfoAccessControlBaseRule: UNKNOWN')
     voinfo.setdefault('path', '/UNKNOWN')
-    voinfo.setdefault('tag', 'Not A Space Reservation')
+    voinfo.setdefault('tag', '__GIP_DELETEME')
     voinfo.setdefault('seUniqueID', se.getUniqueID())
     printTemplate(voinfoTemplate, voinfo)
 
@@ -428,7 +412,7 @@ def print_SE(se, cp):
             desc.Implementation(implementation)
             desc.Version(version)
             desc.Status(status)
-            Gratia.Send(desc)
+            gip.gratia.send(desc)
 
             if int(nt) > 0:
                 state = StorageElementRecord.StorageElementRecord()
@@ -664,6 +648,7 @@ def main():
     The primary wrapper function for emitting GLUE for storage elements.
     """
     cp = config()
+    gip.gratia.initialize(cp)
 
     # Handle full-fledged SEs
     found_se = False

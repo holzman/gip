@@ -97,14 +97,7 @@ def ce_record(cp, info):
             desc.MaxTotalJobs(info['max_total'])
             desc.AssignedJobSlots(info['assigned'])
             desc.Status(info['status'])
-            old_stdout = sys.stdout
-            sys.stdout = sys.stderr
-            result = None
-            try:
-                result = Gratia.Send(desc)
-            finally:
-                sys.stdout = old_stdout
-            result = Gratia.Send(desc)
+            result = send(desc)
             log.debug("CE description for Gratia: %s" % desc)
             log.debug("Gratia sending result: %s" % result)
         except Exception, e:
@@ -132,13 +125,7 @@ def vo_record(cp, info):
             cer.RunningJobs(info['running'])
             cer.TotalJobs(info['total'])
             cer.WaitingJobs(info['waiting'])
-            old_stdout = sys.stdout
-            sys.stdout = sys.stderr
-            result = None
-            try:
-                result = Gratia.Send(cer)
-            finally:
-                sys.stdout = old_stdout
+            result = send(cer)
             log.debug("Gratia description of VOView: %s" % str(cer))
             log.debug("Gratia sending result: %s" % result)
         except Exception, e:

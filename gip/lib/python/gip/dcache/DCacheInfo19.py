@@ -1,4 +1,5 @@
 
+import re
 import gip_sets as sets
 import urllib2
 
@@ -358,6 +359,16 @@ class DCacheInfo19(StorageElement):
         return aps
 
     def getSRMs(self):
+        prev_srm_host = None
+        try:
+            info = super(DCacheInfo19, self).getSRMs()
+            endpoint = info[0]['endpoint']
+            srmhost_re = re.compile("://(.*?):")
+            m = srmhost_re.search(endpoint)
+            if m:
+                prev_srm_host = m.groups()[0]
+        except:
+            raise
         try:
             # BUGFIX: Resolve the IP address of srm host that the admin
             # specifies.  If this IP address matches the IP address given by
@@ -372,6 +383,9 @@ class DCacheInfo19(StorageElement):
                 except:
                     pass
             #vos = [i.strip() for i in cp.get("vo", "vos").split(',')]
+
+            if prev_srm_host:
+                srm_host = prev_srm_host
 
             # Determine the VOs which are allowed to use this storage element
             acbr_tmpl = '\nGlueServiceAccessControlRule: VO:%s' \
@@ -402,6 +416,9 @@ class DCacheInfo19(StorageElement):
                 if hostname_ip != None and hostname_ip == srm_ip and \
                         srm_host != None:
                     hostname = srm_host
+
+                if prev_srm_host:
+                    hostname = prev_srm_host
         
                 # From the SRM info, build the information for the GLUE entity.
                 info = {

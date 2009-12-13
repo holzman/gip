@@ -605,7 +605,8 @@ class TestSEConfigs(unittest.TestCase):
             self.failUnless('multi-disk' in entry.glue['SEArchitecture'])
             self.failUnless('GlueSiteUniqueID=MIT_CMS' in entry.glue\
                 ['ForeignKey'])
-        self.failUnless(found_se, msg="GlueSE entry for srm.unl.edu missing.")
+        self.failUnless(found_se, msg="GlueSE entry for se01.cmsaf.mit.edu" \
+            " missing.")
 
     def test_mit_output(self):
         entries, cp = self.run_test_config("mit-se-test.conf")        
@@ -613,6 +614,30 @@ class TestSEConfigs(unittest.TestCase):
         self.check_pools_mit_ldif(entries)
         self.check_links_mit_ldif(entries, cp)
         self.check_se_mit_ldif(entries)
+
+    def check_se_purdue_ldif(self, entries):
+        found_se = False
+        for entry in entries:
+            if not ('GlueSE' in entry.objectClass and entry.glue.\
+                    get('SEUniqueID', [''])[0] == 'srm-dcache.rcac.purdue.edu'):
+                continue
+            found_se = True
+            self.failUnless(entry.glue['SEName'][0] == 'Purdue dCache')
+            self.failUnless(entry.glue['SEImplementationName'][0] == 'dcache')
+            self.failUnless(entry.glue['SEImplementationVersion'][0] == \
+                'cells')
+            self.failUnless(entry.glue['SEPort'][0] == '8443')
+            self.failUnless('564546' in entry.glue['SESizeTotal'])
+            self.failUnless('110214' in entry.glue['SESizeFree'])
+            self.failUnless('multi-disk' in entry.glue['SEArchitecture'])
+            self.failUnless('GlueSiteUniqueID=Purdue-RCAC' in entry.glue\
+                ['ForeignKey'])
+        self.failUnless(found_se, msg="GlueSE entry for srm-dcache.rcac." \
+            "purdue.edu missing.")
+
+    def test_purdue_output(self):
+        entries, cp = self.run_test_config("purdue-se-test.conf")
+        self.check_se_purdue_ldif(entries)
 
 def main():
     os.environ['GIP_TESTING'] = '1'

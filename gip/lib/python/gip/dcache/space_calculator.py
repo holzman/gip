@@ -420,7 +420,7 @@ def getLGAllowedVOs(cp, vos, name=None):
     mapper = VoMapper(cp)
     for vo_policy in vo_re.finditer(vos):
         vo_policy = vo_policy.groups()[0]
-        if vo_policy == '*:*':
+        if vo_policy == '*:*' or vo_policy == '/*:*':
             return ['VO:%s' % i for i in voListStorage(cp)]
         if vo_policy.startswith('/'):
             log.debug("VO Policy: %s" % vo_policy)

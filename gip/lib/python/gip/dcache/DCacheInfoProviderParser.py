@@ -19,6 +19,7 @@ IN_DOORS = 6
 IN_SUMMARY = 7
 IN_POOLMANAGER = 8
 IN_POOLMANAGER_VERSION = 9
+IN_SUMMARY_POOLS = 10
 
 class InfoProviderHandler(ContentHandler):
 
@@ -43,7 +44,7 @@ class InfoProviderHandler(ContentHandler):
         self.registerHandler(IN_DOORS, DoorsHandler(self.doors))
         self.registerHandler(IN_RESERVATIONS, ReservationsHandler( \
             self.reservations))
-        self.registerHandler(IN_SUMMARY, SummaryHandler(self.summary))
+        self.registerHandler(IN_SUMMARY_POOLS, SummaryHandler(self.summary))
         self.registerHandler(IN_LINKS, LinkHandler(self.links))
 
     def registerHandler(self, state, handler):
@@ -71,6 +72,8 @@ class InfoProviderHandler(ContentHandler):
             self.state = IN_DOORS
         elif name == 'summary' and self.state == IN_TOP:
             self.state = IN_SUMMARY
+        elif name == 'pools' and self.state == IN_SUMMARY:
+            self.state = IN_SUMMARY_POOLS
         elif self.state == IN_TOP and name == 'cell' and attrs.get('name', '') \
                 == 'PoolManager':
             self.state = IN_POOLMANAGER
@@ -93,6 +96,8 @@ class InfoProviderHandler(ContentHandler):
             self.state = IN_TOP
         elif name == 'doors' and self.state == IN_DOORS:
             self.state = IN_TOP
+        elif name == 'pools' and self.state == IN_SUMMARY_POOLS:
+            self.state = IN_SUMMARY
         elif name == 'summary' and self.state == IN_SUMMARY:
             self.state = IN_TOP
         elif self.state == IN_POOLMANAGER and name == 'cell':

@@ -17,13 +17,13 @@ class TestSEConfigs(unittest.TestCase):
         os.environ['GIP_TESTING'] = "1"
         cfg_name = os.path.join("test_configs", testconfig)
         if not os.path.exists(cfg_name):
-           self.fail(msg="Test configuration %s does not exist." % cfg_name)
+            self.fail(msg="Test configuration %s does not exist." % cfg_name)
         cp = config(cfg_name)
         providers_path = cp_get(cp, "gip", "provider_dir", "$GIP_LOCATION/" \
-            "providers")
+                                "providers")
         providers_path = os.path.expandvars(providers_path)
         se_provider_path = os.path.join(providers_path,
-            'storage_element.py')
+                                        'storage_element.py')
         cmd = se_provider_path + " --config %s" % cfg_name
         print cmd
         fd = os.popen(cmd)
@@ -237,7 +237,7 @@ class TestSEConfigs(unittest.TestCase):
                 self.failIf("VO:%s" % vo not in \
                     entry.glue['ServiceAccessControlRule'], msg="String `" \
                     "VO:%s` not in ACBR" % vo)
-                self.failUnless("OK" in entry.glue["ServiceStatus"])
+            self.failUnless("OK" in entry.glue["ServiceStatus"])
             self.failUnless(entry.glue['ServiceEndpoint'] == \
                 entry.glue['ServiceName'])
             self.failUnless(entry.glue['ServiceAccessPointURL'] == \
@@ -310,6 +310,124 @@ class TestSEConfigs(unittest.TestCase):
             found_sa = True
         self.failUnless(found_se, msg="Could not find the correct target SA.")
 
+    def check_srm_mit_ldif(self, entries):
+        found_srm = False
+        for entry in entries:
+
+            if 'GlueService' not in entry.objectClass:
+                continue
+            if 'httpg://se01.cmsaf.mit.edu:8443/srm/managerv2' not in \
+                    entry.glue['ServiceName']:
+                continue
+            found_srm = True
+            self.failUnless(entry.glue['ServiceEndpoint'] == \
+                entry.glue['ServiceName'])
+            self.failUnless(entry.glue['ServiceAccessPointURL'] == \
+                entry.glue['ServiceName'])
+            self.failUnless(entry.glue['ServiceURI'] == \
+                entry.glue['ServiceName'])
+            self.failUnless("GlueSiteUniqueID=MIT_CMS" in \
+                entry.glue['ForeignKey'])
+            self.failUnless(entry.glue["ServiceType"][0] == 'SRM')
+            self.failUnless(entry.glue["ServiceVersion"][0] == '2.2.0')
+        self.failUnless(found_srm, msg="Could not find the SRM entity for " +
+            "se01.cmsaf.mit.edu")
+        found_cp = False
+        for entry in entries:
+            if 'GlueSEControlProtocol' not in entry.objectClass:
+                continue
+            if entry.glue['SEControlProtocolLocalID'][0] != \
+                    'se01.cmsaf.mit.edu_srmv2':
+                continue
+            found_cp = True
+            self.failUnless('httpg://se01.cmsaf.mit.edu:8443/srm/managerv2' in \
+                entry.glue['SEControlProtocolEndpoint'])
+            self.failUnless('2.2.0' in entry.glue['SEControlProtocolVersion'])
+            self.failUnless('SRM' in entry.glue['SEControlProtocolType'])
+            self.failUnless('GlueSEUniqueID=se01.cmsaf.mit.edu' in \
+                entry.glue['ChunkKey'])
+        self.failUnless(found_cp, msg="Could not find the SRM Control Prot for"\
+            " se01.cmsaf.mit.edu")
+
+    def check_pools_mit_ldif(self, entries):
+        found_pool_sa = False
+        for entry in entries:
+            if 'GlueSA' not in entry.objectClass:
+                continue
+            if 'test-pools:custodial:nearline' not in entry.glue['SALocalID']:
+                continue
+            found_pool_sa = True
+            self.failUnless('15849' in entry.glue['SATotalOnlineSize'])
+            self.failUnless('4373' in entry.glue['SAUsedOnlineSize'])
+            self.failUnless('11476' in entry.glue['SAFreeOnlineSize'])
+            self.failUnless('SRMTokenReservedSpace=0' in \
+                entry.glue['SACapability'])
+            self.failUnless('InstalledOnlineCapacity=15849' in \
+                entry.glue['SACapability'])
+            self.failUnless('GlueSEUniqueID=se01.cmsaf.mit.edu' in \
+                entry.glue['ChunkKey'])
+            self.failUnless(entry.glue['SALocalID'][0] == \
+                entry.glue['SAName'][0])
+        self.failUnless(found_pool_sa, msg="Could not find GlueSA entry for " \
+            "the test-pools pool group")
+
+    def check_links_mit_ldif(self, entries, cp):
+        found_link_sa = False
+        vos = voList(cp)
+        for entry in entries:
+            if 'GlueSA' not in entry.objectClass:
+                continue
+            if 'opportunistic-link-group:replica:nearline' not in \
+                    entry.glue['SALocalID']:
+                continue
+            for vo in vos:
+                #self.failIf(vo not in entry.glue['ServiceAccessControlRule'])
+                self.failIf("VO:%s" % vo not in \
+                    entry.glue['SAAccessControlBaseRule'], msg="String `" \
+                    "VO:%s` not in ACBR" % vo)
+            found_link_sa = True
+            self.failUnless('1954' in entry.glue['SATotalOnlineSize'])
+            self.failUnless('0' in entry.glue['SAUsedOnlineSize'])
+            self.failUnless('1954' in entry.glue['SAFreeOnlineSize'])
+            self.failUnless('SRMTokenReservedSpace=0' in \
+                entry.glue['SACapability'])
+            self.failUnless('InstalledOnlineCapacity=1954' in \
+                entry.glue['SACapability'])
+            self.failUnless('GlueSEUniqueID=se01.cmsaf.mit.edu' in \
+                entry.glue['ChunkKey'])
+            self.failUnless(entry.glue['SALocalID'][0] == \
+                entry.glue['SAName'][0])
+        self.failUnless(found_link_sa, msg="Could not find GlueSA entry for " \
+            "the test-pools pool group")
+
+    def check_se_mit_ldif(self, entries):
+        found_se = False
+
+        for entry in entries:
+
+            if not ('GlueSE' in entry.objectClass and entry.glue.\
+                    get('SEUniqueID', [''])[0] == 'se01.cmsaf.mit.edu'):
+                continue
+            found_se = True
+            self.failUnless(entry.glue['SEName'][0] == 'MIT dCache')
+            self.failUnless(entry.glue['SEImplementationName'][0] == 'dcache')
+            self.failUnless(entry.glue['SEImplementationVersion'][0] == \
+                'cells')
+            self.failUnless(entry.glue['SEPort'][0] == '8443')
+            self.failUnless('370989' in entry.glue['SESizeTotal'])
+            self.failUnless('73280' in entry.glue['SESizeFree'])
+            self.failUnless('multi-disk' in entry.glue['SEArchitecture'])
+            self.failUnless('GlueSiteUniqueID=MIT_CMS' in entry.glue\
+                ['ForeignKey'])
+        self.failUnless(found_se, msg="GlueSE entry for srm.unl.edu missing.")
+
+    def test_mit_output(self):
+        entries, cp = self.run_test_config("mit-se-test.conf")
+        self.check_srm_mit_ldif(entries)
+        self.check_pools_mit_ldif(entries)
+        self.check_links_mit_ldif(entries, cp)
+        self.check_se_mit_ldif(entries)
+         
     def checkReservedRules1(self, entries):
         """
         Make sure that on a SA with multiple supported VOs that there is
@@ -441,6 +559,7 @@ class TestSEConfigs(unittest.TestCase):
         self.verify_bestman_output(info)
         srm_ping.bestman_srm_ping(cp, "2")
         self.verify_bestman_output(info)
+
 
 def main():
     os.environ['GIP_TESTING'] = '1'

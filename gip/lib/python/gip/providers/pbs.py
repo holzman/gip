@@ -5,6 +5,8 @@ import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
+import gip.gratia
+
 from gip_common import config, VoMapper, addToPath, getTemplate, printTemplate,\
     cp_get, responseTimes
 from gip_logging import getLogger
@@ -110,7 +112,8 @@ def print_CE(cp):
         info['waiting'] = info['wait']
         info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)
         info['clusterUniqueID'] = getClusterID(cp)
-        print CE % info
+        gip.gratia.ce_record(cp, info)
+        printTemplate(CE, info)
     return queueInfo, totalCpu, freeCpu, queueCpus
 
 def print_VOViewLocal(queue_info, cp):
@@ -155,6 +158,7 @@ def print_VOViewLocal(queue_info, cp):
             'acbr'        : 'VO:%s' % vo
         }
         info['total'] = info['waiting'] + info['running']
+        gip.gratia.vo_record(cp, info)
         printTemplate(VOView, info)
 
 def main():
@@ -167,6 +171,7 @@ def main():
         addToPath(pbs_path + "/bin")
         vo_map = VoMapper(cp)
         pbsVersion = getLrmsInfo(cp)
+        gip.gratia.initialize(cp)
         queueInfo, totalCpu, freeCpu, queueCpus = print_CE(cp)
         print_VOViewLocal(queueInfo, cp)
     except Exception, e:

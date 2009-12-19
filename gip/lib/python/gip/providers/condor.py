@@ -153,7 +153,11 @@ def print_CE(cp):
     #    defaultVoList])
     #groupInfo['default']['acbr'] = acbr
     if not groupInfo['default']['vos']:
+        log.debug("No unassigned VOs; no advertising a default group")
         del groupInfo['default']
+    else:
+        log.info("The following VOs are assigned to the default group: %s" \
+            ", ".join(defaultVoList))
 
     for group, ginfo in groupInfo.items():
         jinfo = jobs_info.get(group, {})

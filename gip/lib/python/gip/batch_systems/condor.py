@@ -70,7 +70,63 @@ class CondorBatchSystem(BatchSystem):
         log.exception(ve)
         raise ve
 
-    def getGroupInfo(self): #pylint: disable-msg=C0103,W0613
+    def getGroupInfo(self):
+        """
+        Get the group info from condor.
+
+        This function wraps around getGroupInfoInternal in order to add in the
+        default group for sites that have no condor groups.
+        """
+        groupInfo = self.getGroupInfoInternal()
+
+        # Get the node information for condor
+        try:
+            total_nodes, _, _ = self.parseNodes()
+        except Exception, e:
+            log.exception(e)
+            total_nodes = 0
+
+        # Set up the "default" group with all the VOs which aren't already in a 
+        # group
+        groupInfo['default'] = {'prio': 999999, 'quota': 999999,
+            'vos': sets.Set()}
+        all_group_vos = sets.Set()
+        total_assigned = 0
+        for key, val in groupInfo.items():
+            if key == 'default':
+                continue
+            all_group_vos.update(val['vos'])
+            try:
+                total_assigned += val['quota']
+            except:
+                pass
+
+        # Adjust the number of assigned nodes for the default group by first
+        # looking at the assigned quota
+        if total_nodes > total_assigned:
+            log.info("There are %i assigned job slots out of %i total; " \
+                "assigning the rest to the default group." % (total_assigned,
+                total_nodes))
+            groupInfo['default']['quota'] = total_nodes-total_assigned
+        else:
+            log.warning("More assigned nodes (%i) than actual nodes (%i)!" % \
+                (total_assigned, total_nodes))
+
+        # Remove any VOs who already have a queue from the default group.
+        log.debug("All assigned VOs: %s" % ", ".join(all_group_vos))
+        defaultVoList = voList(self.cp, vo_map=self.vo_map)
+        defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
+        groupInfo['default']['vos'] = defaultVoList
+        if not groupInfo['default']['vos']:
+            log.debug("No unassigned VOs; no advertising a default group")
+            del groupInfo['default']
+        else:
+            log.info("The following VOs are assigned to the default group: %s" \
+                % ", ".join(defaultVoList))
+
+        return groupInfo
+
+    def getGroupInfoInternal(self): #pylint: disable-msg=C0103,W0613
         """
         Get the group info from condor
 
@@ -97,6 +153,8 @@ class CondorBatchSystem(BatchSystem):
                 prio = condorCommand(condor_prio, self.cp, \
                     {'group': group}).read().strip()
                 vos = self.guessVO(group)
+                log.debug("For group %s, guessed VOs of %s" % (group,
+                    ", ".join(vos)))
                 if not vos:
                     continue
                 curInfo = {'quota': 0, 'prio': 0, 'vos': vos}
@@ -130,19 +188,8 @@ class CondorBatchSystem(BatchSystem):
             # Default to no groups.
             groupInfo = {}
 
-        # Set up the "default" group with all the VOs which aren't already in a 
-        # group
-        groupInfo['default'] = {'prio': 999999, 'quota': 999999,
-            'vos': sets.Set()}
-        all_group_vos = []
-        for val in groupInfo.values():
-            all_group_vos.extend(val['vos'])
-        defaultVoList = voList(self.cp, vo_map=self.vo_map)
-        defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
-        groupInfo['default']['vos'] = defaultVoList
-        if not groupInfo['default']['vos']:
-            del groupInfo['default']
-
+        # getGroupInfo already computes whether or not the default group should
+        # exist; return the list of names directly
         return groupInfo.keys()
 
     def determineGroupVOsFromConfig(self, group):
@@ -230,7 +277,8 @@ class CondorBatchSystem(BatchSystem):
         if _results_cache:
             return dict(_results_cache)
         constraint = cp_get(self.cp, "condor", "jobs_constraint", "TRUE")
-        fp = condorCommand(condor_job_status, self.cp, {'constraint': constraint})
+        fp = condorCommand(condor_job_status, self.cp, {'constraint':
+            constraint})
         handler = ClassAdParser('GlobalJobId', ['JobStatus', 'Owner',
             'AccountingGroup', 'FlockFrom']);
         fp2 = condorCommand(condor_status_submitter, self.cp)
@@ -464,7 +512,7 @@ class CondorBatchSystem(BatchSystem):
                 total -= 1
         log.info("There are %i total; %i claimed and %i unclaimed." % \
                  (total, claimed, unclaimed))
-        _nodes_cache = total, claimed, unclaimed
+        self._nodes_cache = total, claimed, {}
         return total, unclaimed, {}
 
     def bootstrap(self):

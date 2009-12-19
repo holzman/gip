@@ -10,6 +10,7 @@ import time
 import socket
 
 import gip.gratia
+
 from gip_common import cp_get, config, getTemplate, printTemplate, \
     cp_getBoolean, cp_getInt, normalizeFQAN
 from gip_logging import getLogger
@@ -22,11 +23,6 @@ import gip_sets as sets
 
 log = getLogger("GIP.Storage.Generic")
 
-has_gratia_capacity = gip.gratia.has_gratia_capacity
-if has_gratia_capacity:
-    Gratia = gip.gratia.Gratia
-    StorageElement = gip.gratia.StorageElement
-    StorageElementRecord = gip.gratia.StorageElementRecord
 
 def print_SA(se, cp, section="se"): #pylint: disable-msg=W0613
     """
@@ -134,16 +130,15 @@ def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
     info.setdefault('availableSpace', 0)
     info.setdefault('usedSpace', 0)
 
-    if has_gratia_capacity:
-        try:
-            default_path = os.path.expandvars("$VDT_LOCATION/gratia/probe" \
-                "/service/ProbeConfig")
-            Gratia.Initialize(cp_get("gip", "ProbeConfig", default_path))
-            desc = StorageElement.StorageElement()
-            uniqueID = '%s:%s:%s' % (se_unique_id, "GlueStorageArea",
-                info['saName'])
+    try:
+        default_path = os.path.expandvars("$VDT_LOCATION/gratia/probe" \
+            "/service/ProbeConfig")
+        uniqueID = '%s:%s:%s' % (se_unique_id, "GlueStorageArea",
+            info['saName'])
+        desc = gip.gratia.new_se()
+        if desc:
             parentID = '%s:%s:%s' % (se_unique_id, "SE", se_unique_id)
-            state.ParentID(info.get("seUniqueID", "UNKNOWN"))
+            desc.ParentID(parentID)
             desc.UniqueID(uniqueID)
             desc.Name(info['saName'])
             desc.SpaceType('GlueStorageArea')
@@ -152,26 +147,29 @@ def print_single_SA(info, se, cp): #pylint: disable-msg=W0613
             desc.Status(se.getStatus())
             gip.gratia.send(desc)
 
-            if int(info['totalNearline']) > 0:
-                state = StorageElementRecord.StorageElementRecord()
-                state.UniqueID(uniqueID)
-                state.MeasurementType("raw")
-                state.StorageType("tape")
-                state.TotalSpace(str(info['totalNearline']))
-                state.FreeSpace(str(info['freeNearline']))
-                state.UsedSpace(str(info['usedNearline']))
-                gip.gratia.send(state)
-            if int(info['totalOnline']) > 0:
-                state = StorageElementRecord.StorageElementRecord()
-                state.UniqueID(uniqueID)
-                state.MeasurementType("raw")
-                state.StorageType("disk")
-                state.TotalSpace(str(info['totalOnline']))
-                state.FreeSpace(str(info['freeOnline']))
-                state.UsedSpace(str(info['usedOnline']))
-                gip.gratia.send(state)
-        except Exception, e:
-            log.exception(e)
+        state = gip.gratia.new_se_record()
+        if state and int(info['totalNearline']) > 0:
+            state.UniqueID(uniqueID)
+            state.MeasurementType("raw")
+            state.StorageType("tape")
+            state.TotalSpace(str(info['totalNearline']))
+            state.FreeSpace(str(info['freeNearline']))
+            state.UsedSpace(str(info['usedNearline']))
+            gip.gratia.send(state)
+
+        state = gip.gratia.new_se_record()
+        if state and int(info['totalOnline']) > 0:
+            state.UniqueID(uniqueID)
+            state.MeasurementType("raw")
+            state.StorageType("disk")
+            state.TotalSpace(str(info['totalOnline']))
+            state.FreeSpace(str(info['freeOnline']))
+            state.UsedSpace(str(info['usedOnline']))
+            gip.gratia.send(state)
+
+    except Exception, e:
+        log.exception(e)
+
     printTemplate(saTemplate, info)
 
 def get_vos_from_acbr(acbr):
@@ -396,45 +394,41 @@ def print_SE(se, cp):
            }
     seTemplate = getTemplate("GlueSE", "GlueSEUniqueID")
     log.info(str(info))
+
+    gse = gip.gratia.new_se()
+    if gse:
+        unique_id = info['seUniqueID']
+        gse.UniqueID("%s:%s:%s" % (unique_id, "SE", unique_id))
+        gse.SE(se.getName())
+        gse.SpaceType("SE")
+        gse.Implementation(se.getImplementation())
+        gse.Version(se.getVersion())
+        gse.Status(se.getStatus())
+        gip.gratia.send(gse)
+
+    ser = gip.gratia.new_se_record()
+    unique_id = info['seUniqueID']
+    unique_id = "%s:%s:%s" % (unique_id, "SE", unique_id)
+    if ser and int(nt) > 0:
+        ser.UniqueID(unique_id)
+        ser.MeasurementType("raw")
+        ser.StorageType("tape")
+        ser.TotalSpace(str(nt*1000**3))
+        ser.FreeSpace(str(nf*1000**3))
+        ser.UsedSpace(str(nu*1000**3))
+        gip.gratia.send(ser)
+
+    ser = gip.gratia.new_se_record()
+    if ser and int(total) > 0:
+        ser.UniqueID(unique_id)
+        ser.MeasurementType("raw")
+        ser.StorageType("disk")
+        ser.TotalSpace(str(total*1000**3))
+        ser.FreeSpace(str(available*1000**3))
+        ser.UsedSpace(str(used*1000**3))
+        gip.gratia.send(ser)
+
     printTemplate(seTemplate, info)
-
-    if has_gratia_capacity:
-        try:
-            default_path = os.path.expandvars("$VDT_LOCATION/gratia/probe" \
-                "/service/ProbeConfig")
-            Gratia.Initialize(cp_get("gip", "ProbeConfig", default_path))
-            desc = StorageElement.StorageElement()
-            uniqueID = '%s:%s:%s' % (info['seUniqueID'], "SE",
-                info['seUniqueID'])
-            desc.UniqueID(uniqueID)
-            desc.Name(info['seName'])
-            desc.SpaceType('SE')
-            desc.Implementation(implementation)
-            desc.Version(version)
-            desc.Status(status)
-            gip.gratia.send(desc)
-
-            if int(nt) > 0:
-                state = StorageElementRecord.StorageElementRecord()
-                state.UniqueID(uniqueID)
-                state.MeasurementType("raw")
-                state.StorageType("tape")
-                state.TotalSpace(str(nt))
-                state.FreeSpace(str(nf))
-                state.UsedSpace(str(nu))
-                Gratia.Send(state)
-            if int(total) > 0:
-                state = StorageElementRecord.StorageElementRecord()
-                state.UniqueID(uniqueID)
-                state.MeasurementType("raw")
-                state.StorageType("disk")
-                state.TotalSpace(str(total))
-                state.FreeSpace(str(available))
-                state.UsedSpace(str(used))
-                Gratia.Send(state)
-        except Exception, e:
-            log.exception(e)
-
 
     try:
         print_SA(se, cp, se.getSection())

@@ -554,7 +554,7 @@ class StorageElement(object):
         Return the unique ID of the SE.
         
         The base class uses the value of se.unique_name (defaults to se.name)
-        in the configuraiton object.
+        in the configuration object.
         """
         return cp_get(self._cp, self._section, 'unique_name', 
             cp_get(self._cp, self._section, 'name', 'UNKNOWN'))

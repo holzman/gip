@@ -231,7 +231,9 @@ def getVoQueues(cp):
 
     # SGE has a special "waiting" queue -- ignore it.
     queue_exclude.append('waiting')
-    
+   
+    log.info("Excluded queues for SGE: %s" % ", ".join(queue_exclude))
+ 
     vo_queues = []
     queue_list, q = getQueueInfo(cp)
     rvf_info = parseRvf('sge.rvf')
@@ -264,6 +266,10 @@ def getVoQueues(cp):
             acl_vos = parseAclInfo(queue, qinfo, voMap)
             if acl_vos:
                 volist.intersection_update(acl_vos)
+        if whitelist:
+            log.info("Queue %s; whitelist %s" % (queue, ", ".join(whitelist)))
+        if blacklist:
+            log.info("Queue %s; blacklist %s" % (queue, ", ".join(blacklist)))
         for vo in volist:
             if (vo in blacklist or "*" in blacklist) and ((len(whitelist) == 0)\
                 or vo not in whitelist):

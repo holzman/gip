@@ -160,6 +160,6 @@ def send(record):
         result = Gratia.Send(record)
     finally:
         sys.stdout = old_stdout
-    log.debug("Gratia description of record: %s" % str(cer))
+    log.debug("Gratia description of record: %s" % str(record))
     log.debug("Gratia sending result: %s" % result)
 

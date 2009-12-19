@@ -9,11 +9,17 @@ import fcntl
 import popen2
 import select
 import tarfile
+import urllib2
 import cStringIO
+
+from xml.dom.minidom import parse
 
 if sys.version_info[0] <= 2 and sys.version_info[1] <= 2:
     print "GIP diagnostic tool not compatible with Python 2.2 or lower."
     sys.exit(1)
+
+MYOSG_URL = 'https://myosg.grid.iu.edu/rgsummary/xml?datasource=summary&' \
+    'summary_attrs_showfqdn=on&all_resources=on'
 
 import optparse
 
@@ -57,6 +63,36 @@ class OutputManager:
                 print >> sys.stderr, e
         tf.close()
 
+def parse_myosg(opts):
+    fd = urllib2.urlopen(MYOSG_URL)
+    dom = parse(fd)
+    matching_resources = {}
+    match_str = opts.site.lower()
+    for resource_dom in dom.getElementsByTagName("Resource"):
+        try:
+            name = resource_dom.getElementsByTagName("Name")[0].firstChild
+            name = str(name.data)
+        except:
+            continue
+        if name.lower().find(match_str) < 0:
+            continue
+        try:
+            fqdn = resource_dom.getElementsByTagName("FQDN")[0].firstChild
+            fqdn = str(fqdn.data)
+        except:
+            continue
+        matching_resources[name] = fqdn
+    if not matching_resources:
+        print "No resources match name '%s'" % match_str
+        sys.exit(2)
+    if len(matching_resources) > 1:
+        print "Multiple resources match '%s'; please refine your search." % \
+            match_str
+        print "Matching resources:"
+        for site, fqdn in matching_resources.items():
+            print "\t- %s: %s" % (site, fqdn)
+    return matching_resources.values()[0]
+
 def parse_args():
     parser = optparse.OptionParser()
     parser.add_option("-f", "--file", dest="filename",
@@ -64,8 +100,13 @@ def parse_args():
     parser.add_option("-q", "--quiet", dest="talk", action='store_false',
         default=True)
     parser.add_option("-r", "--remote", dest="endpoint")
+    parser.add_option("-s", "--site", dest="site", default=None)
 
     opts, args = parser.parse_args()
+
+    if opts.site:
+        opts.endpoint = parse_myosg(opts)
+
     return opts
 
 def cp_get(cp, section, option, default):
@@ -463,9 +504,35 @@ def gip_check_rvf(cp, outh):
         try:
             if file.startswith("."):
                 continue
-            outh.add_file(os.path.join(globus_rvf_loc, file), dirname="globus_rvf")
+            outh.add_file(os.path.join(globus_rvf_loc, file),
+                dirname="globus_rvf")
         except Exception, e:
             print >> sys.stderr, e
+    return output
+
+def gip_check_dcache_infoprovider(cp, outh):
+    """
+    Download any info provider information for dCache 1.9 sites.
+    """
+    sects = cp.sections()
+    output = ''
+    for sect in sects:
+        if not sect.lower().startswith("se_"):
+            continue
+        try:
+            provider_impl = cp.get(sect, "provider_implementation")
+            if provider_impl != 'dcache19':
+                continue
+            output += 'Dcache 1.9 provider in section %s.\n' % sect
+            endpoint = cp.get(sect, "infoprovider_endpoint")
+            output += 'Info provider endpoint: %s.\n' % endpoint
+            fd = urllib2.urlopen(endpoint)
+            sanitized_sect = sect.replace("/", "_").replace(" ", "_").\
+                replace(":", "_")
+            outh.add_output("dcache19_%s" % sanitized_sect, fd.read())
+        except Exception, e:
+            output += 'Exception while looking for dCache 1.9 provider:%s\n' % \
+                str(e)
     return output
 
 def main():
@@ -514,6 +581,8 @@ def main():
     output += "\n"
     output += gip_check_rvf(cp, out_handler)
     output += "\n"
+    output += "\n"
+    output += gip_check_dcache_infoprovider(cp, out_handler)
 
     if opts.talk:
         print output

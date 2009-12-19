@@ -353,8 +353,6 @@ def getQueueList(cp):
         log.info("The RVF lists the following queues: %s." % ', '.join( \
             rvf_queue_list))
     for queue in getQueueInfo(cp):
-        if queue not in queue_exclude:
-            queues.append(queue)
         if rvf_queue_list and queue not in rvf_queue_list:
             continue
         if queue not in queue_exclude:
@@ -408,6 +406,9 @@ def getVoQueues(cp):
         if 'users' in qinfo or 'groups' in qinfo:
             acl_vos = parseAclInfo(queue, qinfo, voMap)
             volist.intersection_update(acl_vos)
+        log.debug("For queue %s; the blacklist is %s, the whitelist is %s, " \
+            "the volist is %s." % (queue, ", ".join(blacklist),
+            ", ".join(whitelist), ", ".join(volist)))
         # Force any VO in the whitelist to show up in the volist, even if it
         # isn't in the acl_users / acl_groups
         for vo in whitelist:

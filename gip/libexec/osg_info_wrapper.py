@@ -283,11 +283,11 @@ def handle_remove_attributes(entries, remove_attributes):
     DN.
 
     @param entries: A list of LdapData objects
-    @param remove_attribtues: The name of the desired remove_attributes file.
+    @param remove_attributes: The name of the desired remove_attributes file.
     @returns: The entries list with the removed attributes
     """
     if not os.path.exists(remove_attributes):
-        log.warning("The remove-attributes file %s does not exist." % \
+        log.info("The remove-attributes file %s does not exist." % \
             remove_attributes)
         return entries
     try:

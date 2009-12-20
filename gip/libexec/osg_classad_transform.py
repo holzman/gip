@@ -3,7 +3,9 @@
 import os
 import re
 import sys
+import time
 import types
+import signal
 import urllib2
 import httplib
 import datetime
@@ -20,6 +22,7 @@ import gip_ldap
 from gip_logging import getLogger
 
 log = getLogger('CEMonUploader')
+
 
 class HTTPSHandler2(urllib2.HTTPSHandler):
 
@@ -46,12 +49,14 @@ class HTTPSHandler2(urllib2.HTTPSHandler):
 
     https_request = urllib2.HTTPSHandler.do_request_
 
+
 def filter_by_class(entries, objectClass):
     filter = []
     for entry in entries:
         if objectClass in entry.objectClass:
             filter.append(entry)
     return filter
+
 
 def join_FK(item, join_list, join_attr, join_fk_name="ForeignKey"):
     if item.multi:
@@ -81,6 +86,7 @@ def join_FK(item, join_list, join_attr, join_fk_name="ForeignKey"):
                     return entry
     raise ValueError("Unable to find matching entry in list.")
 
+
 def determine_ses(ce, all_cese, all_cese_se):
     # Determine CESE binds, if any
     if ce.multi:
@@ -106,6 +112,7 @@ def determine_ses(ce, all_cese, all_cese_se):
                 se_to_cese[se] = cese
     return adjacent_ses, se_to_cese
 
+
 ap_multi_attributes = ['SEAccessProtocolEndpoint', 'SEAccessProtocolVersion',
     'SEAccessProtocolLocalID', 'SEAccessProtocolSupportedSecurity',
     'SEAccessProtocolMaxStreams']
@@ -123,6 +130,7 @@ class ClassAdSink(object):
     def run(self):
         pass
 
+
 class ClassAdPrinter(ClassAdSink):
 
     def emit(self, results):
@@ -138,6 +146,7 @@ class ClassAdPrinter(ClassAdSink):
             else:       
                 output.append('%s = "%s";' % (key, str(val)))
         print "\n".join(output) + "\n"
+
 
 class CEMonMessageProducer(ClassAdSink):
 
@@ -290,6 +299,7 @@ class CEMonMessageProducer(ClassAdSink):
             log.exception(e)
             raise
 
+
 class BdiiSender(CEMonMessageProducer):
 
     def __init__(self, hosts, **kw):
@@ -305,6 +315,7 @@ class BdiiSender(CEMonMessageProducer):
         messages = ['\n'.join([ldap.to_ldif() for ldap in self.ads])]
         self.encoded_output = self.generate(messages)
         super(BdiiSender, self).run()
+
 
 class ClassAdSender(CEMonMessageProducer):
 
@@ -337,6 +348,7 @@ class ClassAdSender(CEMonMessageProducer):
         output = self.generate(messages)
         self.encoded_output = output
         super(ClassAdSender, self).run()
+
 
 class ClassAdEmitter(object):
 
@@ -483,6 +495,7 @@ class ClassAdEmitter(object):
             else:
                 self.emit_ce(subclusters, ce, voviews, **kw)
 
+
 def map_to_list(key_class, values_class, join):
     results = {}
     for val in values_class:
@@ -496,15 +509,34 @@ def map_to_list(key_class, values_class, join):
             continue
     return results
 
+
+def set_logging(level):
+    py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
+    if not py23:
+        return
+    logging = __import__("logging")
+    LEVELS = {'debug': logging.DEBUG,
+              'info': logging.INFO,
+              'warning': logging.WARNING,
+              'error': logging.ERROR,
+              'critical': logging.CRITICAL}
+    level = level.lower()
+    log = logging.getLogger()
+    log.setLevel(LEVELS.get(level, logging.NOTSET))
+    for handler in log.handlers:
+        if isinstance(handler, logging.StreamHandler):
+            handler.setLevel(LEVELS.get(level, logging.NOTSET))
+
+
 split_re = re.compile('\s*;?,?\s*')
 def configure_emitter():
 
-    cae = ClassAdEmitter()
-
     parser = optparse.OptionParser()
-    parser.add_option("-v", "--verbose", action="store_true", dest="verbose")
-    parser.add_option("-u", "--use_config", action="store_true", dest="config",
-        help="Use the settings in the GIP config files.")
+    parser.add_option("-v", "--verbose", action="store_true", dest="verbose",
+        default=False)
+    parser.add_option("-g", "--ignore_config", action="store_false",
+        dest="config", help="Do not use the settings in the OSG config files.",
+        default=True)
     parser.add_option("-b", "--bdii", dest="bdii", help="BDII servers to send" \
         " this data to.", action="append")
     parser.add_option("-r", "--ress", dest="ress", help="ReSS servers to send" \
@@ -515,10 +547,33 @@ def configure_emitter():
         default=None)
     parser.add_option("-k", "--keyfile", dest="key", help="Key file to use.",
         default=None)
+    parser.add_option("-q", "--quiet", dest="quiet", action="store_true",
+        default=False, help="Remove all output except fatal errors.")
+    parser.add_option("-d", "--dryrun", dest="dryrun", action="store_true",
+        default=False, help="Do not actually send data upstream")
+    parser.add_option("-t", "--timeout", dest="timeout", type="int", default=0,
+        help="Force the script to die after a certain period")
     options, args = parser.parse_args()
     sys.argv = []
 
+    # Set up the alarm to automatically kill a runaway script
+    try:
+        options.timeout = int(options.timeout)
+    except:
+        options.timeout = 0
+    if options.timeout > 0:
+        signal.signal(signal.SIGALRM, signal.SIG_DFL)
+        signal.alarm(options.timeout)
+
+    # Set logging verbosity
+    set_logging("info")
+    if options.quiet:
+        set_logging("error")
+
+    cae = ClassAdEmitter()
+
     if options.verbose:
+        set_logging("debug")
         cae.add_emitter(ClassAdPrinter())
 
     kw = {}
@@ -542,26 +597,40 @@ def configure_emitter():
             options.bdii.append(endpoint)
 
     if options.ress:
+        log.info("ReSS endpoints: %s" % ", ".join(options.ress))
         cae.add_emitter(ClassAdSender(options.ress, **kw))
+    else:
+        log.info("No ReSS endpoints configured.")
 
     if options.bdii:
+        log.info("BDII endpoints: %s" % ", ".join(options.bdii))
         bdii = BdiiSender(options.bdii, **kw)
     else:
+        log.info("No BDII endpoints configured.")
         bdii = None
     
-    return cae, bdii, options.uri
+    return cae, bdii, options.uri, options.dryrun, options.timeout
 
 
 def main():
-    cae, bdii, uri = configure_emitter()
+    cae, bdii, uri, dryrun, timeout = configure_emitter()
     if not uri:
+        t1 = -time.time()
         entries = osg_info_wrapper.main(return_entries=True)
+        t1 += time.time()
+        # Reset the signal handler which the info wrapper clobbers
+        signal.signal(signal.SIGALRM, signal.SIG_DFL)
+        remaining_time = int(timeout-t1)
+        if remaining_time <= 0 and timeout > 0:
+            remaining_time = 1
+        signal.alarm(remaining_time)
     else:
         fd = urllib2.urlopen(uri)
         entries = gip_ldap.read_ldap(fd, multi=True)
-    upload(cae, bdii, entries)
+    upload(cae, bdii, entries, dryrun=dryrun)
 
-def upload(cae, bdii, entries):
+
+def upload(cae, bdii, entries, dryrun=False):
     """
     Converts the list of LdapData objects (entries) to ClassAds.  Submit
     the list of resulting class ads and original LDAP to the respective
@@ -709,12 +778,14 @@ def upload(cae, bdii, entries):
         else:
             cae.emit_ce(subclusters, ce, voviews, **kw)
 
-    cae.run()
+    if not dryrun:
+        cae.run()
 
     if bdii:
         for entry in entries:
             bdii.emit(entry)
-        bdii.run()
+        if not dryrun:
+            bdii.run()
 
 
 if __name__ == '__main__':

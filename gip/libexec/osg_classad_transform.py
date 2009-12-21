@@ -553,8 +553,11 @@ def configure_emitter():
         default=False, help="Do not actually send data upstream")
     parser.add_option("-t", "--timeout", dest="timeout", type="int", default=0,
         help="Force the script to die after a certain period")
+    parser.add_option("--use_cache", dest="cache", default=False,
+        action="store_true", help="Use the GIP's built-in caching mechanism")
     options, args = parser.parse_args()
     sys.argv = []
+    cp = gip_common.config()
 
     # Set up the alarm to automatically kill a runaway script
     try:
@@ -564,6 +567,13 @@ def configure_emitter():
     if options.timeout > 0:
         signal.signal(signal.SIGALRM, signal.SIG_DFL)
         signal.alarm(options.timeout)
+        cp.set("gip", "response", options.timeout)
+
+    # Determine whether we should use the cache
+    if options.cache:
+        cp.set("gip", "flush_cache", "False")
+    else:
+        cp.set("gip", "flush_cache", "True")
 
     # Set logging verbosity
     set_logging("info")
@@ -588,7 +598,6 @@ def configure_emitter():
         options.bdii = []
 
     if options.config:
-        cp = gip_common.config()
         bdii_endpoints = gip_common.cp_get(cp, "gip", "bdii_endpoints", "")
         ress_endpoints = gip_common.cp_get(cp, "gip", "ress_endpoints", "")
         for endpoint in split_re.split(ress_endpoints):
@@ -609,14 +618,14 @@ def configure_emitter():
         log.info("No BDII endpoints configured.")
         bdii = None
     
-    return cae, bdii, options.uri, options.dryrun, options.timeout
+    return cae, bdii, options.uri, options.dryrun, options.timeout, cp
 
 
 def main():
-    cae, bdii, uri, dryrun, timeout = configure_emitter()
+    cae, bdii, uri, dryrun, timeout, cp = configure_emitter()
     if not uri:
         t1 = -time.time()
-        entries = osg_info_wrapper.main(return_entries=True)
+        entries = osg_info_wrapper.main(cp=cp, return_entries=True)
         t1 += time.time()
         # Reset the signal handler which the info wrapper clobbers
         signal.signal(signal.SIGALRM, signal.SIG_DFL)

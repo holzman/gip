@@ -429,7 +429,11 @@ def configSubclusters(cp, cp2):
         "ram_mb":  "ram_size",
         "cpu_platform": "platform",
     }
-    siteName = cp_get(cp, site_sec, "site_name", "UNKNOWN")
+    siteName = cp_get(cp, site_sec, "resource_group", "UNKNOWN")
+    if siteName == "UNKNOWN":
+        siteName = cp_get(cp, site_sec, "site_name", "UNKNOWN")
+    if siteName == "UNKNOWN":
+        siteName = cp_get(cp, site_sec, "resource", "UNKNOWN")
 
     for section in cp.sections():
         my_sect = section.lower()

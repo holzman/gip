@@ -227,7 +227,15 @@ def configOsg(cp):
                 __write_config(section2, option, section, option)
         except:
             pass
-        
+
+    def __write_config_value(section, option, new_val):
+        if not cp.has_section(section):
+            cp.add_section(section)
+        if override and (not cp.has_option(section, option)):
+            cp.set(section, option, new_val)
+        elif (not override):
+            cp.set(section, option, new_val)
+
     # Now, we compare the two - convert the config.ini options into gip.conf
     # options.
     # [Site Information]
@@ -240,10 +248,6 @@ def configOsg(cp):
         cp2.set(site_sec, "host_name", socket.gethostname())
     __write_config(site_sec, "host_name", ce, "name")
     __write_config(site_sec, "host_name", ce, "unique_name")
-    __write_config(site_sec, "site_name", site, "name")
-    __write_config(site_sec, "site_name", site, "unique_name")
-    __write_config(site_sec, "resource_group_name", site, "name")
-    __write_config(site_sec, "resource_group_name", site, "unique_name")
     __write_config(site_sec, "sponsor", site, "sponsor")
     __write_config(site_sec, "site_policy", site, "sitepolicy")
     __write_config(site_sec, "contact", site, "contact")
@@ -253,7 +257,11 @@ def configOsg(cp):
     __write_config(site_sec, "longitude", site, "longitude")
     __write_config(site_sec, "latitude", site, "latitude")
     __write_config(site_sec, "group", site, "group")
-    
+
+    site_name = getSiteName(cp)
+    __write_config_value(site, "name", site_name)
+    __write_config_value(site, "unique_name", site_name)
+
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
     # With the call to __write_all_options_config, the next 2 lines are obsolete
@@ -378,7 +386,7 @@ def configOsg(cp):
         if not cp.has_section(sec):
             continue
 
-        siteName = cp_get(cp2, site_sec, "site_name", "UNKNOWN")
+        siteName = getSiteName(cp2)
         name = cp.get(sec, 'name')
         cp.set(sec, 'unique_name', name+"-"+siteName)
         
@@ -429,11 +437,7 @@ def configSubclusters(cp, cp2):
         "ram_mb":  "ram_size",
         "cpu_platform": "platform",
     }
-    siteName = cp_get(cp, site_sec, "resource_group", "UNKNOWN")
-    if siteName == "UNKNOWN":
-        siteName = cp_get(cp, site_sec, "site_name", "UNKNOWN")
-    if siteName == "UNKNOWN":
-        siteName = cp_get(cp, site_sec, "resource", "UNKNOWN")
+    siteName = getSiteName(cp)
 
     for section in cp.sections():
         my_sect = section.lower()
@@ -590,3 +594,15 @@ def configSEs(cp, cp2):
 
             # Handle allowed VO's for bestman
             # Yet to be implemented
+
+def getSiteName(cp):
+    siteName = cp_get(cp, site_sec, "resource_group", "UNKNOWN")
+    if siteName == "UNKNOWN":
+        siteName = cp_get(cp, site_sec, "site_name", "UNKNOWN")
+    if siteName == "UNKNOWN":
+        siteName = cp_get(cp, site_sec, "resource", "UNKNOWN")
+    if siteName == "UNKNOWN":
+        # adding in as a last option Brian's previous name for resource group
+        siteName = cp_get(cp, site_sec, "resource_group_name", "UNKNOWN")
+
+    return siteName

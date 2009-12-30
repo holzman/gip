@@ -258,7 +258,7 @@ def configOsg(cp):
     __write_config(site_sec, "latitude", site, "latitude")
     __write_config(site_sec, "group", site, "group")
 
-    site_name = getSiteName(cp)
+    site_name = getSiteName(cp2)
     __write_config_value(site, "name", site_name)
     __write_config_value(site, "unique_name", site_name)
 
@@ -386,7 +386,6 @@ def configOsg(cp):
         if not cp.has_section(sec):
             continue
 
-        siteName = getSiteName(cp2)
         name = cp.get(sec, 'name')
         cp.set(sec, 'unique_name', name+"-"+siteName)
         

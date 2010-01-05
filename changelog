@@ -1,4 +1,12 @@
 Changelog
+== 1.1.8 ==
+* Don't drop misconfigured PBS queues (that lack enabled or started attributes)
+* Get siteName correctly from config.ini (first try resource_group, then
+  site_name, then resource, and as a last resort, resource_group_name) 
+* dCache: advertise the endpoint as srm_endpoint in config.ini (if set)
+* dCache: do better parsing link groups and pool groups 
+* dCache: summarize total SE information correctly
+	
 == 1.1.7 ==
 * Addition of resource_group_name
 * Set free slots = 0 if jobs are waiting 

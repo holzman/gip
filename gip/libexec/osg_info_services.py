@@ -182,7 +182,8 @@ class CEMonMessageProducer(ClassAdSink):
         gen.characters('\n   ')
         gen.startPrefixMapping('glite', 'http://glite.org/ce/monitorapij/types')
         gen.startElementNS(('http://glite.org/ce/monitorapij/types',
-            'Notification'), 'Notification', {(None, 'ConsumerURL'): \
+            'Notification'), 'Notification', {("http://glite.org/ce/" \
+            "monitorapij/types", 'ConsumerURL'): \
             'https://osg-ress-4.fnal.gov:8443/ig/services/CEInfoCollector'})
         gen.characters('\n    ')
         gen.startElementNS(('http://glite.org/ce/monitorapij/types',

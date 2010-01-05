@@ -1,3 +1,4 @@
+from orca.scripts import self_voicing
 
 import os
 import sys
@@ -9,34 +10,28 @@ from gip_testing import runTest, streamHandler
 from gip_ldap import read_ldap, prettyDN
 
 class TestSiteName(unittest.TestCase):
-    def setUp(self, filename=None):
-        filename = 'test/test_configs/site-name.conf'
-        if not os.path.exists(filename):
-            filename = 'test_configs/site-name.conf'
-        self.filename = filename
-
-    def setUpLDAP(self, multi=False, filename=None):
+    def setUpLDAP(self, filename, multi=False):
         if filename != None:
-            self.filename = filename
+            filename = filename
         command = "$GIP_LOCATION/providers/site_topology.py --config=%s" % \
-            self.filename
+            filename
 
         stdout = os.popen(command)
         entries = read_ldap(stdout, multi=multi)
         return entries
 
-    def test_site(self):
+    def siteTest(self, entries):
         has_site = False
-        for entry in self.setUpLDAP():
+        for entry in entries:
             if 'GlueSite' in entry.objectClass:
                 self.failUnless(entry.glue['SiteUniqueID'] != 'UNKNOWN')
                 self.failUnless(entry.glue['SiteName'] != 'UNKNOWN')
                 has_site = True
         self.failUnless(has_site, msg="No site LDAP entry present!")
-
-    def test_subcluster(self):
+    
+    def subclusterTest(self, entries):
         has_subcluster = False
-        for entry in self.setUpLDAP():
+        for entry in entries:
             if 'GlueSubCluster' in entry.objectClass:
                 try:
                     msg = "Subclusters site name is UNKNOWN"
@@ -49,8 +44,8 @@ class TestSiteName(unittest.TestCase):
                 has_subcluster = True
         self.failUnless(has_subcluster, msg="No subcluster LDAP entry present!")
 
-    def test_cp(self):
-        cp = config(self.filename)
+    def cpTest(self, filename):
+        cp = config(filename)
 
         siteName = cp_get(cp, "site", "name", "UNKNOWN")
         self.failUnless(siteName != "UNKNOWN", msg="Site name is UNKNOWN")
@@ -71,7 +66,23 @@ class TestSiteName(unittest.TestCase):
                 self.failUnless(sc_sitename != "UNKNOWN", msg)
             except:
                 self.failUnless(False, msg)
+        
+    def test_cp(self):
+        self.cpTest("test_configs/site-name.conf")
+        self.cpTest("test_configs/red.conf")
+        
+    def test_site(self):
+        entries = self.setUpLDAP("test_configs/site-name.conf")
+        self.siteTest(entries)
+        entries = self.setUpLDAP("test_configs/red.conf")
+        self.siteTest(entries)
 
+    def test_subcluster(self):
+        entries = self.setUpLDAP("test_configs/site-name.conf")
+        self.subclusterTest(entries)
+        entries = self.setUpLDAP("test_configs/red.conf")
+        self.subclusterTest(entries)
+    
 def main():
     os.environ['GIP_TESTING'] = '1'
     cp = config()

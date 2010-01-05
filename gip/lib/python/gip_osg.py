@@ -394,7 +394,7 @@ def configOsg(cp):
             continue
 
         name = cp.get(sec, 'name')
-        cp.set(sec, 'unique_name', name+"-"+siteName)
+        cp.set(sec, 'unique_name', name + "-" + site_name)
         
         nodes = cp_getInt(cp, sec, "node_count", "0")
         cpus_per_node = cp_getInt(cp, sec, "cpus_per_node", 2)

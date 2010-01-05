@@ -173,6 +173,13 @@ def configOsg(cp):
         #log.exception(e)
         print >> sys.stderr, str(e)
 
+    try:
+        config_info(cp2, cp)
+    except SystemExit, KeyboardInterrupt:
+        raise
+    except Exception, e:
+        print >> sys.stderr, str(e)
+
     # Set the site status:
     try:
         state_info_file = '$VDT_LOCATION/MIS-CI/etc/grid-site-state-info'
@@ -593,6 +600,95 @@ def configSEs(cp, cp2):
 
             # Handle allowed VO's for bestman
             # Yet to be implemented
+
+cemon_re = re.compile("(https?)://([a-zA-Z0-9\-.]+):([0-9]+)(.*)\[(.*)\]")
+def config_info(ocp, gcp):
+    """
+    Configure the information services.  Right now, this means that we look at
+    and configure the CEMon section from config.ini to determine the BDII and
+    ReSS endpoints.  We then save this to the [GIP] configuration section in
+    the bdii_endpoints and ress_endpoints attributes.
+
+    If all else fails, we default to the OSG servers
+    """
+
+    log.debug("Starting to configure information service endpoints")
+
+    is_osg = True
+    if cp_get(ocp, "Site Information", "group", "OSG").lower().find("itb") >= 0:
+        is_osg = False
+    try:
+        override = cp.getboolean("gip", "override")
+    except:
+        override = False
+
+
+    ress_endpoints = []
+    bdii_endpoints = []
+
+    # Parse the production and testing endpoints
+    def parse_endpoints(name_str):
+        names = split_re.split(name_str)
+        results = []
+        for name in names:
+            m = cemon_re.match(name)
+            if m:
+                result = '%s://%s:%s%s' % m.groups()[:4]
+                results.append(result)
+        return results
+    def get_endpoints(cp, name, default):
+        name_str = cp_get(cp, "Cemon", name, None)
+        if not name_str:
+            name_str = default
+        return parse_endpoints(name_str)
+
+    # These are the default endpoints
+    osg_ress_servers = get_endpoints(ocp, "osg-ress-servers", "https://osg" \
+        "-ress-1.fnal.gov:8443/ig/services/CEInfoCollector[OLD_CLASSAD]")
+    osg_bdii_servers = get_endpoints(ocp, "osg-bdii-servers", "http://is1." \
+        "grid.iu.edu:14001[RAW], http://is2.grid.iu.edu:14001[RAW]")
+    itb_ress_servers = get_endpoints(ocp, "itb-ress-servers", "https://osg" \
+        "-ress-4.fnal.gov:8443/ig/services/CEInfoCollector[OLD_CLASSAD]")
+    itb_bdii_servers = get_endpoints(ocp, "itb-bdii-servers", "http://is-" \
+        "itb1.grid.iu.edu:14001[RAW], http://is-itb2.grid.iu.edu:14001[RAW]")
+
+    # See if the admins set something by hand; if not, go to the correct
+    # endpoint depending on the grid.
+    ress_servers = cp_get(ocp, "Cemon", "ress_servers", "UNAVAILABLE")
+    ress_servers = parse_endpoints(ress_servers)
+    if not ress_servers:
+        if is_osg:
+            ress_servers = osg_ress_servers
+        else:
+            ress_servers = itb_ress_servers
+
+    bdii_servers = cp_get(ocp, "Cemon", "bdii_servers", "UNAVAILABLE")
+    bdii_servers = parse_endpoints(bdii_servers)
+    if not bdii_servers:
+        if is_osg:
+            bdii_servers = osg_bdii_servers
+        else:
+            bdii_servers = itb_bdii_servers
+
+    if not gcp.has_section("gip"):
+        gcp.add_section("gip")
+
+    # As appropriate, override the GIP settings.
+    gip_bdii_servers = cp_get(gcp, "gip", "bdii_endpoints", None)
+    if (bdii_servers and override) or (bdii_servers and not gip_bdii_servers):
+        gcp.set("gip", "bdii_endpoints", ", ".join(bdii_servers))
+        log.info("Configured BDII endpoints: %s." % ", ".join(bdii_servers))
+    else:
+        log.info("Previously configured BDII endpoints: %s." % \
+            ", ".join(gip_bdii_servers))
+
+    gip_ress_servers = cp_get(gcp, "gip", "ress_endpoints", None)
+    if (ress_servers and override) or (ress_servers and not gip_ress_servers):
+        gcp.set("gip", "ress_endpoints", ", ".join(ress_servers))
+        log.info("Configured ReSS endpoints: %s." % ", ".join(ress_servers))
+    else:
+        log.info("Previously configured ReSS endpoints: %s." % \
+            ", ".join(gip_ress_servers))
 
 def getSiteName(cp):
     siteName = cp_get(cp, site_sec, "resource_group", "UNKNOWN")

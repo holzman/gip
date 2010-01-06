@@ -75,4 +75,4 @@ echo "Return Code:      $UNITTEST_RETURN_CODE"
 echo
 echo "If the return code is non zero, at least one unittest failed. Check"
 echo "$GIP_LOCATION/var/logs/gip_unittest.log"
-
+exit $UNITTEST_RETURN_CODE

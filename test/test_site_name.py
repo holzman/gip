@@ -1,5 +1,3 @@
-from orca.scripts import self_voicing
-
 import os
 import sys
 import unittest

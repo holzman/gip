@@ -235,7 +235,15 @@ def configOsg(cp):
                 __write_config(section2, option, section, option)
         except:
             pass
-        
+
+    def __write_config_value(section, option, new_val):
+        if not cp.has_section(section):
+            cp.add_section(section)
+        if override and (not cp.has_option(section, option)):
+            cp.set(section, option, new_val)
+        elif (not override):
+            cp.set(section, option, new_val)
+
     # Now, we compare the two - convert the config.ini options into gip.conf
     # options.
     # [Site Information]
@@ -248,10 +256,6 @@ def configOsg(cp):
         cp2.set(site_sec, "host_name", socket.gethostname())
     __write_config(site_sec, "host_name", ce, "name")
     __write_config(site_sec, "host_name", ce, "unique_name")
-    __write_config(site_sec, "site_name", site, "name")
-    __write_config(site_sec, "site_name", site, "unique_name")
-    __write_config(site_sec, "resource_group_name", site, "name")
-    __write_config(site_sec, "resource_group_name", site, "unique_name")
     __write_config(site_sec, "sponsor", site, "sponsor")
     __write_config(site_sec, "site_policy", site, "sitepolicy")
     __write_config(site_sec, "contact", site, "contact")
@@ -261,7 +265,11 @@ def configOsg(cp):
     __write_config(site_sec, "longitude", site, "longitude")
     __write_config(site_sec, "latitude", site, "latitude")
     __write_config(site_sec, "group", site, "group")
-    
+
+    site_name = getSiteName(cp2)
+    __write_config_value(site, "name", site_name)
+    __write_config_value(site, "unique_name", site_name)
+
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
     # With the call to __write_all_options_config, the next 2 lines are obsolete
@@ -302,6 +310,8 @@ def configOsg(cp):
     __write_config(gip_sec, "srm", se, "srm_present")
     __write_config(gip_sec, "advertise_gums", site, "advertise_gums")
     __write_config(gip_sec, "other_ces", cluster, "other_ces")
+    __write_config(gip_sec, "bdii_endpoints", "gip", "bdii_endpoints")
+    __write_config(gip_sec, "ress_endpoints", "gip", "ress_endpoints")
 
     cluster_name = cp_get(cp2, gip_sec, "cluster_name", "")
     if len(cluster_name) > 0:
@@ -383,6 +393,10 @@ def configOsg(cp):
             __write_config(gip_sec, "sc_%s_%i" % (key, idx), sec, val)
         if not cp.has_section(sec):
             continue
+
+        name = cp.get(sec, 'name')
+        cp.set(sec, 'unique_name', name + "-" + site_name)
+        
         nodes = cp_getInt(cp, sec, "node_count", "0")
         cpus_per_node = cp_getInt(cp, sec, "cpus_per_node", 2)
         cores_per_node = cp_getInt(cp, sec, "cores_per_node", cpus_per_node*2)
@@ -430,6 +444,8 @@ def configSubclusters(cp, cp2):
         "ram_mb":  "ram_size",
         "cpu_platform": "platform",
     }
+    siteName = getSiteName(cp)
+
     for section in cp.sections():
         my_sect = section.lower()
         if not my_sect.startswith(subcluster):
@@ -442,6 +458,16 @@ def configSubclusters(cp, cp2):
             gip_option = translation.get(option, option)
             cp2.set(my_sect, gip_option, cp.get(section, option))
         options = cp2.options(my_sect)
+        
+        if 'name' in options:
+            try:
+                name = cp2.get(my_sect, 'name')
+                cp2.set(my_sect, 'unique_name', name+"-"+siteName)
+            except SystemExit, KeyboardInterrupt:
+                raise
+            except Exception, e:
+                log.exception(e)
+
         if 'node_count' in options and 'cpus_per_node':
             try:
                 cp2.set(my_sect, "total_cpus", str(int(float(cp2.get(my_sect,
@@ -664,5 +690,15 @@ def config_info(ocp, gcp):
     else:
         log.info("Previously configured ReSS endpoints: %s." % \
             ", ".join(gip_ress_servers))
-    
 
+def getSiteName(cp):
+    siteName = cp_get(cp, site_sec, "resource_group", "UNKNOWN")
+    if siteName == "UNKNOWN":
+        siteName = cp_get(cp, site_sec, "site_name", "UNKNOWN")
+    if siteName == "UNKNOWN":
+        siteName = cp_get(cp, site_sec, "resource", "UNKNOWN")
+    if siteName == "UNKNOWN":
+        # adding in as a last option Brian's previous name for resource group
+        siteName = cp_get(cp, site_sec, "resource_group_name", "UNKNOWN")
+
+    return siteName

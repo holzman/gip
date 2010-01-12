@@ -1,0 +1,15 @@
+#!/bin/bash
+RELEASE_FILE=${GIP_LOCATION}/etc/gip-release.txt
+
+if [ x${GIP_LOCATION} != x ]; then
+    if [ -e ${RELEASE_FILE} ]; then
+	cat $RELEASE_FILE
+    else
+	exit 1
+    fi
+else
+    exit 2
+fi
+
+	
+	

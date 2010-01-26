@@ -24,6 +24,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 ################################################################################
 MSG_INFO = "INFO"
 MSG_CRITICAL = "CRIT"
+MSG_UNKNOWN = "UNKNOWN"
 osg_endpoint = "ldap://is.grid.iu.edu:2170"
 itb_endpoint = "ldap://is-itb.grid.iu.edu:2170"
 egee_endpoint = "ldap://lcg-bdii.cern.ch:2170"
@@ -331,7 +332,18 @@ class ValidateGip:
         for site in site_list:
             self.site = site
             self.entries = self.load_entries(site)
-            results.append(self.main(site))
+            if len(self.entries) > 0:
+                results.append(self.main(site))
+            else:
+                test_result = {
+                    "site"       : site, 
+                    "type"       : 'OSG', 
+                    "name"       : 'ValidateGIP_%s' % site, 
+                    "messages"   : ["Could not get LDIF entries",],
+                    "timestamp"  : self.getTimestamp(),
+                    "result"     : MSG_UNKNOWN
+                }
+                results.append(test_result)
         return results
 
     def main(self, site):
@@ -798,8 +810,12 @@ class ValidatorMain:
 
         # since this is a single site test, return 1 if there are any critical
         # errors
-        if results[0]['result'].upper() == 'CRIT':
+        if results[0]['result'].upper() == MSG_CRITICAL:
             return 1
+        
+        # could not contact the BDII or get info from gip_info
+        if results[0]['result'].upper() == MSG_UNKNOWN:
+            return 2
 
         # otherwise return 0 (Success!!)
         return 0

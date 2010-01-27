@@ -339,7 +339,7 @@ class ValidateGip:
                     "site"       : site, 
                     "type"       : 'OSG', 
                     "name"       : 'ValidateGIP_%s' % site, 
-                    "messages"   : ["Could not get LDIF entries",],
+                    "messages"   : [{'msg': 'Could not get LDIF Entries.', 'type': 'CRIT'},],
                     "timestamp"  : self.getTimestamp(),
                     "result"     : MSG_UNKNOWN
                 }
@@ -751,7 +751,7 @@ class ValidatorMain:
             default="False")
         (options, args) = p.parse_args()
 
-        if not (options.grid.lower() == "prod"): ITB = True
+        if not (options.grid.lower() == "prod"): self.ITB = True
 
         # get site list
         if options.sites == "OIM":
@@ -830,7 +830,7 @@ class ValidatorMain:
             xml += "        <Result>%s</Result>\n" % result['result']
             xml += "        <Messages>\n"
             for msg in result['messages']:
-                xml += "            <Message>%s</Message>\n" % msg['msg']
+                xml += "            <Message>%s</Message>\n" % str(msg['msg'])
             xml += "        </Messages>\n"
             xml += "    </ResourceGroup>\n"
         xml += '<GIPValidator>\n'

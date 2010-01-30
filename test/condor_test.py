@@ -222,7 +222,59 @@ class TestCondorProvider(unittest.TestCase):
         """
         Make sure that we can parse non-trivial COLLECTOR_HOST entries.
         """
-        
+
+    def test_condor_blacklist(self):
+        """
+        For a given Condor group <grp>, make sure one can restrict access to 
+        a certain VO by the following config.ini lines::
+        [Condor]
+        grp_blacklist = *
+        grp_whitelist = cdms
+        """
+        os.environ['GIP_TESTING'] = 'suffix=fnal'
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+            "--config=test_configs/fnal_condor.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd, multi=True)
+        has_e907 = False
+        has_default = False
+        for entry in entries:
+            if 'GlueCE' not in entry.objectClass:
+                continue
+            self.failIf("VO:testblacklist" in \
+                entry.glue['CEAccessControlBaseRule'])
+            if 'group_e907' in entry.glue['CEName']:
+                has_e907 = True
+                self.failUnless("VO:cms" in entry.glue["CEAccessControlBaseRule"])
+                self.failUnless("VO:mipp" in entry.glue["CEAccessControlBaseRule"])
+                self.failIf("VO:e907" in entry.glue["CEAccessControlBaseRule"])
+            if 'default' in entry.glue['CEName']:
+                has_default = True
+                self.failIf("VO:cdms" not in entry.glue["CEAccessControlBaseRule"])
+                self.failIf("VO:cms" in entry.glue["CEAccessControlBaseRule"])
+        self.failUnless(has_e907, msg="No GlueCE object in output for " \
+            "group_e907")
+        self.failUnless(has_default, msg="No GlueCE object in output for " \
+            "group_e907")
+
+    def test_condor_ignore(self):
+        """
+        Verify that Condor provider respects the group_ignore parameter in
+        the config.ini section [Condor].  This should allow one to remove
+        unwanted groups.
+        """
+        os.environ['GIP_TESTING'] = 'suffix=fnal'
+        path = os.path.expandvars("$GIP_LOCATION/providers/batch_system.py " \
+            "--config=test_configs/fnal_condor.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd, multi=True)
+        has_ce = False
+        for entry in entries:
+            if "GlueCE" not in entry.objectClass:
+                continue
+            has_ce = True
+            self.failIf("group_test_ignore" in entry.glue["CEName"])
+        self.failUnless(has_ce, msg="No GlueCE object in the output.")
 
 def main():
     """

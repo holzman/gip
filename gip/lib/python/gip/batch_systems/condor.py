@@ -92,6 +92,7 @@ class CondorBatchSystem(BatchSystem):
             'vos': sets.Set()}
         all_group_vos = sets.Set()
         total_assigned = 0
+        log.debug("All group info: %s" % str(groupInfo))
         for key, val in groupInfo.items():
             if key == 'default':
                 continue
@@ -116,6 +117,15 @@ class CondorBatchSystem(BatchSystem):
         log.debug("All assigned VOs: %s" % ", ".join(all_group_vos))
         defaultVoList = voList(self.cp, vo_map=self.vo_map)
         defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
+        whitelist, blacklist = self.getWhiteBlackLists("default")
+        if "*" in blacklist:
+            defaultVoList = []
+        for vo in blacklist:
+            if vo in defaultVoList:
+                defaultVoList.remove(vo)
+        for vo in whitelist:
+            if vo not in defaultVoList:
+                defaultVoList.append(vo)
         groupInfo['default']['vos'] = defaultVoList
         if not groupInfo['default']['vos']:
             log.debug("No unassigned VOs; no advertising a default group")
@@ -155,8 +165,6 @@ class CondorBatchSystem(BatchSystem):
                 vos = self.guessVO(group)
                 log.debug("For group %s, guessed VOs of %s" % (group,
                     ", ".join(vos)))
-                if not vos:
-                    continue
                 curInfo = {'quota': 0, 'prio': 0, 'vos': vos}
                 try:
                     curInfo['quota'] += int(quota)
@@ -192,21 +200,12 @@ class CondorBatchSystem(BatchSystem):
         # exist; return the list of names directly
         return groupInfo.keys()
 
-    def determineGroupVOsFromConfig(self, group):
+    def getWhiteBlackLists(self, group):
         """
-        Given a group name and the config object, determine the VOs which are
-        allowed in that group; this is based solely on the config files.
+        Given a group name, determine the white and black lists from the
+        configuration object.
         """
         cp = self.cp
-
-        # This is the old behavior.  Base everything on (groupname)_vos
-        bycp = cp_get(cp, "condor", "%s_vos" % group, None)
-        if bycp:
-            return [i.strip() for i in bycp.split(',')]
-
-        # This is the new behavior.  Base everything on (groupname)_blacklist 
-        # and (groupname)_whitelist.  Done to mimic the PBS configuration.
-        volist = sets.Set(voList(cp, self.vo_map))
         try:
             whitelist = [i.strip() for i in cp.get("condor", "%s_whitelist" % \
                 group).split(',')]
@@ -219,6 +218,27 @@ class CondorBatchSystem(BatchSystem):
         except:
             blacklist = []
         blacklist = sets.Set(blacklist)
+        return whitelist, blacklist
+
+    def determineGroupVOsFromConfig(self, group):
+        """
+        Given a group name, determine the VOs which are
+        allowed in that group; this is based solely on the config files.
+        """
+        cp = self.cp
+
+        # This is the old behavior.  Base everything on (groupname)_vos
+        bycp = cp_get(cp, "condor", "%s_vos" % group, None)
+        if bycp:
+            return [i.strip() for i in bycp.split(',')]
+
+        # This is the new behavior.  Base everything on (groupname)_blacklist 
+        # and (groupname)_whitelist.  Done to mimic the PBS configuration.
+        volist = sets.Set(voList(cp, self.vo_map))
+        whitelist, blacklist = self.getWhiteBlackLists(group)
+
+        log.debug("Group %s; whitelist: %s; blacklist: %s" % (group,
+            ", ".join(whitelist), ", ".join(blacklist)))
 
         # Return None if there's no explicit white/black list setting.
         if len(whitelist) == 0 and len(blacklist) == 0:
@@ -263,7 +283,7 @@ class CondorBatchSystem(BatchSystem):
         elif byname:
             return byname
         else:
-            return [altname]
+            return []
 
     def _getJobsInfoInternal(self):
         """
@@ -472,13 +492,15 @@ class CondorBatchSystem(BatchSystem):
                 results.add((vo, group))
         log.debug("VO Queues (before adding default queue): %s", ", ".join( \
             [str(i) for i in results]))
+        # The VOs in the default queue are already represented from group_info
+        # No need to do this anymore.
         # Add all other VOs to default queue.
-        current_vos = sets.Set()
-        for result in results:
-            current_vos.add(result[1])
-        all_vos.difference_update(current_vos)
-        for vo in all_vos:
-            results.add((vo, 'default'))
+        #current_vos = sets.Set()
+        #for result in results:
+        #    current_vos.add(result[1])
+        #all_vos.difference_update(current_vos)
+        #for vo in all_vos:
+        #    results.add((vo, 'default'))
         self._vo_queues = list(results)
         return self._vo_queues
 

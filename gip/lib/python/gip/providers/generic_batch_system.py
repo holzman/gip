@@ -30,6 +30,9 @@ def print_CE(batch):
     try:
         excludeQueues = [i.strip() for i in cp_get(cp, system_name, \
             "queue_exclude", "").split(',')]
+        excludeGroups = [i.strip() for i in cp_get(cp, system_name, \
+            "group_exclude", "").split(',')]
+        excludeQueues += excludeGroups
     except:
         excludeQueues = []
     vo_queues = batch.getVoQueues()

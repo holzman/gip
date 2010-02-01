@@ -23,9 +23,9 @@ from batch_system import BatchSystem
 log = getLogger("GIP.Condor")
 
 condor_version = "condor_version"
-condor_group = "condor_config_val -negotiator GROUP_NAMES"
-condor_quota = "condor_config_val -negotiator GROUP_QUOTA_%(group)s"
-condor_prio = "condor_config_val -negotiator GROUP_PRIO_FACTOR_%(group)s"
+condor_group = "condor_config_val -%(daemon)s GROUP_NAMES"
+condor_quota = "condor_config_val -%(daemon)s GROUP_QUOTA_%(group)s"
+condor_prio = "condor_config_val -%(daemon)s GROUP_PRIO_FACTOR_%(group)s"
 condor_status = "condor_status -xml -constraint '%(constraint)s'"
 condor_status_submitter = "condor_status -submitter -xml"
 condor_job_status = "condor_q -xml -constraint '%(constraint)s'"
@@ -40,6 +40,10 @@ class CondorBatchSystem(BatchSystem):
         self._jobs_info = None
         self._version_cache = None
         self._vo_queues = None
+        if cp_getBoolean(self.cp, "condor", "use_collector", False):
+            self._ccv_negotiator = "collector"
+        else:
+            self._ccv_negotiator = "negotiator"
 
     _version_re = re.compile("(\d+).(\d+).(\d+).*")
     def getLrmsInfo(self): #pylint: disable-msg=C0103
@@ -148,7 +152,8 @@ class CondorBatchSystem(BatchSystem):
         """
         if self._group_info != None:
             return self._group_info
-        fp = condorCommand(condor_group, self.cp)
+        fp = condorCommand(condor_group % {'daemon': self._ccv_negotiator},
+            self.cp)
         output = fp.read().split(',')
         if fp.close():
             log.info("No condor groups found.")
@@ -159,9 +164,11 @@ class CondorBatchSystem(BatchSystem):
             for group in output:
                 group = group.strip()
                 quota = condorCommand(condor_quota, self.cp, \
-                    {'group': group}).read().strip()
+                    {'group': group, "daemon": self._ccv_negotiator}).read().\
+                    strip()
                 prio = condorCommand(condor_prio, self.cp, \
-                    {'group': group}).read().strip()
+                    {'group': group, 'daemon': self._ccv_negotiator}).read().\
+                    strip()
                 vos = self.guessVO(group)
                 log.debug("For group %s, guessed VOs of %s" % (group,
                     ", ".join(vos)))

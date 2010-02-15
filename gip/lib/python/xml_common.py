@@ -21,11 +21,26 @@ def getText(nodelist):
     for node in nodelist:
         if node.nodeType == node.TEXT_NODE:
             rc = rc + node.data
-        if node.childNodes:
-            for child in node.childNodes:
-                if child.nodeType == node.CDATA_SECTION_NODE:
-                    rc = rc + child.data
     return rc
+
+def setText(dom, node, newText):
+    """
+    Since there are no guarantees with regard to the number of TEXT_NODEs that
+    an element may contain, we remove all TEXT_NODEs that are found first, then
+    create a single new TEXT_NODE, add the text to it, then append it to the 
+    given node.
+    
+    @param dom: The Dom object for the XML document
+    @param node: The XML node that will contain the TEXT_NODEs
+    @param newText: The text that will be appended to the new TEXT_NODE
+    @return: None
+    """
+    nodelist = node.childNodes
+    for child in nodelist:
+        if child.nodeType == child.TEXT_NODE:
+            node.removeChild(child)
+    txtNode = dom.createTextNode(newText)
+    node.appendChild(txtNode)
 
 def getDom(source, sourcetype="string"):
     """

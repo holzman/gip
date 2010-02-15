@@ -63,10 +63,10 @@ class SiteInfoToXml:
         self.transform()
 
     def transform(self):
-        writeXML(self.doc, self.xml_file, pretty=True)
+        writeXML(self.doc, self.xml_file, pretty=False)
         transform_cmd = "xsltproc -o %s %s %s"
-#        runCommand(transform_cmd % (self.html_file,self.xsl_file,self.xml_file))
-#        runCommand("rm -rf %s" % self.xml_file)
+        runCommand(transform_cmd % (self.html_file,self.xsl_file,self.xml_file))
+        runCommand("rm -rf %s" % self.xml_file)
 
     def getEntries(self):
         path = os.path.expandvars("$GIP_LOCATION/bin/gip_info")
@@ -76,8 +76,13 @@ class SiteInfoToXml:
     def getLdifValue(self, entry_value):
         try:
             val = ", ".join(entry_value)
-        except:
-            val = "EXCEPTION"
+        except TypeError:
+            try:
+                val = ""
+                for item in entry_value:
+                    val += ", ".join(item)
+            except:
+                val = "EXCEPTION: %s" % str(entry_value)
         return val
 
     def findEntry(self, node, elm_name, id=""):

@@ -157,7 +157,7 @@ class SiteInfoToXml:
                     self.convertEntry(entry, door)
                     nodeList = addChild(self.doc, door, "nodeList")
                 else:
-                    nodeList = findEntry(self.doc, door, "nodeList")
+                    nodeList = self.findEntry(self.doc, door, "nodeList")
 
                 node = entry.glue['SEAccessProtocolEndpoint'][0].split(":")[1][2:]
                 nodes = getText(nodeList) + str(node) + " "

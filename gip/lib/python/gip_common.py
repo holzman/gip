@@ -810,7 +810,7 @@ def responseTimes(cp, running, waiting, average_job_time=None,
         return 3600, 86400
     ERT = int(average_job_time/float(running+10)*waiting)
     WRT = int(max_job_time/float(running+1)*waiting)
-    ERT = max(min(ERT, 86400), 0)
+    ERT = max(min(ERT, 86400), 60)
     WRT = max(min(WRT, 30*86400), 2*ERT)
     return ERT, WRT
 

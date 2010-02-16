@@ -2,11 +2,12 @@
 
 import os
 import sys
+import re
 from xml.dom.minidom import Document
 
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_ldap import read_ldap
-from gip_common import config, cp_get, getTempFilename
+from gip_common import config, cp_get, getTempFilename, getUrlFd
 from gip_common import fileOverWrite as write_file
 
 def runCommand(cmd):
@@ -47,7 +48,7 @@ def writeXML(dom, filename, pretty=False):
     write_file(filename, contents)
 
 class SiteInfoToXml:
-    def __init__(self):
+    def __init__(self, url=""):
         cp = config()
         self.xml_file = getTempFilename()
         self.xsl_file = os.path.expandvars(cp_get(cp, "gip", "pretty_gip_xsl",
@@ -55,6 +56,7 @@ class SiteInfoToXml:
         self.html_file = os.path.expandvars(cp_get(cp, "gip", "pretty_gip_html",
             "$VDT_LOCATION/apache/htdocs/pretty_gip_info.html"))
         self.doc = Document()
+        self.url = url
         self.entries = None
 
     def main(self):
@@ -66,11 +68,16 @@ class SiteInfoToXml:
         writeXML(self.doc, self.xml_file, pretty=False)
         transform_cmd = "xsltproc -o %s %s %s"
         runCommand(transform_cmd % (self.html_file,self.xsl_file,self.xml_file))
-        runCommand("rm -rf %s" % self.xml_file)
+        #runCommand("rm -rf %s" % self.xml_file)
 
     def getEntries(self):
-        path = os.path.expandvars("$GIP_LOCATION/bin/gip_info")
-        fd = os.popen(path)
+        url_re = re.compile('http://([A-Za-z0-9-\.]+)/(.+)')
+        m = url_re.match(self.url)
+        if m:
+            fd = getUrlFd(self.url)
+        else:
+            path = os.path.expandvars("$GIP_LOCATION/bin/gip_info")
+            fd = os.popen(path)
         self.entries = read_ldap(fd, multi=True)
 
     def getLdifValue(self, entry_value):
@@ -130,7 +137,7 @@ class SiteInfoToXml:
                 self.convertEntry(entry, ce)
                 
             elif stanza_type == "GlueSEUniqueID":
-                se_id = self.getLdifValue(entry.glue['SEName'])
+                se_id = self.getLdifValue(entry.glue['SEUniqueID'])
                 se = self.findEntry(xml, "se", se_id)
                 if se is None:
                     se = addChild(self.doc, xml, "se")
@@ -162,7 +169,7 @@ class SiteInfoToXml:
                     self.convertEntry(entry, door)
                     nodeList = addChild(self.doc, door, "nodeList")
                 else:
-                    nodeList = self.findEntry(self.doc, door, "nodeList")
+                    nodeList = self.findEntry(door, "nodeList")
 
                 node = entry.glue['SEAccessProtocolEndpoint'][0].split(":")[1][2:]
                 nodes = getText(nodeList) + str(node) + " "
@@ -237,9 +244,13 @@ class SiteInfoToXml:
                 continue
         return
 
-def main():
-    xmlBuilder = SiteInfoToXml()
+def main(arg_url):
+    xmlBuilder = SiteInfoToXml(url=arg_url)
     xmlBuilder.main()
 
 if __name__ == '__main__':
-    main()
+    try:
+        url = sys.argv[1]
+    except:
+        url = ""
+    main(url)

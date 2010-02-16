@@ -25,9 +25,9 @@ from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
 from gip_testing import runCommand
 
 condor_version = "condor_version"
-condor_group = "condor_config_val -negotiator GROUP_NAMES"
-condor_quota = "condor_config_val -negotiator GROUP_QUOTA_%(group)s"
-condor_prio = "condor_config_val -negotiator GROUP_PRIO_FACTOR_%(group)s"
+condor_group = "condor_config_val -%(daemon)s GROUP_NAMES"
+condor_quota = "condor_config_val -%(daemon)s GROUP_QUOTA_%(group)s"
+condor_prio = "condor_config_val -%(daemon)s GROUP_PRIO_FACTOR_%(group)s"
 condor_status = "condor_status -xml -constraint '%(constraint)s'"
 condor_status_submitter = "condor_status -submitter -xml"
 condor_job_status = "condor_q -xml -constraint '%(constraint)s'"
@@ -224,7 +224,13 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
     @returns: A dictionary whose keys are VO groups and values are the quota
         and priority of the group.
     """
-    fp = condorCommand(condor_group, cp)
+
+    if cp_getBoolean(cp, "condor", "use_collector", False):
+        configDaemon = "collector"
+    else:
+        configDaemon = "negotiator"
+                                    
+    fp = condorCommand(condor_group, cp, {'daemon' : configDaemon})
     output = fp.read().split(',')
     if fp.close():
         log.info("No condor groups found.")
@@ -235,9 +241,9 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
         for group in output:
             group = group.strip()
             quota = condorCommand(condor_quota, cp, \
-                {'group': group}).read().strip()
+                {'group': group, 'daemon': configDaemon}).read().strip()
             prio = condorCommand(condor_prio, cp, \
-                {'group': group}).read().strip()
+                {'group': group, 'daemon': configDaemon}).read().strip()
             vos = guessVO(cp, group)
             if not vos:
                 continue

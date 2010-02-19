@@ -198,7 +198,7 @@ def main():
         impl = cp_get(cp, ce, "job_manager", None)
         if impl == 'forwarding':
             batch = Forwarding(cp)
-        if impl == 'pbs':
+        elif impl == 'pbs':
             batch = PbsBatchSystem(cp)
         elif impl == 'condor':
             batch = CondorBatchSystem(cp)

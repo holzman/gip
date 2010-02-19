@@ -133,6 +133,10 @@ class Forwarding(BatchSystem):
         values = self.groupAttribute(attr, self.forward_ces).values()
         return max(values)
 
+    def minCEAttribute(self, attr):
+        values = self.groupAttribute(attr, self.forward_ces).values()
+        return min(values)
+
     def allCEAttribute(self, attr):
         result = self.groupAttribute(attr, self.forward_ces, type='str')
         return result.values()
@@ -173,6 +177,8 @@ class Forwarding(BatchSystem):
         """
         Returns the condor version used by the forwarding node.
 
+        If condor is not used, return one of the forwarded versions.
+
         @returns: The condor version
         @rtype: string
         """
@@ -181,7 +187,17 @@ class Forwarding(BatchSystem):
                 version = line[15:].strip()
                 log.info("Running condor version %s." % version)
                 return "condor", version
-        ve = ValueError("Bad output from condor_version.")
+        glue_ces = self.filterObject("GlueCE")
+        if not glue_ces:
+            ve = ValueError("Bad output from condor_version.")
+            log.exception(ve)
+            raise ve
+        glue_ce = glue_ces[0]
+        if 'CEInfoLRMSVersion' in glue_ce.glue and 'CEInfoJobManager' in \
+                glue_ce.glue:
+            return glue_ce.glue['CEInfoJobManager'][0], \
+                glue_ce.glue['CEInfoLRMSVersion'][0]
+        ve = ValueError("No LRMS version given from forwarded sites!")
         log.exception(ve)
         raise ve
 
@@ -238,8 +254,8 @@ class Forwarding(BatchSystem):
             state = 'Production'
         results['status'] = state
         results['priority'] = 1
-        results['max_wall'] = self.maxCEAttribute('CEPolicyMaxWallClockTime')
-        results['max_running'] = self.maxCEAttribute('CEPolicyMaxRunningJobs')
+        results['max_wall'] = self.minCEAttribute('CEPolicyMaxWallClockTime')
+        results['max_running'] = self.addCEAttribute('CEPolicyMaxRunningJobs')
         results['running'] = self.addCEAttribute('CEStateRunningJobs')
         results['wait'] = self.addCEAttribute('CEStateWaitingJobs')
         results['total'] = self.addCEAttribute('CEStateTotalJobs')

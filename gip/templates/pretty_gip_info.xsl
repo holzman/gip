@@ -246,6 +246,67 @@
             </div>
         </div>
     </xsl:for-each>
+    <div style="width: 100%; border: 1px solid #a8a8a8; background-color: DDDDDD;">
+	    <p style="margin: .5% 0% .5% .5%;"><a onclick="toggle('vos');">VO View:</a></p>
+	    <hr/>
+	    <div style='display:none;' id='vos'>
+	        <xsl:for-each select="/xml/vo">
+	            <div style="width: 99%; margin: 0% 0% .5% .5%; border: 1px solid #a8a8a8; background-color: EEEEEE;">
+	                <p style="margin: .5% 0% .5% .5%;"><a><xsl:attribute name="onclick">toggle('vo_<xsl:value-of select="@id"/>');</xsl:attribute>VO Name: <xsl:value-of select="@id"/></a></p>
+	                <hr/>
+	                <div style='display:none;'><xsl:attribute name="id">vo_<xsl:value-of select="@id"/></xsl:attribute>
+                        <p style="margin: .5% 0% .5% .5%;"><a><xsl:attribute name="onclick">toggle('vo_<xsl:value-of select="@id"/>_CEs');</xsl:attribute>Compute Elements:</a></p>
+                        <hr/>
+                        <div style='display:none;'><xsl:attribute name="id">vo_<xsl:value-of select="@id"/>_CEs</xsl:attribute>
+	                        <xsl:for-each select="vo_view">
+			                    <table width='100%'>
+			                    <tr><td>CE:</td><td><xsl:value-of select="ChunkKey"/></td></tr>
+			                    <tr><td>ERT:</td><td><xsl:value-of select="CEStateEstimatedResponseTime"/></td></tr>
+			                    <tr><td>WRT:</td><td><xsl:value-of select="CEStateWorstResponseTime"/></td></tr>
+		                        <tr><td colspan='2'><hr style='width:75%'/></td></tr>
+			                    <tr><td>CE Running Jobs:</td><td><xsl:value-of select="CEStateRunningJobs"/></td></tr>
+			                    <tr><td>CE Waiting Jobs:</td><td><xsl:value-of select="CEStateWaitingJobs"/></td></tr>
+			                    <tr><td>CE total Jobs:</td><td><xsl:value-of select="CEStateTotalJobs"/></td></tr>
+			                    <tr><td>CE Free Job Slots:</td><td><xsl:value-of select="CEStateFreeJobSlots"/></td></tr>
+		                        <tr><td colspan='2'><hr style='width:75%'/></td></tr>
+			                    <tr><td>Default SE:</td><td><xsl:value-of select="CEInfoDefaultSE"/></td></tr>
+			                    <tr><td>Data Directory:</td><td><xsl:value-of select="CEInfoDataDir"/></td></tr>
+			                    <tr><td>Application Directory:</td><td><xsl:value-of select="CEInfoApplicationDir"/></td></tr>
+			                    <tr><td colspan='2'><hr style='width:75%'/></td></tr>
+		                        </table>
+		                        <hr/>
+	                        </xsl:for-each>
+	                    </div>
+                        <p style="margin: .5% 0% .5% .5%;"><a><xsl:attribute name="onclick">toggle('vo_<xsl:value-of select="@id"/>_Services');</xsl:attribute>Services:</a></p>
+                        <hr/>
+                        <div style='display:none;'><xsl:attribute name="id">vo_<xsl:value-of select="@id"/>_Services</xsl:attribute>
+	                        <xsl:for-each select="service">
+	                            <table width='100%'>
+			                        <tr><td>Name: </td><td><xsl:value-of select="Name"/></td></tr>
+			                        <tr><td>Version: </td><td><xsl:value-of select="Version"/></td></tr>
+			                        <tr><td>Type: </td><td><xsl:value-of select="Type"/></td></tr>
+		                            <tr><td colspan='2'><hr style='width:75%'/></td></tr>
+	                            </table>
+                                <hr/>
+		                    </xsl:for-each>
+		                </div>
+		                <p style="margin: .5% 0% .5% .5%;"><a><xsl:attribute name="onclick">toggle('vo_<xsl:value-of select="VOViewLocalID"/>_software');</xsl:attribute><xsl:value-of select="VOViewLocalID"/> Software:</a></p>
+		                <hr/>
+		                <div style='display:none;'><xsl:attribute name="id">vo_<xsl:value-of select="VOViewLocalID"/>_software</xsl:attribute>
+		                    <table width='100%'>
+			                    <xsl:for-each select="software">
+			                        <tr><td>Name: </td><td><xsl:value-of select="Name"/></td></tr>
+			                        <tr><td>Version: </td><td><xsl:value-of select="Version"/></td></tr>
+			                        <tr><td>Path: </td><td><xsl:value-of select="Path"/></td></tr>
+	                                <tr><td colspan='2'><hr style='width:75%'/></td></tr>
+			                    </xsl:for-each>
+		                    </table>
+		                </div>
+					</div>
+	            </div>        
+	        </xsl:for-each>
+        </div>
+    </div>
 </body>
 </html>
 

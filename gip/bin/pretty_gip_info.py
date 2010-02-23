@@ -276,7 +276,13 @@ class SiteInfoToXml:
                     if vo is None:
                         vo = addChild(self.doc, xml, "vo")
                         vo.attributes["id"] = vo_name
-                    self.convertEntry(entry, vo)
+                    
+                    vo_view_id = entry.glue['ChunkKey'][0].split("=")[1]
+                    vo_view = self.findEntry(vo, "vo_view", vo_view_id)
+                    if vo_view is None:
+                        vo_view = addChild(self.doc, vo, "vo_view")
+                        vo_view.attributes["id"] = vo_view_id
+                        self.convertEntry(entry, vo_view)
 
             elif stanza_type == "GlueLocationLocalID":
                 site = self.findEntry(self.doc, "site")

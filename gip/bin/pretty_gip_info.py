@@ -68,7 +68,7 @@ class SiteInfoToXml:
         writeXML(self.doc, self.xml_file, pretty=False)
         transform_cmd = "xsltproc -o %s %s %s"
         runCommand(transform_cmd % (self.html_file,self.xsl_file,self.xml_file))
-        #runCommand("rm -rf %s" % self.xml_file)
+        runCommand("rm -rf %s" % self.xml_file)
 
     def getEntries(self):
         url_re = re.compile('http://([A-Za-z0-9-\.]+)/(.+)')
@@ -121,6 +121,11 @@ class SiteInfoToXml:
         else:
             setText(self.doc, elm, value)
 
+    def getVOfromACBR(self, ACBR):
+        if ACBR.strip().startswith('VO'): vo_name = ACBR.split(':')[1]
+        else: vo_name = ACBR
+        return vo_name.strip()
+        
     def parseLdif(self):
         xml = addChild(self.doc, self.doc, "xml")
         for entry in self.entries:
@@ -179,6 +184,27 @@ class SiteInfoToXml:
                 # Add Service
                 service = addChild(self.doc, xml, "service")
                 self.convertEntry(entry, service)
+
+                try:
+                    acbrs = self.getLdifValue(entry.glue['ServiceAccessControlRule']).strip().split(',')
+                    for rule in acbrs:
+                        vo_name = self.getVOfromACBR(rule)
+                        vo = self.findEntry(self.doc, "vo", vo_name)
+                        if vo is None:
+                            vo = addChild(self.doc, xml, "vo")
+                            vo.attributes["id"] = vo_name
+                       
+                        service_name = self.getLdifValue(entry.glue['ServiceName'])
+                        service = self.findEntry(vo, "service", service_name)
+                        if service is None:
+                            service = addChild(self.doc, vo, "service")
+                            service.attributes["id"] = service_name
+                            self.updateItem(self.doc, service, "Name", self.getLdifValue(entry.glue['ServiceName']))
+                            self.updateItem(self.doc, service, "Type", self.getLdifValue(entry.glue['ServiceType']))
+                            self.updateItem(self.doc, service, "Version", self.getLdifValue(entry.glue['ServiceVersion']))
+                        
+                except:
+                    continue
                 
             elif stanza_type == "GlueSEControlProtocolLocalID":
                 se_id = entry.glue['ChunkKey'][0].split("=")[1]
@@ -216,6 +242,48 @@ class SiteInfoToXml:
                     site = addChild(self.doc, xml, "site")
                 self.convertEntry(entry, site)
 
+            elif stanza_type == "GlueVOInfoLocalID":
+                acbrs = self.getLdifValue(entry.glue['VOInfoAccessControlBaseRule']).strip().split(',')
+                for rule in acbrs:
+                    vo_name = self.getVOfromACBR(rule)
+                    vo = self.findEntry(self.doc, "vo", vo_name)
+                    if vo is None:
+                        vo = addChild(self.doc, xml, "vo")
+                        vo.attributes["id"] = vo_name
+
+                    vo_se_name = ""
+                    chunk_keys = self.getLdifValue(entry.glue['ChunkKey']).strip().split(',')
+                    for key in chunk_keys:
+                        if key.startswith('GlueSEUniqueID'):
+                            vo_se_name = key.split('=')[1]
+                            break
+                    if len(vo_se_name) > 0:
+                        vo_se = self.findEntry(vo, "vo_se", vo_se_name)
+                        if vo_se is None:
+                            vo_se = addChild(self.doc, vo, "vo_se")
+                            vo_se.attributes["id"] = vo_se_name
+                            
+                        self.updateItem(self.doc, vo_se, "SE", vo_se_name)
+                        self.updateItem(self.doc, vo_se, "Name", self.getLdifValue(entry.glue['VOInfoName']))
+                        self.updateItem(self.doc, vo_se, "Path", self.getLdifValue(entry.glue['VOInfoPath']))
+                        self.updateItem(self.doc, vo_se, "Tag", self.getLdifValue(entry.glue['VOInfoTag']))
+                
+            elif stanza_type == "GlueVOViewLocalID":
+                acbrs = self.getLdifValue(entry.glue['CEAccessControlBaseRule']).strip().split(',')
+                for rule in acbrs:
+                    vo_name = self.getVOfromACBR(rule)
+                    vo = self.findEntry(self.doc, "vo", vo_name)
+                    if vo is None:
+                        vo = addChild(self.doc, xml, "vo")
+                        vo.attributes["id"] = vo_name
+                    
+                    vo_view_id = entry.glue['ChunkKey'][0].split("=")[1]
+                    vo_view = self.findEntry(vo, "vo_view", vo_view_id)
+                    if vo_view is None:
+                        vo_view = addChild(self.doc, vo, "vo_view")
+                        vo_view.attributes["id"] = vo_view_id
+                        self.convertEntry(entry, vo_view)
+
             elif stanza_type == "GlueLocationLocalID":
                 site = self.findEntry(self.doc, "site")
                 if site is None:
@@ -240,6 +308,26 @@ class SiteInfoToXml:
                     osg_path = self.getLdifValue(entry.glue['LocationPath'])
                     self.updateItem(self.doc, site, "osg_version", osg_version)
                     self.updateItem(self.doc, site, "osg_path", osg_path)
+                else:
+                    try:
+                        if stanza_type_value.startswith('VO'):
+                            vo_name = stanza_type_value.split('-')[1]
+                            vo = self.findEntry(self.doc, "vo", vo_name)
+                            if vo is None:
+                                vo = addChild(self.doc, xml, "vo")
+                                vo.attributes["id"] = vo_name
+    
+                            software_name = self.getLdifValue(entry.glue['LocationName'])
+                            software = self.findEntry(vo, "software", software_name)
+                            if software is None:
+                                software = addChild(self.doc, vo, "software")
+                                software.attributes["id"] = software_name
+                            self.updateItem(self.doc, software, "Name", self.getLdifValue(entry.glue['LocationName']))
+                            self.updateItem(self.doc, software, "Path", self.getLdifValue(entry.glue['LocationPath']))
+                            self.updateItem(self.doc, software, "Version", self.getLdifValue(entry.glue['LocationVersion']))
+                    except:
+                        continue
+
             else:
                 continue
         return

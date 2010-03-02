@@ -388,9 +388,23 @@ class ClassAdEmitter(object):
     def add_software(self, software, results):
         pass
 
+    def can_access(self, obj1_acbrs, obj2, attribute):
+        """
+        Return true if any of the entries in the obj1_acbrs are allowed to
+        access obj2 (using the glue attribute named "attribute")
+        """
+        obj2_acbrs = obj2.glue.get(attribute, [])
+        if not obj2_acbrs:
+            return False
+        for acbr1 in obj1_acbrs:
+            for acbr2 in obj2_acbrs:
+                if gip_common.matchFQAN(acbr1, acbr2):
+                    return True
+        return False
+
     def emit(self, site=None, cluster=None, ce=None, voview=None, software=None,
             aps=None, service=None, se=None, voinfo=None, sa=None,
-            subcluster=None, cese=None, **kw):
+            subcluster=None, cese=None, cp=None, **kw):
 
         if not site or not cluster or not ce:
             return
@@ -408,6 +422,8 @@ class ClassAdEmitter(object):
             voview_acbr = voview.glue['CEAccessControlBaseRule']
         if service:
             self.add_to_results(service, results)
+        if cp:
+            self.add_to_results(cp, results)
         if se:
             self.add_to_results(se, results)
         if cese:
@@ -476,11 +492,11 @@ class ClassAdEmitter(object):
 
     def emit_se(self, subclusters, ce, voviews, **kw):
         aps = kw['aps']
-        aps = self.sort_aps(aps)
         services = kw['services']
+        aps = self.sort_aps(aps)
         if services:
             for service in services:
-                kw['service'] = service
+                kw['service'], kw['cp'] = service
                 if aps:
                     for ap_type in aps.values():
                         kw['aps'] = ap_type
@@ -696,7 +712,7 @@ def upload(cae, bdii, entries, dryrun=False):
         for cp in se_to_cps.get(se, []):
             if cp in cp_to_service:
                 service_list = se_to_services.setdefault(se, [])
-                service_list.append(cp_to_service[cp])
+                service_list.append((cp_to_service[cp], cp))
 
     # Map SE to SAs
     se_to_sas = map_to_list(all_ses, all_sas, "SEUniqueID")
@@ -764,25 +780,29 @@ def upload(cae, bdii, entries, dryrun=False):
         if adjacent_ses:
             # All SEs
             for se in adjacent_ses:
-                adjacent_sas = se_to_sas.get(se, [])
+                log.info("\tSE adjacent to CE: %s" % se)
                 kw['se'] = id_to_se[se]
+                adjacent_sas = se_to_sas.get(kw['se'], [])
                 kw['aps'] = se_to_aps.get(id_to_se[se], [])
-                kw['services'] = se_to_services.get(se, [])
+                kw['services'] = se_to_services.get(kw['se'], [])
                 if se in seid_to_cese:
                     kw['cese'] = seid_to_cese[se]
                 # All SAs
                 if adjacent_sas:
                     for sa in adjacent_sas:
+                        log.info("\t\tSA adjacent to SE: %s" % \
+                            sa.glue['SALocalID'])
                         kw['sa'] = sa
-                        voinfos = sesa_to_voinfos.get((se, sa), [])
+                        voinfos = sesa_to_voinfos.get((id_to_se[se], sa), [])
                         if voinfos:
                             # All VOInfos
                             for voinfo in voinfos:
                                 kw['voinfo'] = voinfo
-                                cae.emit_ce(subclusters, ce, voviews, **kw)
+                                cae.emit_se(subclusters, ce, voviews, **kw)
                         else:
                             cae.emit_se(subclusters, ce, voviews, **kw)
                 else:
+                    log.info("\t\tNo SA adjacent to SE.")
                     cae.emit_se(subclusters, ce, voviews, **kw)
         else:
             cae.emit_ce(subclusters, ce, voviews, **kw)

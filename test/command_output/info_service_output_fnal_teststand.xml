@@ -1,0 +1,3558 @@
+<?xml version="1.0"?>
+<dCache xmlns="http://www.dcache.org/2008/01/Info">
+  <summary>
+    <linkgroup>
+      <blanket-auth>
+        <by-VO>
+          <VO name="cms">
+            <linkgroups>
+              <linkgroupref lgid="0"/>
+            </linkgroups>
+          </VO>
+          <VO name="atlas">
+            <linkgroups>
+              <linkgroupref lgid="0"/>
+            </linkgroups>
+          </VO>
+        </by-VO>
+        <all>
+          <linkgroups>
+            <linkgroupref lgid="1"/>
+          </linkgroups>
+        </all>
+      </blanket-auth>
+    </linkgroup>
+    <pools>
+      <space>
+        <metric name="total" type="integer">3015067041792</metric>
+        <metric name="free" type="integer">2974504972849</metric>
+        <metric name="precious" type="integer">38244118430</metric>
+        <metric name="removable" type="integer">82305688</metric>
+        <metric name="used" type="integer">40562068943</metric>
+      </space>
+    </pools>
+    <reservations>
+      <by-VO>
+        <VO name="osg">
+          <by-description>
+            <reservation-group description="space_for_test">
+              <space>
+                <metric name="total" type="integer">2000</metric>
+                <metric name="free" type="integer">2000</metric>
+                <metric name="allocated" type="integer">0</metric>
+                <metric name="used" type="integer">0</metric>
+              </space>
+              <metric name="vo" type="string">osg</metric>
+              <reservations>
+                <reservation id="370006"/>
+                <reservation id="380000"/>
+              </reservations>
+            </reservation-group>
+          </by-description>
+        </VO>
+        <VO name="fermilab">
+          <by-description>
+            <reservation-group description="my_space">
+              <space>
+                <metric name="total" type="integer">1000</metric>
+                <metric name="free" type="integer">1000</metric>
+                <metric name="allocated" type="integer">0</metric>
+                <metric name="used" type="integer">0</metric>
+              </space>
+              <metric name="vo" type="string">fermilab</metric>
+              <reservations>
+                <reservation id="350052"/>
+              </reservations>
+            </reservation-group>
+          </by-description>
+        </VO>
+      </by-VO>
+    </reservations>
+  </summary>
+  <doors>
+    <door name="DCap-gsi-gwdca03@gsidcap-gwdca03Domain">
+      <metric name="port" type="integer">22128</metric>
+      <metric name="update-time" type="integer">120000</metric>
+      <protocol>
+        <metric name="engine" type="string">diskCacheV111.doors.DCapDoor</metric>
+        <metric name="family" type="string">gsidcap</metric>
+        <metric name="version" type="string">1.3.0</metric>
+      </protocol>
+      <metric name="cell" type="string">DCap-gsi-gwdca03</metric>
+      <metric name="domain" type="string">gsidcap-gwdca03Domain</metric>
+      <interfaces>
+        <interface name="gwdca03.fnal.gov">
+          <metric name="address-type" type="string">IPv4</metric>
+          <metric name="order" type="integer">1</metric>
+          <metric name="address" type="string">131.225.64.53</metric>
+          <metric name="name" type="string">gwdca03.fnal.gov</metric>
+          <metric name="FQDN" type="string">gwdca03.fnal.gov</metric>
+        </interface>
+      </interfaces>
+      <metric name="load" type="float">0.0</metric>
+    </door>
+    <door name="SRM-gwdca04@srm-gwdca04Domain">
+      <metric name="port" type="integer">8443</metric>
+      <metric name="update-time" type="integer">300000</metric>
+      <protocol>
+        <metric name="engine" type="string">diskCacheV111.srm.dcache.Storage</metric>
+        <metric name="family" type="string">SRM</metric>
+        <metric name="version" type="string">1.1.1</metric>
+      </protocol>
+      <metric name="cell" type="string">SRM-gwdca04</metric>
+      <metric name="domain" type="string">srm-gwdca04Domain</metric>
+      <interfaces>
+        <interface name="gwdca04.fnal.gov">
+          <metric name="address-type" type="string">IPv4</metric>
+          <metric name="order" type="integer">1</metric>
+          <metric name="address" type="string">131.225.64.54</metric>
+          <metric name="name" type="string">gwdca04.fnal.gov</metric>
+          <metric name="FQDN" type="string">gwdca04.fnal.gov</metric>
+        </interface>
+      </interfaces>
+      <metric name="load" type="float">0.0</metric>
+    </door>
+    <door name="GFTP-gwdca03@gridftp-gwdca03Domain">
+      <metric name="port" type="integer">2811</metric>
+      <metric name="update-time" type="integer">5000</metric>
+      <protocol>
+        <metric name="engine" type="string">diskCacheV111.doors.GsiFtpDoorV1</metric>
+        <metric name="family" type="string">gsiftp</metric>
+        <metric name="version" type="string">1.0.0</metric>
+      </protocol>
+      <metric name="cell" type="string">GFTP-gwdca03</metric>
+      <metric name="domain" type="string">gridftp-gwdca03Domain</metric>
+      <interfaces>
+        <interface name="gwdca03.fnal.gov">
+          <metric name="address-type" type="string">IPv4</metric>
+          <metric name="order" type="integer">1</metric>
+          <metric name="address" type="string">131.225.64.53</metric>
+          <metric name="name" type="string">gwdca03.fnal.gov</metric>
+          <metric name="FQDN" type="string">gwdca03.fnal.gov</metric>
+        </interface>
+      </interfaces>
+      <metric name="load" type="float">0.0</metric>
+    </door>
+    <door name="Xrootd-gwdca06@xrootd-gwdca06Domain">
+      <metric name="port" type="integer">1094</metric>
+      <metric name="update-time" type="integer">30000</metric>
+      <protocol>
+        <metric name="engine" type="string">org.dcache.xrootd2.door.XrootdDoor</metric>
+        <metric name="family" type="string">root</metric>
+        <metric name="version" type="string">2.4</metric>
+      </protocol>
+      <metric name="cell" type="string">Xrootd-gwdca06</metric>
+      <metric name="domain" type="string">xrootd-gwdca06Domain</metric>
+      <interfaces>
+        <interface name="gwdca06.fnal.gov">
+          <metric name="address-type" type="string">IPv4</metric>
+          <metric name="order" type="integer">1</metric>
+          <metric name="address" type="string">131.225.64.56</metric>
+          <metric name="name" type="string">gwdca06.fnal.gov</metric>
+          <metric name="FQDN" type="string">gwdca06.fnal.gov</metric>
+        </interface>
+      </interfaces>
+      <metric name="load" type="float">0.0</metric>
+    </door>
+    <door name="DCap-gwdca03@dcap-gwdca03Domain">
+      <metric name="port" type="integer">22125</metric>
+      <metric name="update-time" type="integer">30000</metric>
+      <protocol>
+        <metric name="engine" type="string">diskCacheV111.doors.DCapDoor</metric>
+        <metric name="family" type="string">dcap</metric>
+        <metric name="version" type="string">1.3.0</metric>
+      </protocol>
+      <metric name="cell" type="string">DCap-gwdca03</metric>
+      <metric name="domain" type="string">dcap-gwdca03Domain</metric>
+      <interfaces>
+        <interface name="gwdca03.fnal.gov">
+          <metric name="address-type" type="string">IPv4</metric>
+          <metric name="order" type="integer">1</metric>
+          <metric name="address" type="string">131.225.64.53</metric>
+          <metric name="name" type="string">gwdca03.fnal.gov</metric>
+          <metric name="FQDN" type="string">gwdca03.fnal.gov</metric>
+        </interface>
+      </interfaces>
+      <metric name="load" type="float">0.0</metric>
+    </door>
+  </doors>
+  <linkgroups>
+    <linkgroup lgid="1">
+      <metric name="id" type="string">1</metric>
+      <access-latency>
+        <metric name="onlineAllowed" type="boolean">true</metric>
+        <metric name="nearlineAllowed" type="boolean">true</metric>
+      </access-latency>
+      <metric name="name" type="string">public-link-group</metric>
+      <lastUpdated>
+        <metric name="ISO-8601" type="string">2010-03-15T19:04Z</metric>
+        <metric name="simple" type="string">Mar 15, 14:04:18 CDT</metric>
+        <metric name="unix" type="integer">1268679858</metric>
+      </lastUpdated>
+      <retention-policy>
+        <metric name="custodialAllowed" type="boolean">true</metric>
+        <metric name="outputAllowed" type="boolean">false</metric>
+        <metric name="replicaAllowed" type="boolean">true</metric>
+      </retention-policy>
+      <space>
+        <metric name="total" type="integer">1004012904543</metric>
+        <metric name="free" type="integer">1004012904543</metric>
+        <metric name="available" type="integer">1004012901543</metric>
+        <metric name="used" type="integer">0</metric>
+        <metric name="reserved" type="integer">3000</metric>
+      </space>
+      <authorisation>
+        <authorised name="*:*">
+          <metric name="FQAN" type="string">*</metric>
+          <metric name="role" type="string">*</metric>
+          <metric name="group" type="string">*</metric>
+        </authorised>
+      </authorisation>
+      <reservations>
+        <reservationref reservation-id="350052"/>
+        <reservationref reservation-id="370006"/>
+        <reservationref reservation-id="380000"/>
+      </reservations>
+    </linkgroup>
+    <linkgroup lgid="0">
+      <metric name="id" type="string">0</metric>
+      <access-latency>
+        <metric name="onlineAllowed" type="boolean">true</metric>
+        <metric name="nearlineAllowed" type="boolean">true</metric>
+      </access-latency>
+      <metric name="name" type="string">reserved-link-group</metric>
+      <lastUpdated>
+        <metric name="ISO-8601" type="string">2010-03-15T19:04Z</metric>
+        <metric name="simple" type="string">Mar 15, 14:04:18 CDT</metric>
+        <metric name="unix" type="integer">1268679858</metric>
+      </lastUpdated>
+      <retention-policy>
+        <metric name="custodialAllowed" type="boolean">true</metric>
+        <metric name="outputAllowed" type="boolean">false</metric>
+        <metric name="replicaAllowed" type="boolean">true</metric>
+      </retention-policy>
+      <space>
+        <metric name="total" type="integer">0</metric>
+        <metric name="free" type="integer">0</metric>
+        <metric name="available" type="integer">0</metric>
+        <metric name="used" type="integer">0</metric>
+        <metric name="reserved" type="integer">0</metric>
+      </space>
+      <authorisation>
+        <authorised name="atlas:*">
+          <metric name="FQAN" type="string">atlas</metric>
+          <metric name="role" type="string">*</metric>
+          <metric name="group" type="string">atlas</metric>
+        </authorised>
+        <authorised name="cms:*">
+          <metric name="FQAN" type="string">cms</metric>
+          <metric name="role" type="string">*</metric>
+          <metric name="group" type="string">cms</metric>
+        </authorised>
+      </authorisation>
+    </linkgroup>
+  </linkgroups>
+  <unitgroups>
+    <unitgroup name="any-store">
+      <links>
+        <linkref name="resilient-link"/>
+        <linkref name="reserved-link"/>
+        <linkref name="public-link"/>
+        <linkref name="default-link"/>
+      </links>
+      <units>
+        <unitref name="*@*"/>
+      </units>
+    </unitgroup>
+    <unitgroup name="world-net">
+      <links>
+        <linkref name="resilient-link"/>
+        <linkref name="reserved-link"/>
+        <linkref name="public-link"/>
+        <linkref name="default-link"/>
+      </links>
+      <units>
+        <unitref name="0.0.0.0/0.0.0.0"/>
+      </units>
+    </unitgroup>
+    <unitgroup name="any-protocol">
+      <links>
+        <linkref name="resilient-link"/>
+        <linkref name="reserved-link"/>
+        <linkref name="public-link"/>
+        <linkref name="default-link"/>
+      </links>
+      <units>
+        <unitref name="*/*"/>
+      </units>
+    </unitgroup>
+  </unitgroups>
+  <domains>
+    <domain name="dirDomain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:40 CDT</metric>
+            <metric name="unix" type="integer">1268679160</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:40 CDT</metric>
+            <metric name="unix" type="integer">1268679160</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="dirLookupPool">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:40 CDT</metric>
+            <metric name="unix" type="integer">1268679160</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">diskCacheV111.pools.DirectoryLookUpPool</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">13283</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:40 CDT</metric>
+            <metric name="unix" type="integer">1268679160</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:39 CDT</metric>
+            <metric name="unix" type="integer">1268679159</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-102">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:40 CDT</metric>
+            <metric name="unix" type="integer">1268679160</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@dirDomain</metric>
+      <routing>
+        <local>
+          <cellref name="dirLookupPool"/>
+        </local>
+        <named-cells>
+          <cell name="dirLookupPool">
+            <domainref name="dirDomain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="srm-gwdca04Domain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="SRM-gwdca04">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:52 CST</metric>
+            <metric name="unix" type="integer">1268335312</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">diskCacheV111.srm.dcache.Storage</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">12780</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="CopyManager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:52 CST</metric>
+            <metric name="unix" type="integer">1268335312</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">diskCacheV111.doors.CopyManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="ThreadManager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">201</metric>
+          <metric name="class" type="string">diskCacheV111.util.ThreadManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RemoteHttpTransferManager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">diskCacheV111.doors.RemoteHttpTransferManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="SrmSpaceManager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:52 CST</metric>
+            <metric name="unix" type="integer">1268335312</metric>
+          </created>
+          <metric name="thread-count" type="integer">3</metric>
+          <metric name="class" type="string">diskCacheV111.services.space.Manager</metric>
+          <metric name="type" type="string">diskCacheV111.services.space.Manager</metric>
+          <version>
+            <metric name="revision" type="string">1.63</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="RemoteGsiftpTransferManager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">diskCacheV111.services.GsiftpTransferManager</metric>
+          <metric name="type" type="string">diskCacheV111.services.TransferManager</metric>
+          <version>
+            <metric name="revision" type="string">1.38</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-103">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:51 CDT</metric>
+            <metric name="unix" type="integer">1268679171</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@srm-gwdca04Domain</metric>
+      <routing>
+        <local>
+          <cellref name="CopyManager"/>
+          <cellref name="SRM-gwdca04"/>
+          <cellref name="RemoteHttpTransferManager"/>
+          <cellref name="SrmSpaceManager"/>
+          <cellref name="RemoteGsiftpTransferManager"/>
+        </local>
+        <named-cells>
+          <cell name="SRM-gwdca04">
+            <domainref name="srm-gwdca04Domain"/>
+          </cell>
+          <cell name="CopyManager">
+            <domainref name="srm-gwdca04Domain"/>
+          </cell>
+          <cell name="RemoteHttpTransferManager">
+            <domainref name="srm-gwdca04Domain"/>
+          </cell>
+          <cell name="SrmSpaceManager">
+            <domainref name="srm-gwdca04Domain"/>
+          </cell>
+          <cell name="RemoteGsiftpTransferManager">
+            <domainref name="srm-gwdca04Domain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="gsidcap-gwdca03Domain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:51 CST</metric>
+            <metric name="unix" type="integer">1268335311</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:51 CST</metric>
+            <metric name="unix" type="integer">1268335311</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:51 CST</metric>
+            <metric name="unix" type="integer">1268335311</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:50 CST</metric>
+            <metric name="unix" type="integer">1268335310</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-103">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:49 CDT</metric>
+            <metric name="unix" type="integer">1268679169</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="DCap-gsi-gwdca03">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:51 CST</metric>
+            <metric name="unix" type="integer">1268335311</metric>
+          </created>
+          <metric name="thread-count" type="integer">4</metric>
+          <metric name="class" type="string">dmg.cells.services.login.LoginManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">1.17</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@gsidcap-gwdca03Domain</metric>
+      <routing>
+        <local>
+          <cellref name="DCap-gsi-gwdca03"/>
+        </local>
+        <named-cells>
+          <cell name="DCap-gsi-gwdca03">
+            <domainref name="gsidcap-gwdca03Domain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="utilityDomain">
+      <cells>
+        <cell name="gsi-pam">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:46 CDT</metric>
+            <metric name="unix" type="integer">1268679166</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">diskCacheV111.admin.PAMAuthentificator</metric>
+          <metric name="type" type="string">diskCacheV111.admin.PAMAuthentificator</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:46 CDT</metric>
+            <metric name="unix" type="integer">1268679166</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:46 CDT</metric>
+            <metric name="unix" type="integer">1268679166</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="PinManager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:48 CDT</metric>
+            <metric name="unix" type="integer">1268679168</metric>
+          </created>
+          <metric name="thread-count" type="integer">3</metric>
+          <metric name="class" type="string">org.dcache.services.pinmanager1.PinManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">1.42</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="ThreadManager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">diskCacheV111.util.ThreadManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:46 CDT</metric>
+            <metric name="unix" type="integer">1268679166</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:45 CDT</metric>
+            <metric name="unix" type="integer">1268679165</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-102">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@utilityDomain</metric>
+      <routing>
+        <local>
+          <cellref name="gsi-pam"/>
+          <cellref name="PinManager"/>
+        </local>
+        <named-cells>
+          <cell name="gsi-pam">
+            <domainref name="utilityDomain"/>
+          </cell>
+          <cell name="PinManager">
+            <domainref name="utilityDomain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="gPlazma-gwdca06Domain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:48 CDT</metric>
+            <metric name="unix" type="integer">1268679168</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="gPlazma">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:48 CDT</metric>
+            <metric name="unix" type="integer">1268679168</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">org.dcache.auth.gplazma.GPLAZMA</metric>
+          <metric name="type" type="string">GPLAZMA</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:46 CDT</metric>
+            <metric name="unix" type="integer">1268679166</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-102">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:48 CDT</metric>
+            <metric name="unix" type="integer">1268679168</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@gPlazma-gwdca06Domain</metric>
+      <routing>
+        <local>
+          <cellref name="gPlazma"/>
+        </local>
+        <named-cells>
+          <cell name="gPlazma">
+            <domainref name="gPlazma-gwdca06Domain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="dCacheDomain">
+      <cells>
+        <cell name="l-101-Unknown-106">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-107">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:49 CDT</metric>
+            <metric name="unix" type="integer">1268679169</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:39 CDT</metric>
+            <metric name="unix" type="integer">1268679159</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-117">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:53Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:53:06 CDT</metric>
+            <metric name="unix" type="integer">1268679186</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-108">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:50 CDT</metric>
+            <metric name="unix" type="integer">1268679170</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-109">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:52 CDT</metric>
+            <metric name="unix" type="integer">1268679172</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="broadcast">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:43 CDT</metric>
+            <metric name="unix" type="integer">1268679163</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.multicaster.BroadcastCell</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-111">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:54 CDT</metric>
+            <metric name="unix" type="integer">1268679174</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-112">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:57 CDT</metric>
+            <metric name="unix" type="integer">1268679177</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:39 CDT</metric>
+            <metric name="unix" type="integer">1268679159</metric>
+          </created>
+          <metric name="thread-count" type="integer">3</metric>
+          <metric name="class" type="string">dmg.cells.services.login.LoginManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:39 CDT</metric>
+            <metric name="unix" type="integer">1268679159</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-110">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:53 CDT</metric>
+            <metric name="unix" type="integer">1268679173</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-102">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:40 CDT</metric>
+            <metric name="unix" type="integer">1268679160</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-115">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:59 CDT</metric>
+            <metric name="unix" type="integer">1268679179</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-116">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:59 CDT</metric>
+            <metric name="unix" type="integer">1268679179</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-103">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:42 CDT</metric>
+            <metric name="unix" type="integer">1268679162</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-113">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:58 CDT</metric>
+            <metric name="unix" type="integer">1268679178</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-104">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:44 CDT</metric>
+            <metric name="unix" type="integer">1268679164</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-105">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="l-101-Unknown-114">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:58 CDT</metric>
+            <metric name="unix" type="integer">1268679178</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="PoolManager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:40 CDT</metric>
+            <metric name="unix" type="integer">1268679160</metric>
+          </created>
+          <metric name="thread-count" type="integer">3</metric>
+          <metric name="class" type="string">PoolManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">13283</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="Prestager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:43 CDT</metric>
+            <metric name="unix" type="integer">1268679163</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">diskCacheV111.hsmControl.DummyStager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="LoginBroker">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:43 CDT</metric>
+            <metric name="unix" type="integer">1268679163</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.login.LoginBroker</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">1.6</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:38 CDT</metric>
+            <metric name="unix" type="integer">1268679158</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain</metric>
+      <routing>
+        <local>
+          <cellref name="PoolManager"/>
+          <cellref name="Prestager"/>
+          <cellref name="broadcast"/>
+          <cellref name="LoginBroker"/>
+        </local>
+        <remote>
+          <domain name="dirDomain">
+            <cellref name="dirLookupPool"/>
+          </domain>
+          <domain name="srm-gwdca04Domain">
+            <cellref name="SRM-gwdca04"/>
+            <cellref name="CopyManager"/>
+            <cellref name="RemoteHttpTransferManager"/>
+            <cellref name="SrmSpaceManager"/>
+            <cellref name="RemoteGsiftpTransferManager"/>
+          </domain>
+          <domain name="gsidcap-gwdca03Domain">
+            <cellref name="DCap-gsi-gwdca03"/>
+          </domain>
+          <domain name="utilityDomain">
+            <cellref name="gsi-pam"/>
+            <cellref name="PinManager"/>
+          </domain>
+          <domain name="gPlazma-gwdca06Domain">
+            <cellref name="gPlazma"/>
+          </domain>
+          <domain name="httpdDomain">
+            <cellref name="billing"/>
+            <cellref name="srm-LoginBroker"/>
+            <cellref name="topo"/>
+            <cellref name="TransferObserver"/>
+          </domain>
+          <domain name="pnfsDomain">
+            <cellref name="PnfsManager"/>
+            <cellref name="cleaner"/>
+            <cellref name="acladmin"/>
+          </domain>
+          <domain name="infoDomain">
+            <cellref name="info"/>
+          </domain>
+          <domain name="dcap-gwdca03Domain">
+            <cellref name="DCap-gwdca03"/>
+          </domain>
+          <domain name="adminDoorDomain">
+            <cellref name="pam"/>
+          </domain>
+          <domain name="gwdca01Domain">
+            <cellref name="gwdca01_1"/>
+            <cellref name="gwdca01_2"/>
+            <cellref name="gwdca01_3"/>
+          </domain>
+          <domain name="replicaDomain">
+            <cellref name="replicaManager"/>
+          </domain>
+          <domain name="gridftp-gwdca03Domain">
+            <cellref name="GFTP-gwdca03"/>
+          </domain>
+          <domain name="infoProviderDomain">
+            <cellref name="InfoCollector"/>
+          </domain>
+          <domain name="xrootd-gwdca06Domain">
+            <cellref name="Xrootd-gwdca06"/>
+          </domain>
+          <domain name="gwdca02Domain">
+            <cellref name="gwdca02_2"/>
+            <cellref name="gwdca02_1"/>
+            <cellref name="gwdca02_3"/>
+          </domain>
+        </remote>
+        <named-cells>
+          <cell name="replicaManager">
+            <domainref name="replicaDomain"/>
+          </cell>
+          <cell name="PinManager">
+            <domainref name="utilityDomain"/>
+          </cell>
+          <cell name="broadcast">
+            <domainref name="dCacheDomain"/>
+          </cell>
+          <cell name="InfoCollector">
+            <domainref name="infoProviderDomain"/>
+          </cell>
+          <cell name="info">
+            <domainref name="infoDomain"/>
+          </cell>
+          <cell name="gwdca02_2">
+            <domainref name="gwdca02Domain"/>
+          </cell>
+          <cell name="gwdca02_1">
+            <domainref name="gwdca02Domain"/>
+          </cell>
+          <cell name="PoolManager">
+            <domainref name="dCacheDomain"/>
+          </cell>
+          <cell name="acladmin">
+            <domainref name="pnfsDomain"/>
+          </cell>
+          <cell name="gwdca02_3">
+            <domainref name="gwdca02Domain"/>
+          </cell>
+          <cell name="CopyManager">
+            <domainref name="srm-gwdca04Domain"/>
+          </cell>
+          <cell name="SRM-gwdca04">
+            <domainref name="srm-gwdca04Domain"/>
+          </cell>
+          <cell name="PnfsManager">
+            <domainref name="pnfsDomain"/>
+          </cell>
+          <cell name="Xrootd-gwdca06">
+            <domainref name="xrootd-gwdca06Domain"/>
+          </cell>
+          <cell name="topo">
+            <domainref name="httpdDomain"/>
+          </cell>
+          <cell name="SrmSpaceManager">
+            <domainref name="srm-gwdca04Domain"/>
+          </cell>
+          <cell name="RemoteGsiftpTransferManager">
+            <domainref name="srm-gwdca04Domain"/>
+          </cell>
+          <cell name="gwdca01_1">
+            <domainref name="gwdca01Domain"/>
+          </cell>
+          <cell name="pam">
+            <domainref name="adminDoorDomain"/>
+          </cell>
+          <cell name="gwdca01_2">
+            <domainref name="gwdca01Domain"/>
+          </cell>
+          <cell name="DCap-gsi-gwdca03">
+            <domainref name="gsidcap-gwdca03Domain"/>
+          </cell>
+          <cell name="gwdca01_3">
+            <domainref name="gwdca01Domain"/>
+          </cell>
+          <cell name="billing">
+            <domainref name="httpdDomain"/>
+          </cell>
+          <cell name="gsi-pam">
+            <domainref name="utilityDomain"/>
+          </cell>
+          <cell name="srm-LoginBroker">
+            <domainref name="httpdDomain"/>
+          </cell>
+          <cell name="GFTP-gwdca03">
+            <domainref name="gridftp-gwdca03Domain"/>
+          </cell>
+          <cell name="RemoteHttpTransferManager">
+            <domainref name="srm-gwdca04Domain"/>
+          </cell>
+          <cell name="dirLookupPool">
+            <domainref name="dirDomain"/>
+          </cell>
+          <cell name="DCap-gwdca03">
+            <domainref name="dcap-gwdca03Domain"/>
+          </cell>
+          <cell name="cleaner">
+            <domainref name="pnfsDomain"/>
+          </cell>
+          <cell name="Prestager">
+            <domainref name="dCacheDomain"/>
+          </cell>
+          <cell name="gPlazma">
+            <domainref name="gPlazma-gwdca06Domain"/>
+          </cell>
+          <cell name="LoginBroker">
+            <domainref name="dCacheDomain"/>
+          </cell>
+          <cell name="TransferObserver">
+            <domainref name="httpdDomain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="httpdDomain">
+      <cells>
+        <cell name="collector">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:45 CDT</metric>
+            <metric name="unix" type="integer">1268679165</metric>
+          </created>
+          <metric name="thread-count" type="integer">3</metric>
+          <metric name="class" type="string">diskCacheV111.cells.WebCollectorV3</metric>
+          <metric name="type" type="string">diskCacheV111.cells.WebCollectorV3</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="billing">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:43 CDT</metric>
+            <metric name="unix" type="integer">1268679163</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">diskCacheV111.cells.BillingCell</metric>
+          <metric name="type" type="string">diskCacheV111.cells.BillingCell</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="srm-LoginBroker">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:44 CDT</metric>
+            <metric name="unix" type="integer">1268679164</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.login.LoginBroker</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">1.6</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:42 CDT</metric>
+            <metric name="unix" type="integer">1268679162</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:43 CDT</metric>
+            <metric name="unix" type="integer">1268679163</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="InfoHttpEngine">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:45 CDT</metric>
+            <metric name="unix" type="integer">1268679165</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">org.dcache.services.info.InfoHttpEngine</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">9086</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="httpd">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:44 CDT</metric>
+            <metric name="unix" type="integer">1268679164</metric>
+          </created>
+          <metric name="thread-count" type="integer">3</metric>
+          <metric name="class" type="string">dmg.cells.services.HttpServiceCell</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="topo">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:44 CDT</metric>
+            <metric name="unix" type="integer">1268679164</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.TopoCell</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:42 CDT</metric>
+            <metric name="unix" type="integer">1268679162</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:42 CDT</metric>
+            <metric name="unix" type="integer">1268679162</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="TransferObserver">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:44 CDT</metric>
+            <metric name="unix" type="integer">1268679164</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">diskCacheV111.cells.TransferObserverV1</metric>
+          <metric name="type" type="string">diskCacheV111.cells.TransferObserverV1</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-102">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:44 CDT</metric>
+            <metric name="unix" type="integer">1268679164</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@httpdDomain</metric>
+      <routing>
+        <local>
+          <cellref name="billing"/>
+          <cellref name="srm-LoginBroker"/>
+          <cellref name="topo"/>
+          <cellref name="TransferObserver"/>
+        </local>
+        <named-cells>
+          <cell name="billing">
+            <domainref name="httpdDomain"/>
+          </cell>
+          <cell name="srm-LoginBroker">
+            <domainref name="httpdDomain"/>
+          </cell>
+          <cell name="topo">
+            <domainref name="httpdDomain"/>
+          </cell>
+          <cell name="TransferObserver">
+            <domainref name="httpdDomain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="pnfsDomain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:10Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:10:49 CST</metric>
+            <metric name="unix" type="integer">1268334649</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:10Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:10:49 CST</metric>
+            <metric name="unix" type="integer">1268334649</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="PnfsManager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:10Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:10:49 CST</metric>
+            <metric name="unix" type="integer">1268334649</metric>
+          </created>
+          <metric name="thread-count" type="integer">10</metric>
+          <metric name="class" type="string">diskCacheV111.namespace.PnfsManagerV3</metric>
+          <metric name="type" type="string">diskCacheV111.namespace.PnfsManagerV3</metric>
+          <version>
+            <metric name="revision" type="string">12742</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="cleaner">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:10Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:10:50 CST</metric>
+            <metric name="unix" type="integer">1268334650</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">diskCacheV111.cells.CleanerV2</metric>
+          <metric name="type" type="string">diskCacheV111.cells.CleanerV2</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="acladmin">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:10Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:10:50 CST</metric>
+            <metric name="unix" type="integer">1268334650</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">org.dcache.acl.AclCell</metric>
+          <metric name="type" type="string">org.dcache.acl.AclCell</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:10Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:10:49 CST</metric>
+            <metric name="unix" type="integer">1268334649</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:10Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:10:49 CST</metric>
+            <metric name="unix" type="integer">1268334649</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-103">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:52 CDT</metric>
+            <metric name="unix" type="integer">1268679172</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@pnfsDomain</metric>
+      <routing>
+        <local>
+          <cellref name="PnfsManager"/>
+          <cellref name="cleaner"/>
+          <cellref name="acladmin"/>
+        </local>
+        <named-cells>
+          <cell name="PnfsManager">
+            <domainref name="pnfsDomain"/>
+          </cell>
+          <cell name="cleaner">
+            <domainref name="pnfsDomain"/>
+          </cell>
+          <cell name="acladmin">
+            <domainref name="pnfsDomain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="infoDomain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:50 CDT</metric>
+            <metric name="unix" type="integer">1268679170</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:51 CDT</metric>
+            <metric name="unix" type="integer">1268679171</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="topo">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:52 CDT</metric>
+            <metric name="unix" type="integer">1268679172</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.TopoCell</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:50 CDT</metric>
+            <metric name="unix" type="integer">1268679170</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:49 CDT</metric>
+            <metric name="unix" type="integer">1268679169</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-102">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:51 CDT</metric>
+            <metric name="unix" type="integer">1268679171</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="info">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:52 CDT</metric>
+            <metric name="unix" type="integer">1268679172</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">org.dcache.services.info.InfoProvider</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">9086</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain</metric>
+      <routing>
+        <local>
+          <cellref name="info"/>
+        </local>
+        <named-cells>
+          <cell name="info">
+            <domainref name="infoDomain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="adminDoorDomain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:41 CDT</metric>
+            <metric name="unix" type="integer">1268679161</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:42 CDT</metric>
+            <metric name="unix" type="integer">1268679162</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="acm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:42 CDT</metric>
+            <metric name="unix" type="integer">1268679162</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.login.user.AclCell</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="skm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:42 CDT</metric>
+            <metric name="unix" type="integer">1268679162</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.login.SshKeyManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:41 CDT</metric>
+            <metric name="unix" type="integer">1268679161</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="alm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:42 CDT</metric>
+            <metric name="unix" type="integer">1268679162</metric>
+          </created>
+          <metric name="thread-count" type="integer">3</metric>
+          <metric name="class" type="string">dmg.cells.services.login.LoginManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:40 CDT</metric>
+            <metric name="unix" type="integer">1268679160</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="pam">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:43 CDT</metric>
+            <metric name="unix" type="integer">1268679163</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">diskCacheV111.admin.PAMAuthentificator</metric>
+          <metric name="type" type="string">diskCacheV111.admin.PAMAuthentificator</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-102">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:42 CDT</metric>
+            <metric name="unix" type="integer">1268679162</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@adminDoorDomain</metric>
+      <routing>
+        <local>
+          <cellref name="pam"/>
+        </local>
+        <named-cells>
+          <cell name="pam">
+            <domainref name="adminDoorDomain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="dcap-gwdca03Domain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="DCap-gwdca03">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">4</metric>
+          <metric name="class" type="string">dmg.cells.services.login.LoginManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">1.17</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:49 CST</metric>
+            <metric name="unix" type="integer">1268335309</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-103">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:48 CDT</metric>
+            <metric name="unix" type="integer">1268679168</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@dcap-gwdca03Domain</metric>
+      <routing>
+        <local>
+          <cellref name="DCap-gwdca03"/>
+        </local>
+        <named-cells>
+          <cell name="DCap-gwdca03">
+            <domainref name="dcap-gwdca03Domain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="gwdca01Domain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:22Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:22:01 CST</metric>
+            <metric name="unix" type="integer">1268335321</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:22Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:22:01 CST</metric>
+            <metric name="unix" type="integer">1268335321</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:22Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:22:01 CST</metric>
+            <metric name="unix" type="integer">1268335321</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:22Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:22:01 CST</metric>
+            <metric name="unix" type="integer">1268335321</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="gwdca01_1">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:22Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:22:01 CST</metric>
+            <metric name="unix" type="integer">1268335321</metric>
+          </created>
+          <metric name="thread-count" type="integer">24</metric>
+          <metric name="class" type="string">Pool</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">13283</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="gwdca01_2">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:22Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:22:04 CST</metric>
+            <metric name="unix" type="integer">1268335324</metric>
+          </created>
+          <metric name="thread-count" type="integer">10</metric>
+          <metric name="class" type="string">Pool</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">13283</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="c-101-103">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:51 CDT</metric>
+            <metric name="unix" type="integer">1268679171</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="gwdca01_3">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:22Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:22:05 CST</metric>
+            <metric name="unix" type="integer">1268335325</metric>
+          </created>
+          <metric name="thread-count" type="integer">11</metric>
+          <metric name="class" type="string">Pool</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">13283</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@gwdca01Domain</metric>
+      <routing>
+        <local>
+          <cellref name="gwdca01_1"/>
+          <cellref name="gwdca01_2"/>
+          <cellref name="gwdca01_3"/>
+        </local>
+        <named-cells>
+          <cell name="gwdca01_1">
+            <domainref name="gwdca01Domain"/>
+          </cell>
+          <cell name="gwdca01_2">
+            <domainref name="gwdca01Domain"/>
+          </cell>
+          <cell name="gwdca01_3">
+            <domainref name="gwdca01Domain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="replicaDomain">
+      <cells>
+        <cell name="replicaManager">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:54 CDT</metric>
+            <metric name="unix" type="integer">1268679174</metric>
+          </created>
+          <metric name="thread-count" type="integer">5</metric>
+          <metric name="class" type="string">diskCacheV111.replicaManager.ReplicaManagerV2</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:54 CDT</metric>
+            <metric name="unix" type="integer">1268679174</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:54 CDT</metric>
+            <metric name="unix" type="integer">1268679174</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:53 CDT</metric>
+            <metric name="unix" type="integer">1268679173</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:53 CDT</metric>
+            <metric name="unix" type="integer">1268679173</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-102">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:56 CDT</metric>
+            <metric name="unix" type="integer">1268679176</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@replicaDomain</metric>
+      <routing>
+        <local>
+          <cellref name="replicaManager"/>
+        </local>
+        <named-cells>
+          <cell name="replicaManager">
+            <domainref name="replicaDomain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="gridftp-gwdca03Domain">
+      <cells>
+        <cell name="c-101-106">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:53Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:53:06 CDT</metric>
+            <metric name="unix" type="integer">1268679186</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:51 CST</metric>
+            <metric name="unix" type="integer">1268335311</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:52 CST</metric>
+            <metric name="unix" type="integer">1268335312</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="GFTP-gwdca03">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:52 CST</metric>
+            <metric name="unix" type="integer">1268335312</metric>
+          </created>
+          <metric name="thread-count" type="integer">4</metric>
+          <metric name="class" type="string">dmg.cells.services.login.LoginManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">1.17</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:51 CST</metric>
+            <metric name="unix" type="integer">1268335311</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-11T19:21Z</metric>
+            <metric name="simple" type="string">Mar 11, 13:21:51 CST</metric>
+            <metric name="unix" type="integer">1268335311</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@gridftp-gwdca03Domain</metric>
+      <routing>
+        <local>
+          <cellref name="GFTP-gwdca03"/>
+        </local>
+        <named-cells>
+          <cell name="GFTP-gwdca03">
+            <domainref name="gridftp-gwdca03Domain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="infoProviderDomain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="InfoCollector">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">org.dcache.services.infoCollector.InfoCollector</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:46 CDT</metric>
+            <metric name="unix" type="integer">1268679166</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-102">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:47 CDT</metric>
+            <metric name="unix" type="integer">1268679167</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@infoProviderDomain</metric>
+      <routing>
+        <local>
+          <cellref name="InfoCollector"/>
+        </local>
+        <named-cells>
+          <cell name="InfoCollector">
+            <domainref name="infoProviderDomain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="xrootd-gwdca06Domain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:54 CDT</metric>
+            <metric name="unix" type="integer">1268679174</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:54 CDT</metric>
+            <metric name="unix" type="integer">1268679174</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="Xrootd-gwdca06">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:55 CDT</metric>
+            <metric name="unix" type="integer">1268679175</metric>
+          </created>
+          <metric name="thread-count" type="integer">3</metric>
+          <metric name="class" type="string">XrootdDoor</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">13283</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:54 CDT</metric>
+            <metric name="unix" type="integer">1268679174</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:52 CDT</metric>
+            <metric name="unix" type="integer">1268679172</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-102">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:55 CDT</metric>
+            <metric name="unix" type="integer">1268679175</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@xrootd-gwdca06Domain</metric>
+      <routing>
+        <local>
+          <cellref name="Xrootd-gwdca06"/>
+        </local>
+        <named-cells>
+          <cell name="Xrootd-gwdca06">
+            <domainref name="xrootd-gwdca06Domain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+    <domain name="gwdca02Domain">
+      <cells>
+        <cell name="lm">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-12T20:02Z</metric>
+            <metric name="simple" type="string">Mar 12, 14:02:59 CST</metric>
+            <metric name="unix" type="integer">1268424179</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.services.LocationManager</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="gwdca02_2">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-12T20:03Z</metric>
+            <metric name="simple" type="string">Mar 12, 14:03:10 CST</metric>
+            <metric name="unix" type="integer">1268424190</metric>
+          </created>
+          <metric name="thread-count" type="integer">11</metric>
+          <metric name="class" type="string">Pool</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">13283</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="c-101">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-12T20:02Z</metric>
+            <metric name="simple" type="string">Mar 12, 14:02:59 CST</metric>
+            <metric name="unix" type="integer">1268424179</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationManagerConnector</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="gwdca02_1">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-12T20:02Z</metric>
+            <metric name="simple" type="string">Mar 12, 14:02:59 CST</metric>
+            <metric name="unix" type="integer">1268424179</metric>
+          </created>
+          <metric name="thread-count" type="integer">26</metric>
+          <metric name="class" type="string">Pool</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">13283</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="RoutingMgr">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-12T20:02Z</metric>
+            <metric name="simple" type="string">Mar 12, 14:02:59 CST</metric>
+            <metric name="unix" type="integer">1268424179</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.services.RoutingManager</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="gwdca02_3">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-12T20:03Z</metric>
+            <metric name="simple" type="string">Mar 12, 14:03:16 CST</metric>
+            <metric name="unix" type="integer">1268424196</metric>
+          </created>
+          <metric name="thread-count" type="integer">11</metric>
+          <metric name="class" type="string">Pool</metric>
+          <metric name="type" type="string">Generic</metric>
+          <version>
+            <metric name="revision" type="string">13283</metric>
+            <metric name="release" type="string">production-1.9.5-12</metric>
+          </version>
+        </cell>
+        <cell name="System">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-12T20:02Z</metric>
+            <metric name="simple" type="string">Mar 12, 14:02:59 CST</metric>
+            <metric name="unix" type="integer">1268424179</metric>
+          </created>
+          <metric name="thread-count" type="integer">1</metric>
+          <metric name="class" type="string">dmg.cells.nucleus.SystemCell</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+        <cell name="c-101-103">
+          <metric name="event-queue-size" type="integer">0</metric>
+          <created>
+            <metric name="ISO-8601" type="string">2010-03-15T18:52Z</metric>
+            <metric name="simple" type="string">Mar 15, 13:52:57 CDT</metric>
+            <metric name="unix" type="integer">1268679177</metric>
+          </created>
+          <metric name="thread-count" type="integer">2</metric>
+          <metric name="class" type="string">dmg.cells.network.LocationMgrTunnel</metric>
+          <metric name="type" type="string">System</metric>
+          <version>
+            <metric name="revision" type="string">CA-1.28</metric>
+            <metric name="release" type="string">cells</metric>
+          </version>
+        </cell>
+      </cells>
+      <metric name="address" type="string">System@infoDomain:System@dCacheDomain:System@gwdca02Domain</metric>
+      <routing>
+        <local>
+          <cellref name="gwdca02_2"/>
+          <cellref name="gwdca02_1"/>
+          <cellref name="gwdca02_3"/>
+        </local>
+        <named-cells>
+          <cell name="gwdca02_2">
+            <domainref name="gwdca02Domain"/>
+          </cell>
+          <cell name="gwdca02_1">
+            <domainref name="gwdca02Domain"/>
+          </cell>
+          <cell name="gwdca02_3">
+            <domainref name="gwdca02Domain"/>
+          </cell>
+        </named-cells>
+      </routing>
+    </domain>
+  </domains>
+  <links>
+    <link name="resilient-link">
+      <prefs>
+        <metric name="cache" type="integer">10</metric>
+        <metric name="write" type="integer">10</metric>
+        <metric name="read" type="integer">10</metric>
+        <metric name="p2p" type="integer">-1</metric>
+      </prefs>
+      <unitgroups>
+        <unitgroupref name="any-store"/>
+        <unitgroupref name="world-net"/>
+        <unitgroupref name="any-protocol"/>
+      </unitgroups>
+      <space>
+        <metric name="total" type="integer">1005022347264</metric>
+        <metric name="free" type="integer">967745100566</metric>
+        <metric name="precious" type="integer">37277246698</metric>
+        <metric name="removable" type="integer">0</metric>
+        <metric name="used" type="integer">37277246698</metric>
+      </space>
+      <pools>
+        <poolref name="gwdca02_1"/>
+        <poolref name="gwdca01_1"/>
+      </pools>
+      <metric name="selection" type="string">None</metric>
+      <units>
+        <protocol>
+          <unitref name="*/*"/>
+        </protocol>
+        <store>
+          <unitref name="*@*"/>
+        </store>
+        <net>
+          <unitref name="0.0.0.0/0.0.0.0"/>
+        </net>
+      </units>
+      <poolgroups>
+        <poolgroupref name="ResilientPools"/>
+      </poolgroups>
+    </link>
+    <link name="reserved-link">
+      <prefs>
+        <metric name="cache" type="integer">10</metric>
+        <metric name="write" type="integer">10</metric>
+        <metric name="read" type="integer">10</metric>
+        <metric name="p2p" type="integer">-1</metric>
+      </prefs>
+      <unitgroups>
+        <unitgroupref name="any-store"/>
+        <unitgroupref name="world-net"/>
+        <unitgroupref name="any-protocol"/>
+      </unitgroups>
+      <space>
+        <metric name="total" type="integer">0</metric>
+        <metric name="free" type="integer">0</metric>
+        <metric name="precious" type="integer">0</metric>
+        <metric name="removable" type="integer">0</metric>
+        <metric name="used" type="integer">0</metric>
+      </space>
+      <metric name="selection" type="string">None</metric>
+      <units>
+        <protocol>
+          <unitref name="*/*"/>
+        </protocol>
+        <store>
+          <unitref name="*@*"/>
+        </store>
+        <net>
+          <unitref name="0.0.0.0/0.0.0.0"/>
+        </net>
+      </units>
+      <poolgroups>
+        <poolgroupref name="reserved"/>
+      </poolgroups>
+    </link>
+    <link name="public-link">
+      <prefs>
+        <metric name="cache" type="integer">10</metric>
+        <metric name="write" type="integer">10</metric>
+        <metric name="read" type="integer">10</metric>
+        <metric name="p2p" type="integer">-1</metric>
+      </prefs>
+      <unitgroups>
+        <unitgroupref name="any-store"/>
+        <unitgroupref name="world-net"/>
+        <unitgroupref name="any-protocol"/>
+      </unitgroups>
+      <space>
+        <metric name="total" type="integer">1005022347264</metric>
+        <metric name="free" type="integer">1003983210647</metric>
+        <metric name="precious" type="integer">433344498</metric>
+        <metric name="removable" type="integer">29693896</metric>
+        <metric name="used" type="integer">1039136617</metric>
+      </space>
+      <pools>
+        <poolref name="gwdca02_3"/>
+        <poolref name="gwdca01_3"/>
+      </pools>
+      <metric name="selection" type="string">None</metric>
+      <units>
+        <protocol>
+          <unitref name="*/*"/>
+        </protocol>
+        <store>
+          <unitref name="*@*"/>
+        </store>
+        <net>
+          <unitref name="0.0.0.0/0.0.0.0"/>
+        </net>
+      </units>
+      <poolgroups>
+        <poolgroupref name="public"/>
+      </poolgroups>
+    </link>
+    <link name="default-link">
+      <prefs>
+        <metric name="cache" type="integer">10</metric>
+        <metric name="write" type="integer">-1</metric>
+        <metric name="read" type="integer">10</metric>
+        <metric name="p2p" type="integer">-1</metric>
+      </prefs>
+      <unitgroups>
+        <unitgroupref name="any-store"/>
+        <unitgroupref name="world-net"/>
+        <unitgroupref name="any-protocol"/>
+      </unitgroups>
+      <space>
+        <metric name="total" type="integer">1005022347264</metric>
+        <metric name="free" type="integer">1002776661636</metric>
+        <metric name="precious" type="integer">533527234</metric>
+        <metric name="removable" type="integer">52611792</metric>
+        <metric name="used" type="integer">2245685628</metric>
+      </space>
+      <pools>
+        <poolref name="gwdca02_2"/>
+        <poolref name="gwdca01_2"/>
+      </pools>
+      <metric name="selection" type="string">None</metric>
+      <units>
+        <protocol>
+          <unitref name="*/*"/>
+        </protocol>
+        <store>
+          <unitref name="*@*"/>
+        </store>
+        <net>
+          <unitref name="0.0.0.0/0.0.0.0"/>
+        </net>
+      </units>
+      <poolgroups>
+        <poolgroupref name="default"/>
+      </poolgroups>
+    </link>
+  </links>
+  <nas>
+    <nas id="S{RC:*@*}">
+      <links>
+        <linkref name="default-link"/>
+      </links>
+      <space>
+        <metric name="total" type="integer">1005022347264</metric>
+        <metric name="free" type="integer">1002776661636</metric>
+        <metric name="precious" type="integer">533527234</metric>
+        <metric name="removable" type="integer">52611792</metric>
+        <metric name="used" type="integer">2245685628</metric>
+      </space>
+      <pools>
+        <poolref name="gwdca02_2"/>
+        <poolref name="gwdca01_2"/>
+      </pools>
+      <units>
+        <store>
+          <read>
+            <unitref name="*@*"/>
+          </read>
+          <stage>
+            <unitref name="*@*"/>
+          </stage>
+        </store>
+      </units>
+    </nas>
+    <nas id="S{RWC:*@*}">
+      <links>
+        <linkref name="resilient-link"/>
+      </links>
+      <space>
+        <metric name="total" type="integer">2010044694528</metric>
+        <metric name="free" type="integer">1971728311213</metric>
+        <metric name="precious" type="integer">37710591196</metric>
+        <metric name="removable" type="integer">29693896</metric>
+        <metric name="used" type="integer">38316383315</metric>
+      </space>
+      <pools>
+        <poolref name="gwdca02_1"/>
+        <poolref name="gwdca01_1"/>
+        <poolref name="gwdca02_3"/>
+        <poolref name="gwdca01_3"/>
+      </pools>
+      <units>
+        <store>
+          <write>
+            <unitref name="*@*"/>
+          </write>
+          <read>
+            <unitref name="*@*"/>
+          </read>
+          <stage>
+            <unitref name="*@*"/>
+          </stage>
+        </store>
+      </units>
+    </nas>
+  </nas>
+  <pools>
+    <pool name="gwdca02_2">
+      <metric name="enabled" type="boolean">true</metric>
+      <metric name="read-only" type="boolean">false</metric>
+      <metric name="last-heartbeat" type="integer">4709</metric>
+      <queues>
+        <queue type="store">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="mover">
+          <metric name="max-active" type="integer">100</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="restore">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-clientqueue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-queue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+      </queues>
+      <space>
+        <metric name="total" type="integer">999653638144</metric>
+        <metric name="free" type="integer">997407952516</metric>
+        <metric name="break-even" type="float">0.7</metric>
+        <metric name="LRU-seconds" type="integer">45098623</metric>
+        <metric name="precious" type="integer">533527234</metric>
+        <metric name="removable" type="integer">52611792</metric>
+        <metric name="used" type="integer">2245685628</metric>
+        <metric name="gap" type="integer">4294967296</metric>
+      </space>
+      <poolgroups>
+        <poolgroupref name="default"/>
+      </poolgroups>
+    </pool>
+    <pool name="gwdca02_1">
+      <metric name="enabled" type="boolean">true</metric>
+      <metric name="read-only" type="boolean">false</metric>
+      <metric name="last-heartbeat" type="integer">6304</metric>
+      <queues>
+        <queue type="store">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="mover">
+          <metric name="max-active" type="integer">100</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="restore">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-clientqueue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-queue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+      </queues>
+      <space>
+        <metric name="total" type="integer">999653638144</metric>
+        <metric name="free" type="integer">962406911785</metric>
+        <metric name="break-even" type="float">0.7</metric>
+        <metric name="LRU-seconds" type="integer">1268679887</metric>
+        <metric name="precious" type="integer">37246726359</metric>
+        <metric name="removable" type="integer">0</metric>
+        <metric name="used" type="integer">37246726359</metric>
+        <metric name="gap" type="integer">4294967296</metric>
+      </space>
+      <poolgroups>
+        <poolgroupref name="ResilientPools"/>
+      </poolgroups>
+    </pool>
+    <pool name="gwdca01_1">
+      <metric name="enabled" type="boolean">true</metric>
+      <metric name="read-only" type="boolean">false</metric>
+      <metric name="last-heartbeat" type="integer">10733</metric>
+      <queues>
+        <queue type="store">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="mover">
+          <metric name="max-active" type="integer">100</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="restore">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-clientqueue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-queue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+      </queues>
+      <space>
+        <metric name="total" type="integer">5368709120</metric>
+        <metric name="free" type="integer">5338188781</metric>
+        <metric name="break-even" type="float">0.7</metric>
+        <metric name="LRU-seconds" type="integer">1268679893</metric>
+        <metric name="precious" type="integer">30520339</metric>
+        <metric name="removable" type="integer">0</metric>
+        <metric name="used" type="integer">30520339</metric>
+        <metric name="gap" type="integer">4294967296</metric>
+      </space>
+      <poolgroups>
+        <poolgroupref name="ResilientPools"/>
+      </poolgroups>
+    </pool>
+    <pool name="gwdca02_3">
+      <metric name="enabled" type="boolean">true</metric>
+      <metric name="read-only" type="boolean">false</metric>
+      <metric name="last-heartbeat" type="integer">9760</metric>
+      <queues>
+        <queue type="store">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="mover">
+          <metric name="max-active" type="integer">100</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="restore">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-clientqueue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-queue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+      </queues>
+      <space>
+        <metric name="total" type="integer">999653638144</metric>
+        <metric name="free" type="integer">998614501531</metric>
+        <metric name="break-even" type="float">0.7</metric>
+        <metric name="LRU-seconds" type="integer">45098627</metric>
+        <metric name="precious" type="integer">433344498</metric>
+        <metric name="removable" type="integer">29693896</metric>
+        <metric name="used" type="integer">1039136613</metric>
+        <metric name="gap" type="integer">4294967296</metric>
+      </space>
+      <poolgroups>
+        <poolgroupref name="public"/>
+      </poolgroups>
+    </pool>
+    <pool name="gwdca01_2">
+      <metric name="enabled" type="boolean">true</metric>
+      <metric name="read-only" type="boolean">false</metric>
+      <metric name="last-heartbeat" type="integer">28477</metric>
+      <queues>
+        <queue type="store">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="mover">
+          <metric name="max-active" type="integer">100</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="restore">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-clientqueue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-queue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+      </queues>
+      <space>
+        <metric name="total" type="integer">5368709120</metric>
+        <metric name="free" type="integer">5368709120</metric>
+        <metric name="break-even" type="float">0.7</metric>
+        <metric name="LRU-seconds" type="integer">1268679895</metric>
+        <metric name="precious" type="integer">0</metric>
+        <metric name="removable" type="integer">0</metric>
+        <metric name="used" type="integer">0</metric>
+        <metric name="gap" type="integer">4294967296</metric>
+      </space>
+      <poolgroups>
+        <poolgroupref name="default"/>
+      </poolgroups>
+    </pool>
+    <pool name="gwdca01_3">
+      <metric name="enabled" type="boolean">true</metric>
+      <metric name="read-only" type="boolean">false</metric>
+      <metric name="last-heartbeat" type="integer">18153</metric>
+      <queues>
+        <queue type="store">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="mover">
+          <metric name="max-active" type="integer">100</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="restore">
+          <metric name="max-active" type="integer">0</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-clientqueue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+        <queue type="p2p-queue">
+          <metric name="max-active" type="integer">10</metric>
+          <metric name="queued" type="integer">0</metric>
+          <metric name="active" type="integer">0</metric>
+        </queue>
+      </queues>
+      <space>
+        <metric name="total" type="integer">5368709120</metric>
+        <metric name="free" type="integer">5368709116</metric>
+        <metric name="break-even" type="float">0.7</metric>
+        <metric name="LRU-seconds" type="integer">1268679895</metric>
+        <metric name="precious" type="integer">0</metric>
+        <metric name="removable" type="integer">0</metric>
+        <metric name="used" type="integer">4</metric>
+        <metric name="gap" type="integer">4294967296</metric>
+      </space>
+      <poolgroups>
+        <poolgroupref name="public"/>
+      </poolgroups>
+    </pool>
+  </pools>
+  <units>
+    <unit name="*/*">
+      <unitgroups>
+        <unitgroupref ref="any-protocol"/>
+      </unitgroups>
+      <metric name="type" type="string">Protocol</metric>
+    </unit>
+    <unit name="0.0.0.0/255.255.255.255">
+      <metric name="type" type="string">Net</metric>
+    </unit>
+    <unit name="0.0.0.0/0.0.0.0">
+      <unitgroups>
+        <unitgroupref ref="world-net"/>
+      </unitgroups>
+      <metric name="type" type="string">Net</metric>
+    </unit>
+    <unit name="*@*">
+      <unitgroups>
+        <unitgroupref ref="any-store"/>
+      </unitgroups>
+      <metric name="type" type="string">Store</metric>
+    </unit>
+  </units>
+  <reservations>
+    <reservation reservation-id="350052">
+      <metric name="id" type="string">350052</metric>
+      <metric name="lifetime" type="integer">100000000000</metric>
+      <metric name="access-latency" type="string">ONLINE</metric>
+      <created>
+        <metric name="ISO-8601" type="string">2009-09-02T21:16Z</metric>
+        <metric name="simple" type="string">Sep 2, 16:16:49 CDT</metric>
+        <metric name="unix" type="integer">1251926209</metric>
+      </created>
+      <metric name="description" type="string">my_space</metric>
+      <metric name="state" type="string">RESERVED</metric>
+      <metric name="retention-policy" type="string">REPLICA</metric>
+      <space>
+        <metric name="total" type="integer">1000</metric>
+        <metric name="free" type="integer">1000</metric>
+        <metric name="allocated" type="integer">0</metric>
+        <metric name="used" type="integer">0</metric>
+      </space>
+      <authorisation>
+        <metric name="FQAN" type="string">/fermilab</metric>
+        <metric name="group" type="string">/fermilab</metric>
+      </authorisation>
+      <metric name="linkgroupref" type="string">1</metric>
+    </reservation>
+    <reservation reservation-id="370006">
+      <metric name="id" type="string">370006</metric>
+      <metric name="lifetime" type="integer">10000000000</metric>
+      <metric name="access-latency" type="string">ONLINE</metric>
+      <created>
+        <metric name="ISO-8601" type="string">2009-12-30T16:07Z</metric>
+        <metric name="simple" type="string">Dec 30, 10:07:11 CST</metric>
+        <metric name="unix" type="integer">1262189231</metric>
+      </created>
+      <metric name="description" type="string">space_for_test</metric>
+      <metric name="state" type="string">RESERVED</metric>
+      <metric name="retention-policy" type="string">REPLICA</metric>
+      <space>
+        <metric name="total" type="integer">1000</metric>
+        <metric name="free" type="integer">1000</metric>
+        <metric name="allocated" type="integer">0</metric>
+        <metric name="used" type="integer">0</metric>
+      </space>
+      <authorisation>
+        <metric name="FQAN" type="string">/osg</metric>
+        <metric name="group" type="string">/osg</metric>
+      </authorisation>
+      <metric name="linkgroupref" type="string">1</metric>
+    </reservation>
+    <reservation reservation-id="380000">
+      <metric name="id" type="string">380000</metric>
+      <metric name="lifetime" type="integer">10000000000</metric>
+      <metric name="access-latency" type="string">ONLINE</metric>
+      <created>
+        <metric name="ISO-8601" type="string">2009-12-30T16:12Z</metric>
+        <metric name="simple" type="string">Dec 30, 10:12:24 CST</metric>
+        <metric name="unix" type="integer">1262189544</metric>
+      </created>
+      <metric name="description" type="string">space_for_test</metric>
+      <metric name="state" type="string">RESERVED</metric>
+      <metric name="retention-policy" type="string">REPLICA</metric>
+      <space>
+        <metric name="total" type="integer">1000</metric>
+        <metric name="free" type="integer">1000</metric>
+        <metric name="allocated" type="integer">0</metric>
+        <metric name="used" type="integer">0</metric>
+      </space>
+      <authorisation>
+        <metric name="FQAN" type="string">/osg/Testing</metric>
+        <metric name="group" type="string">/osg/Testing</metric>
+      </authorisation>
+      <metric name="linkgroupref" type="string">1</metric>
+    </reservation>
+  </reservations>
+  <poolgroups>
+    <poolgroup name="default">
+      <links>
+        <linkref name="default-link"/>
+      </links>
+      <space>
+        <metric name="total" type="integer">1005022347264</metric>
+        <metric name="free" type="integer">1002776661636</metric>
+        <metric name="removable" type="integer">52611792</metric>
+        <metric name="precious" type="integer">533527234</metric>
+        <metric name="used" type="integer">2245685628</metric>
+      </space>
+      <pools>
+        <poolref name="gwdca02_2"/>
+        <poolref name="gwdca01_2"/>
+      </pools>
+    </poolgroup>
+    <poolgroup name="ResilientPools">
+      <links>
+        <linkref name="resilient-link"/>
+      </links>
+      <space>
+        <metric name="total" type="integer">1005022347264</metric>
+        <metric name="free" type="integer">967745100566</metric>
+        <metric name="removable" type="integer">0</metric>
+        <metric name="precious" type="integer">37277246698</metric>
+        <metric name="used" type="integer">37277246698</metric>
+      </space>
+      <pools>
+        <poolref name="gwdca02_1"/>
+        <poolref name="gwdca01_1"/>
+      </pools>
+    </poolgroup>
+    <poolgroup name="public">
+      <links>
+        <linkref name="public-link"/>
+      </links>
+      <space>
+        <metric name="total" type="integer">1005022347264</metric>
+        <metric name="free" type="integer">1003983210647</metric>
+        <metric name="precious" type="integer">433344498</metric>
+        <metric name="removable" type="integer">29693896</metric>
+        <metric name="used" type="integer">1039136617</metric>
+      </space>
+      <pools>
+        <poolref name="gwdca02_3"/>
+        <poolref name="gwdca01_3"/>
+      </pools>
+    </poolgroup>
+    <poolgroup name="reserved">
+      <links>
+        <linkref name="reserved-link"/>
+      </links>
+      <space>
+        <metric name="total" type="integer">0</metric>
+        <metric name="free" type="integer">0</metric>
+        <metric name="precious" type="integer">0</metric>
+        <metric name="removable" type="integer">0</metric>
+        <metric name="used" type="integer">0</metric>
+      </space>
+    </poolgroup>
+  </poolgroups>
+</dCache>

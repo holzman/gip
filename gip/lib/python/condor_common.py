@@ -231,15 +231,33 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
         configDaemon = "negotiator"
                                     
     fp = condorCommand(condor_group, cp, {'daemon' : configDaemon})
-    grouplist = fp.read().split(',')
+    output = fp.read().split(',')
     if fp.close():
         log.info("No condor groups found.")
         return {}
+
+    grouplist = []
+    for group in output:
+        grouplist.append(group.strip())
+        
+    excludedGroups = cp_get(cp, "condor", "excluded_groups", None)
+    log.debug("excluded_groups = %s" % excludedGroups)
+    for excludedGroup in excludedGroups:
+        excludedGroup = excludedGroup.strip()
+        try:
+            grouplist.remove(excludedGroup)
+            log.debug("Removed excluded group %s" % excludedGroup)
+        except ValueError:
+            log.debug("Attempted to remove non-existent group %s" % excludedGroup)
+
+    if not grouplist:
+        log.info("No condor groups exist (after applying excluded_groups)")
+        return{}
+    
     retval = {}
-    if (not (grouplist[0].strip().startswith('Not defined'))) and \
-            (len(grouplist[0].strip()) > 0):
+    if (not (grouplist[0].startswith('Not defined'))) and \
+            (len(grouplist[0]) > 0):
         for group in grouplist:
-            group = group.strip()
             quota = condorCommand(condor_quota, cp, \
                 {'group': group, 'daemon': configDaemon}).read().strip()
             prio = condorCommand(condor_prio, cp, \

@@ -17,8 +17,8 @@ IN_POOLGROUPS = 4
 IN_RESERVATIONS = 5
 IN_DOORS = 6
 IN_SUMMARY = 7
-IN_POOLMANAGER = 8
-IN_POOLMANAGER_VERSION = 9
+IN_PNFSMANAGER = 8
+IN_PNFSMANAGER_VERSION = 9
 IN_SUMMARY_POOLS = 10
 
 class InfoProviderHandler(ContentHandler):
@@ -75,11 +75,11 @@ class InfoProviderHandler(ContentHandler):
         elif name == 'pools' and self.state == IN_SUMMARY:
             self.state = IN_SUMMARY_POOLS
         elif self.state == IN_TOP and name == 'cell' and attrs.get('name', '') \
-                == 'PoolManager':
-            self.state = IN_POOLMANAGER
-        elif self.state == IN_POOLMANAGER and name == 'metric' and \
+                == 'PnfsManager':
+            self.state = IN_PNFSMANAGER
+        elif self.state == IN_PNFSMANAGER and name == 'metric' and \
                 attrs.get('name', '') == 'release':
-            self.state = IN_POOLMANAGER_VERSION
+            self.state = IN_PNFSMANAGER_VERSION
         elif self.state in self.startElementCB:
             self.startElementCB[self.state](name, attrs)
 
@@ -100,9 +100,9 @@ class InfoProviderHandler(ContentHandler):
             self.state = IN_SUMMARY
         elif name == 'summary' and self.state == IN_SUMMARY:
             self.state = IN_TOP
-        elif self.state == IN_POOLMANAGER and name == 'cell':
+        elif self.state == IN_PNFSMANAGER and name == 'cell':
             self.state = IN_TOP
-        elif self.state == IN_POOLMANAGER_VERSION and name == 'metric':
+        elif self.state == IN_PNFSMANAGER_VERSION and name == 'metric':
             self.state = IN_TOP
         elif self.state in self.endElementCB:
             self.endElementCB[self.state](name)
@@ -110,7 +110,7 @@ class InfoProviderHandler(ContentHandler):
     def characters(self, ch):
         if self.state in self.charactersCB:
             self.charactersCB[self.state](ch)
-        elif self.state == IN_POOLMANAGER_VERSION:
+        elif self.state == IN_PNFSMANAGER_VERSION:
             self.version = ch.strip()
 
 class ObjectHandler(ContentHandler):

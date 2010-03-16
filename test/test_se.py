@@ -598,7 +598,7 @@ class TestSEConfigs(unittest.TestCase):
             self.failUnless(entry.glue['SEName'][0] == 'MIT dCache')
             self.failUnless(entry.glue['SEImplementationName'][0] == 'dcache')
             self.failUnless(entry.glue['SEImplementationVersion'][0] == \
-                'cells')
+                'production-1.9.3-3')
             self.failUnless(entry.glue['SEPort'][0] == '8443')
             self.failUnless('370989' in entry.glue['SESizeTotal'])
             self.failUnless('73280' in entry.glue['SESizeFree'])
@@ -624,8 +624,10 @@ class TestSEConfigs(unittest.TestCase):
             found_se = True
             self.failUnless(entry.glue['SEName'][0] == 'Purdue dCache')
             self.failUnless(entry.glue['SEImplementationName'][0] == 'dcache')
+            #self.failUnless(entry.glue['SEImplementationVersion'][0] == \
+            #    'cells')
             self.failUnless(entry.glue['SEImplementationVersion'][0] == \
-                'cells')
+                'production-1.9.5-8')
             self.failUnless(entry.glue['SEPort'][0] == '8443')
             self.failUnless('564546' in entry.glue['SESizeTotal'])
             self.failUnless('110214' in entry.glue['SESizeFree'])

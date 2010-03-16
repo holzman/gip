@@ -29,7 +29,7 @@ condor_group = "condor_config_val -%(daemon)s GROUP_NAMES"
 condor_quota = "condor_config_val -%(daemon)s GROUP_QUOTA_%(group)s"
 condor_prio = "condor_config_val -%(daemon)s GROUP_PRIO_FACTOR_%(group)s"
 condor_status = "condor_status -xml -constraint '%(constraint)s'"
-condor_status_submitter = "condor_status -submitter -xml"
+condor_status_submitter = "condor_status -submitter -xml -constraint '%(constraint)s'"
 condor_job_status = "condor_q -xml -constraint '%(constraint)s'"
 
 log = getLogger("GIP.Condor")
@@ -169,6 +169,23 @@ def parseCondorXml(fp, handler): #pylint: disable-msg=C0103
         else:
             raise
 
+def _createSubmitterConstraint(cp):
+    """
+    Create constraint for condor_status -submitters command
+    """
+    exclude_schedd = cp_get(cp, "condor", "exclude_schedd", None)
+
+    if not exclude_schedd:
+        return 'TRUE'
+
+    schedds = exclude_schedd.split(',')
+    submitConstraint = 'TRUE'
+    for schedd in schedds:
+        schedd = schedd.strip()
+        submitConstraint += ' && Machine =!= "%s"' % schedd
+        
+    return submitConstraint
+    
 def condorCommand(command, cp, info=None): #pylint: disable-msg=W0613
     """
     Execute a command in the shell.  Returns a file-like object
@@ -401,7 +418,9 @@ def _getJobsInfoInternal(cp):
     fp = condorCommand(condor_job_status, cp, {'constraint': constraint})
     handler = ClassAdParser('GlobalJobId', ['JobStatus', 'Owner',
         'AccountingGroup', 'FlockFrom']);
-    fp2 = condorCommand(condor_status_submitter, cp)
+
+    submitConstraint = _createSubmitterConstraint(cp)
+    fp2 = condorCommand(condor_status_submitter, cp, {'constraint': submitConstraint})
     handler2 = ClassAdParser('Name', ['MaxJobsRunning'])
     try:
         xmlLine = ''
@@ -471,7 +490,8 @@ def getJobsInfo(vo_map, cp):
     group_jobs = {}
     queue_constraint = cp_get(cp, "condor", "jobs_constraint", "TRUE")
     if queue_constraint.upper() == 'TRUE':
-        fp = condorCommand(condor_status_submitter, cp)
+        submitConstraint = _createSubmitterConstraint(cp)
+        fp = condorCommand(condor_status_submitter, cp, {'constraint': submitConstraint})
         handler = ClassAdParser(('Name', 'ScheddName'), ['RunningJobs',
             'IdleJobs', 'HeldJobs', 'MaxJobsRunning', 'FlockedJobs'])
         try:

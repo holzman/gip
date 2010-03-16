@@ -240,7 +240,11 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
     for group in output:
         grouplist.append(group.strip())
         
-    excludedGroups = cp_get(cp, "condor", "excluded_groups", None)
+    excludedGroups = cp_get(cp, "condor", "excluded_groups", [])
+
+    if excludedGroups:
+        excludedGroups = excludedGroups.split(',')
+        
     log.debug("excluded_groups = %s" % excludedGroups)
     for excludedGroup in excludedGroups:
         excludedGroup = excludedGroup.strip()

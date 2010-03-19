@@ -368,7 +368,7 @@ def print_SE(se, cp):
     # Tape information, if we have it...
     nu, nf, nt = se.getSETape()
 
-    siteUniqueID = cp.get("site", "unique_name")
+    siteUniqueID = cp_get(cp, "site", "unique_name", "UNKNOWN")
     implementation = se.getImplementation()
 
     # Try to guess the appropriate architecture

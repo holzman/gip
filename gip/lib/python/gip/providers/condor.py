@@ -113,8 +113,13 @@ def print_CE(cp):
             " the rest to the default group." % (total_assigned, total_nodes))
         groupInfo['default']['quota'] = total_nodes-total_assigned
     else:
-        log.warning("More assigned nodes (%i) than actual nodes (%i)!" % \
-            (total_assigned, total_nodes))
+        log.warning("More assigned nodes (%i) than actual nodes (%i)! Assigning" \
+	   " all slots also to the default group." % (total_assigned, total_nodes))
+	# NB: If you sum up the GlueCEInfoTotalCPUs for every queue, you will calculate
+	# more slots than the batch system actually has.  That seems fair, since the group
+	# quotas are oversubscribed.
+	groupInfo['default']['quota'] = 0  # will get transformed to total_nodes below
+	
     all_vos = voList(cp)
     defaultVoList = [i for i in all_vos if i not in all_group_vos]
     groupInfo['default']['vos'] = defaultVoList

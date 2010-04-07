@@ -15,6 +15,7 @@ from gip_common import getLogger, py23
 log = getLogger("GIP")
 
 site_sec = "Site Information"
+misc_sec = "Misc Services"
 pbs_sec = "PBS"
 condor_sec = "Condor"
 sge_sec = 'SGE'
@@ -269,6 +270,14 @@ def configOsg(cp):
     __write_config_value(site, "name", site_name)
     __write_config_value(site, "unique_name", site_name)
 
+    # [Misc Services]
+    glexec_enabled = False
+    if cp2.has_section(misc_sec) and cp2.has_option(misc_sec, 'glexec_location'):
+        gLexecLocation = cp2.get(misc_sec, 'glexec_location')
+        if gLexecLocation.upper() != 'UNAVAILABLE':
+            glexec_enabled = True
+    cp.set(site, 'glexec_enabled', str(glexec_enabled))
+    
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
     # With the call to __write_all_options_config, the next 2 lines are obsolete

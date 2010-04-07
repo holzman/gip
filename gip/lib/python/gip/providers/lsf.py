@@ -117,6 +117,12 @@ def print_CE(cp):
         info['waiting'] = info.get('wait', 0)
         info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)
         info['clusterUniqueID'] = getClusterID(cp)
+
+        extraCapabilities = ''
+        if cp_getBoolean('site', 'glexec_enabled', False):
+            extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
+        info['extraCapabilities'] = extraCapabilities
+        
         printTemplate(CE, info)
     return queueInfo, totalCpu, freeCpu, queueCpus
 

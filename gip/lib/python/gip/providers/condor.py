@@ -191,6 +191,10 @@ def print_CE(cp):
         contact_string = cp_get(cp, "condor", 'job_contact', ce_unique_id)
         if contact_string.endswith("jobmanager-condor"):
             contact_string += "-%s" % group
+
+        extraCapabilities = ''
+	if cp_getBoolean('site', 'glexec_enabled', False):
+	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
 	
         # Build all the GLUE CE entity information.
         info = { \
@@ -235,7 +239,8 @@ def print_CE(cp):
             "acbr"           : ginfo['acbr'],
             "referenceSI00"  : referenceSI00,
             "clusterUniqueID": getClusterID(cp),
-            "bdii"           : cp_get(cp, "bdii", "endpoint", "Unknown")
+            "bdii"           : cp_get(cp, "bdii", "endpoint", "Unknown"),
+	    'extraCapabilities' : extraCapabilities
         }
         printTemplate(ce_template, info)
     return total_nodes, claimed, unclaimed

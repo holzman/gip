@@ -45,6 +45,10 @@ def print_CE(cp):
         if contact_string.endswith("jobmanager-sge"):
             contact_string += "-%s" % queue['name']
 
+        extraCapabilities = ''
+	if cp_getBoolean('site', 'glexec_enabled', False):
+	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
+
         info = { \
             "ceUniqueID" : unique_id,
             "ceName" : ce_name,
@@ -82,6 +86,7 @@ def print_CE(cp):
             "port" : 2119,
             "waiting" : queue['waiting'],
             "referenceSI00": referenceSI00,
+            'extraCapabilities' : extraCapabilities
         }
         printTemplate(ce_template, info)
     return queueInfo

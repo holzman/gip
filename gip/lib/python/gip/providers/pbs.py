@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    printTemplate, cp_get, responseTimes
+    printTemplate, cp_get, responseTimes, cp_getBoolean
 from gip_cluster import getClusterID
 from pbs_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
@@ -67,7 +67,7 @@ def print_CE(cp):
         contact_string = cp_get(cp, "pbs", 'job_contact', unique_id)
         if contact_string.endswith("jobmanager-pbs"):
             contact_string += "-%s" % queue
-        
+
         info['contact_string'] = contact_string
         info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP")
         info['data_dir'] = cp_get(cp, 'osg_dirs', 'data', "/UNKNOWN_DATA")
@@ -166,9 +166,9 @@ def print_VOViewLocal(queue_info, cp):
 def main():
     try:
         cp = config()
-        pbs_path = cp_get(cp, "pbs", "pbs_path", ".") 
+        pbs_path = cp_get(cp, "pbs", "pbs_path", ".")
         addToPath(pbs_path)
-        # adding pbs_path/bin to the path as well, since pbs/torque home 
+        # adding pbs_path/bin to the path as well, since pbs/torque home
         # points to /usr/local and the binaries exist in /usr/local/bin
         addToPath(pbs_path + "/bin")
         vo_map = VoMapper(cp)

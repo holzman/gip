@@ -10,7 +10,7 @@ import os
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    printTemplate, cp_get, cp_getInt, responseTimes
+    printTemplate, cp_get, cp_getInt, responseTimes, cp_getBoolean
 from gip_cluster import getClusterID
 from lsf_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues

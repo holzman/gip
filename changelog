@@ -1,4 +1,11 @@
 Changelog
+== 1.1.9rc1 ==
+* PBS: Properly drop PBS queues that are not in the RVF.
+* Condor: Add capability to ignore condor accounting groups
+* Condor: Add capability to query collector instead of negotiator
+* Condor: Add capability to exclude schedds during condor_status -submitter
+* Change minimum EstimatedResponseTime to 60
+	
 == 1.1.8 ==
 * Don't drop misconfigured PBS queues (that lack enabled or started attributes)
 * Get siteName correctly from config.ini (first try resource_group, then

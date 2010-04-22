@@ -29,7 +29,7 @@ condor_group = "condor_config_val -%(daemon)s GROUP_NAMES"
 condor_quota = "condor_config_val -%(daemon)s GROUP_QUOTA_%(group)s"
 condor_prio = "condor_config_val -%(daemon)s GROUP_PRIO_FACTOR_%(group)s"
 condor_status = "condor_status -xml -constraint '%(constraint)s'"
-condor_status_submitter = "condor_status -submitter -xml"
+condor_status_submitter = "condor_status -submitter -xml -constraint '%(constraint)s'"
 condor_job_status = "condor_q -xml -constraint '%(constraint)s'"
 
 log = getLogger("GIP.Condor")
@@ -169,6 +169,23 @@ def parseCondorXml(fp, handler): #pylint: disable-msg=C0103
         else:
             raise
 
+def _createSubmitterConstraint(cp):
+    """
+    Create constraint for condor_status -submitters command
+    """
+    exclude_schedd = cp_get(cp, "condor", "exclude_schedd", None)
+
+    if not exclude_schedd:
+        return 'TRUE'
+
+    schedds = exclude_schedd.split(',')
+    submitConstraint = 'TRUE'
+    for schedd in schedds:
+        schedd = schedd.strip()
+        submitConstraint += ' && Machine =!= "%s"' % schedd
+        
+    return submitConstraint
+    
 def condorCommand(command, cp, info=None): #pylint: disable-msg=W0613
     """
     Execute a command in the shell.  Returns a file-like object
@@ -235,11 +252,33 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
     if fp.close():
         log.info("No condor groups found.")
         return {}
+
+    grouplist = []
+    for group in output:
+        grouplist.append(group.strip())
+        
+    excludedGroups = cp_get(cp, "condor", "excluded_groups", [])
+
+    if excludedGroups:
+        excludedGroups = excludedGroups.split(',')
+        
+    log.debug("excluded_groups = %s" % excludedGroups)
+    for excludedGroup in excludedGroups:
+        excludedGroup = excludedGroup.strip()
+        try:
+            grouplist.remove(excludedGroup)
+            log.debug("Removed excluded group %s" % excludedGroup)
+        except ValueError:
+            log.debug("Attempted to remove non-existent group %s" % excludedGroup)
+
+    if not grouplist:
+        log.info("No condor groups exist (after applying excluded_groups)")
+        return{}
+    
     retval = {}
-    if (not (output[0].strip().startswith('Not defined'))) and \
-            (len(output[0].strip()) > 0):
-        for group in output:
-            group = group.strip()
+    if (not (grouplist[0].startswith('Not defined'))) and \
+            (len(grouplist[0]) > 0):
+        for group in grouplist:
             quota = condorCommand(condor_quota, cp, \
                 {'group': group, 'daemon': configDaemon}).read().strip()
             prio = condorCommand(condor_prio, cp, \
@@ -379,7 +418,9 @@ def _getJobsInfoInternal(cp):
     fp = condorCommand(condor_job_status, cp, {'constraint': constraint})
     handler = ClassAdParser('GlobalJobId', ['JobStatus', 'Owner',
         'AccountingGroup', 'FlockFrom']);
-    fp2 = condorCommand(condor_status_submitter, cp)
+
+    submitConstraint = _createSubmitterConstraint(cp)
+    fp2 = condorCommand(condor_status_submitter, cp, {'constraint': submitConstraint})
     handler2 = ClassAdParser('Name', ['MaxJobsRunning'])
     try:
         xmlLine = ''
@@ -449,7 +490,8 @@ def getJobsInfo(vo_map, cp):
     group_jobs = {}
     queue_constraint = cp_get(cp, "condor", "jobs_constraint", "TRUE")
     if queue_constraint.upper() == 'TRUE':
-        fp = condorCommand(condor_status_submitter, cp)
+        submitConstraint = _createSubmitterConstraint(cp)
+        fp = condorCommand(condor_status_submitter, cp, {'constraint': submitConstraint})
         handler = ClassAdParser(('Name', 'ScheddName'), ['RunningJobs',
             'IdleJobs', 'HeldJobs', 'MaxJobsRunning', 'FlockedJobs'])
         try:

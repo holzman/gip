@@ -106,7 +106,7 @@ class DCacheInfo19(StorageElement):
                     if info.get('linkgroupref', None) != lgid:
                         continue
                     log.debug("Analyzing reservation: %s" % str(info))
-                    # Regardless of who owns the reservation, anyone who can 
+                    # Regardless of who owns the reservation, anyone who can
                     # write into the LG can write into the reservation.
                     #if len(str(info.get('FQAN', ''))) == 0:
                     #    allowed_acbrs = getLGAllowedVOs(self._cp, info.get(
@@ -131,7 +131,7 @@ class DCacheInfo19(StorageElement):
                             'saLocalID': sa['saLocalID'],
                             }
                     self.vos.append(info)
-                
+
 
             # For any VO with no pre-existing reservation, but which is allowed
             # to make reservations, also do a VOInfo object.
@@ -372,8 +372,8 @@ class DCacheInfo19(StorageElement):
         try:
             # BUGFIX: Resolve the IP address of srm host that the admin
             # specifies.  If this IP address matches the IP address given by
-            # dCache, then we will print out the admin-specified hostname 
-            # instead of looking it up.  This is for sites where the SRM host 
+            # dCache, then we will print out the admin-specified hostname
+            # instead of looking it up.  This is for sites where the SRM host
             # is a CNAME instead of the A name.
             srm_host = cp_get(self._cp, self._section, "srm_host", None)
             srm_ip = None
@@ -412,14 +412,14 @@ class DCacheInfo19(StorageElement):
                     hostname = socket.getfqdn(hostname)
                     hostname_ip = socket.gethostbyname(hostname)
                 except:
-                    hostname_ip = None 
+                    hostname_ip = None
                 if hostname_ip != None and hostname_ip == srm_ip and \
                         srm_host != None:
                     hostname = srm_host
 
                 if prev_srm_host:
                     hostname = prev_srm_host
-        
+
                 # From the SRM info, build the information for the GLUE entity.
                 info = {
                     "serviceType"  : "SRM",
@@ -433,7 +433,7 @@ class DCacheInfo19(StorageElement):
                     "semantics"  : "http://sdm.lbl.gov/srm-wg/doc/srm.v1.0.pdf",
                     "startTime"    : "1970-01-01T00:00:00Z",
                     }
-        
+
                 # Augment the information with SRM v1 protocol information, then
                 # print out the control and service entries
                 info['version'] = "1.1.0"
@@ -443,7 +443,7 @@ class DCacheInfo19(StorageElement):
                 info['uri'] = endpoint
                 info['url'] = endpoint
                 info['serviceName'] = endpoint
-                # Bugfix: Make the control protocol unique ID unique between 
+                # Bugfix: Make the control protocol unique ID unique between
                 # the SRM versions.
                 info['cpLocalID'] = doorname + '_srmv1'
                 srms.append(info)
@@ -459,7 +459,7 @@ class DCacheInfo19(StorageElement):
                 info['serviceName'] = endpoint
                 info["wsdl"] = "http://sdm.lbl.gov/srm-wg/srm.v2.2.wsdl"
                 info["semantics"] = "http://sdm.lbl.gov/srm-wg/doc/SRM.v2.2.pdf"
-                # Bugfix: Make the control protocol unique ID unique between 
+                # Bugfix: Make the control protocol unique ID unique between
                 # the SRM versions
                 info['cpLocalID'] = doorname + '_srmv2'
                 srms.append(info)
@@ -469,3 +469,9 @@ class DCacheInfo19(StorageElement):
             log.exception(e)
             return super(DCacheInfo19, self).getSRMs()
 
+    def hasSRM(self):
+        """
+        Return True if there is a SRM endpoint present on this SE.
+        dCache is an SRM server, so return True
+        """
+        return True

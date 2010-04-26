@@ -48,7 +48,7 @@ def cp_getBoolean(cp, section, option, default=True):
     If the cp object has a section/option of the proper name, and if that value
     has a 'y' or 't', we assume it's supposed to be true.  Otherwise, if it
     contains a 'n' or 'f', we assume it's supposed to be true.
-    
+
     If neither applies - or the option doesn't exist, return the default
 
     @param cp: ConfigParser object
@@ -68,21 +68,21 @@ def cp_getBoolean(cp, section, option, default=True):
 def cp_get(cp, section, option, default):
     """
     Helper function for ConfigParser objects which allows setting the default.
-    
+
     ConfigParser objects throw an exception if one tries to access an option
     which does not exist; this catches the exception and returns the default
-    value instead. 
+    value instead.
 
     This function is also found in gip_common, but is replicated here to avoid
     circular dependencies.
-    
+
     @param cp: ConfigParser object
     @param section: Section of config parser to read
     @param option: Option in section to retrieve
     @param default: Default value if the section/option is not present.
     @returns: Value stored in CP for section/option, or default if it is not
         present.
-    """ 
+    """
     try:
         return cp.get(section, option)
     except:
@@ -91,11 +91,11 @@ def cp_get(cp, section, option, default):
 def checkOsgConfigured(cp):
     """
     Make sure that the OSG has been configured when this is run.
-    
+
     Checks for the presence of the file
       - In the config object, gip.osg_attribtues, if the attribute exists; else,
       - $VDT_LOCATION/monitoring/osg-attributes.conf
-      
+
     @param cp: Site config object
     @return: True
     @raise ValueError: If the specified file does not exist.
@@ -118,7 +118,7 @@ def checkOsgConfigured(cp):
     if os.path.getsize(osg_user_vo_map) == 0:
         raise ValueError("osg-user-vo-map.txt is a 0 length file; we may be "
                          "running in an unconfigured OSG install!")
-  
+
     loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
     loc = os.path.expandvars(loc)
     try:
@@ -129,7 +129,7 @@ def checkOsgConfigured(cp):
         log.exception(e)
         raise ValueError("Unable to read config.ini; expecting to find it" \
             " at %s!" % loc)
- 
+
     return True
 
 def configOsg(cp):
@@ -149,14 +149,14 @@ def configOsg(cp):
         check_osg = True
     if check_osg and 'GIP_TESTING' not in os.environ:
         checkOsgConfigured(cp)
-        
+
     # Load config.ini values
     cp2 = ConfigParser.ConfigParser()
 
     loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
     loc = list(os.path.expandvars(loc))
     loc += [os.path.expandvars("$OSG_CUSTOM_CONFIG")]
-    
+
     log.info("Using OSG config.ini %s." % str(loc))
 
     cp2.read(loc)
@@ -198,7 +198,7 @@ def configOsg(cp):
             cp.set('condor', 'Closed')
     except:
         pass
-    
+
     # get all the items in the [GIP] section of the config.ini
     try:
         gip_items = cp2.items("GIP")
@@ -278,12 +278,12 @@ def configOsg(cp):
     #__write_config(pbs_sec, "enabled", pbs, "enabled")
     # Changing the provider to use job_contact, rather than contact_string
     #__write_config(pbs_sec, "job_contact", pbs, "contact_string")
-    
+
     # attempt to put all the pbs options into the internal config object
     # so that whitelisting and blacklisting work without having to resort to
     # gip.conf
     __write_all_options_config(pbs_sec, pbs)
-        
+
     # [Condor]
     __write_all_options_config(condor_sec, condor)
 
@@ -294,7 +294,7 @@ def configOsg(cp):
 
     # [LSF]
     __write_all_options_config(lsf_sec, lsf)
-    
+
     # [Storage]
     __write_config(storage_sec, "app_dir", "osg_dirs", "app")
     __write_config(storage_sec, "data_dir", "osg_dirs", "data")
@@ -335,7 +335,7 @@ def configOsg(cp):
             cp.set(ce, "job_manager", gip_name)
     __write_config(gip_sec, "batch", ce, "job_manager")
 
-    # Storage stuff 
+    # Storage stuff
     __write_config(gip_sec, "se_control_version", se, "srm_version")
     # Force version string of 2.2.0 or 1.1.0
     if "se" in cp.sections() and "srm_version" in cp.options("se") and \
@@ -397,7 +397,7 @@ def configOsg(cp):
 
         name = cp.get(sec, 'name')
         cp.set(sec, 'unique_name', name + "-" + site_name)
-        
+
         nodes = cp_getInt(cp, sec, "node_count", "0")
         cpus_per_node = cp_getInt(cp, sec, "cpus_per_node", 2)
         cores_per_node = cp_getInt(cp, sec, "cores_per_node", cpus_per_node*2)
@@ -459,7 +459,7 @@ def configSubclusters(cp, cp2):
             gip_option = translation.get(option, option)
             cp2.set(my_sect, gip_option, cp.get(section, option))
         options = cp2.options(my_sect)
-        
+
         if 'name' in options:
             try:
                 name = cp2.get(my_sect, 'name')
@@ -495,9 +495,9 @@ def configSubclusters(cp, cp2):
             except Exception, e:
                 pass
 
-            
-        
-    
+
+
+
 url_re = re.compile('([A-Za-z]+)://([A-Za-z0-9-\.]+):([0-9]+)/(.+)')
 split_re = re.compile("\s*,?\s*")
 def configSEs(cp, cp2):
@@ -521,7 +521,7 @@ def configSEs(cp, cp2):
     """
 
     if not py23:
-        # python 2.2's ConfigParser class doesn't have items(). 
+        # python 2.2's ConfigParser class doesn't have items().
         def cpitems(cp, section):
             d = cp.defaults().copy()
             try:
@@ -576,6 +576,8 @@ def configSEs(cp, cp2):
                 "provider_implementation", "static"))
             cp2.set(my_sect, "infoProviderEndpoint", cp_get(cp, section,
                 "infoprovider_endpoint", "file:///dev/null"))
+            if cp_getBoolean(cp, gip_sec, "srm_present", False):
+                cp2.set(my_sect, "srm_present", "True")
             vo_paths = split_re.split(cp_get(cp, section, "vo_paths", ""))
             for voinfo in vo_paths:
                 try:
@@ -584,7 +586,7 @@ def configSEs(cp, cp2):
                     continue
                 vo, path = vo.strip(), path.strip()
                 cp2.set(my_sect, vo, path)
-    
+
             # Handle allowed VO's for dCache
             spaces_re = re.compile("space_.+_vos")
             if cp_get(cp, section, "implementation", "UNKNOWN").lower() == \

@@ -77,11 +77,11 @@ def getDefaultSE(cp):
     if _defaultSE:
         return _defaultSE
     default_se = cp_get(cp, "se", "name", "UNKNOWN")
-    # if [se] name: ??? is "UNAVAILABLE" or not set, then try to get the 
+    # if [se] name: ??? is "UNAVAILABLE" or not set, then try to get the
     # default_se
     if default_se == "UNKNOWN" or default_se == "UNAVAILABLE":
         default_se = cp_get(cp, "se", "default_se", "UNAVAILABLE")
-    # if it is still UNAVAILABLE or not set, check to see if the classic SE 
+    # if it is still UNAVAILABLE or not set, check to see if the classic SE
     # is being advertised and use that
     if default_se == "UNAVAILABLE" and cp_getBoolean(cp, "classic_se",
             "advertise_se", True):
@@ -170,10 +170,10 @@ def getPath(cp, vo='', section='vo', classicSE=False):
 def getSESpace(cp, admin=None, gb=False, total=False, section=se):
     """
     Return the amount of space available at the SE.
-    
+
     If se.dynamic_dcache=True, use dCache-based methods.
     Otherwise, use classic SE methods (do a df on the SE mounts).
-    
+
     @param cp: Site configuration object
     @keyword admin: If a dCache provider, the dCache admin objects
     @keyword gb: Set to true to retun values in GB.
@@ -195,7 +195,7 @@ def getClassicSESpace(cp, gb=False, total=False):
     @type cp: ConfigParser
     @keyword gb: If True, then return the results  in GB, not KB.
     @keyword total: If True, also return the total amount of space in the SE.
-    @returns: Returns the used space, free space.  If C{total=true}, also 
+    @returns: Returns the used space, free space.  If C{total=true}, also
         return the total space.  If C{gb=True}, return the numbers in GB;
         otherwise the numbers are in kilobytes.
     """
@@ -266,7 +266,7 @@ def getdCacheSESpace(cp, admin=None, gb=False, total=False):
         connection.
     @keyword gb: If True, then return the results  in GB, not KB.
     @keyword total: If True, also return the total amount of space in the SE.
-    @returns: Returns the used space, free space.  If C{total=true}, also 
+    @returns: Returns the used space, free space.  If C{total=true}, also
         return the total space.  If C{gb=True}, return the numbers in GB;
         otherwise the numbers are in kilobytes.
     """
@@ -376,13 +376,13 @@ def getAccessProtocols(cp): #pylint: disable-msg=W0613
 
     Eventually, this will return a list of dictionaries.  Each dictionary will
     have the following keys with reference to an access endpoint:
-       
+
        - protocol
        - hostname
        - port
-    
+
     Optionally, the following keys may be included (default in parenthesis):
-       
+
        - capability (file transfer)
        - maxStreams (1)
        - securityinfo (none)
@@ -397,11 +397,11 @@ class StorageElement(object):
 
     """
     This class represents a logical StorageElement.
-    
+
     The class implements the necessary functions for a generic SRM v2.2
     based storage element - however, it leaves many things blank as there's
     no way to determine space available, etc.  Provider implementors for SEs
-    should subclass this and implement SE-specific functions. 
+    should subclass this and implement SE-specific functions.
     """
 
     def __init__(self, cp, section="se"):
@@ -417,7 +417,7 @@ class StorageElement(object):
     def run(self):
         """
         Run whatever data-gathering activities which need to be done.
-        
+
         For the base class, this is a no-op.
         """
 
@@ -439,13 +439,13 @@ class StorageElement(object):
 
         Return a list of dictionaries. Each dictionary will
         have the following keys with reference to an access endpoint:
-       
+
            - protocol
            - hostname
            - port
-    
+
         Optionally, the following keys may be included (default in parenthesis):
-       
+
            - capability (file transfer)
            - maxStreams (1)
            - securityinfo (none)
@@ -464,27 +464,27 @@ class StorageElement(object):
         """
         Return True if there is a SRM endpoint present on this SE.
         """
-        return cp_getBoolean(self._cp, self._section, "srm_present", True)
+        return cp_getBoolean(self._cp, self._section, "srm_present", False)
 
     split_re = re.compile("\s*,?\s*")
     def getSRMs(self):
         """
         Return a list of dictionaries containing information about the SRM
         endpoints.
-        
+
         Each dictionary must have the following keys:
            - acbr
            - status
            - version
            - endpoint
            - name
-           
+
         The base class implementation uses the following configuration entries
         (default value in parenthesis)
            - se.srm_host (default: UNKNOWN.example.com)
            - se.srm_version (2.2.0)
            - se.srm_port (8443)
-           - se.srm_endpoint 
+           - se.srm_endpoint
              (httpg://(se.srm_host):(se.srm_port)/srm/managerv2)
         Any of the above may be a comma- or space-separated list.
         """
@@ -524,7 +524,7 @@ class StorageElement(object):
             vos = voListStorage(self._cp, self._section)
             for vo in vos:
                 acbr += acbr_tmpl % (vo, vo)
-       
+
             name = endpoint
             m = srmname_re.search(endpoint)
             if m:
@@ -540,11 +540,11 @@ class StorageElement(object):
             srms.append(info)
 
         return srms
- 
+
     def getName(self):
         """
         Return the name of the SE.
-        
+
         The base class uses the value of se.name in the configuration object.
         """
         return cp_get(self._cp, self._section, 'name', 'UNKNOWN')
@@ -552,17 +552,17 @@ class StorageElement(object):
     def getUniqueID(self):
         """
         Return the unique ID of the SE.
-        
+
         The base class uses the value of se.unique_name (defaults to se.name)
         in the configuration object.
         """
-        return cp_get(self._cp, self._section, 'unique_name', 
+        return cp_get(self._cp, self._section, 'unique_name',
             cp_get(self._cp, self._section, 'name', 'UNKNOWN'))
 
     def getStatus(self):
         """
         Return the status of the SE.
-        
+
         The base classes uses the value of se.status (defaults to Production)
         in the configuration object.
         """
@@ -571,8 +571,8 @@ class StorageElement(object):
     def getImplementation(self):
         """
         Return the implementation name for this SE.
-        
-        The base class uses the value of se.implementation (defaults to 
+
+        The base class uses the value of se.implementation (defaults to
         UNKNOWN) in the configuration object.
         """
         return cp_get(self._cp, self._section, "implementation", "UNKNOWN")
@@ -580,7 +580,7 @@ class StorageElement(object):
     def getVersion(self):
         """
         Return a version string for this SE.
-        
+
         The base class uses the value of se.version (defaults to UNKNOWN)
         in the configuration object.
         """
@@ -590,7 +590,7 @@ class StorageElement(object):
     def getSESpace(self, gb=False, total=False):
         """
         Returns information about the SE disk space.
-        
+
         @see: getSESpace (module-level implementation)
         """
         return getSESpace(self._cp, total=total, gb=gb)
@@ -604,7 +604,7 @@ class StorageElement(object):
     def getSETape(self):
         """
         Retrieve the freespace information from the tape systems.
-        
+
         @see: getSETape (module level implementation)
         """
         return getSETape(self._cp)
@@ -612,12 +612,12 @@ class StorageElement(object):
     def getSEArch(self):
         """
         Returns the SE architecture.
-        
+
         This is an enumeration; the possible values are "tape",
         "multi-disk", "disk", or "other".
-        
+
         The base class makes an educated guess based upon the implementation
-        name and the return value of hasTape. 
+        name and the return value of hasTape.
         """
         implementation = self.getImplementation()
         if self.hasTape():
@@ -696,7 +696,7 @@ class StorageElement(object):
     def getVOInfos(self):
         """
         Return a list of VOInfo dictionaries.
-        
+
         Each dictionary must have the following keys:
            - voInfoID
            - name
@@ -704,7 +704,7 @@ class StorageElement(object):
            - tag
            - acbr
            - saLocalID
-        
+
         """
         voinfos = []
         for sa_info in self.getSAs():
@@ -727,7 +727,7 @@ class StorageElement(object):
 
     def getVOsForSpace(self, space): #pylint: disable-msg=W0613
         """
-        Given a certain space, return a list of 
+        Given a certain space, return a list of
         """
         return voListStorage(self._cp, self._section)
 
@@ -740,19 +740,19 @@ class StorageElement(object):
         a path they should use.
 
         This function tries to find option dcache.space_<space>_path; it parses
-        this as a comma-separated list of VO:path pairs; i.e., 
+        this as a comma-separated list of VO:path pairs; i.e.,
             space_CMS_path=cms:/dev/null, atlas:/pnfs/blah
 
-        If that does not provide a match and return_default is true, then it 
+        If that does not provide a match and return_default is true, then it
         will look for dcache.space_<space>_default_path and return that.
 
-        If that is not there and return_default is true, it will use the 
+        If that is not there and return_default is true, it will use the
         standard getPath from gip_storage.
 
         If return_default is true, this is guaranteed to return a non-empty
         string; if return_default is false, then this might through a ValueError
         exception.
-        
+
         @param cp: Site config object
         @param space: The name of the space to determine the path for.
         @param vo: The name of the VO which will be using this space; None for
@@ -762,7 +762,7 @@ class StorageElement(object):
         @returns: A path string; raises a ValueError if return_default=False
         """
         log.debug("Get path for SA %s, vo %s, section %s." % (space, vo, section))
-        default_path = cp_get(self._cp, self._section, 
+        default_path = cp_get(self._cp, self._section,
             "space_%s_default_path" % space, None)
         if not default_path:
             if self._section == 'se':

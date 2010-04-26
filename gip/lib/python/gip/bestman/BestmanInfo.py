@@ -43,7 +43,7 @@ class BestmanInfo(StorageElement):
             log.exception(e)
             self.sas = []
             self.voinfos = []
-  
+
     def getSRMs(self):
         srms = super(BestmanInfo, self).getSRMs()
         for srm in srms:
@@ -51,7 +51,14 @@ class BestmanInfo(StorageElement):
                 srm['endpoint'] = srm['endpoint'].replace( \
                     '/srm/managerv2', '/srm/v2/server')
         return srms
- 
+
+    def hasSRM(self):
+        """
+        Return True if there is a SRM endpoint present on this SE.
+        BestMan is an SRM server, so return True
+        """
+        return True
+
     gftp_url_re = re.compile('(.+)://(.+)')
     def getAccessProtocols(self):
         results = super(BestmanInfo, self).getAccessProtocols()
@@ -128,7 +135,7 @@ class BestmanInfo(StorageElement):
                             vo),
                         'path': path,
                         'tag': tag,
-                        'acbr': 'GlueVOInfoAccessControlBaseRule: %s' % vo, 
+                        'acbr': 'GlueVOInfoAccessControlBaseRule: %s' % vo,
                         'saLocalID': sa_info.get('saLocalID', 'UNKNOWN_SA')
                        }
                 self.voinfos.append(info)
@@ -219,4 +226,4 @@ class BestmanInfo(StorageElement):
             return used, free, tot
         else:
             return super(BestmanInfo, self).getSESpace(gb=gb, total=total)
-          
+

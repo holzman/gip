@@ -9,7 +9,7 @@ import socket
 import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, lsf, se, subcluster, \
-    cluster, cesebind
+    cluster, cesebind, htpc
 from gip_common import py23
 from gip_logging import getLogger
 
@@ -23,6 +23,7 @@ storage_sec = 'Storage'
 gip_sec = 'GIP'
 dcache_sec = 'dcache'
 lsf_sec = 'LSF'
+misc_sec = "Misc Services"
 
 def cp_getInt(cp, section, option, default):
     """
@@ -154,7 +155,7 @@ def configOsg(cp):
     cp2 = ConfigParser.ConfigParser()
 
     loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
-    loc = list(os.path.expandvars(loc))
+    loc = [os.path.expandvars(loc)]
     loc += [os.path.expandvars("$OSG_CUSTOM_CONFIG")]
 
     log.info("Using OSG config.ini %s." % str(loc))
@@ -270,6 +271,15 @@ def configOsg(cp):
     site_name = getSiteName(cp2)
     __write_config_value(site, "name", site_name)
     __write_config_value(site, "unique_name", site_name)
+
+    # [Misc Services]
+    # Process the HTPC lines
+    if cp2.has_section(misc_sec) and cp2.has_option(misc_sec, "htpc_rsl"):
+        if not cp.has_section(htpc):
+            cp.add_section(htpc)
+        cp.set(htpc, "enabled", "True")
+    __write_config(misc_sec, "htpc_rsl", htpc, "rsl")
+    __write_config(misc_sec, "htpc_vos", htpc, "vos")
 
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")

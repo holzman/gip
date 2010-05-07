@@ -10,4 +10,5 @@ condor = 'condor'
 sge = 'sge'
 lsf = 'lsf'
 forwarding = 'forwarding'
+htpc = "htpc"
 

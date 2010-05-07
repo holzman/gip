@@ -6,10 +6,11 @@ import os
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
 import gip.gratia
-from gip_common import config, getTemplate, printTemplate, cp_get, responseTimes
+from gip_common import config, getTemplate, printTemplate, cp_get, \
+    responseTimes, cp_getBoolean, cp_getList
 from gip_logging import getLogger
 from gip_cluster import getClusterID, getClusterName
-from gip_sections import ce
+from gip_sections import ce, htpc
 from gip_storage import getDefaultSE
 
 from gip.batch_systems.pbs import PbsBatchSystem
@@ -137,6 +138,27 @@ def print_CE(batch):
         info['clusterUniqueID'] = getClusterID(cp)
         gip.gratia.ce_record(cp, info)
 
+        # Add HTPC information
+        info['capability'] = ''
+        info['htpc'] = ''
+        if cp_getBoolean(cp, htpc, "enabled", False):
+            log.debug("HTPC enabled")
+            info['capability'] = '\nGlueCECapability: htpc'
+            htpc_str = ''
+            rsl = cp_get(cp, htpc, "rsl", "UNKNOWN")
+            if rsl != "UNKNOWN":
+                htpc_str += '\nHTPCrsl: %s' % rsl
+                log.debug("HTPC RSL: %s" % rsl)
+            vos = cp_getList(cp, htpc, "vos", [])
+            log.debug("HTPC VOs: %s" % ", ".join(vos))
+            if vos:
+                for vo in vos:
+                    if vo.startswith("/"):
+                        htpc_str += "\nHTPCAccessControlBaseRule: VOMS:%s" % vo
+                    else:
+                        htpc_str += "\nHTPCAccessControlBaseRule: VO:%s" % vo
+            info['htpc'] = htpc_str
+
         printTemplate(CE, info)
     return queueInfo, totalCpu, freeCpu, queueCpus
 
@@ -187,6 +209,7 @@ def print_VOViewLocal(queue_info, batch):
             'acbr'        : 'VO:%s' % vo
         }
         info['total'] = info['waiting'] + info['running']
+
         gip.gratia.vo_record(cp, info)
 
         printTemplate(VOView, info)

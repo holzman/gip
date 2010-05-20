@@ -296,7 +296,8 @@ class CEMonMessageProducer(ClassAdSink):
             output = opener.open(req).read()
             # print output
         except Exception, e:
-            log.exception(e)
+            msg = "\nException occured for endpoint: %s \n\n%s" % (endpoint, str(e))
+            log.exception(msg)
             raise
 
 
@@ -781,7 +782,12 @@ def upload(cae, bdii, entries, dryrun=False):
             # All SEs
             for se in adjacent_ses:
                 log.info("\tSE adjacent to CE: %s" % se)
-                kw['se'] = id_to_se[se]
+                try:
+                    kw['se'] = id_to_se[se]
+                except:
+                    log.info("\tSE not advertised by this CE: %s" % se)
+                    continue
+
                 adjacent_sas = se_to_sas.get(kw['se'], [])
                 kw['aps'] = se_to_aps.get(id_to_se[se], [])
                 kw['services'] = se_to_services.get(kw['se'], [])

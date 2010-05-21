@@ -12,6 +12,7 @@ import datetime
 import optparse
 import threading
 import cStringIO
+import ConfigParser
 
 from xml.sax.saxutils import XMLGenerator
 
@@ -418,9 +419,20 @@ class ClassAdEmitter(object):
 
         # Work on optional entities
         voview_acbr = ce.glue['CEAccessControlBaseRule']
+        secondary_ce_acbrs = []
         if voview:
             self.add_to_results(voview, results)
             voview_acbr = voview.glue['CEAccessControlBaseRule']
+            # Go through each CE ACBR and we'll add the ACBR to the final
+            # ClassAd if the CE ACBR is different from the VOView ACBR and the
+            # CE ACBR can access the VOView.
+            # Use case: CE ACBR has VO:cms and VOMS:/cms/Role=t1access, while
+            # there only exists a VOView for VO:cms
+            for ce_acbr in ce.glue['CEAccessControlBaseRule']:
+                if self.can_access([ce_acbr], voview, 
+                        "CEAccessControlBaseRule"):
+                    if ce_acbr not in voview_acbr:
+                        secondary_ce_acbrs.append(ce_acbr)
         if service:
             self.add_to_results(service, results)
         if cp:
@@ -431,6 +443,16 @@ class ClassAdEmitter(object):
             self.add_to_results(cese, results)
         if subcluster:
             self.add_to_results(subcluster, results)
+
+        # If there are secondary ACBRs for this ClassAd, add them now.
+        if secondary_ce_acbrs:
+            key = "GlueCEAccessControlBaseRule"
+            prev_results = []
+            if key in results:
+                prev_results = results[key].split(",")
+            results[key] = ','.join(prev_results + [str(i) for i in \
+                secondary_ce_acbrs])
+
 
         # Add the optional SA/VOInfo for this information.  Note that if the
         # SA or VOInfo exists and the corresponding CE/VOView can't access it,
@@ -574,7 +596,16 @@ def configure_emitter():
         action="store_true", help="Use the GIP's built-in caching mechanism")
     options, args = parser.parse_args()
     sys.argv = []
-    cp = gip_common.config()
+    if not options.config:
+        # If we are ignoring the config, we can ignore exceptions and create
+        # an empty configuration object.
+        try:
+            cp = gip_common.config()
+        except:
+            cp = ConfigParser.ConfigParser()
+            cp.add_section("gip")
+    else:
+        cp = gip_common.config()
 
     # Set up the alarm to automatically kill a runaway script
     try:

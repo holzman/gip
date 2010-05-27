@@ -318,7 +318,7 @@ def print_VOViewLocal(cp):
         
         for vo in vos:
             acbr = 'VO:%s' % vo
-            info = jinfo.get(vo, {"running": 0, "idle": 0, "held": 0})
+            info = jinfo.get(vo.lower(), {"running": 0, "idle": 0, "held": 0})
             ert, wrt = responseTimes(cp, info["running"], info["idle"] + \
                 info["held"], max_job_time=max_wall*60)
             free = min(unclaimed, assigned-myrunning,

@@ -530,6 +530,10 @@ def getJobsInfo(vo_map, cp):
             group, name = name_info
         else:
             group = 'default'
+        if group not in all_group_info:
+            log.debug("Changing group name from %s to default, as we don't" \
+                " recognize the group." % group)
+            group = 'default'
         log.debug("Examining jobs for group %s, user %s." % (group, name))
         try:
             vo = vo_map[name].lower()
@@ -550,7 +554,7 @@ def getJobsInfo(vo_map, cp):
         my_info = vo_jobs.get(vo, {"running":0, "idle":0, "held":0, \
             'max_running':0})
         addIntInfo(my_info, info, "running", "RunningJobs")
-        if cp_getBoolean(cp, "condor", "count_flocked", False):
+        if cp_getBoolean(cp, "condor", "count_flocked", True):
             addIntInfo(my_info, info, "running", "FlockedJobs")
         addIntInfo(my_info, info, "idle", "IdleJobs")
         addIntInfo(my_info, info, "held", "HeldJobs")

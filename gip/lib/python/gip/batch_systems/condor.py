@@ -422,6 +422,8 @@ class CondorBatchSystem(BatchSystem):
             # In case if we've been assigned a group, but it's not actually
             # configured anywhere
             if group not in all_group_info:
+                log.debug("Changing group name from %s to default, as we don't"\
+                   " recognize the group." % group)
                 group = 'default'
             log.debug("Examining jobs for group %s, user %s." % (group, name))
             try:
@@ -443,7 +445,7 @@ class CondorBatchSystem(BatchSystem):
             my_info = vo_jobs.get(vo, {"running":0, "wait":0, "held":0, \
                 'max_running':0})
             addIntInfo(my_info, info, "running", "RunningJobs")
-            if cp_getBoolean(self.cp, "condor", "count_flocked", False):
+            if cp_getBoolean(self.cp, "condor", "count_flocked", True):
                 addIntInfo(my_info, info, "running", "FlockedJobs")
             addIntInfo(my_info, info, "wait", "IdleJobs")
             addIntInfo(my_info, info, "held", "HeldJobs")

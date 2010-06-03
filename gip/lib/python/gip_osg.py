@@ -333,13 +333,18 @@ def configOsg(cp):
         cp2.set(gip_sec, "simple_cesebind", "False")
         __write_config(gip_sec, "simple_cesebind", cesebind, "simple")
 
-    # Try to auto-detect the batch manager.
+    # Try to auto-detect the batch manager.  If all are disabled or missing, 
+    # then this is an SE only installation
+    cp2.set(gip_sec, "se_only", "True")
     mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge'}
     for section, gip_name in mappings.items():
         if cp_getBoolean(cp2, section, 'enabled', False):
             if ce not in cp.sections():
                 cp.add_section(ce)
             cp.set(ce, "job_manager", gip_name)
+            cp2.set(gip_sec, "se_only", "False")
+    __write_config(gip_sec, "se_only", "gip", "se_only")
+
     __write_config(gip_sec, "batch", ce, "job_manager")
 
     # Storage stuff

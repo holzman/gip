@@ -7,5 +7,8 @@ sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip.providers.cese_bind import main
 
 if __name__ == '__main__':
-    main()
+    cp = config()
+    se_only = cp_getBoolean(cp, "gip", "se_only", False)
+    if not se_only:
+        main()
 

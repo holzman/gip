@@ -577,10 +577,12 @@ def main():
         handle_SE(cp, 'se')
 
     # Handle the "classic" SE.
-    try:
-        print_classicSE(cp)
-    except Exception, e:
-        log.exception(e)
+    se_only = cp_getBoolean(cp, "gip", "se_only", False)
+    if not se_only:
+        try:
+            print_classicSE(cp)
+        except Exception, e:
+            log.exception(e)
 
 if __name__ == '__main__':
     main()

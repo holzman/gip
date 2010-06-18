@@ -335,6 +335,8 @@ def configOsg(cp):
 
     # Try to auto-detect the batch manager.  If all are disabled or missing, 
     # then this is an SE only installation
+    if gip_sec not in cp2.sections():
+        cp2.add_section(gip_sec)
     cp2.set(gip_sec, "se_only", "True")
     mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge'}
     for section, gip_name in mappings.items():

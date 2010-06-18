@@ -133,6 +133,11 @@ class ClassAdSink(object):
 
 class ClassAdPrinter(ClassAdSink):
 
+    def isBool(self, val):
+        if val.lower() == "true" or val.lower() == "false":
+            return True
+        return False
+
     def emit(self, results):
         output = []
         keys = results.keys()
@@ -143,6 +148,8 @@ class ClassAdPrinter(ClassAdSink):
                 continue
             if isinstance(val, types.IntType):
                 output.append('%s = %i;' % (key, val))
+            elif isBool(val):       
+                output.append('%s = %s;' % (key, str(val)))
             else:       
                 output.append('%s = "%s";' % (key, str(val)))
         print "\n".join(output) + "\n"

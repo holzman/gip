@@ -2,6 +2,7 @@
 import re
 import gip_sets as sets
 import urllib2
+import socket
 
 from gip_common import getLogger, cp_get, normalizeFQAN
 from gip_storage import StorageElement, voListStorage

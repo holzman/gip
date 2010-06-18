@@ -1,0 +1,27 @@
+To run the GIP in standalone SE mode the following step must be taken:
+
+Extra Requirement:  a valid osg-user-vo-map.txt is needed.
+
+Assumption:  The GIP will be run on a machine with the same type of access to
+    an SE that a CE normally would have.
+
+1) copy gip.se_only.example.conf to $GIP_LOCATION/etc/gip.conf
+2) fill in the locations of the osg_config file and the osg-user-vo-map.txt
+    * It is recommended that they be placed in $GIP_LOCATION/etc as well
+      This makes the GIP completely self contained and portable.
+3) Fill out a config.ini for the SE only site.  The known minimum sections are:
+    DEFAULT, Site Information, Storage, GIP, and SE <name>
+
+   a) see the OSG twiki for specific help on each of the sections
+   b) the Storage section only needs:
+        se_available = %(enable)s
+        default_se = <se fqdn>
+   c) the GIP section only needs:
+        advertise_gsiftp = %(disable)s
+4) Place the config.ini in the location specified in step 2.
+5) copy a valid osg-user-vo-map.txt file to the location specified in step 2.
+6) copy $GIP_LOCATION/bin/run_gip.sh.se_only.example to
+   $GIP_LOCATION/bin/run_gip.sh
+7) modify the VDT_LOCATION and GIP_LOCATION paths in run_gip.sh to the location
+   that you placed the gip.  GIP_LOCATION should point directly to the gip
+   directory.  VDT_LOCATION should point to the parent directory.

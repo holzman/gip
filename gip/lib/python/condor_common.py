@@ -174,9 +174,9 @@ def _createSubmitterConstraint(cp):
     Create constraint for condor_status -submitters command
     """
 
-    exclude_schedd = cp_getList(cp, "condor", "exclude_schedd", [])
+    exclude_schedds = cp_getList(cp, "condor", "exclude_schedds", [])
 
-    if not exclude_schedd:
+    if not exclude_schedds:
         return 'TRUE'
 
     submitConstraint = 'TRUE'
@@ -257,9 +257,9 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
     for group in output:
         grouplist.append(group.strip())
         
-    excludedGroups = cp_getList(cp, "condor", "excluded_groups", [])
+    excludedGroups = cp_getList(cp, "condor", "exclude_groups", [])
         
-    log.debug("excluded_groups = %s" % excludedGroups)
+    log.debug("exclude_groups = %s" % excludedGroups)
     for excludedGroup in excludedGroups:
         excludedGroup = excludedGroup.strip()
         try:
@@ -269,7 +269,7 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
             log.debug("Attempted to remove non-existent group %s" % excludedGroup)
 
     if not grouplist:
-        log.info("No condor groups exist (after applying excluded_groups)")
+        log.info("No condor groups exist (after applying exclude_groups)")
         return{}
     
     retval = {}

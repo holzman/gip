@@ -21,7 +21,7 @@ from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges
 
 from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
-    VoMapper, cp_getInt
+    VoMapper, cp_getInt, cp_getList
 from gip_testing import runCommand
 
 condor_version = "condor_version"
@@ -173,12 +173,12 @@ def _createSubmitterConstraint(cp):
     """
     Create constraint for condor_status -submitters command
     """
-    exclude_schedd = cp_get(cp, "condor", "exclude_schedd", None)
+
+    exclude_schedd = cp_getList(cp, "condor", "exclude_schedd", [])
 
     if not exclude_schedd:
         return 'TRUE'
 
-    schedds = exclude_schedd.split(',')
     submitConstraint = 'TRUE'
     for schedd in schedds:
         schedd = schedd.strip()
@@ -257,10 +257,7 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
     for group in output:
         grouplist.append(group.strip())
         
-    excludedGroups = cp_get(cp, "condor", "excluded_groups", [])
-
-    if excludedGroups:
-        excludedGroups = excludedGroups.split(',')
+    excludedGroups = cp_getList(cp, "condor", "excluded_groups", [])
         
     log.debug("excluded_groups = %s" % excludedGroups)
     for excludedGroup in excludedGroups:

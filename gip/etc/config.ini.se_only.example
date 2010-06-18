@@ -1,0 +1,51 @@
+[DEFAULT]
+unavailable = UNAVAILABLE
+default = UNAVAILABLE
+disable = False
+enable = True
+localhost = cms-xen15.fnal.gov
+admin_email = cms-t1@fnal.gov
+osg_location = /home/tiradani/tmp/test_se_gip
+
+[Site Information]
+resource = USCMS-FNAL-ITB-CE15
+resource_group = USCMS-FNAL-ITB
+sponsor = cms:100
+site_policy = http://www.uscms.org/SoftwareComputing/Grid/Policy/OSG_VO.html
+contact = cms-t1@fnal.gov
+city = Batavia, IL
+country = USA
+longitude = -88.2546
+latitude = 41.8412
+group = OSG-ITB
+email = %(admin_email)s
+host_name = %(localhost)s
+
+[Storage]
+se_available = %(enable)s
+default_se = cmssrm.fnal.gov
+
+[GIP]
+advertise_gsiftp = %(disable)s
+advertise_accesspoints = False
+
+[SE dCache]
+enabled = True
+name = cmssrm.fnal.gov
+srm_endpoint = httpg://cmssrm.fnal.gov:8443/srm/managerv2
+provider_implementation = dcache19
+implementation = dcache
+version = 1.9.0-15p6
+default_path = /
+infoprovider_endpoint = http://cmsdcam.fnal.gov/site/info
+spaces = flushPools,ResilientPools,LFSOnlyPools,ReadOnlyPools,stagePools
+space_stagePools_vos = cms,mis
+space_ReadOnlyPools_vos = cms,mis
+space_LFSOnlyPools_vos = cms,mis
+space_ResilientPools_vos = cms,mis
+space_flushPools_vos = cms,mis
+space_flushPools_path = mis:/NotWrittenToTape,ops:/NotWrittenToTape
+space_ResilientPools_path = mis:/NotWrittenToTape,ops:/NotWrittenToTape
+space_LFSOnlyPools_path = mis:/NotWrittenToTape,ops:/NotWrittenToTape
+space_ReadOnlyPools_path = mis:/NotWrittenToTape,ops:/NotWrittenToTape
+space_stagePools_path = mis:/NotWrittenToTape,ops:/NotWrittenToTape

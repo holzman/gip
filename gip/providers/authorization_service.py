@@ -95,26 +95,27 @@ def main():
     try:
         # Load up the site configuration
         cp = config()
-
-        # Load up the template for GlueService
-        # To view its contents, see $VDT_LOCATION/gip/templates/GlueService
-        template = getTemplate("GlueService", "GlueServiceUniqueID")
-        if not cp_getBoolean(cp, "site", "advertise_gums", True):
-            log.info("Not advertising authorization service.")
-            return
-        else:
-            log.info("Advertising authorization service.")
-
-        authfile = open('/etc/grid-security/gsi-authz.conf', 'r')
-        authlines = authfile.readlines()
-        authmod = re.compile('^(?!#)(.*)libprima_authz_module')
-        for line in authlines:
-            m = authmod.match(line)
-            if m:
-                publish_gums(cp, template)
+        se_only = cp_getBoolean(cp, "gip", "se_only", False)
+        if not se_only:
+            # Load up the template for GlueService
+            # To view its contents, see $VDT_LOCATION/gip/templates/GlueService
+            template = getTemplate("GlueService", "GlueServiceUniqueID")
+            if not cp_getBoolean(cp, "site", "advertise_gums", True):
+                log.info("Not advertising authorization service.")
                 return
-            
-        publish_gridmap_file(cp, template)                
+            else:
+                log.info("Advertising authorization service.")
+    
+            authfile = open('/etc/grid-security/gsi-authz.conf', 'r')
+            authlines = authfile.readlines()
+            authmod = re.compile('^(?!#)(.*)libprima_authz_module')
+            for line in authlines:
+                m = authmod.match(line)
+                if m:
+                    publish_gums(cp, template)
+                    return
+                
+            publish_gridmap_file(cp, template)                
 
     except Exception, e:
         # Log error, then report it via stderr.

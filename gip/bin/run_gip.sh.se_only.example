@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export VDT_LOCATION=/put/your/path/here
+export GIP_LOCATION=/put/your/path/here/gip
+
+$GIP_LOCATION/gip/bin/gip_info

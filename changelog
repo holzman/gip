@@ -1,4 +1,18 @@
 Changelog
+== 1.1.10alpha ==
+* Publication of glexec (if glexec_location is published in the Misc Services
+  section of the config.ini)
+* Allow and document standalone SE publication (if se_only = True in the GIP 
+  section of the config.ini) 
+* Revised option names (excluded_groups -> exclude_groups, 
+  exclude_schedd -> exclude_schedds)	
+* Condor: if the sum of the group quotas are larger than the size of the 
+  cluster, set the TotalCPUs to the size of the cluster (previous behavior was
+  using 999999)	
+* Condor: Fix VOView case-sensitivity bug 
+* Condor: count flocked jobs as running by default
+* Condor: Set default group name to 'default' if negotiator isn't aware of it.
+
 == 1.1.9rc1 ==
 * PBS: Properly drop PBS queues that are not in the RVF.
 * Condor: Add capability to ignore condor accounting groups

@@ -1,5 +1,5 @@
 Changelog
-== 1.1.10alpha ==
+== 1.1.10alpha0 ==
 * Publication of glexec (if glexec_location is published in the Misc Services
   section of the config.ini)
 * Allow and document standalone SE publication (if se_only = True in the GIP 

@@ -833,7 +833,7 @@ class ValidatorMain:
                 xml += "            <Message>%s</Message>\n" % str(msg['msg'])
             xml += "        </Messages>\n"
             xml += "    </ResourceGroup>\n"
-        xml += '<GIPValidator>\n'
+        xml += '</GIPValidator>\n'
         print xml
         
     def main(self, args):

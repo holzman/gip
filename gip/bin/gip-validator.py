@@ -823,7 +823,6 @@ class ValidatorMain:
         return 0
 
     def printResults(self, results):
-        print results
         xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
         xml += '<GIPValidator>\n'
         for result in results:

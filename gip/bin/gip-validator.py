@@ -340,7 +340,8 @@ class ValidateGip:
                     "type"       : 'OSG', 
                     "name"       : 'ValidateGIP_%s' % site, 
                     "messages"   : [{'msg': 'Could not get LDIF Entries.', 'type': 'CRIT'},],
-                    "timestamp"  : self.getTimestamp(),
+                    "timestamp"  : time.strftime("%a %b %d %T UTC %Y", time.gmtime()),
+                    "unixtimestamp"  : time.time(),
                     "result"     : MSG_UNKNOWN
                 }
                 results.append(test_result)
@@ -822,6 +823,7 @@ class ValidatorMain:
         return 0
 
     def printResults(self, results):
+        print results
         xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
         xml += '<GIPValidator>\n'
         for result in results:

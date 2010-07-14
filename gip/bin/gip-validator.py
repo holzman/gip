@@ -368,7 +368,8 @@ class ValidateGip:
                        "type"       : 'OSG', 
                        "name"       : 'ValidateGIP_%s' % site, 
                        "messages"   : self.messages, 
-                       "timestamp"  : self.getTimestamp()
+                       "timestamp"  : time.strftime("%a %b %d %T UTC %Y", time.gmtime()),
+                       "unixtimestamp"  : time.time()
                       }
         if self.passed(self.messages):
             test_result["result"] = "PASS" 
@@ -827,6 +828,7 @@ class ValidatorMain:
             xml += "    <ResourceGroup type='%s'>\n" % result['type']
             xml += "        <Name>%s</Name>\n" % result['site']
             xml += "        <Timestamp>%s</Timestamp>\n" % result['timestamp']
+            xml += "        <UnixTimestamp>%s</UnixTimestamp>\n" % result['unixtimestamp']
             xml += "        <Result>%s</Result>\n" % result['result']
             xml += "        <Messages>\n"
             for msg in result['messages']:

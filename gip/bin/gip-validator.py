@@ -491,20 +491,31 @@ class ValidateGip:
 
     def test_sponsors(self):
         r = re.compile("(\w+):([0-9]+)")
-        for entry in self.entries:
+        bdii_base = "mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site
+        fd = query_bdii(self.endpoint, query="", base=bdii_base)
+        local_entries = read_ldap(fd, multi=True)
+
+        for entry in local_entries:
             if 'GlueSite' not in entry.objectClass:
                 continue
             try:
-                m = r.findall(entry.glue['SiteSponsor'])
-                if m == None:
+                try:
+                    sponsors = entry.glue['SiteSponsor']
+                except:
                     msg="Invalid site sponsor: %s" % entry.glue['SiteSponsor']
                     self.appendMessage(MSG_CRITICAL, msg)
                     return
                 tot = 0
                 num_sponsors = 0
-                for e in m:
+                for s in sponsors:
+                    try:
+                        amount = int(s.split(":")[1])
+                    except:
+                        msg="Invalid site sponsor percentage: %s" % entry.glue['SiteSponsor']
+                        self.appendMessage(MSG_CRITICAL, msg)
+                        return
                     num_sponsors += 1
-                    tot += int(e[1])
+                    tot += amount
                 if num_sponsors == 1 and tot == 0:
                     tot = 100
                 if tot != 100:

@@ -77,6 +77,7 @@ def print_CE(cp):
             info['max_running'] = 999999
         if "max_wall" not in info:
             info["max_wall"] = 1440
+        info["max_wall"] = int(info["max_wall"]) # glue proscribes ints 
         info["job_slots"] = min(totalCpu, info["job_slots"])
 
         ert, wrt = responseTimes(cp, info["running"], info["wait"],

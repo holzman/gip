@@ -42,6 +42,10 @@ class BestmanInfo(StorageElement):
             log.exception(e)
             self.sas = []
             self.voinfos = []
+    
+    def getPort(self):
+        port = cp_get(self._cp, self._section, "srm_port", "8443")
+        return port
 
     def getSRMs(self):
         srms = super(BestmanInfo, self).getSRMs()

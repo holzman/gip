@@ -432,6 +432,15 @@ class StorageElement(object):
         """
         return [2]
 
+    def getPort(self):
+        """
+        Return the port for the SE.
+        
+        This value is a deprecated value and should not b queried for.  It is 
+        included in the GIP to eliminate confusion downstream.
+        """
+        return "8443"
+    
     def getAccessProtocols(self):
         """
         Stub function for providing access protocol information.

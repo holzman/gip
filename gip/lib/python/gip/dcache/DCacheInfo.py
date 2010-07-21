@@ -25,6 +25,10 @@ class DCacheInfo(StorageElement):
                 section=self._section)
         except Exception, e:
             log.exception(e)
+
+    def getPort(self):
+        port = cp_get(self._cp, self._section, "srm_port", "8443")
+        return port
     
     def getSAs(self):
         if getattr(self, 'sas', None):

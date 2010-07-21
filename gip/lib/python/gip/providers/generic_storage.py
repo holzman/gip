@@ -326,6 +326,10 @@ def print_SE(se, cp):
 
     # Try to guess the appropriate architecture
     arch = se.getSEArch()
+    
+    # port number was hard coded to 8443, get from cp now
+    # NOTE: this field is deprecated by the schema so it should not be used 
+    port = se.getPort()
 
     # Fill in the information for the template
     info = { 'seName'         : se.getName(),
@@ -333,7 +337,7 @@ def print_SE(se, cp):
              'implementation' : implementation,
              "version"        : version,
              "status"         : status,
-             "port"           : 8443,
+             "port"           : port,
              "onlineTotal"    : total,
              "nearlineTotal"  : nt,
              "onlineUsed"     : used,

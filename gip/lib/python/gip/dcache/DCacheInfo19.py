@@ -35,6 +35,10 @@ class DCacheInfo19(StorageElement):
         self.parseSAs_fromPG()
         self.parseVOInfos_fromReservations()
 
+    def getPort(self):
+        port = cp_get(self._cp, self._section, "srm_port", "8443")
+        return port
+
     def getSESpace(self, gb=False, total=False):
         total = self.handler.summary.get('total', 0) / 1000
         free = self.handler.summary.get('free', 0) / 1000

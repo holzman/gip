@@ -458,7 +458,10 @@ class ValidateGip:
         self.test_existence("GlueCESEBindSEUniqueID")
         self.test_existence("GlueCESEBindGroupCEUniqueID")
         self.test_existence("GlueLocationLocalID")
-        self.test_existence("GlueServiceUniqueID")
+        # Commenting out because ATLAS runs CE's where they do not advertise
+        # GUMS and they do not have an attached SE, therefore they will not 
+        # have any GlueServiceUniqueID stanzas.
+        #self.test_existence("GlueServiceUniqueID")
         self.test_existence("GlueSEUniqueID")
         self.test_existence("GlueSEAccessProtocolLocalID")
         # need to check to see if there are any SE's other than the classic SE

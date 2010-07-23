@@ -106,15 +106,18 @@ def main():
             else:
                 log.info("Advertising authorization service.")
     
-            authfile = open('/etc/grid-security/gsi-authz.conf', 'r')
-            authlines = authfile.readlines()
-            authmod = re.compile('^(?!#)(.*)libprima_authz_module')
-            for line in authlines:
-                m = authmod.match(line)
-                if m:
-                    publish_gums(cp, template)
-                    return
-                
+            try:
+                authfile = open('/etc/grid-security/gsi-authz.conf', 'r')
+                authlines = authfile.readlines()
+                authmod = re.compile('^(?!#)(.*)libprima_authz_module')
+                for line in authlines:
+                    m = authmod.match(line)
+                    if m:
+                        publish_gums(cp, template)
+                        return
+            except IOError:
+                log.info("/etc/grid-security/gsi-authz.conf not found; assuming gridmap file authorization")
+            
             publish_gridmap_file(cp, template)                
 
     except Exception, e:

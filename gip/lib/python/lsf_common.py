@@ -18,8 +18,8 @@ queue_info_cmd = "bqueues -l"
 jobs_cmd = "bjobs -u all -r"
 lsfnodes_cmd = "bhosts"
 lsid_cmd = 'lsid'
-bmgroup_r_cmd = 'bmgroup -r'
-bugroup_r_cmd = 'bugroup -r'
+bmgroup_r_cmd = 'bmgroup -r -w'
+bugroup_r_cmd = 'bugroup -r -w'
 
 def lsfCommand(command, cp):
     """

@@ -1,4 +1,8 @@
 Changelog
+== 1.1.10 ==
+* LSF: add -w option to avoid truncating group and user names
+* LSF: enforce max_wall as integer 	
+
 == 1.1.10alpha0 ==
 * Publication of glexec (if glexec_location is published in the Misc Services
   section of the config.ini)

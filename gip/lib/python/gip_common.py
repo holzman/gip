@@ -388,7 +388,24 @@ def getTemplate(template, name):
     @return: Template string
     @raise e: ValueError if it is unable to find the template in the file.
     """
-    fp = open(os.path.expandvars("$GIP_LOCATION/templates/%s" % template))
+
+    cp = config()
+    template_dirs = cp_getList(cp, 'gip', 'local_template_dirs', [])
+    template_dirs.append(os.path.expandvars('$GIP_LOCATION/templatestest'))
+    tried = []
+    fp = ''
+    
+    for template_dir in template_dirs:
+        try:
+            template_dir = os.path.expandvars(template_dir)
+            fp = open("%s/%s" % (template_dir, template))
+            break
+        except IOError:
+            tried.append("%s/%s" % (template_dir, template))
+
+    if not fp:
+        raise ValueError("Couldn't find template.  Searched %s" % tried)
+
     start_str = "dn: %s" % name
     mybuffer = ''
     recording = False
@@ -399,6 +416,8 @@ def getTemplate(template, name):
             mybuffer += line
             if line == '\n':
                 break
+
+    fp.close()
     if not recording:
         raise ValueError("Unable to find %s in template %s" % (name, template))
     return mybuffer[:-1]

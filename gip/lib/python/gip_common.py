@@ -391,7 +391,7 @@ def getTemplate(template, name):
 
     cp = config()
     template_dirs = cp_getList(cp, 'gip', 'local_template_dirs', [])
-    template_dirs.append(os.path.expandvars('$GIP_LOCATION/templatestest'))
+    template_dirs.append(os.path.expandvars('$GIP_LOCATION/templates'))
     tried = []
     fp = ''
     

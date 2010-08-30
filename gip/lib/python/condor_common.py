@@ -312,17 +312,21 @@ def getQueueList(cp): #pylint: disable-msg=C0103
         # Default to no groups.
         groupInfo = {}
 
-    # Set up the "default" group with all the VOs which aren't already in a 
-    # group
-    groupInfo['default'] = {'prio': 999999, 'quota': 999999, 'vos': sets.Set()}
-    all_group_vos = []
-    for val in groupInfo.values():
-        all_group_vos.extend(val['vos'])
-    defaultVoList = voList(cp, vo_map=vo_map)
-    defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
-    groupInfo['default']['vos'] = defaultVoList
-    if not groupInfo['default']['vos']:
-        del groupInfo['default']
+    excludedGroups = cp_getList(cp, "condor", "exclude_groups", [])
+    excludedGroups = [x.strip() for x in excludedGroups]
+
+    if 'default' not in excludedGroups:
+        # Set up the "default" group with all the VOs which aren't already in a 
+        # group
+        groupInfo['default'] = {'prio': 999999, 'quota': 999999, 'vos': sets.Set()}
+        all_group_vos = []
+        for val in groupInfo.values():
+            all_group_vos.extend(val['vos'])
+        defaultVoList = voList(cp, vo_map=vo_map)
+        defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
+        groupInfo['default']['vos'] = defaultVoList
+        if not groupInfo['default']['vos']:
+            del groupInfo['default']
 
     return groupInfo.keys()
 

@@ -15,6 +15,7 @@ import time
 import urlparse
 import GipUnittest
 import ConfigParser
+import popen2
 
 from gip_common import cp_get, cp_getBoolean, pathFormatter, parseOpts, config
 from gip_common import strContains
@@ -58,6 +59,14 @@ def runCommand(cmd, force_command=False):
         return open(os.path.expandvars("$VDT_LOCATION/test/command_output/%s" \
             % filename))
     else:
+        child = popen2.Popen4(cmd)
+        exitStatus = child.wait()
+        stdouterr = child.fromchild
+        if exitStatus:
+            raise RuntimeError(stdouterr.readlines())
+        else:
+            return stdouterr
+        
         return os.popen(cmd)
 
 def generateTests(cp, cls, args=[]):

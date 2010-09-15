@@ -38,6 +38,10 @@ def getCEList(cp, extraCEs=[]):
     elif jobman == 'condor':
         queue_entries = getCondorQueueList(cp)
     elif jobman == 'sge':
+        from gip.providers.sge import bootstrapSGE
+        from gip_common import addToPath
+        bootstrapSGE(cp)
+        addToPath(cp_get(cp, "sge", "sge_path", "."))
         queue_entries = getSGEQueueList(cp)
     else:
         raise ValueError("Unknown job manager %s." % jobman)

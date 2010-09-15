@@ -64,10 +64,8 @@ def runCommand(cmd, force_command=False):
         stdouterr = child.fromchild
         if exitStatus:
             raise RuntimeError(stdouterr.readlines())
-        else:
-            return stdouterr
         
-        return os.popen(cmd)
+        return stdouterr
 
 def generateTests(cp, cls, args=[]):
     """

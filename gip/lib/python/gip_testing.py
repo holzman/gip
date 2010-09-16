@@ -16,6 +16,7 @@ import urlparse
 import GipUnittest
 import ConfigParser
 import popen2
+from gip_common import getLogger
 
 from gip_common import cp_get, cp_getBoolean, pathFormatter, parseOpts, config
 from gip_common import strContains
@@ -59,13 +60,15 @@ def runCommand(cmd, force_command=False):
         return open(os.path.expandvars("$VDT_LOCATION/test/command_output/%s" \
             % filename))
     else:
-        child = popen2.Popen4(cmd)
+        child = popen2.Popen3(cmd, capturestderr=True)
         exitStatus = child.wait()
-        stdouterr = child.fromchild
+        stdout = child.fromchild
+        stderr = child.childerr
         if exitStatus:
-            raise RuntimeError(stdouterr.readlines())
-        
-        return stdouterr
+            log = getLogger("GIP.common")
+            log.debug('Command %s exited with %d, stderr: %s' % (cmd, os.WEXITSTATUS(exitStatus), stderr.readlines()))
+
+        return stdout
 
 def generateTests(cp, cls, args=[]):
     """

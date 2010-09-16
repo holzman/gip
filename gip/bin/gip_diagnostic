@@ -18,8 +18,10 @@ if sys.version_info[0] <= 2 and sys.version_info[1] <= 2:
     print "GIP diagnostic tool not compatible with Python 2.2 or lower."
     sys.exit(1)
 
-MYOSG_URL = 'https://myosg.grid.iu.edu/rgsummary/xml?datasource=summary&' \
-    'summary_attrs_showfqdn=on&all_resources=on'
+MYOSG_URL = 'https://myosg.grid.iu.edu/rgsummary/xml?' \
+            'datasource=summary&' \
+            'summary_attrs_showfqdn=on&' \
+            'all_resources=on'
 
 import optparse
 
@@ -101,12 +103,14 @@ def parse_args():
         default=True)
     parser.add_option("-r", "--remote", dest="endpoint")
     parser.add_option("-s", "--site", dest="site", default=None)
+    parser.add_option("-i", "--stream-input", dest="input", default=False)
+    parser.add_option("-l", "--svn-location", dest="svn", default=None)
 
-    opts, args = parser.parse_args()
+    opts, _ = parser.parse_args()
 
     if opts.site:
         opts.endpoint = parse_myosg(opts)
-
+    
     return opts
 
 def cp_get(cp, section, option, default):
@@ -161,7 +165,7 @@ def pull_remote(command, fdout=sys.stdout, fderr=sys.stderr):
     errfd = errfile.fileno()
     makeNonBlocking(outfd)            # don't deadlock!
     makeNonBlocking(errfd)
-    outdata = errdata = ''
+    #outdata = errdata = ''
     outeof = erreof = 0
     while 1:
         ready = select.select([outfd,errfd],[],[]) # wait for input
@@ -211,28 +215,46 @@ def configContents(cp, stream=sys.stderr):
             print >> stream, msg
         print >> stream, " "
 
-def gip_check_env():
+def gip_check_env(use_custom_gip=False):
     """
     Check environment for $GIP_LOCATION or $VDT_LOCATION
     """
     if 'OSG_LOCATION' in os.environ and 'VDT_LOCATION' not in os.environ:
         os.environ['VDT_LOCATION'] = os.environ['OSG_LOCATION']
+    
     output = "Checking for $GIP_LOCATION... "
     if 'GIP_LOCATION' in os.environ:
         output += "OK\n"
         return output
     else:
         if 'VDT_LOCATION' in os.environ:
-            output += "Assuming to be $VDT_LOCATION/gip; OK\n"
-            os.environ['GIP_LOCATION']  = os.path.join(\
-                os.environ['VDT_LOCATION'], 'gip')
+            if use_custom_gip:
+                # extract the tarball
+                os.environ['GIP_LOCATION']  = os.path.join(os.getcwd(), 'osg_gip/gip')
+                output += "$GIP_LOCATION is set to %s OK\n" % os.environ['GIP_LOCATION']
+                gip_write_conf()
+                output += "$GIP_LOCATION/etc/gip.conf has been written OK\n"
+            else:
+                output += "Assuming to be $VDT_LOCATION/gip; OK\n"
+                os.environ['GIP_LOCATION']  = os.path.join(os.environ['VDT_LOCATION'], 'gip')
             output += "OK\n"
             return output
         else:
             output += "FAIL\n"
             output += "GIP_LOCATION and VDT_LOCATION not set.\n"
             return output
+        
+def gip_write_conf():
+    config_ini = os.path.join(os.environ['VDT_LOCATION'], 'osg/etc') + "/config.ini"
+    conf_contents = """[gip]
+osg_config=%s
+""" % config_ini
 
+    gip_conf = os.path.join(os.environ['GIP_LOCATION'], 'etc') + "/gip.conf"
+    fd = open(gip_conf, "w")
+    fd.write(conf_contents)
+    fd.close() 
+    
 def gip_check_config():
     """
     Check that GIP can read in config.
@@ -453,9 +475,9 @@ def gip_check_old(cp, outh):
     gip_static = os.path.expandvars("$GIP_LOCATION/etc/osg-info-gip-config")
     if not os.path.exists(gip_static):
         return "No old static files found.\n"
-    output = "Old static file directory found."
+    output = "Old static file directory found.\n"
     fd = os.popen("ls -lh %s" % gip_static)
-    output = "Contents of static directory:\n%s" % fd.read()
+    output += "Contents of static directory:\n%s" % fd.read()
     if fd.close():
         output += "`ls` operation returned non-zero exit code"
     for file in os.listdir(gip_static):
@@ -474,9 +496,9 @@ def gip_check_ldap(cp, outh):
     gip_static = os.path.expandvars("$GIP_LOCATION/var/ldif")
     if not os.path.exists(gip_static):
         return "No old ldif files found.\n"
-    output = "Old ldif file directory found."
+    output = "Old ldif file directory found.\n"
     fd = os.popen("ls -lh %s" % gip_static)
-    output = "Contents of ldif directory:\n%s" % fd.read()
+    output += "Contents of ldif directory:\n%s" % fd.read()
     if fd.close():
         output += "`ls` operation returned non-zero exit code"
     for file in os.listdir(gip_static):
@@ -535,9 +557,28 @@ def gip_check_dcache_infoprovider(cp, outh):
                 str(e)
     return output
 
+def runLocalCommand(cmd):
+    child = popen2.Popen4(cmd)
+    exitStatus = child.wait()
+    stdouterr = child.fromchild
+    if exitStatus:
+        raise RuntimeError(stdouterr.readlines())
+    return stdouterr
+    
+def write_stdin_data():
+    custom_gip = False
+    if not sys.stdin.isatty(): # redirected from file or pipe
+        tar = tarfile.open(mode="r|gz", fileobj=sys.stdin)
+        for tarinfo in tar:
+            tar.extract(tarinfo)
+        tar.close()
+        custom_gip = True
+
+    return custom_gip
+
 def main():
     opts = parse_args()
-
+        
     if opts.endpoint:
         script_path = local_script_path()
         if not os.path.exists(script_path):
@@ -548,21 +589,57 @@ def main():
         endpoint = opts.endpoint
         if endpoint.find(':/jobmanager') < 0:
             endpoint += ':/jobmanager-fork'
+            
         if not opts.filename:
             opts.filename = 'gip_diagnostic.tar.gz'
+            
         if os.path.exists(opts.filename):
             print >> sys.stderr, "Cowardly refusing to overwrite existing " \
                 "output file %s." % opts.filename
             sys.exit(1)
-        cmd = 'globus-job-run -stdout -s %s %s -s %s -q -f /dev/stdout' % \
-            (opts.filename, endpoint, script_path)
+
+        stdin_args = ""
+        if opts.input and len(opts.svn) <= 0:
+            print >> sys.stderr, "SVN location required if input is enabled"
+            sys.exit(1)
+        elif opts.input:
+            # do SVN export
+            svn_url = "svn://t2.unl.edu/brian/gip/%s" % opts.svn
+            svn_cmd = "rm -rf /tmp/osg_gip; svn export %s /tmp/osg_gip" % svn_url
+            try:
+                runLocalCommand(svn_cmd)
+            except RuntimeError, e:
+                print >> sys.stderr, "SVN export failed with the following error:\n%s" % str(e)
+                sys.exit(1)
+
+            # Create tarball
+            tf = tarfile.open(name="osg_gip.tar.gz", mode="w:gz")
+            try:
+                tf.add("/tmp/osg_gip", arcname="osg_gip")
+            except Exception, e:
+                print >> sys.stderr, str(e)
+                sys.exit(1)
+            tf.close()
+
+            os.system("rm -rf /tmp/osg_gip")
+            # create input streaming option
+            stdin_args += "-stdin -s osg_gip.tar.gz"
+
+        cmd = 'globus-job-run %s -stdout -s %s %s -s %s -q -f /dev/stdout' % \
+            (stdin_args, opts.filename, endpoint, script_path)
         print "Attempting command: %s" % cmd
         exit_code = pull_remote(cmd)
+
+        if opts.input:
+            os.remove("osg_gip.tar.gz")
+            
         sys.exit(exit_code)
+
+    use_custom_gip = write_stdin_data()
 
     out_handler = OutputManager()
 
-    output = gip_check_env()
+    output = gip_check_env(use_custom_gip)
     output += '\n'
     out, cp = gip_check_config()
     output += out
@@ -589,6 +666,9 @@ def main():
     out_handler.add_output("test_results.txt", output)
 
     out_handler.write_output(open(opts.filename, "w"))
+    
+    if use_custom_gip:
+        os.system('rm -rf osg_gip')
 
 if __name__ == '__main__':
     main()

@@ -567,12 +567,14 @@ def runLocalCommand(cmd):
     
 def write_stdin_data():
     custom_gip = False
-    if not sys.stdin.isatty(): # redirected from file or pipe
+    try:
         tar = tarfile.open(mode="r|gz", fileobj=sys.stdin)
         for tarinfo in tar:
             tar.extract(tarinfo)
         tar.close()
         custom_gip = True
+    except:
+        custom_gip = False
 
     return custom_gip
 

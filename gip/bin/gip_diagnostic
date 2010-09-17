@@ -11,6 +11,7 @@ import select
 import tarfile
 import urllib2
 import cStringIO
+import traceback
 
 from xml.dom.minidom import parse
 
@@ -22,6 +23,7 @@ MYOSG_URL = 'https://myosg.grid.iu.edu/rgsummary/xml?' \
             'datasource=summary&' \
             'summary_attrs_showfqdn=on&' \
             'all_resources=on'
+RUNNING_USERNAME = pwd.getpwuid(os.getuid())[0]
 
 import optparse
 
@@ -64,6 +66,19 @@ class OutputManager:
             except Exception, e:
                 print >> sys.stderr, e
         tf.close()
+
+class WritableObject:
+    def __init__(self):
+        self.content = []
+        
+    def write(self, string):
+        self.content.append(str(string))
+        
+    def readlines(self):
+        return self.content
+    
+    def read(self):
+        return ''.join(self.content)
 
 def parse_myosg(opts):
     fd = urllib2.urlopen(MYOSG_URL)
@@ -225,9 +240,12 @@ def gip_check_env(use_custom_gip=False):
     output = "Checking for $GIP_LOCATION... "
     if 'GIP_LOCATION' in os.environ:
         output += "OK\n"
+        output = "$VDT_LOCATION... %s\n" % os.environ['VDT_LOCATION']
+
         return output
     else:
         if 'VDT_LOCATION' in os.environ:
+            output = "$VDT_LOCATION... %s\n" % os.environ['VDT_LOCATION']
             if use_custom_gip:
                 # extract the tarball
                 os.environ['GIP_LOCATION']  = os.path.join(os.getcwd(), 'osg_gip/gip')
@@ -329,18 +347,14 @@ def gip_check_perms(cp):
     temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
         "$GIP_LOCATION/var/tmp"))
     if os.path.exists(temp_dir):
-        if can_read(temp_dir):
-            output += "Temporary directory %s exists and can be read.\n" % \
-                temp_dir
+        if can_read(temp_dir, RUNNING_USERNAME):
+            output += "Temporary directory %s exists and can be read.\n" % temp_dir
         else:
-            output += "FAILURE: Temporary directory %s cannot be read.\n" % \
-                temp_dir
-        if can_write(temp_dir):
-            output += "Temporary directory %s exists and can be written into" \
-                " by daemon.\n" % temp_dir
+            output += "FAILURE: Temporary directory %s cannot be read.\n" % temp_dir
+        if can_write(temp_dir, RUNNING_USERNAME):
+            output += "Temporary directory %s exists and can be written into by daemon.\n" % temp_dir
         else:
-            output += "FAILURE: Temporary directory %s cannot be written into" \
-                " by daemon .\n" % temp_dir
+            output += "FAILURE: Temporary directory %s cannot be written into by daemon .\n" % temp_dir
     else:
         output += "Temporary directory does not exist.\n"
         return output
@@ -349,15 +363,14 @@ def gip_check_perms(cp):
     gip_log = os.path.join(log_dir, "gip.log")
     modules_log = os.path.join(log_dir, "module.log")
     if os.path.exists(log_dir):
-        if can_write(log_dir):
-            output += "OK: User daemon can write into log directory %s.\n" % \
-                log_dir
+        if can_write(log_dir, RUNNING_USERNAME):
+            output += "OK: User daemon can write into log directory %s.\n" % log_dir
     else:
         output += "FAILURE: GIP logging directory %s does not exist." % log_dir
         return output
     if os.path.exists(gip_log):
         output += "OK: GIP log file %s exists.\n" % gip_log
-        if can_write(gip_log):
+        if can_write(gip_log, RUNNING_USERNAME):
             output += "OK: Daemon can write into GIP log file.\n"
         else:
             output += "FAILURE: daemon cannot write into GIP log file.\n"
@@ -365,7 +378,7 @@ def gip_check_perms(cp):
         output += "WARNING: GIP log file %s does not exist.\n % gip_log"
     if os.path.exists(modules_log):
         output += "OK: Modules log file %s exists.\n" % modules_log
-        if can_write(modules_log):
+        if can_write(modules_log, RUNNING_USERNAME):
             output += "OK: daemon can write into modules log.\n"
         else:
             output += "FAILURE: daemon cannot write into modules log.\n"
@@ -373,23 +386,20 @@ def gip_check_perms(cp):
         output += "WARNING: Modules log file %s does not exist.\n" % modules_log
 
     # Check all our config files (if they exist)
-    add_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "add_attributes", "$GIP_LOCATION/etc/add-attributes.conf"))
-    alter_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "alter_attributes", "$GIP_LOCATION/etc/alter-attributes.conf"))
-    remove_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "remove_attributes", "$GIP_LOCATION/etc/remove-attributes.conf"))
+    add_attributes = os.path.expandvars(cp_get(cp, "gip", "add_attributes", "$GIP_LOCATION/etc/add-attributes.conf"))
+    alter_attributes = os.path.expandvars(cp_get(cp, "gip", "alter_attributes", "$GIP_LOCATION/etc/alter-attributes.conf"))
+    remove_attributes = os.path.expandvars(cp_get(cp, "gip", "remove_attributes", "$GIP_LOCATION/etc/remove-attributes.conf"))
     if os.path.exists(add_attributes):
         output += "OK: Add attributes file %s exists.\n" % add_attributes
-        if not can_read(add_attributes):
+        if not can_read(add_attributes, RUNNING_USERNAME):
             output += "FAILURE: daemon cannot read add attrs file.\n"
     if os.path.exists(alter_attributes):
         output += "OK: Alter attrs file %s exists.\n" % alter_attributes
-        if not can_read(alter_attributes):
+        if not can_read(alter_attributes, RUNNING_USERNAME):
             output += "FAILURE: daemon cannot read alterattrs file.\n"
     if os.path.exists(remove_attributes):
         output += "OK: Remove attrs file %s exists.\n" % remove_attributes
-        if not can_read(remove_attributes):
+        if not can_read(remove_attributes, RUNNING_USERNAME):
             output += "FAILURE: daemon cannot read remove attrs file.\n"
 
     return output
@@ -553,8 +563,46 @@ def gip_check_dcache_infoprovider(cp, outh):
                 replace(":", "_")
             outh.add_output("dcache19_%s" % sanitized_sect, fd.read())
         except Exception, e:
-            output += 'Exception while looking for dCache 1.9 provider:%s\n' % \
-                str(e)
+            output += 'Exception while looking for dCache 1.9 provider:%s\n' % str(e)
+    return output
+
+def run_gip(outh):
+    sys_argv = sys.argv
+    sys.argv = []
+    output = 'Running GIP located at %s\n' % os.path.expandvars("$GIP_LOCATION")
+    try:
+        sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+        from gip_common import config, cp_get
+
+        #Add the path with the osg_info_wrapper script:
+        sys.path.append(os.path.expandvars("$GIP_LOCATION/libexec"))
+        import osg_info_wrapper
+
+        cp = config()
+        if 'gip' not in cp.sections():
+            cp.add_section('gip')
+        cp.set("gip", "flush_cache", "True")
+        
+        # try to redirect stdout to a StringIO file-like object
+        # this is so that the globus-job-run doesn't stream the ldap concatenated
+        # to the tarball back to the calling script
+        dummy_stdout = WritableObject() 
+        sys.stdout = dummy_stdout
+
+        try:
+            osg_info_wrapper.main(cp)
+        finally:
+            temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", "$GIP_LOCATION/var/tmp"))
+            osg_info_wrapper.flush_cache(temp_dir)
+            sys.stdout = sys.__stdout__
+        
+        outh.add_output("generated_ldap", dummy_stdout.read())
+ 
+    except:
+        tb = traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
+        output += "\nERROR running osg_info_wrapper.main: %s\n" % tb
+
+    sys.argv = sys_argv
     return output
 
 def runLocalCommand(cmd):
@@ -643,6 +691,9 @@ def main():
 
     output = gip_check_env(use_custom_gip)
     output += '\n'
+    if use_custom_gip:
+        output += run_gip(out_handler)
+        output += '\n'
     out, cp = gip_check_config()
     output += out
     output += '\n'
@@ -669,8 +720,8 @@ def main():
 
     out_handler.write_output(open(opts.filename, "w"))
     
-    if use_custom_gip:
-        os.system('rm -rf osg_gip')
+    #if use_custom_gip:
+    #    os.system('rm -rf osg_gip')
 
 if __name__ == '__main__':
     main()

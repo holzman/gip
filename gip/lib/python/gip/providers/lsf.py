@@ -33,6 +33,7 @@ def print_CE(cp):
     except:
         #raise
         totalCpu, freeCpu, queueCpus = 0, 0, {}
+    log.debug('Total, Free CPU: (%s, %s)' % totalCpu, freeCpu)
     ce_name = cp.get(ce, "name")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
     try:
@@ -44,6 +45,7 @@ def print_CE(cp):
     for queue, info in queueInfo.items():
         if queue in excludeQueues:
             continue
+        log.debug('Processing queue %s' % queue)
         if 'running' not in info:
             info['running'] = 0
         if 'status' not in info:
@@ -184,6 +186,7 @@ def main():
     """
     Wrapper for printing out the LSF-related GLUE objects.
     """
+    log.debug("Beginning LSF provider")
     try:
         cp = config()
         lsf_path = cp_get(cp, "lsf", "lsf_path", None)

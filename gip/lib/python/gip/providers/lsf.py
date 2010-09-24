@@ -33,7 +33,7 @@ def print_CE(cp):
     except:
         #raise
         totalCpu, freeCpu, queueCpus = 0, 0, {}
-    log.debug('Total, Free CPU: (%s, %s)' % totalCpu, freeCpu)
+    log.debug('Total, Free CPU: (%s, %s)' % (totalCpu, freeCpu))
     ce_name = cp.get(ce, "name")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
     try:
@@ -189,7 +189,7 @@ def main():
     log.debug("Beginning LSF provider")
     try:
         cp = config()
-        lsf_path = cp_get(cp, "lsf", "lsf_path", None)
+        lsf_path = cp_get(cp, "lsf", "lsf_location", None)
         if lsf_path:
             addToPath(lsf_path)
         #vo_map = VoMapper(cp)

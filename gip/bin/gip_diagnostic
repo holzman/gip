@@ -5,6 +5,7 @@ import grp
 import pwd
 import sys
 import stat
+import time
 import fcntl
 import popen2
 import select
@@ -44,27 +45,31 @@ class OutputManager:
 
     def write_output(self, fd):
         tf = tarfile.open(fileobj=fd, mode="w:gz", name="gip.tar.gz")
-        for file in self.files:
-            try:
-                file, dirname = file
-                if dirname:
-                    tf.add(file, arcname=os.path.join(dirname,
-                        os.path.split(file)[-1]))
-                else:
-                    tf.add(file)
-            except Exception, e:
-                print >> sys.stderr, e
-        for filename, string in self.strings.items():
-            try:
-                fd_str = cStringIO.StringIO(string)
-                fd_str.seek(0)
-                ti = tarfile.TarInfo()
-                ti.size = len(string)
-                ti.name = filename
-                ti.type = tarfile.REGTYPE
-                tf.addfile(ti, fd_str)
-            except Exception, e:
-                print >> sys.stderr, e
+        try:
+            for file in self.files:
+                try:
+                    file, dirname = file
+                    if dirname:
+                        tf.add(file, arcname=os.path.join(dirname, os.path.split(file)[-1]))
+                    else:
+                        tf.add(file)
+                except Exception, e:
+                    print >> sys.stderr, e
+            for filename, string in self.strings.items():
+                try:
+                    fd_str = cStringIO.StringIO(string)
+                    fd_str.seek(0)
+                    ti = tarfile.TarInfo()
+                    ti.size = len(string)
+                    ti.name = filename
+                    ti.type = tarfile.REGTYPE
+                    ti.mtime = time.time()
+                    tf.addfile(ti, fd_str)
+                except Exception, e:
+                    print >> sys.stderr, e
+        except Exception, e:
+            print >> sys.stderr, e
+
         tf.close()
 
 class WritableObject:
@@ -606,12 +611,46 @@ def run_gip(outh):
     return output
 
 def runLocalCommand(cmd):
-    child = popen2.Popen4(cmd)
-    exitStatus = child.wait()
-    stdouterr = child.fromchild
-    if exitStatus:
-        raise RuntimeError(stdouterr.readlines())
-    return stdouterr
+    try:
+        child = popen2.Popen3(cmd, 1) # capture stdout and stderr from command
+        child.tochild.close()             # don't need to talk to child
+        outfile = child.fromchild 
+        outfd = outfile.fileno()
+        errfile = child.childerr
+        errfd = errfile.fileno()
+        makeNonBlocking(outfd)            # don't deadlock!
+        makeNonBlocking(errfd)
+        
+        fdout = cStringIO.StringIO()
+        fderr = cStringIO.StringIO()
+        
+        while 1:
+            ready = select.select([outfd,errfd],[],[]) # wait for input
+            if outfd in ready[0]:
+                try:
+                    outchunk = outfile.read()
+                except Exception, ex:
+                    outchunk = ''
+                if len(outchunk) > 0:
+                    fdout.write(outchunk)
+                
+            if errfd in ready[0]:
+                try:
+                    errchunk = errfile.read()
+                except Exception, ex:
+                    errchunk = ""
+                if len(errchunk) > 0:
+                    fderr.write(errchunk)
+            
+            exit_code = child.poll()
+            if not (exit_code is None) and (exit_code >= 0):
+                break
+            
+            select.select([],[],[],.1) # give a little time for buffers to fill
+    except Exception, ex:
+        fderr.write("Error launching the pilot startup script: %s\n" % str(ex))
+        
+    return fderr.getvalue()
     
 def write_stdin_data():
     custom_gip = False

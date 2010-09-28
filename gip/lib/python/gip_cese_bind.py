@@ -34,6 +34,8 @@ def getCEList(cp, extraCEs=[]):
     if jobman == 'pbs':
         queue_entries = getPBSQueueList(cp)
     elif jobman == 'lsf':
+        from gip.providers.lsf import bootstrapLSF
+        bootstrapLSF(cp)
         queue_entries = getLSFQueueList(cp)
     elif jobman == 'condor':
         queue_entries = getCondorQueueList(cp)

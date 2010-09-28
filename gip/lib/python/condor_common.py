@@ -313,6 +313,15 @@ def getQueueList(cp): #pylint: disable-msg=C0103
         # Default to no groups.
         groupInfo = {}
 
+    # filter out queues that don't match a VO
+    allVos = sets.Set(voList(cp))
+
+    for group in groupInfo.keys():
+        vos = sets.Set(groupInfo[group]['vos'])
+        if not vos.intersection(allVos):
+            log.debug('Filtering out %s in getQueueList -- no matching VO' % groupInfo[group]['vos'])
+            del groupInfo[group]
+
     # Set up the "default" group with all the VOs which aren't already in a 
     # group
     if not defaultGroupIsExcluded(cp):

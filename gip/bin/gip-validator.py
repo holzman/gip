@@ -305,12 +305,13 @@ def message(msg_type, msg_str):
     return {"type": msg_type, "msg": msg_str}
 
 class ValidateGip:
-    def __init__(self, ITB=False):
+    def __init__(self, ITB=False, localFile=False):
         self.itb_grid = ITB
         self.entries = ""
         self.site_id = ""
         self.messages = []
         self.site = ""
+        self.localFile = localFile
 
         if self.itb_grid:
             self.endpoint = itb_endpoint
@@ -323,8 +324,12 @@ class ValidateGip:
         self.messages.append(message(msg_type, msg_str))
 
     def load_entries(self, site):
-        bdii_base = "mds-vo-name=%s,mds-vo-name=local,o=grid" % site
-        fd = query_bdii(self.endpoint, query="", base=bdii_base)
+        # if self.localFile == True, then site will contain a file path
+        if self.localFile:
+            fd = open(site, 'r')
+        else:
+            bdii_base = "mds-vo-name=%s,mds-vo-name=local,o=grid" % site
+            fd = query_bdii(self.endpoint, query="", base=bdii_base)
         return read_ldap(fd)
 
     def run(self, site_list):
@@ -348,11 +353,12 @@ class ValidateGip:
         return results
 
     def main(self, site):
-        try:
-            self.site_id = self.getSiteUniqueID(site)
-        except:
-            msg="Site: %s does not exist in the BDII."
-            self.appendMessage(MSG_CRITICAL, msg % site)
+        if not self.localFile:
+            try:
+                self.site_id = self.getSiteUniqueID(site)
+            except:
+                msg="Site: %s does not exist in the BDII."
+                self.appendMessage(MSG_CRITICAL, msg % site)
 
         self.test_existence_all()
         self.test_egee_site_unique_id()
@@ -617,11 +623,15 @@ class ValidateGip:
             if m == None:
                 self.appendMessage(MSG_CRITICAL, "Invalid GlueForeignKey.")
 
-            site_unique_id = m.groups()[0]
-            if site_unique_id != self.site_id:
-                msg = "Incorrect site unique ID for SRM service. %s != %s"
-                msg = msg % (site_unique_id, self.site_id)
-                self.appendMessage(MSG_CRITICAL, msg)
+            # Note:  We don't have a site_id if we are reading from a local file
+            #  Don't do this particular test - means that the ldif *could* be failing
+            #  this test and we won't know
+            if not self.localFile:
+                site_unique_id = m.groups()[0]
+                if site_unique_id != self.site_id:
+                    msg = "Incorrect site unique ID for SRM service. %s != %s"
+                    msg = msg % (site_unique_id, self.site_id)
+                    self.appendMessage(MSG_CRITICAL, msg)
 
             path = self.getPath(entry.glue['ServiceEndpoint'])
             if path.startswith("/srm/managerv"):
@@ -653,13 +663,15 @@ class ValidateGip:
                     self.appendMessage(MSG_CRITICAL, msg)
 
     def test_site_missing(self):
-        query = "(objectClass=GlueCE)"
-        base = "mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site
-        fd = query_bdii(self.endpoint, query, base)
-        line = fd.readline().lower()
-        if not line.startswith("dn:"):
-            msg = "Missing - Check CEMon logs to see any errors and when the last time it reported."
-            self.appendMessage(MSG_CRITICAL, msg)
+        # If we are reading from a local file, this test is irrelevant
+        if not self.localFile:
+            query = "(objectClass=GlueCE)"
+            base = "mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site
+            fd = query_bdii(self.endpoint, query, base)
+            line = fd.readline().lower()
+            if not line.startswith("dn:"):
+                msg = "Missing - Check CEMon logs to see any errors and when the last time it reported."
+                self.appendMessage(MSG_CRITICAL, msg)
 
     def test_interop_reporting(self):
         isInterop = self.checkIsInterop(site)
@@ -699,36 +711,38 @@ class ValidateGip:
         return False
 
     def test_last_update_time(self):
-        bdii_time = self.getLastUpdateFromBDII()
-        local_time = time.time()
-
-        TimeError = False
-        try:
-            bdii_time = float(bdii_time)
-        except ValueError:
-            TimeError = True
-            msg = "BDII Timestamp error for site: %s\nBDII Timestamp: %s" % \
-                (self.site, str(bdii_time)) 
-            self.appendMessage(MSG_CRITICAL, msg)
-            bdii_time = 0
-
-        try:
-            local_time = float(local_time)
-        except ValueError:
-            TimeError = True
-            msg = "Local Timestamp error for site: %s\nBDII Timestamp: %s" % \
-                (self.site, str(local_time)) 
-            self.appendMessage(MSG_CRITICAL, msg)
-            local_time = 0
-            
-        diff_minutes = abs((local_time - bdii_time) / 60)
-        if TimeError:
-            msg = "The BDII Timestamp and/or the Local Timestamp had an error" 
-            self.appendMessage(MSG_CRITICAL, msg)
-        elif diff_minutes > 30:
-            msg = "The BDII Timestamp and the Local Timestamp differ by "\
-                "%s minutes" % str(diff_minutes) 
-            self.appendMessage(MSG_CRITICAL, msg)
+        # another test that is irrelevant if we are reading from a local file
+        if not self.localFile:
+            bdii_time = self.getLastUpdateFromBDII()
+            local_time = time.time()
+    
+            TimeError = False
+            try:
+                bdii_time = float(bdii_time)
+            except ValueError:
+                TimeError = True
+                msg = "BDII Timestamp error for site: %s\nBDII Timestamp: %s" % \
+                    (self.site, str(bdii_time)) 
+                self.appendMessage(MSG_CRITICAL, msg)
+                bdii_time = 0
+    
+            try:
+                local_time = float(local_time)
+            except ValueError:
+                TimeError = True
+                msg = "Local Timestamp error for site: %s\nBDII Timestamp: %s" % \
+                    (self.site, str(local_time)) 
+                self.appendMessage(MSG_CRITICAL, msg)
+                local_time = 0
+                
+            diff_minutes = abs((local_time - bdii_time) / 60)
+            if TimeError:
+                msg = "The BDII Timestamp and/or the Local Timestamp had an error" 
+                self.appendMessage(MSG_CRITICAL, msg)
+            elif diff_minutes > 30:
+                msg = "The BDII Timestamp and the Local Timestamp differ by "\
+                    "%s minutes" % str(diff_minutes) 
+                self.appendMessage(MSG_CRITICAL, msg)
 
     def getLastUpdateFromBDII(self):
         query = "(GlueLocationLocalID=TIMESTAMP)"
@@ -755,6 +769,7 @@ class ValidatorMain:
         self.ITB = False
         self.format = ""
         self.site_list = []
+        self.local_file = ""
 
     def parseArgs(self, args):
         p = optparse.OptionParser()
@@ -763,22 +778,31 @@ class ValidatorMain:
         help_msg = 'Specifies which grid to pull info from, ITB or Prod.'
         p.add_option('-g', '--grid', dest='grid', help=help_msg, default='Prod')
         help_msg = 'Print results.'
-        p.add_option('-p', '--print', dest='print_results', help=help_msg, \
-            default="False")
+        p.add_option('-p', '--print', dest='print_results', help=help_msg, default="False")
+        help_msg = 'Read from local file.  Overrides -s, --sites, -g, --grid.'
+        p.add_option('-l', '--local-file', dest='local_file', help=help_msg, default="False")
+        help_msg = 'Comma separated file list.  The file should contain ldif.'
+        p.add_option('-f', '--file-list', dest='file_list', help=help_msg, default="False")
         (options, args) = p.parse_args()
 
         if not (options.grid.lower() == "prod"): self.ITB = True
 
+        self.local_file = smart_bool(options.local_file)
         # get site list
-        if options.sites == "OIM":
-            sitelist, itb_sitelist = self.getOIMSites()
-            if options.grid.lower() == "itb":
-                self.ITB = True
-                self.site_list = itb_sitelist
-            else:
-                self.site_list = sitelist
+        # if a local file has been specified, it overrides all other options 
+        # except for the print option
+        if self.local_file:
+            self.site_list = options.file_list.split(",")
         else:
-            self.site_list = options.sites.split(',')
+            if options.sites == "OIM":
+                sitelist, itb_sitelist = self.getOIMSites()
+                if options.grid.lower() == "itb":
+                    self.ITB = True
+                    self.site_list = itb_sitelist
+                else:
+                    self.site_list = sitelist
+            else:
+                self.site_list = options.sites.split(',')
 
         self.print_results = smart_bool(options.print_results)
 
@@ -856,7 +880,7 @@ class ValidatorMain:
     def main(self, args):
         self.parseArgs(args)
 
-        test = ValidateGip(self.ITB)
+        test = ValidateGip(ITB=self.ITB, localFile=self.local_file)
         results = test.run(self.site_list)
         if self.print_results: self.printResults(results)
         return self.determineReturnCode(results)

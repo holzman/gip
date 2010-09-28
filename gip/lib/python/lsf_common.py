@@ -34,6 +34,7 @@ def lsfCommand(command, cp):
     if lsfHost.lower() == "none" or lsfHost.lower() == "localhost":
         lsfHost = ""
     cmd = command % {'lsfHost': lsfHost}
+    log.debug('Executing LSF command %s' % cmd)
     fp = runCommand(cmd)
     return fp
 

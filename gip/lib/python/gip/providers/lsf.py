@@ -9,6 +9,7 @@ import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
+from gip_testing import runCommand
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     printTemplate, cp_get, cp_getInt, responseTimes, cp_getBoolean
 from gip_cluster import getClusterID
@@ -27,6 +28,8 @@ def print_CE(cp):
         lsfVersion = getLrmsInfo(cp)
     except:
         lsfVersion = 'Unknown'
+
+    log.debug('Using LSF version %s' % lsfVersion)    
     queueInfo = getQueueInfo(cp)
     try:
         totalCpu, freeCpu, queueCpus = parseNodes(queueInfo, cp)
@@ -182,6 +185,26 @@ def print_VOViewLocal(queue_info, cp):
         info['total'] = info['waiting'] + info['running']
         printTemplate(VOView, info)
 
+def bootstrapLSF(cp):
+    """
+    If it exists, source the profile.lsf file
+    """
+    lsf_profile = cp_get(cp, "lsf", "lsf_profile", "/lsf/conf/profile.lsf")
+    if not os.path.exists(lsf_profile):
+        log.warning("Could not find the LSF profile file; looked in %s" %
+                    lsf_profile)
+        return
+
+    log.debug('Excuting lsf profile from %s' % lsf_profile)
+    cmd = "/bin/sh -c 'source %s; /usr/bin/env'" % lsf_profile
+    output = runCommand(cmd)
+    for line in output.readlines():
+        line = line.strip()
+        info = line.split('=', 2)
+        if len(info) != 2:
+            continue
+        os.environ[info[0]] = info[1]
+    
 def main():
     """
     Wrapper for printing out the LSF-related GLUE objects.
@@ -192,6 +215,7 @@ def main():
         lsf_path = cp_get(cp, "lsf", "lsf_location", None)
         if lsf_path:
             addToPath(lsf_path)
+        bootstrapLSF(cp)
         #vo_map = VoMapper(cp)
         queueInfo, _, _, _ = print_CE(cp)
         print_VOViewLocal(queueInfo, cp)

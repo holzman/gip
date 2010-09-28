@@ -1,4 +1,20 @@
 Changelog
+== 1.1.11 ==
+* Support publication of arbitrary SE port numbers via srm_port configuration
+  parameter (even though they are deprecated in the schema)
+* Children with non-zero exit status are now logged properly
+* Added support for local template dirs (contributed by Sam Morrison @ ARCS),
+  needs local_template_dirs parameter to be defined
+* Added new tools: gip_diagnostic, gip-validator.py
+* Bugfix: continue if we can't open gsi-authz.conf
+* Condor: Allow exclusion of 'default' queue via excluded_groups parameter
+* Condor: Remove unpublished CEs from foreign keys.  The CEs were removed
+  from publication because they did not match to any VOs.
+* LSF: Bootstrap LSF by sourcing the lsf_profile parameter (if not provided,
+  we try /lsf/conf/profile.lsf)
+* LSF: Ensure max wall time is an integer
+* LSF: Use -w option in LSF commands to avoid truncation
+	
 == 1.1.10alpha0 ==
 * Publication of glexec (if glexec_location is published in the Misc Services
   section of the config.ini)

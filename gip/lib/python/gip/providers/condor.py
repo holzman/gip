@@ -20,6 +20,7 @@ from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes
 from gip_cluster import getClusterID
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
+from condor_common import defaultGroupIsExcluded
 from gip_storage import getDefaultSE
 
 from gip_sections import ce, se
@@ -126,9 +127,10 @@ def print_CE(cp):
     #acbr = '\n'.join(['GlueCEAccessControlBaseRule: VO:%s' % i for i in \
     #    defaultVoList])
     #groupInfo['default']['acbr'] = acbr
-    if not groupInfo['default']['vos']:
-        del groupInfo['default']
-
+    if not groupInfo['default']['vos'] or defaultGroupIsExcluded(cp):
+        if groupInfo.has_key('default'):
+            del groupInfo['default']
+        
     for group, ginfo in groupInfo.items():
         jinfo = jobs_info.get(group, {})
         ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)
@@ -293,6 +295,10 @@ def print_VOViewLocal(cp):
         log.warning("More assigned nodes (%i) than actual nodes (%i)!" % \
             (total_assigned, total_nodes))
 
+    if defaultGroupIsExcluded(cp):
+        if groupInfo.has_key('default'):
+            del groupInfo['default']
+        
     for group in groupInfo:
         jinfo = jobs_info.get(group, {})
         vos = sets.Set(groupInfo[group].get('vos', [group]))

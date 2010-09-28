@@ -266,7 +266,8 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
             grouplist.remove(excludedGroup)
             log.debug("Removed excluded group %s" % excludedGroup)
         except ValueError:
-            log.debug("Attempted to remove non-existent group %s" % excludedGroup)
+            if excludedGroup != 'default':
+                log.debug("Attempted to remove non-existent group %s" % excludedGroup)
 
     if not grouplist:
         log.info("No condor groups exist (after applying exclude_groups)")
@@ -312,12 +313,9 @@ def getQueueList(cp): #pylint: disable-msg=C0103
         # Default to no groups.
         groupInfo = {}
 
-    excludedGroups = cp_getList(cp, "condor", "exclude_groups", [])
-    excludedGroups = [x.strip() for x in excludedGroups]
-
-    if 'default' not in excludedGroups:
-        # Set up the "default" group with all the VOs which aren't already in a 
-        # group
+    # Set up the "default" group with all the VOs which aren't already in a 
+    # group
+    if not defaultGroupIsExcluded(cp):
         groupInfo['default'] = {'prio': 999999, 'quota': 999999, 'vos': sets.Set()}
         all_group_vos = []
         for val in groupInfo.values():
@@ -531,7 +529,7 @@ def getJobsInfo(vo_map, cp):
             group, name = name_info
         else:
             group = 'default'
-        if group not in all_group_info:
+        if group not in all_group_info and group != 'default':
             log.debug("Changing group name from %s to default, as we don't" \
                 " recognize the group." % group)
             group = 'default'
@@ -603,4 +601,15 @@ def parseNodes(cp):
              (total, claimed, unclaimed))
     _nodes_cache = total, claimed, unclaimed
     return total, claimed, unclaimed
+
+def defaultGroupIsExcluded(cp):
+    """
+    Check to see if the "default" group is excluded.
+    """
+    excludedGroups = cp_getList(cp, "condor", "exclude_groups", [])
+    excludedGroups = [x.strip() for x in excludedGroups]
+    if 'default' in excludedGroups:
+        return True
+    else:
+        return False
 

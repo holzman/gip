@@ -5,15 +5,25 @@ import sys
 import optparse
 
 class BDIIError(Exception):
+    """
+    Custom Error 
+    """
     def __init__(self, value):
         self.value = value
     def __str__(self):
         return repr(self.value)
 
 def run_command(command):
+    """
+    Blindly run any command that is passed to it.  This probably should be 
+    updated at some point to use the proper python libs.
+    """
     return os.popen(command)
 
 def smart_bool(s):
+    """
+    Takes a string value and converts it to a python boolean
+    """
     if s is True or s is False: return s
     s = str(s).strip().lower()
     return not s in ['false','f','n','0','']

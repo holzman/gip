@@ -1,4 +1,8 @@
 Changelog
+== 1.1.12 ==
+* gip-validate syntax fixes
+* Implement __ne__ for ldap	
+	
 == 1.1.11 ==
 * Support publication of arbitrary SE port numbers via srm_port configuration
   parameter (even though they are deprecated in the schema)

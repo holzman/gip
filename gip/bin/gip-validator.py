@@ -154,7 +154,12 @@ class LdapData:
             output += ' - %s: %s\n' % (key, val)
         return output
 
-    def __eq__(ldif1, ldif2):
+    def __ne__(self, other):
+        return not self.__eq__(other)
+    
+    def __eq__(self, other):
+        ldif1 = self
+        ldif2 = other
         if not compareDN(ldif1, ldif2):
             return False
         if not compareObjectClass(ldif1, ldif2):
@@ -672,43 +677,6 @@ class ValidateGip:
             if not line.startswith("dn:"):
                 msg = "Missing - Check CEMon logs to see any errors and when the last time it reported."
                 self.appendMessage(MSG_CRITICAL, msg)
-
-    def test_interop_reporting(self):
-        isInterop = self.checkIsInterop(site)
-        if isInterop:
-            query="(objectClass=GlueSite)"
-            base="mds-vo-name=%s,mds-vo-name=local,o=grid" % site
-            # try the OSG BDII
-            self.cp.set('bdii', 'endpoint', self.osg_endpoint)
-            data = read_bdii(self.cp, query, base)
-
-            if len(data) < 1:
-                msg = "%s does not exist in the OSG BDII" % site
-                self.appendMessage(MSG_CRITICAL, msg)
-
-            # try the WLCG BDII
-            self.cp.set('bdii', 'endpoint', self.egee_endpoint)
-            data = read_bdii(self.cp, query, base)
-            if len(data) < 1:
-                msg = "%s does not exist in the WLCG BDII" % site
-                self.appendMessage(MSG_CRITICAL, msg)
-
-    def checkIsInterop():
-        myosg_url="http://myosg.grid.iu.edu/rgsummary/xml?datasource=summary&"\
-                "summary_attrs_showwlcg=on&all_resources=on&gridtype=on&"\
-                "gridtype_1=on&has_wlcg=on"
-        myosg_xml = urllib.urlopen(myosg_summary_url).read()
-        xml_doc = libxml2.parseDoc(myosg_summary_xml)
-        
-        for rg in xml_doc.xpathEval('//ResourceGroup'):
-            for rg_name in rg.xpathEval('GroupName'):
-                if rg_name.content == self.site:
-                    for res in rg.xpathEval('Resource'):
-                        for interop in res.xpathEval('InteropBDII'):
-                            InteropBDII = interop.content
-                            if smart_bool(InteropBDII):
-                                return True
-        return False
 
     def test_last_update_time(self):
         # another test that is irrelevant if we are reading from a local file

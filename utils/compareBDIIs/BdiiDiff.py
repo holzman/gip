@@ -3,6 +3,7 @@
 import ldap
 import sys
 from pprint import pprint
+import re
 
 sdiffcount = 0
 
@@ -40,8 +41,23 @@ def dump_bdii(bdii):
 
     return result_set
 
+
+excludeSites = ['NYSGRID-ALBANY-ATHENA',
+                'WISC-ATLAS',
+                'MCGILL_HEP',
+                'MCGILL_HEP']
+regexp = '(.*('
+for site in excludeSites:
+    regexp += 'mds-vo-name=%s' % site.lower()
+    regexp += '|'
+
+regexp = regexp[0:-1] + ').*)|^o=grid'
+re_excludeDN = re.compile(regexp, re.IGNORECASE)
+#print regexp
+#sys.exit(1)
+
 bdii1 = 'is1.grid.iu.edu'
-bdii2 = 'is-itb2.grid.iu.edu'
+bdii2 = 'is2.grid.iu.edu'
 
 is1 = dump_bdii(bdii1)
 is2 = dump_bdii(bdii2)
@@ -95,6 +111,11 @@ def get_data(item):
     stanza = item[0][1]
     return dn, stanza
 
+def DN_excluded(dn):
+    matchObj = re_excludeDN.match(dn)
+    if matchObj:
+        return True
+    
 print 'BDII #1: %s\tBDII#2: %s\n' % (bdii1, bdii2)
 
 is1dict = {}
@@ -103,16 +124,18 @@ caseDn = {}
 
 for item in is1:
      dn, stanza = get_data(item)
+     if DN_excluded(dn): continue
      caseDn[dn.lower()] = dn
      is1dict[dn.lower()] = item[0][1]
 
 for item in is2:
      dn, stanza = get_data(item)
+     if DN_excluded(dn): continue
      caseDn[dn.lower()] = dn
      is2dict[dn.lower()] = item[0][1]
 
-if is1dict.has_key('o=grid'):
-    del is1dict['o=grid']
+#if is1dict.has_key('o=grid'):
+#    del is1dict['o=grid']
     
 for dn in is1dict.keys():
     matched = False
@@ -126,6 +149,10 @@ for dn in is1dict.keys():
         print 'Missing DN [#2]: %s' % caseDn[dn]
         sdiffcount +=1
 
+for dn in is2dict.keys():
+    if dn not in is1dict:
+        print 'Missing DN [#1]: %s' % caseDn[dn]
+        
 if sdiffcount > 255: sdiffcount = 255
 sys.exit(sdiffcount)
 

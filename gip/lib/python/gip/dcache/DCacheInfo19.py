@@ -116,7 +116,7 @@ class DCacheInfo19(StorageElement):
                             'name': myid,
                             'path': path,
                             'tag': tag,
-                            'acbr': '\n'.join(['GlueSAAccessControlBaseRule: '\
+                            'acbr': '\n'.join(['GlueVOInfoAccessControlBaseRule: '\
                                 '%s' % i for i in allowed_acbrs]),
                             'saLocalID': sa['saLocalID'],
                             }
@@ -135,7 +135,7 @@ class DCacheInfo19(StorageElement):
                         'name': id,
                         'path': path,
                         'tag': '%s with no reserved space' % vo,
-                        'acbr': 'GlueSAAccessControlBaseRule: VO:%s' % vo,
+                        'acbr': 'GlueVOInfoAccessControlBaseRule: VO:%s' % vo,
                         'saLocalID': sa['saLocalID'],
                        }
                 self.vos.append(info)

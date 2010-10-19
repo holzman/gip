@@ -17,6 +17,8 @@ Module for interacting with SGE.
 import re
 import os
 import sys
+import grp
+import pwd
 
 from gip_common import  getLogger, VoMapper, voList, parseRvf
 from xml_common import parseXmlSax

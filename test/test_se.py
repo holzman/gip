@@ -10,6 +10,7 @@ from gip_common import config, cp_get, voList
 from gip_testing import runTest, streamHandler
 from gip_ldap import read_ldap
 import gip.bestman.srm_ping as srm_ping
+from gip.dcache.space_calculator import getAllowedVOs
 
 class TestSEConfigs(unittest.TestCase):
 
@@ -373,7 +374,9 @@ class TestSEConfigs(unittest.TestCase):
 
     def check_links_mit_ldif(self, entries, cp):
         found_link_sa = False
-        vos = voList(cp)
+        # Note: getAllowedVOs will return a list with items formatted like:  
+        #    VO: cms
+        vos = getAllowedVOs(cp, "")
         for entry in entries:
             if 'GlueSA' not in entry.objectClass:
                 continue
@@ -382,9 +385,8 @@ class TestSEConfigs(unittest.TestCase):
                 continue
             for vo in vos:
                 #self.failIf(vo not in entry.glue['ServiceAccessControlRule'])
-                self.failIf("VO:%s" % vo not in \
-                    entry.glue['SAAccessControlBaseRule'], msg="String `" \
-                    "VO:%s` not in ACBR" % vo)
+                self.failIf(vo not in entry.glue['SAAccessControlBaseRule'], \
+                            msg="String `VO:%s` not in ACBR" % vo)
             found_link_sa = True
             self.failUnless('1954' in entry.glue['SATotalOnlineSize'])
             self.failUnless('0' in entry.glue['SAUsedOnlineSize'])
@@ -411,18 +413,45 @@ class TestSEConfigs(unittest.TestCase):
             found_se = True
             self.failUnless(entry.glue['SEName'][0] == 'MIT dCache')
             self.failUnless(entry.glue['SEImplementationName'][0] == 'dcache')
-            self.failUnless(entry.glue['SEImplementationVersion'][0] == \
-                'cells')
+            self.failUnless(entry.glue['SEImplementationVersion'][0] == 'cells')
             self.failUnless(entry.glue['SEPort'][0] == '8443')
             self.failUnless('370989' in entry.glue['SESizeTotal'])
             self.failUnless('73280' in entry.glue['SESizeFree'])
             self.failUnless('multi-disk' in entry.glue['SEArchitecture'])
             self.failUnless('GlueSiteUniqueID=MIT_CMS' in entry.glue\
-                ['ForeignKey'])
+                            ['ForeignKey'])
+            
         self.failUnless(found_se, msg="GlueSE entry for srm.unl.edu missing.")
 
+    def check_mit_se_allowed_vos(self, entries):
+        '''
+        For the purposes of this unittest, we know that the supplied config
+        contains allowed_vos = cms,ops
+        '''
+        for entry in entries:
+            if 'GlueSAAccessControlBase' in entry.objectClass:
+                # SALocalID :  GlueSAAccessControlBaseRule: engage
+                for acbr in entry.glue['SAAccessControlBaseRule']:
+                    self.failUnless(not ('engage' in str(acbr).lower()))
+                    
+            if 'GlueVOInfo' in entry.objectClass:
+                # VOInfoLocalID : GlueVOInfoAccessControlBaseRule: engage
+                for acbr in entry.glue['VOInfoAccessControlBaseRule']:
+                    self.failUnless(not ('engage' in str(acbr).lower()))
+                
+            if 'GlueService' in entry.objectClass:
+                # ServiceUniqueID : for GlueServiceType: SRM: 
+                #    GlueServiceAccessControlRule: VO:engage or 
+                #    GlueServiceAccessControlRule: engage
+                if str(entry.glue["ServiceType"][0]).upper() == "SRM":
+                    # GlueServiceAccessControlRule: VO:engage or 
+                    # GlueServiceAccessControlRule: engage
+                    for acbr in entry.glue['ServiceAccessControlRule']:
+                        self.failUnless(not ('engage' in str(acbr).lower()))
+        
     def test_mit_output(self):
         entries, cp = self.run_test_config("mit-se-test.conf")
+        self.check_mit_se_allowed_vos(entries)
         self.check_srm_mit_ldif(entries)
         self.check_pools_mit_ldif(entries)
         self.check_links_mit_ldif(entries, cp)
@@ -482,8 +511,12 @@ class TestSEConfigs(unittest.TestCase):
         """
         For given LG and reservations, make sure the paths are correct.
         """
-        lkgrp = [('atlasuser-disk-link-group:replica:nearline', 'ATLASUSERDISK:10007', '/pnfs/usatlas.bnl.gov/atlasuserdisk/'),
-                 ('atlasgroup-disk-link-group:replica:nearline', 'ATLASGROUPDISK:10006', '/pnfs/usatlas.bnl.gov/atlasgroupdisk/')
+        lkgrp = [('atlasuser-disk-link-group:replica:nearline', 
+                  'ATLASUSERDISK:10007', 
+                  '/pnfs/usatlas.bnl.gov/atlasuserdisk/'),
+                 ('atlasgroup-disk-link-group:replica:nearline', 
+                  'ATLASGROUPDISK:10006', 
+                  '/pnfs/usatlas.bnl.gov/atlasgroupdisk/')
                 ]
         for grp, res, path in lkgrp:
             found_sa = False

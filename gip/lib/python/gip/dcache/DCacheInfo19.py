@@ -381,7 +381,8 @@ class DCacheInfo19(StorageElement):
             acbr_tmpl = '\nGlueServiceAccessControlRule: VO:%s' \
                 '\nGlueServiceAccessControlRule: %s'
             acbr = ''
-            vos = voListStorage(self._cp)
+            
+            vos = voListStorage(self._cp, section=self._section)
             for vo in vos:
                 acbr += acbr_tmpl % (vo, vo)
             acbr = acbr[1:]

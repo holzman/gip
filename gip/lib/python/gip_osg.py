@@ -619,7 +619,12 @@ def configSEs(cp, cp2):
                     allowed_vos = cp_get(cp, section, option, "")
                     if len(allowed_vos) > 0:
                         cp2.set(dcache_sec, option, allowed_vos)
-
+                # Add in the allowed_vos option and value so that the 
+                # space_calculator module can see them if set
+                allowed_vos = cp_get(cp, section, "allowed_vos", "")
+                if len(allowed_vos) > 0:
+                     cp2.set(dcache_sec, "allowed_vos", allowed_vos)
+                
             # Handle allowed VO's for bestman
             # Yet to be implemented
 

@@ -58,11 +58,11 @@ def print_CE(cp):
             info['total'] = 0
         info["lrmsVersion"] = lsfVersion
         info["job_manager"] = "lsf"
-        if info.get("wait", 0) > 0:
+        if int(info.get("wait", 0)) > 0:
             info["free_slots"] = 0
         else:
-            if queue in queueCpus:
-                info["free_slots"] = queueCpus[queue]
+            if queue in queueCpus and 'max' in queueCpus[queue] and 'njobs' in queueCpus[queue]:
+                info["free_slots"] = queueCpus[queue]['max'] - queueCpus[queue]['njobs']
             else:
                 info["free_slots"] = freeCpu
         info["queue"] = queue
@@ -71,6 +71,7 @@ def print_CE(cp):
         info['ceUniqueID'] = unique_id
         if "job_slots" not in info:
             if queue in queueCpus and 'max' in queueCpus[queue]:
+                log.debug('queue %s, info is %s' % (queue, queueCpus[queue]))
                 info['job_slots'] = queueCpus[queue]['max']
             else:
                 info["job_slots"] = totalCpu
@@ -195,7 +196,7 @@ def bootstrapLSF(cp):
                     lsf_profile)
         return
 
-    log.debug('Excuting lsf profile from %s' % lsf_profile)
+    log.debug('Executing lsf profile from %s' % lsf_profile)
     cmd = "/bin/sh -c 'source %s; /usr/bin/env'" % lsf_profile
     output = runCommand(cmd)
     for line in output.readlines():

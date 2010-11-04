@@ -542,8 +542,6 @@ class ClassAdEmitter(object):
                 "fnpcosg1.fnal.gov-FNAL_FERMIGRID"):
             return
 
-        print voinfo.glue["VOInfoName"]
-
         # If there are secondary ACBRs for this ClassAd, add them now.
         if secondary_ce_acbrs:
             key = "GlueCEAccessControlBaseRule"
@@ -951,7 +949,6 @@ def upload(cae, bdii, entries, dryrun=False):
                                         'VOInfoAccessControlBaseRule'][0] != \
                                         'atlas'):
                                     continue
-                                print my_voviews
                                 if my_voviews:
                                     cae.emit_se(subclusters, ce, my_voviews, **kw)
                         else:

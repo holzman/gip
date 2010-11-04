@@ -576,8 +576,8 @@ def matchFQAN(fqan1, fqan2):
     """
     fqan1 = normalizeFQAN(fqan1)
     fqan2 = normalizeFQAN(fqan2)
-    vog1, vor1 = fqan1.split('/Role=')
-    vog2, vor2 = fqan2.split('/Role=')
+    vog1, vor1 = fqan1.split('Role=')
+    vog2, vor2 = fqan2.split('Role=')
     vog_matches = False
     vor_matches = False
     if vor2 == '*':

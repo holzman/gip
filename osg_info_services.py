@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+import sets
 import time
 import types
 import signal
@@ -23,6 +24,52 @@ import gip_ldap
 
 log = gip_common.getLogger('CEMonUploader')
 
+
+DEBUG = False
+
+
+# Sadly, this had to be copy/pasted from gip_common because
+# of a slight incompatible fqan normalization.
+def matchFQAN_services(fqan1, fqan2):
+    """
+    Return True if fqan1 matches with fqan2, False otherwise
+
+    fqan1 may actually be more specific than fqan2.  So, if fqan1 is /cms/blah
+    and fqan2 is /cms, then there is a match.  If the Role=* for fqan2, the
+    value of the Role for fqan1 is ignored.
+
+    FQANs may be of the form:
+       - VOMS:<FQAN>
+       - VO:<VO Name>
+       - <FQAN>
+       - <VO>
+
+    @param fqan1: The FQAN we are testing for match
+    @param fqan2: The FQAN 
+    """
+    fqan1 = gip_common.normalizeFQAN(fqan1)
+    fqan2 = gip_common.normalizeFQAN(fqan2)
+    vog1, vor1 = fqan1.split('Role=')
+    vog2, vor2 = fqan2.split('Role=')
+    vog_matches = False
+    vor_matches = False
+    if vor2 == '*':
+        vor_matches = True
+    elif vor2 == vor1:
+        vor_matches = True
+    if vog1.startswith(vog2):
+        vog_matches = True
+    return vog_matches and vor_matches
+
+_match_cache = {}
+def matchFQAN(acbr1, acbr2):
+    t = (acbr1, acbr2)
+    match = _match_cache.get(t, None)
+    if match != None:
+        return match
+    match = matchFQAN_services(acbr1, acbr2)
+    _match_cache[t] = match
+    return match
 
 class HTTPSHandler2(urllib2.HTTPSHandler):
 
@@ -354,6 +401,8 @@ class ClassAdSender(CEMonMessageProducer):
                     out.append('%s = "%s";' % (key, str(val)))
             message = "[\n" + "\n        ".join(out) + "\n\n]"
             messages.append(message)
+        log.info("Generated %i ClassAds for endpoints %s" % (len(self.ads),
+            ", ".join(self.endpoints)))
         output = self.generate(messages)
         self.encoded_output = output
         super(ClassAdSender, self).run()
@@ -374,10 +423,13 @@ class ClassAdEmitter(object):
     def add_to_results(self, entry, results):
         for glue, val in entry.glue.items():
             key = "Glue" + glue
-            try:
-                results[key] = int(','.join(val))
-            except:
+            if isinstance(val, types.ListType) or isinstance(val, types.TupleType):
                 results[key] = ','.join([str(i) for i in val])
+            else:
+                try:
+                    results[key] = int(val)
+                except:
+                    results[key] = val
 
         for glue, val in entry.nonglue.items():
             try:
@@ -407,9 +459,36 @@ class ClassAdEmitter(object):
             return False
         for acbr1 in obj1_acbrs:
             for acbr2 in obj2_acbrs:
-                if gip_common.matchFQAN(acbr1, acbr2):
+                if matchFQAN(acbr1, acbr2):
                     return True
         return False
+
+    _match_view_cache = {}
+    def can_match_view(self, ce, voview=None, sa=None, voinfo=None):
+        voview_acbr = ce.glue['CEAccessControlBaseRule']
+        if voview:
+            voview_acbr = voview.glue['CEAccessControlBaseRule']
+        t = (ce.__hash__(), voview_acbr, sa.__hash__(), voinfo.__hash__())
+        if t in self._match_view_cache:
+            return self._match_view_cache[t]
+        if self.can_access(voview_acbr, sa, "SAAccessControlBaseRule"):
+            if voinfo:
+                if self.can_access(voview_acbr, voinfo,
+                        "VOInfoAccessControlBaseRule"):
+                    self._match_view_cache[t] = True
+                else:
+                    self._match_view_cache[t] = False
+            else:
+                self._match_view_cache[t] = True
+        else:
+            self._match_view_cache[t] = False
+        return self._match_view_cache[t]
+
+    def filter_voviews(self, ce, voviews, sa, voinfo=None):
+        results = [i for i in voviews if self.can_match_view(ce, i, sa, voinfo)]
+        if results:
+            return results
+        return None
 
     def emit(self, site=None, cluster=None, ce=None, voview=None, software=None,
             aps=None, service=None, se=None, voinfo=None, sa=None,
@@ -430,6 +509,14 @@ class ClassAdEmitter(object):
         if voview:
             self.add_to_results(voview, results)
             voview_acbr = voview.glue['CEAccessControlBaseRule']
+
+        # Add the optional SA/VOInfo for this information.  Note that if the
+        # SA or VOInfo exists and the corresponding CE/VOView can't access it,
+        # we just return.
+        if sa and not self.can_match_view(ce, voview, sa, voinfo):
+            return
+
+        if voview:
             # Go through each CE ACBR and we'll add the ACBR to the final
             # ClassAd if the CE ACBR is different from the VOView ACBR and the
             # CE ACBR can access the VOView.
@@ -451,6 +538,12 @@ class ClassAdEmitter(object):
         if subcluster:
             self.add_to_results(subcluster, results)
 
+        if DEBUG and (subcluster.glue["SubClusterUniqueID"][0] != \
+                "fnpcosg1.fnal.gov-FNAL_FERMIGRID"):
+            return
+
+        print voinfo.glue["VOInfoName"]
+
         # If there are secondary ACBRs for this ClassAd, add them now.
         if secondary_ce_acbrs:
             key = "GlueCEAccessControlBaseRule"
@@ -459,20 +552,6 @@ class ClassAdEmitter(object):
                 prev_results = results[key].split(",")
             results[key] = ','.join(prev_results + [str(i) for i in \
                 secondary_ce_acbrs])
-
-
-        # Add the optional SA/VOInfo for this information.  Note that if the
-        # SA or VOInfo exists and the corresponding CE/VOView can't access it,
-        # we just return.
-        if sa and self.can_access(voview_acbr, sa, "SAAccessControlBaseRule"):
-            self.add_to_results(sa, results)
-            if voinfo and self.can_access(voview_acbr, voinfo,
-                    "VOInfoAccessControlBaseRule"):
-                self.add_to_results(voinfo, results)
-            elif voinfo:
-                return
-        elif sa:
-            return
 
         # Separate functions handle software and APs
         if aps:
@@ -512,8 +591,12 @@ class ClassAdEmitter(object):
         etc) and value a list of access protocols of that type.
         """
         results = {}
+        type = None
         for ap in aps:
-            type = ap.glue.get('SEAccessProtocolType', None)
+            # Really, we should have one ClassAd per AccessProtocol type
+            # Adding the next two lines for precise matching of CEMon
+            if not type:
+                type = ap.glue.get('SEAccessProtocolType', None)
             if not type:
                 continue
             ap_list = results.setdefault(type, [])
@@ -527,6 +610,11 @@ class ClassAdEmitter(object):
         if services:
             for service in services:
                 kw['service'], kw['cp'] = service
+                # For CEMon compatibility, do not advertise SRMv2.
+                if service[0].glue.get("ServiceType", ["Unknown"])[0] == "SRM" \
+                        and service[0].glue.get("ServiceVersion", [""])[0] \
+                        .find("1") >= 0:
+                    continue
                 if aps:
                     for ap_type in aps.values():
                         kw['aps'] = ap_type
@@ -788,6 +876,10 @@ def upload(cae, bdii, entries, dryrun=False):
         "ClusterUniqueID")
 
     for ce in all_ces:
+        if DEBUG and (ce.glue['CEUniqueID'][0] != \
+                "fnpcosg1.fnal.gov:2119/jobmanager-condor-default"):
+            continue
+
         log.info("Creating ClassAds related to CE %s" % ce.glue['CEUniqueID'])
         # Adjoined cluster and site are required.
         try:
@@ -815,10 +907,15 @@ def upload(cae, bdii, entries, dryrun=False):
         # Here's all the nested logic to print out the the class ad even when
         # various pieces are missing.
         # (thinking about better ways to do this)
-        kw = {'site': site, 'cluster': cluster}
+        ce_kw = {'site': site, 'cluster': cluster}
+        #it = len(cae.emitters[0].ads)
         if adjacent_ses:
             # All SEs
             for se in adjacent_ses:
+                kw = dict(ce_kw)
+                #if DEBUG and (se != "fndca1.fnal.gov"):
+                #    continue
+
                 log.info("\tSE adjacent to CE: %s" % se)
                 try:
                     kw['se'] = id_to_se[se]
@@ -834,22 +931,41 @@ def upload(cae, bdii, entries, dryrun=False):
                 # All SAs
                 if adjacent_sas:
                     for sa in adjacent_sas:
+                        if DEBUG and (sa.glue["SALocalID"][0] != \
+                                "readPools:custodial:nearline"):
+                            continue
+
                         log.info("\t\tSA adjacent to SE: %s" % \
                             sa.glue['SALocalID'])
                         kw['sa'] = sa
                         voinfos = sesa_to_voinfos.get((id_to_se[se], sa), [])
+
+                        if DEBUG:
+                            it = len(cae.emitters[-1].ads)
                         if voinfos:
                             # All VOInfos
                             for voinfo in voinfos:
                                 kw['voinfo'] = voinfo
-                                cae.emit_se(subclusters, ce, voviews, **kw)
+                                my_voviews = cae.filter_voviews(ce, voviews, sa, voinfo)
+                                if DEBUG and (voinfo.glue[\
+                                        'VOInfoAccessControlBaseRule'][0] != \
+                                        'atlas'):
+                                    continue
+                                print my_voviews
+                                if my_voviews:
+                                    cae.emit_se(subclusters, ce, my_voviews, **kw)
                         else:
+                            if DEBUG:
+                                print "Emitting a SA without a VOInfo"
                             cae.emit_se(subclusters, ce, voviews, **kw)
+                        if DEBUG:
+                            print len(cae.emitters[-1].ads) - it
                 else:
                     log.info("\t\tNo SA adjacent to SE.")
                     cae.emit_se(subclusters, ce, voviews, **kw)
         else:
-            cae.emit_ce(subclusters, ce, voviews, **kw)
+            cae.emit_ce(subclusters, ce, voviews, **ce_kw)
+        #print "Ident: ", ce.glue["CEUniqueID"][0], len(cae.emitters[0].ads) - it
 
     if not dryrun:
         cae.run()

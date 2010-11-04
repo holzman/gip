@@ -390,7 +390,9 @@ class ClassAdSender(CEMonMessageProducer):
                     continue
                 if isinstance(val, types.IntType):
                     out.append('%s = %i;' % (key, val))
-                else:       
+                elif val in ("TRUE", "FALSE"):
+                    out.append("%s = %s" % (key, val))
+                else:
                     out.append('%s = "%s";' % (key, str(val)))
             message = "[\n" + "\n        ".join(out) + "\n\n]"
             messages.append(message)
@@ -416,13 +418,10 @@ class ClassAdEmitter(object):
     def add_to_results(self, entry, results):
         for glue, val in entry.glue.items():
             key = "Glue" + glue
-            if isinstance(val, types.ListType) or isinstance(val, types.TupleType):
+            try:
+                results[key] = int(','.join(val))
+            except:
                 results[key] = ','.join([str(i) for i in val])
-            else:
-                try:
-                    results[key] = int(val)
-                except:
-                    results[key] = val
 
         for glue, val in entry.nonglue.items():
             try:

@@ -7,8 +7,10 @@ import re
 import grp
 import pwd
 import gip_sets as sets
+import os
 
 from gip_common import HMSToMin, getLogger, VoMapper, voList, parseRvf
+from gip_common import addToPath, cp_get
 from gip_testing import runCommand
 
 log = getLogger("GIP.PBS")
@@ -109,6 +111,11 @@ def pbsCommand(command, cp):
         pbsHost = ""
     if pbsHost.lower() == "none" or pbsHost.lower() == "localhost":
         pbsHost = ""
+
+    pbs_path = cp_get(cp, "pbs", "pbs_path", ".")
+    addToPath(pbs_path)
+    addToPath(pbs_path + "/bin")
+
     cmd = command % {'pbsHost': pbsHost}
     fp = runCommand(cmd)
     #pid, exitcode = os.wait()

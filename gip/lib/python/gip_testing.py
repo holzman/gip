@@ -101,7 +101,7 @@ def runCommand(cmd, force_command=False):
         
         if exitStatus:
             log = getLogger("GIP.common")
-            log.debug('Command %s exited with %d, stderr: %s' % (cmd, os.WEXITSTATUS(exitStatus), errdata.readlines()))
+            log.info('Command %s exited with %d, stderr: %s' % (cmd, os.WEXITSTATUS(exitStatus), errdata.readlines()))
 
         return outdata
 

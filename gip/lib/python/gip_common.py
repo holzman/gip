@@ -368,7 +368,14 @@ def addToPath(new_element):
     """
     path = os.environ.get("PATH")
     path = "%s:%s" % (str(new_element), path)
-    os.environ["PATH"] = path
+
+
+    # remove duplicates -- http://code.activestate.com/recipes/52560/
+    pathlist = path.split(':')
+    set = {}
+    uniquepathlist = [set.setdefault(e,e) for e in pathlist if e not in set]
+    uniquepath = ':'.join(uniquepathlist)
+    os.environ["PATH"] = uniquepath
 
 def HMSToMin(hms): #pylint: disable-msg=C0103
     """

@@ -278,6 +278,11 @@ def configOsg(cp):
             glexec_enabled = True
     cp.set(site, 'glexec_enabled', str(glexec_enabled))
 
+    # WLCG-specific items
+    __write_config(site_sec, "wlcg_tier", site, "wlcg_tier")
+    __write_config(site_sec, "wlcg_parent", site, "wlcg_parent")
+    __write_config(site_sec, "wlcg_name", site, "wlcg_name")
+
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
     # With the call to __write_all_options_config, the next 2 lines are obsolete

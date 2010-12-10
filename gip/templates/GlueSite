@@ -14,7 +14,7 @@ GlueSiteLocation: %(location)s
 GlueSiteLatitude: %(latitude)s
 GlueSiteLongitude: %(longitude)s
 GlueSiteWeb: %(website)s
-%(sponsor)s
+%(otherInfo)s%(sponsor)s
 GlueForeignKey: GlueSiteUniqueID=%(uniqueID)s
 GlueSchemaVersionMajor: 1
 GlueSchemaVersionMinor: 3

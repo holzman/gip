@@ -112,7 +112,7 @@ def print_CE(cp):
         info['clusterUniqueID'] = getClusterID(cp)
 
         extraCapabilities = ''
-        if cp_getBoolean('site', 'glexec_enabled', False):
+        if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
             extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
         info['extraCapabilities'] = extraCapabilities
                                        

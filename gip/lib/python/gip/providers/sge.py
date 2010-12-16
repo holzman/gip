@@ -46,7 +46,7 @@ def print_CE(cp):
             contact_string += "-%s" % queue['name']
 
         extraCapabilities = ''
-	if cp_getBoolean('site', 'glexec_enabled', False):
+	if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
 	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
 
         info = { \

@@ -1,4 +1,7 @@
 Changelog
+== 1.1.14 ==
+* Bugfix: fix glexec support publishing
+	
 == 1.1.13 ==
 * Bugfix: fix the ACBRs to VOLocalViews
 * Bugfix: enable allowed_vos to also work properly on the storage element

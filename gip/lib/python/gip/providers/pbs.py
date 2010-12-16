@@ -106,7 +106,7 @@ def print_CE(cp):
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
         gramVersion = ''
-        if not cp_getBoolean('cream', 'enabled', False):
+        if not cp_getBoolean(cp, 'cream', 'enabled', False):
             gramVersion = '\n' + 'GlueCEInfoGRAMVersion: 2.0'
         info['gramVersion'] = gramVersion
         info['port'] = 2119
@@ -115,7 +115,7 @@ def print_CE(cp):
         info['clusterUniqueID'] = getClusterID(cp)
 
         extraCapabilities = ''
-        if cp_getBoolean('site', 'glexec_enabled', False):
+        if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
             extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
         info['extraCapabilities'] = extraCapabilities
                                        

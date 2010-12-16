@@ -84,9 +84,13 @@ def cp_get(cp, section, option, default):
     @returns: Value stored in CP for section/option, or default if it is not
         present.
     """
+    if not isinstance(cp, ConfigParser.ConfigParser):
+        log.error('BUG: NOTIFY GIP DEVELOPERS: cp_get called without a proper cp as first arg')
+        raise RuntimeError('cp_get called without a proper cp as first arg')
+
     try:
         return cp.get(section, option)
-    except:
+    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
         return default
 
 def checkOsgConfigured(cp):
@@ -274,6 +278,9 @@ def configOsg(cp):
     # [CREAM]
     if cp2.has_section(cream_sec) and cp2.has_option(cream_sec, 'enabled'):
         __write_config(cream_sec, 'enabled', cream, 'enabled')
+
+    if 'BURT_CREAM_TEST' in os.environ:
+        __write_config_value(cream, 'enabled', 'True')
     
     # [Misc Services]
     glexec_enabled = False

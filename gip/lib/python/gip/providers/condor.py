@@ -135,7 +135,7 @@ def print_CE(cp):
         jinfo = jobs_info.get(group, {})
 	ce_prefix = 'jobmanager'
 	port = 2119
-	if cp_getBoolean('cream', 'enabled', False):
+	if cp_getBoolean(cp, 'cream', 'enabled', False):
 	    ce_prefix = 'cream'
 	    port = 8443
         ce_unique_id = '%s:%d/%s-condor-%s' % (ce_name, port, ce_prefix, group)
@@ -210,7 +210,7 @@ def print_CE(cp):
 		contact_string = 'https://' + contact_string
 
         extraCapabilities = ''
-	if cp_getBoolean('site', 'glexec_enabled', False):
+	if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
 	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
 
 	gramVersion = ''
@@ -218,7 +218,7 @@ def print_CE(cp):
 	port = 2119
 	ceImplVersion = cp_get(cp, ce, 'globus_version', '4.0.6')
 	
-        if cp_getBoolean('cream', 'enabled', False):
+        if cp_getBoolean(cp, 'cream', 'enabled', False):
 	    ceImpl = 'CREAM'
 	    port = 8443
 	    ceImplVersion = '%s' % getOSGVersion(cp)
@@ -346,7 +346,7 @@ def print_VOViewLocal(cp):
         log.debug("All VOs for %s: %s" % (group, ", ".join(vos)))
 	ce_prefix = 'jobmanager'
 	port = 2119
-	if cp_getBoolean('cream', 'enabled', False):
+	if cp_getBoolean(cp, 'cream', 'enabled', False):
 	    ce_prefix = 'cream'
 	    port = 8443
         ce_unique_id = '%s:%d/%s-condor-%s' % (ce_name, port, ce_prefix, group)

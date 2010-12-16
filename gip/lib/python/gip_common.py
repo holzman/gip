@@ -544,9 +544,13 @@ def cp_get(cp, section, option, default):
     @returns: Value stored in CP for section/option, or default if it is not
         present.
     """
+    if not isinstance(cp, ConfigParser.ConfigParser):
+        log.error('BUG: NOTIFY GIP DEVELOPERS: cp_get called without a proper cp as first arg')
+        raise RuntimeError('cp_get called without a proper cp as first arg')
+
     try:
         return cp.get(section, option)
-    except:
+    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
         return default
 
 def cp_getBoolean(cp, section, option, default=True):

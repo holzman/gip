@@ -9,7 +9,7 @@ import socket
 import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, lsf, se, subcluster, \
-    cluster, cesebind
+    cluster, cesebind, cream
 from gip_common import getLogger, py23
 
 log = getLogger("GIP")
@@ -23,6 +23,7 @@ storage_sec = 'Storage'
 gip_sec = 'GIP'
 dcache_sec = 'dcache'
 lsf_sec = 'LSF'
+cream_sec = 'CREAM'
 
 def cp_getInt(cp, section, option, default):
     """
@@ -270,6 +271,10 @@ def configOsg(cp):
     __write_config_value(site, "name", site_name)
     __write_config_value(site, "unique_name", site_name)
 
+    # [CREAM]
+    if cp2.has_section(cream_sec) and cp2.has_option(cream_sec, 'enabled'):
+        __write_config(cream_sec, 'enabled', cream, 'enabled')
+    
     # [Misc Services]
     glexec_enabled = False
     if cp2.has_section(misc_sec) and cp2.has_option(misc_sec, 'glexec_location'):

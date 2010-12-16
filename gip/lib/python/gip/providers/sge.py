@@ -49,6 +49,10 @@ def print_CE(cp):
 	if cp_getBoolean('site', 'glexec_enabled', False):
 	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
 
+        gramVersion = ''
+        if not cp_getBoolean('cream', 'enabled', False):
+            gramVersion = '\n' + 'GlueCEInfoGRAMVersion: 2.0'
+
         info = { \
             "ceUniqueID" : unique_id,
             "ceName" : ce_name,
@@ -82,7 +86,7 @@ def print_CE(cp):
             "preemption" : cp_get(cp, 'sge', 'preemption', '0'),
             "acbr" : acbr[:-1],
             "bdii": cp.get('bdii', 'endpoint'),
-            "gramVersion" : '2.0',
+            "gramVersion" : gramVersion,
             "port" : 2119,
             "waiting" : queue['waiting'],
             "referenceSI00": referenceSI00,

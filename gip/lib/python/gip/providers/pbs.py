@@ -105,7 +105,10 @@ def print_CE(cp):
             continue
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
-        info['gramVersion'] = '2.0'
+        gramVersion = ''
+        if not cp_getBoolean('cream', 'enabled', False):
+            gramVersion = '\n' + 'GlueCEInfoGRAMVersion: 2.0'
+        info['gramVersion'] = gramVersion
         info['port'] = 2119
         info['waiting'] = info['wait']
         info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)

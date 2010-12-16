@@ -16,8 +16,7 @@ GlueCEUniqueID: %(ceUniqueID)s
 GlueCEInfoGatekeeperPort: %(port)s
 GlueCEInfoHostName: %(hostName)s
 GlueCEInfoLRMSType: %(lrmsType)s
-GlueCEInfoLRMSVersion: %(lrmsVersion)s
-GlueCEInfoGRAMVersion: %(gramVersion)s
+GlueCEInfoLRMSVersion: %(lrmsVersion)s%(gramVersion)s
 GlueCEInfoTotalCPUs: %(job_slots)s
 GlueCEInfoJobManager: %(job_manager)s
 GlueCEInfoContactString: %(contact_string)s

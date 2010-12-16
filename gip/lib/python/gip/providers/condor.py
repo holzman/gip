@@ -18,7 +18,7 @@ if not py23:
 import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes
-from gip_cluster import getClusterID
+from gip_cluster import getClusterID, getOSGVersion
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
 from condor_common import defaultGroupIsExcluded
 from gip_storage import getDefaultSE
@@ -133,7 +133,12 @@ def print_CE(cp):
         
     for group, ginfo in groupInfo.items():
         jinfo = jobs_info.get(group, {})
-        ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)
+	ce_prefix = 'jobmanager'
+	port = 2119
+	if cp_getBoolean('cream', 'enabled', False):
+	    ce_prefix = 'cream'
+	    port = 8443
+        ce_unique_id = '%s:%d/%s-condor-%s' % (ce_name, port, ce_prefix, group)
         vos = ginfo['vos']
         if not isinstance(vos, sets.Set):
             vos = sets.Set(vos)
@@ -191,24 +196,47 @@ def print_CE(cp):
 
         referenceSI00 = gip_cluster.getReferenceSI00(cp)
         contact_string = cp_get(cp, "condor", 'job_contact', ce_unique_id)
-        if contact_string.endswith("jobmanager-condor"):
-            contact_string += "-%s" % group
+	if contact_string.endswith("jobmanager-condor"):
+	    contact_string += "-%s" % group
+
+	if cp_getBoolean(cp, 'cream', 'enabled', False) and not \
+	       contact_string.endswith('cream-condor'):
+	    log.warning('CREAM CE enabled, but contact string in config.ini '
+			'does not end with "cream-condor"')
+		
+	if contact_string.endswith('cream-condor'):
+	    contact_string += "-%s" % group
+	    if not contact_string.startswith('https://'):
+		contact_string = 'https://' + contact_string
 
         extraCapabilities = ''
 	if cp_getBoolean('site', 'glexec_enabled', False):
 	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
+
+	gramVersion = ''
+	ceImpl = 'Globus'
+	port = 2119
+	ceImplVersion = cp_get(cp, ce, 'globus_version', '4.0.6')
 	
+        if cp_getBoolean('cream', 'enabled', False):
+	    ceImpl = 'CREAM'
+	    port = 8443
+	    ceImplVersion = '%s' % getOSGVersion(cp)
+	    ceImplVersion = getOSGVersion(cp)
+	else:
+	    gramVersion = '\n' + 'GlueCEInfoGRAMVersion: 2.0'
+
         # Build all the GLUE CE entity information.
         info = { \
             "ceUniqueID"     : ce_unique_id,
             'contact_string' : contact_string,
-            "ceImpl"         : "Globus",
-            "ceImplVersion"  : cp_get(cp, ce, 'globus_version', '4.0.6'),
+            "ceImpl"         : ceImpl,
+            "ceImplVersion"  : ceImplVersion,
             "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name),
             "hostName"       : cp_get(cp, ce, "host_name", ce_name),
-            "gramVersion"    : '2.0',
+            "gramVersion"    : gramVersion,
             "lrmsType"       : "condor",
-            "port"           : 2119,
+            "port"           : port,
             "running"        : myrunning,
             "idle"           : myidle,
             "held"           : myheld,
@@ -316,7 +344,12 @@ def print_VOViewLocal(cp):
             assigned = total_nodes
 
         log.debug("All VOs for %s: %s" % (group, ", ".join(vos)))
-        ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)    
+	ce_prefix = 'jobmanager'
+	port = 2119
+	if cp_getBoolean('cream', 'enabled', False):
+	    ce_prefix = 'cream'
+	    port = 8443
+        ce_unique_id = '%s:%d/%s-condor-%s' % (ce_name, port, ce_prefix, group)
         max_wall = cp_getInt(cp, "condor", "max_wall", 1440)
 
         myrunning = sum([i.get('running', 0) for i in jinfo.values()], 0)

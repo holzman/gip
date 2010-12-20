@@ -548,6 +548,9 @@ def cp_get(cp, section, option, default):
         log.error('BUG: NOTIFY GIP DEVELOPERS: cp_get called without a proper cp as first arg')
         raise RuntimeError('cp_get called without a proper cp as first arg')
 
+    if not section or not option:  # no use looking any deeper
+        return default
+    
     try:
         return cp.get(section, option)
     except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):

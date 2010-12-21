@@ -279,9 +279,6 @@ def configOsg(cp):
     if cp2.has_section(cream_sec) and cp2.has_option(cream_sec, 'enabled'):
         __write_config(cream_sec, 'enabled', cream, 'enabled')
 
-    if 'BURT_CREAM_TEST' in os.environ:
-        __write_config_value(cream, 'enabled', 'True')
-    
     # [Misc Services]
     glexec_enabled = False
     if cp2.has_section(misc_sec) and cp2.has_option(misc_sec, 'glexec_location'):

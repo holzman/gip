@@ -17,6 +17,8 @@ from lsf_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
 from gip_sections import ce
 from gip_storage import getDefaultSE
+from gip_batch import buildCEUniqueID, getGramVersion, getCEImpl, getPort, \
+     buildContactString
 
 log = getLogger("GIP.LSF")
 
@@ -67,7 +69,8 @@ def print_CE(cp):
                 info["free_slots"] = freeCpu
         info["queue"] = queue
         info["ceName"] = ce_name
-        unique_id = '%s:2119/jobmanager-lsf-%s' % (ce_name, queue)
+
+        unique_id = buildCEUniqueID(cp, ce_name, 'lsf', queue)        
         info['ceUniqueID'] = unique_id
         if "job_slots" not in info:
             if queue in queueCpus and 'max' in queueCpus[queue]:
@@ -89,16 +92,16 @@ def print_CE(cp):
         ert, wrt = responseTimes(cp, info["running"], info["wait"],
             max_job_time=info["max_wall"])
 
-        contact_string = cp_get(cp, "lsf", 'job_contact', unique_id)
-        if contact_string.endswith("jobmanager-lsf"):
-            contact_string += "-%s" % queue
+	contact_string = buildContactString(cp, 'lsf', queue, unique_id, log)
+
+        ceImpl, ceImplVersion = getCEImpl(cp)
 
         info['ert'] = ert
         info['wrt'] = wrt
         info['hostingCluster'] = cp_get(cp, ce, 'hosting_cluster', ce_name)
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
-        info['ceImpl'] = 'Globus'
-        info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')
+        info['ceImpl'] = ceImpl
+        info['ceImplVersion'] = ceImplVersion
         info['contact_string'] = contact_string
         info['app_dir'] = cp.get('osg_dirs', 'app')
         info['data_dir'] = cp.get('osg_dirs', 'data')
@@ -119,11 +122,10 @@ def print_CE(cp):
         #print info
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
-        gramVersion = ''
-        if not cp_getBoolean(cp, 'cream', 'enabled', False):
-            gramVersion = '\n' + 'GlueCEInfoGRAMVersion: 2.0'
+        gramVersion = getGramVersion(cp)
+        port = getPort(cp)
         info['gramVersion'] = gramVersion
-        info['port'] = 2119
+        info['port'] = port
         info['waiting'] = info.get('wait', 0)
         info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)
         info['clusterUniqueID'] = getClusterID(cp)
@@ -152,7 +154,8 @@ def print_VOViewLocal(queue_info, cp):
         vo = vo.lower()
         vo_info = queue_jobs.get(queue, {})
         info2 = vo_info.get(vo, {})
-        ce_unique_id = '%s:2119/jobmanager-lsf-%s' % (ce_name, queue)
+
+        ce_unique_id = buildCEUniqueID(cp, ce_name, 'lsf', queue)
 
         my_queue_info = queue_info.setdefault(queue, {})
         if "max_wall" not in my_queue_info:

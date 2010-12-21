@@ -30,7 +30,7 @@ def getCEList(cp, extraCEs=[]):
 
     prefix = 'jobmanager'
     port = 2119
-    if cp_getBoolean(cp, 'cream', 'enable', False):
+    if cp_getBoolean(cp, 'cream', 'enabled', False):
         prefix = 'cream'
         port = 8443
     ce_names = ['%s:%d/%s-%s-%%s' % (hostname, port, prefix, jobman) for hostname in hostnames]

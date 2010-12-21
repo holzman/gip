@@ -13,6 +13,8 @@ from pbs_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
 from gip_sections import ce
 from gip_storage import getDefaultSE
+from gip_batch import buildCEUniqueID, getGramVersion, getCEImpl, getPort, \
+     buildContactString
 
 log = getLogger("GIP.PBS")
 
@@ -42,7 +44,11 @@ def print_CE(cp):
                 info["free_slots"] = freeCpu
         info["queue"] = queue
         info["ceName"] = ce_name
-        unique_id = '%s:2119/jobmanager-pbs-%s' % (ce_name, queue)
+
+        unique_id = buildCEUniqueID(cp, ce_name, 'pbs', queue)
+        ceImpl, ceImplVersion = getCEImpl(cp)
+	port = getPort(cp)
+
         info['ceUniqueID'] = unique_id
         if "job_slots" not in info:
             info["job_slots"] = totalCpu
@@ -61,12 +67,10 @@ def print_CE(cp):
         info['wrt'] = wrt
         info['hostingCluster'] = cp_get(cp, ce, 'hosting_cluster', ce_name)
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
-        info['ceImpl'] = 'Globus'
-        info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')
+        info['ceImpl'] = ceImpl
+        info['ceImplVersion'] = ceImplVersion
 
-        contact_string = cp_get(cp, "pbs", 'job_contact', unique_id)
-        if contact_string.endswith("jobmanager-pbs"):
-            contact_string += "-%s" % queue
+	contact_string = buildContactString(cp, 'pbs', queue, unique_id, log)
 
         info['contact_string'] = contact_string
         info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP")
@@ -105,11 +109,10 @@ def print_CE(cp):
             continue
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
-        gramVersion = ''
-        if not cp_getBoolean(cp, 'cream', 'enabled', False):
-            gramVersion = '\n' + 'GlueCEInfoGRAMVersion: 2.0'
+        gramVersion = getGramVersion(cp)
+
         info['gramVersion'] = gramVersion
-        info['port'] = 2119
+        info['port'] = port
         info['waiting'] = info['wait']
         info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)
         info['clusterUniqueID'] = getClusterID(cp)
@@ -131,8 +134,10 @@ def print_VOViewLocal(queue_info, cp):
     for vo, queue in vo_queues:
         vo_info = queue_jobs.get(queue, {})
         info2 = vo_info.get(vo, {})
-        ce_unique_id = '%s:2119/jobmanager-pbs-%s' % (ce_name, queue)
 
+	port = getPort(cp)
+        ce_unique_id = buildCEUniqueID(cp, ce_name, 'pbs', queue)
+        
         my_queue_info = queue_info.setdefault(queue, {})
         ert, wrt = responseTimes(cp, info2.get("running", 0),
             info2.get("wait", 0),

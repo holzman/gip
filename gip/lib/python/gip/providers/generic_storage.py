@@ -404,6 +404,8 @@ def print_single_SRM(info, se, cp):
     info['protocolType'] = 'SRM'
     info['serviceType'] = 'SRM'
     info['capability'] = 'control'
+    info['semantics'] = 'UNDEFINED'
+    info['owner'] = ''
     if version.find('2') >= 0:
         info['version'] = "2.2.0"
         info['endpoint'] = endpoint

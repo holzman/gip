@@ -25,9 +25,9 @@ from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
 from gip_testing import runCommand
 
 condor_version = "condor_version"
-condor_group = "condor_config_val -%(daemon)s GROUP_NAMES"
-condor_quota = "condor_config_val -%(daemon)s GROUP_QUOTA_%(group)s"
-condor_prio = "condor_config_val -%(daemon)s GROUP_PRIO_FACTOR_%(group)s"
+condor_group = "condor_config_val %(daemon)s GROUP_NAMES"
+condor_quota = "condor_config_val %(daemon)s GROUP_QUOTA_%(group)s"
+condor_prio = "condor_config_val %(daemon)s GROUP_PRIO_FACTOR_%(group)s"
 condor_status = "condor_status -xml -constraint '%(constraint)s'"
 condor_status_submitter = "condor_status -submitter -xml -constraint '%(constraint)s'"
 condor_job_status = "condor_q -xml -constraint '%(constraint)s'"
@@ -242,10 +242,14 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
         and priority of the group.
     """
 
-    if cp_getBoolean(cp, "condor", "use_collector", False):
-        configDaemon = "collector"
+    configDaemon = ''
+    if cp_getBoolean(cp, "condor", "query_only_local_condor", False):
+        log.info("Only querying local Condor -- ignoring use_collector, if set!")
     else:
-        configDaemon = "negotiator"
+        if cp_getBoolean(cp, "condor", "use_collector", False):
+            configDaemon = "-collector"
+        else:
+            configDaemon = "-negotiator"
                                     
     fp = condorCommand(condor_group, cp, {'daemon' : configDaemon})
     output = fp.read().split(',')

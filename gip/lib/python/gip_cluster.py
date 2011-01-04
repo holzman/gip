@@ -223,6 +223,18 @@ def getSubClusterIDs(cp):
         subclusters.append(cp_get(cp, section, "unique_name", subCluster))
     return subclusters
 
+def _addLocation(locations, info):
+    """
+    Add a software location; emit a warning for duplicates.
+    """
+    name = info['locationName']
+    if locations.has_key(name):
+        log.info('Duplicate software location %s; overwriting with '
+                 'latest value!' % name)
+
+    locations[info['locationName']] = info
+    return locations
+    
 def getApplications(cp):
     """
     Return a list of dictionaries containing the application info for each
@@ -245,7 +257,7 @@ def getApplications(cp):
     path3 = cp_get(cp, "ce", "app_list", '')
     if path3:
         paths.append(path3)
-    locations = []
+    locations = {}
     for path in paths:
         try:
             fp = open(path, 'r')
@@ -264,22 +276,24 @@ def getApplications(cp):
                 info[1] = 'UNDEFINED'
             info = {'locationName': info[0], 'version': info[1], 'path':info[2]}
             info['locationId'] = info['locationName']
-            locations.append(info)
+            locations = _addLocation(locations, info)
     osg_ver = getOSGVersion(cp)
     if osg_ver:
         # old method: will deprecate in a future version, but leave
         # for backwards compatibility
         info = {'locationId': osg_ver, 'locationName': osg_ver, 'version': \
             osg_ver, 'path': os.environ.get('VDT_LOCATION', '/UNKNOWN')}
-        locations.append(info)
+        locations = _addLocation(locations, info)
         # new method
         info = {'locationId': 'OSG_VERSION', 'locationName': 'OSG_VERSION',
                 'version': osg_ver, 'path': os.environ.get('VDT_LOCATION', '/UNKNOWN')}
-        locations.append(info)
+        locations = _addLocation(locations, info)
     try:
-        locations += getApplicationsV1(cp)
+        locations.update(getApplicationsV1(cp))
     except Exception, e:
         log.exception(e)
+
+    locations = locations.values()
     if not locations:
         locations = [{'locationId': "UNKNOWN", 'locationName': "UNKNOWN",
             'version': "UNKNOWN", 'path': '/UNKNOWN'}]
@@ -304,7 +318,7 @@ def getApplicationsV1(cp):
     app_dir = cp_get(cp, "osg_dirs", "app", "/UNKNOWN")
     base_path = os.path.join(app_dir, "etc")
     base_path = cp_get(cp, "gip", "software_dir", base_path)
-    locations = []
+    locations = {}
     for vo in voList(cp):
         vo_dir = os.path.join(base_path, vo)
         vo_dir = os.path.expandvars(vo_dir)
@@ -329,6 +343,6 @@ def getApplicationsV1(cp):
                 info[1] = 'UNDEFINED'
             info = {'locationName': info[0], 'version': info[1], 'path':info[2]}
             info['locationId'] = info['locationName']
-            locations.append(info)
+            locations = _addLocation(locations, info)
     return locations
             

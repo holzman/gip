@@ -180,7 +180,7 @@ def _createSubmitterConstraint(cp):
         return 'TRUE'
 
     submitConstraint = 'TRUE'
-    for schedd in schedds:
+    for schedd in exclude_schedds:
         schedd = schedd.strip()
         submitConstraint += ' && Machine =!= "%s"' % schedd
         

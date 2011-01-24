@@ -650,7 +650,7 @@ class StorageElement(object):
         for vo in vos:
             sa_vos.add(vo)
             if not vo.startswith('VO'):
-                sa_vos.add('VO: %s' % vo)
+                sa_vos.add('VO:%s' % vo)
         sa_vos = list(sa_vos)
         sa_vos.sort()
         acbr = '\n'.join(['GlueSAAccessControlBaseRule: %s' % i \

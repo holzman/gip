@@ -92,7 +92,7 @@ def main():
             acbr = '__GIP_DELETEME'
         else:
             acbr = '\n'.join(['GlueServiceAccessControlBaseRule: %s\n' \
-                              'GlueServiceAccessControlBaseRule: VO: %s' % (vo, vo) for vo in allVOs])
+                              'GlueServiceAccessControlBaseRule: VO:%s' % (vo, vo) for vo in allVOs])
             owner = '\n' + '\n'.join(['GlueServiceOwner: %s' % vo for vo in allVOs]) # owner needs an extra prepended newline
 
         pid = -1

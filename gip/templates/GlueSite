@@ -6,10 +6,10 @@ objectClass: GlueSchemaVersion
 GlueSiteUniqueID: %(uniqueID)s
 GlueSiteName: %(siteName)s
 GlueSiteDescription: OSG Site
-GlueSiteEmailContact: mailto: %(emailContact)s
-GlueSiteUserSupportContact: mailto: %(emailContact)s
-GlueSiteSysAdminContact: mailto: %(emailContact)s
-GlueSiteSecurityContact: mailto: %(emailContact)s
+GlueSiteEmailContact: mailto:%(emailContact)s
+GlueSiteUserSupportContact: mailto:%(emailContact)s
+GlueSiteSysAdminContact: mailto:%(emailContact)s
+GlueSiteSecurityContact: mailto:%(emailContact)s
 GlueSiteLocation: %(location)s
 GlueSiteLatitude: %(latitude)s
 GlueSiteLongitude: %(longitude)s

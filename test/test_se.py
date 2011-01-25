@@ -66,7 +66,7 @@ class TestSEConfigs(unittest.TestCase):
                 'permanent')
             for vo in voList(cp):
                 self.failUnless(vo in entry.glue['SAAccessControlBaseRule'])
-                self.failUnless("VO: %s" % vo in \
+                self.failUnless("VO:%s" % vo in \
                     entry.glue['SAAccessControlBaseRule'])
         self.failUnless(found_se, msg="GlueSA entry for srm.unl.edu missing.")
 
@@ -192,7 +192,7 @@ class TestSEConfigs(unittest.TestCase):
                 'permanent')
             for vo in voList(cp):
                 self.failUnless(vo in entry.glue['SAAccessControlBaseRule'])
-                self.failUnless("VO: %s" % vo in \
+                self.failUnless("VO:%s" % vo in \
                     entry.glue['SAAccessControlBaseRule'])
         self.failUnless(found_se, msg="GlueSA entry for dcache07.unl.edu " \
             "missing.")

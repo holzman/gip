@@ -23,7 +23,7 @@ from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
 from condor_common import defaultGroupIsExcluded
 from gip_storage import getDefaultSE
 from gip_batch import buildCEUniqueID, getGramVersion, getCEImpl, getPort, \
-     buildContactString
+     buildContactString, getHTPCInfo
 
 from gip_sections import ce, se
 
@@ -194,11 +194,15 @@ def print_CE(cp):
         referenceSI00 = gip_cluster.getReferenceSI00(cp)
 
 	contact_string = buildContactString(cp, 'condor', group, ce_unique_id, log)
+	htpcRSL, maxSlots = getHTPCInfo(cp, 'condor', group, log)
 		
         extraCapabilities = ''
 	if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
 	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
 
+	if maxSlots > 1:
+	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: htpc'
+		
 	gramVersion = getGramVersion(cp)
 	ceImpl, ceImplVersion = getCEImpl(cp)
 	port = getPort(cp)
@@ -232,7 +236,7 @@ def print_CE(cp):
             "total"          : myrunning + myidle + myheld,
             "priority"       : ginfo.get('prio', 0),
             "assigned"       : assigned,
-            "max_slots"      : 1,
+            "max_slots"      : maxSlots,
             "preemption"     : str(int(cp_getBoolean(cp, "condor", \
                 "preemption", False))),
             "max_running"    : max_running,
@@ -247,7 +251,8 @@ def print_CE(cp):
             "referenceSI00"  : referenceSI00,
             "clusterUniqueID": getClusterID(cp),
             "bdii"           : cp_get(cp, "bdii", "endpoint", "Unknown"),
-	    'extraCapabilities' : extraCapabilities
+	    'extraCapabilities' : extraCapabilities,
+	    "htpc"           : htpcRSL
         }
         printTemplate(ce_template, info)
     return total_nodes, claimed, unclaimed

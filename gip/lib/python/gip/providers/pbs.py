@@ -22,6 +22,7 @@ def print_CE(cp):
     pbsVersion = getLrmsInfo(cp)
     queueInfo = getQueueInfo(cp)
     totalCpu, freeCpu, queueCpus = parseNodes(cp, pbsVersion)
+    log.debug("totalCpu, freeCpu, queueCPus: %s %s %s" % (totalCpu, freeCpu, queueCpus))
     ce_name = cp_get(cp, ce, "name", "UNKNOWN_CE")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
     try:
@@ -35,13 +36,19 @@ def print_CE(cp):
             continue
         info["lrmsVersion"] = pbsVersion
         info["job_manager"] = "pbs"
-        if info["wait"] > 0:
-            info["free_slots"] = 0
-        else:
-            if queue in queueCpus:
-                info["free_slots"] = queueCpus[queue]
-            else:
-                info["free_slots"] = freeCpu
+
+        # if no jobs are waiting in the queue, set the number of free slots
+        # to (job_slots - running), or the total number of free slots on the cluster,
+        # whichever is less.
+        
+        info["free_slots"] = 0
+        if info["wait"] == 0:
+            freeSlots = info["job_slots"] - info["running"]
+            if freeSlots > 0:
+                info["free_slots"] =  min(freeSlots, freeCpu)
+
+        log.debug("queue info: %s %s" % (queue, info))
+
         info["queue"] = queue
         info["ceName"] = ce_name
 
@@ -121,7 +128,7 @@ def print_CE(cp):
         if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
             extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
         info['extraCapabilities'] = extraCapabilities
-                                       
+
         print CE % info
     return queueInfo, totalCpu, freeCpu, queueCpus
 

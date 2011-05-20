@@ -44,6 +44,7 @@ GlueCEPolicyMaxSlotsPerJob: %(max_slots)s
 GlueCEPolicyPreemption: %(preemption)s
 %(acbr)s
 GlueCECapability: CPUScalingReferenceSI00=%(referenceSI00)s%(extraCapabilities)s
+%(htpc)s
 GlueInformationServiceURL: %(bdii)s
 GlueForeignKey: GlueClusterUniqueID=%(clusterUniqueID)s
 GlueSchemaVersionMajor: 1

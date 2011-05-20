@@ -14,7 +14,7 @@ from pbs_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
 from gip_sections import ce
 from gip_storage import getDefaultSE
 from gip_batch import buildCEUniqueID, getGramVersion, getCEImpl, getPort, \
-     buildContactString
+     buildContactString, getHTPCInfo
 
 log = getLogger("GIP.PBS")
 
@@ -22,6 +22,7 @@ def print_CE(cp):
     pbsVersion = getLrmsInfo(cp)
     queueInfo = getQueueInfo(cp)
     totalCpu, freeCpu, queueCpus = parseNodes(cp, pbsVersion)
+    log.debug("totalCpu, freeCpu, queueCPus: %s %s %s" % (totalCpu, freeCpu, queueCpus))
     ce_name = cp_get(cp, ce, "name", "UNKNOWN_CE")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
     try:
@@ -35,13 +36,11 @@ def print_CE(cp):
             continue
         info["lrmsVersion"] = pbsVersion
         info["job_manager"] = "pbs"
-        if info["wait"] > 0:
-            info["free_slots"] = 0
-        else:
-            if queue in queueCpus:
-                info["free_slots"] = queueCpus[queue]
-            else:
-                info["free_slots"] = freeCpu
+
+        # if no jobs are waiting in the queue, set the number of free slots
+        # to (job_slots - running), or the total number of free slots on the cluster,
+        # whichever is less.
+
         info["queue"] = queue
         info["ceName"] = ce_name
 
@@ -58,6 +57,16 @@ def print_CE(cp):
             info["max_running"] = info["job_slots"]
         if "max_wall" not in info:
             info["max_wall"] = 1440
+
+        
+        info["free_slots"] = 0
+        if info["wait"] == 0:
+            freeSlots = info["job_slots"] - info["running"]
+            if freeSlots > 0:
+                info["free_slots"] =  min(freeSlots, freeCpu)
+
+        log.debug("queue info: %s %s" % (queue, info))
+
 
         ert, wrt = responseTimes(cp, info.get("running", 0),
             info.get("wait", 0), max_job_time=info["max_wall"])
@@ -84,7 +93,6 @@ def print_CE(cp):
         else:
             info['max_total'] = info['max_waiting'] + info['max_running']
             info['free_slots'] = min(info['free_slots'], info['max_total'])
-        info['max_slots'] = 1
 
         # Enforce invariants:
         # max_total <= max_running
@@ -120,8 +128,16 @@ def print_CE(cp):
         extraCapabilities = ''
         if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
             extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
+
+        htpcRSL, maxSlots = getHTPCInfo(cp, 'pbs', queue, log)
+        info['max_slots'] = maxSlots
+        
+        if maxSlots > 1:
+            extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: htpc'
+
         info['extraCapabilities'] = extraCapabilities
-                                       
+        info['htpc'] = htpcRSL
+
         print CE % info
     return queueInfo, totalCpu, freeCpu, queueCpus
 

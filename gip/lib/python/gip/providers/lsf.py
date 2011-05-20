@@ -18,7 +18,7 @@ from lsf_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
 from gip_sections import ce
 from gip_storage import getDefaultSE
 from gip_batch import buildCEUniqueID, getGramVersion, getCEImpl, getPort, \
-     buildContactString
+     buildContactString, getHTPCInfo
 
 log = getLogger("GIP.LSF")
 
@@ -107,7 +107,6 @@ def print_CE(cp):
         info['data_dir'] = cp.get('osg_dirs', 'data')
         info['default_se'] = getDefaultSE(cp)
         info['max_waiting'] = 999999
-        info['max_slots'] = 1
         #info['max_total'] = info['max_running']
         info['max_total'] = info['max_waiting'] + info['max_running']
         info['assigned'] = info['job_slots']
@@ -133,8 +132,16 @@ def print_CE(cp):
         extraCapabilities = ''
         if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
             extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
-        info['extraCapabilities'] = extraCapabilities
+
+	htpcRSL, maxSlots = getHTPCInfo(cp, 'lsf', queue, log)
+        info['max_slots'] = maxSlots
+        info['htpc'] = htpcRSL
         
+        if maxSlots > 1:
+	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: htpc'
+            
+        info['extraCapabilities'] = extraCapabilities
+
         printTemplate(CE, info)
     return queueInfo, totalCpu, freeCpu, queueCpus
 

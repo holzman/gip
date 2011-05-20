@@ -202,7 +202,7 @@ def print_single_VOInfo(voinfo, se, cp): #pylint: disable-msg=W0613
     voinfoTemplate = getTemplate('GlueSE', 'GlueVOInfoLocalID')
     voinfo.setdefault('acbr', 'GlueVOInfoAccessControlBaseRule: UNKNOWN')
     voinfo.setdefault('path', '/UNKNOWN')
-    voinfo.setdefault('tag', 'Not A Space Reservation')
+    voinfo.setdefault('tag', '__GIP_DELETEME')
     voinfo.setdefault('seUniqueID', se.getUniqueID())
     printTemplate(voinfoTemplate, voinfo)
 

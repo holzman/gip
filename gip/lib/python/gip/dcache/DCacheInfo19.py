@@ -287,8 +287,7 @@ class DCacheInfo19(StorageElement):
                     'seUniqueID': seUniqueID,
                     'name': id,
                     'path': path,
-                    'tag': 'VOInfo associated with poolgroup %s; no space' \
-                        ' reservation' % poolgroup['name'],
+                    'tag': '__GIP_DELETEME',
                     'acbr': acbr,
                     'saLocalID': info['saName']
                 }

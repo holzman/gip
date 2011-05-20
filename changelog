@@ -1,4 +1,23 @@
 Changelog
+== 1.2.0alpha0 ==
+* Suppress publishing GlueVOInfoTag unless there is a space reservation
+* Implement CREAM support 
+* Implement HTPC support
+* PBS: Better calculate free slots for queues
+* Condor: Bug fix for exclude_schedds
+* Condor: Support query_only_local_condor option
+* LSF: Bug fix (we were publishing LSF queues _only_ if they were _not_ in
+  the RVF, which is the exact opposite to what we should do).
+* Remove spaces in storage AccessControlBaseRule
+* Remove duplicate software locations
+* Tighter exception handling for parsing config files, imlpying we should:
+* Explicitly return the default for blank config section or option
+* Avoid executing temporary/backup files
+* Updated unit tests	
+	
+== 1.1.14 ==
+* Bugfix: fix glexec support publishing
+	
 == 1.1.13 ==
 * Bugfix: fix the ACBRs to VOLocalViews
 * Bugfix: enable allowed_vos to also work properly on the storage element

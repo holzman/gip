@@ -353,9 +353,10 @@ def getQueueList(cp):
         log.info("The RVF lists the following queues: %s." % ', '.join( \
             rvf_queue_list))
     for queue in getQueueInfo(cp):
+        if rvf_queue_list and queue not in rvf_queue_list:
+            continue
         if queue not in queue_exclude:
-            if rvf_queue_list and queue not in rvf_queue_list:
-                queues.append(queue)
+            queues.append(queue)
 
     return queues
 

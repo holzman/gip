@@ -194,8 +194,8 @@ class TestPbsDynamic(unittest.TestCase):
                     entry.glue['CEUniqueID'] == 'red.unl.edu:2119/jobmanager' \
                     '-pbs-lcgadmin':
                 self.failUnless(entry.glue['CEPolicyMaxWaitingJobs'] == '183')
-                self.failUnless(entry.glue['CEStateFreeCPUs'] == '183')
-                self.failUnless(entry.glue['CEStateFreeJobSlots'] == '183')
+                self.failUnless(entry.glue['CEStateFreeCPUs'] == '4')
+                self.failUnless(entry.glue['CEStateFreeJobSlots'] == '4')
                 has_lcgadmin_ce = True
         self.failUnless(has_lcgadmin_ce, msg="lcgadmin queue's CE was not found!")
 

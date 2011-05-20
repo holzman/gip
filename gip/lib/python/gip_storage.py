@@ -700,7 +700,7 @@ class StorageElement(object):
                 info = {'voInfoID': myid,
                         'name': myid,
                         'path': path,
-                        'tag': 'Not A Space Reservation',
+                        'tag': '__GIP_DELETEME',
                         'acbr': acbr,
                         'saLocalID': sa_info.get('saLocalID', 'UNKNOWN'),
                        }

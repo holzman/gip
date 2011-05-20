@@ -22,6 +22,8 @@ def publish_gridmap_file(cp, template):
             'serviceName': 'Authorization',
             'version': 'UNDEFINED',
             'endpoint': 'Not Applicable',
+            'semantics': 'UNDEFINED',
+            'owner': '',
             'url': 'localhost://etc/grid-security/gridmap-file',
             'uri': 'localhost://etc/grid-security/gridmap-file',
             'status': 'OK',
@@ -79,6 +81,8 @@ def publish_gums(cp, template):
             'serviceName': 'Authorization',
             'version': 'UNDEFINED',
             'endpoint': gums_uri,
+            'semantics': 'UNDEFINED',
+            'owner': '',
             'url': gums_uri,
             'uri': gums_uri,
             'status': status,
@@ -106,15 +110,18 @@ def main():
             else:
                 log.info("Advertising authorization service.")
     
-            authfile = open('/etc/grid-security/gsi-authz.conf', 'r')
-            authlines = authfile.readlines()
-            authmod = re.compile('^(?!#)(.*)libprima_authz_module')
-            for line in authlines:
-                m = authmod.match(line)
-                if m:
-                    publish_gums(cp, template)
-                    return
-                
+            try:
+                authfile = open('/etc/grid-security/gsi-authz.conf', 'r')
+                authlines = authfile.readlines()
+                authmod = re.compile('^(?!#)(.*)libprima_authz_module')
+                for line in authlines:
+                    m = authmod.match(line)
+                    if m:
+                        publish_gums(cp, template)
+                        return
+            except IOError:
+                log.info("/etc/grid-security/gsi-authz.conf not found; assuming gridmap file authorization")
+            
             publish_gridmap_file(cp, template)                
 
     except Exception, e:

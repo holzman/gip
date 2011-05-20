@@ -25,9 +25,9 @@ from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
 from gip_testing import runCommand
 
 condor_version = "condor_version"
-condor_group = "condor_config_val -%(daemon)s GROUP_NAMES"
-condor_quota = "condor_config_val -%(daemon)s GROUP_QUOTA_%(group)s"
-condor_prio = "condor_config_val -%(daemon)s GROUP_PRIO_FACTOR_%(group)s"
+condor_group = "condor_config_val %(daemon)s GROUP_NAMES"
+condor_quota = "condor_config_val %(daemon)s GROUP_QUOTA_%(group)s"
+condor_prio = "condor_config_val %(daemon)s GROUP_PRIO_FACTOR_%(group)s"
 condor_status = "condor_status -xml -constraint '%(constraint)s'"
 condor_status_submitter = "condor_status -submitter -xml -constraint '%(constraint)s'"
 condor_job_status = "condor_q -xml -constraint '%(constraint)s'"
@@ -180,7 +180,7 @@ def _createSubmitterConstraint(cp):
         return 'TRUE'
 
     submitConstraint = 'TRUE'
-    for schedd in schedds:
+    for schedd in exclude_schedds:
         schedd = schedd.strip()
         submitConstraint += ' && Machine =!= "%s"' % schedd
         
@@ -242,10 +242,14 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
         and priority of the group.
     """
 
-    if cp_getBoolean(cp, "condor", "use_collector", False):
-        configDaemon = "collector"
+    configDaemon = ''
+    if cp_getBoolean(cp, "condor", "query_only_local_condor", False):
+        log.info("Only querying local Condor -- ignoring use_collector, if set!")
     else:
-        configDaemon = "negotiator"
+        if cp_getBoolean(cp, "condor", "use_collector", False):
+            configDaemon = "-collector"
+        else:
+            configDaemon = "-negotiator"
                                     
     fp = condorCommand(condor_group, cp, {'daemon' : configDaemon})
     output = fp.read().split(',')
@@ -266,7 +270,8 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
             grouplist.remove(excludedGroup)
             log.debug("Removed excluded group %s" % excludedGroup)
         except ValueError:
-            log.debug("Attempted to remove non-existent group %s" % excludedGroup)
+            if excludedGroup != 'default':
+                log.debug("Attempted to remove non-existent group %s" % excludedGroup)
 
     if not grouplist:
         log.info("No condor groups exist (after applying exclude_groups)")
@@ -312,17 +317,27 @@ def getQueueList(cp): #pylint: disable-msg=C0103
         # Default to no groups.
         groupInfo = {}
 
+    # filter out queues that don't match a VO
+    allVos = sets.Set(voList(cp))
+
+    for group in groupInfo.keys():
+        vos = sets.Set(groupInfo[group]['vos'])
+        if not vos.intersection(allVos):
+            log.debug('Filtering out %s in getQueueList -- no matching VO' % groupInfo[group]['vos'])
+            del groupInfo[group]
+
     # Set up the "default" group with all the VOs which aren't already in a 
     # group
-    groupInfo['default'] = {'prio': 999999, 'quota': 999999, 'vos': sets.Set()}
-    all_group_vos = []
-    for val in groupInfo.values():
-        all_group_vos.extend(val['vos'])
-    defaultVoList = voList(cp, vo_map=vo_map)
-    defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
-    groupInfo['default']['vos'] = defaultVoList
-    if not groupInfo['default']['vos']:
-        del groupInfo['default']
+    if not defaultGroupIsExcluded(cp):
+        groupInfo['default'] = {'prio': 999999, 'quota': 999999, 'vos': sets.Set()}
+        all_group_vos = []
+        for val in groupInfo.values():
+            all_group_vos.extend(val['vos'])
+        defaultVoList = voList(cp, vo_map=vo_map)
+        defaultVoList = [i for i in defaultVoList if i not in all_group_vos]
+        groupInfo['default']['vos'] = defaultVoList
+        if not groupInfo['default']['vos']:
+            del groupInfo['default']
 
     return groupInfo.keys()
 
@@ -527,6 +542,10 @@ def getJobsInfo(vo_map, cp):
             group, name = name_info
         else:
             group = 'default'
+        if group not in all_group_info and group != 'default':
+            log.debug("Changing group name from %s to default, as we don't" \
+                " recognize the group." % group)
+            group = 'default'
         log.debug("Examining jobs for group %s, user %s." % (group, name))
         try:
             vo = vo_map[name].lower()
@@ -547,7 +566,7 @@ def getJobsInfo(vo_map, cp):
         my_info = vo_jobs.get(vo, {"running":0, "idle":0, "held":0, \
             'max_running':0})
         addIntInfo(my_info, info, "running", "RunningJobs")
-        if cp_getBoolean(cp, "condor", "count_flocked", False):
+        if cp_getBoolean(cp, "condor", "count_flocked", True):
             addIntInfo(my_info, info, "running", "FlockedJobs")
         addIntInfo(my_info, info, "idle", "IdleJobs")
         addIntInfo(my_info, info, "held", "HeldJobs")
@@ -595,4 +614,15 @@ def parseNodes(cp):
              (total, claimed, unclaimed))
     _nodes_cache = total, claimed, unclaimed
     return total, claimed, unclaimed
+
+def defaultGroupIsExcluded(cp):
+    """
+    Check to see if the "default" group is excluded.
+    """
+    excludedGroups = cp_getList(cp, "condor", "exclude_groups", [])
+    excludedGroups = [x.strip() for x in excludedGroups]
+    if 'default' in excludedGroups:
+        return True
+    else:
+        return False
 

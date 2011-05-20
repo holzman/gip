@@ -16,8 +16,7 @@ GlueCEUniqueID: %(ceUniqueID)s
 GlueCEInfoGatekeeperPort: %(port)s
 GlueCEInfoHostName: %(hostName)s
 GlueCEInfoLRMSType: %(lrmsType)s
-GlueCEInfoLRMSVersion: %(lrmsVersion)s
-GlueCEInfoGRAMVersion: %(gramVersion)s
+GlueCEInfoLRMSVersion: %(lrmsVersion)s%(gramVersion)s
 GlueCEInfoTotalCPUs: %(job_slots)s
 GlueCEInfoJobManager: %(job_manager)s
 GlueCEInfoContactString: %(contact_string)s
@@ -45,6 +44,7 @@ GlueCEPolicyMaxSlotsPerJob: %(max_slots)s
 GlueCEPolicyPreemption: %(preemption)s
 %(acbr)s
 GlueCECapability: CPUScalingReferenceSI00=%(referenceSI00)s%(extraCapabilities)s
+%(htpc)s
 GlueInformationServiceURL: %(bdii)s
 GlueForeignKey: GlueClusterUniqueID=%(clusterUniqueID)s
 GlueSchemaVersionMajor: 1

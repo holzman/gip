@@ -432,6 +432,15 @@ class StorageElement(object):
         """
         return [2]
 
+    def getPort(self):
+        """
+        Return the port for the SE.
+        
+        This value is a deprecated value and should not b queried for.  It is 
+        included in the GIP to eliminate confusion downstream.
+        """
+        return "8443"
+    
     def getAccessProtocols(self):
         """
         Stub function for providing access protocol information.
@@ -641,7 +650,7 @@ class StorageElement(object):
         for vo in vos:
             sa_vos.add(vo)
             if not vo.startswith('VO'):
-                sa_vos.add('VO: %s' % vo)
+                sa_vos.add('VO:%s' % vo)
         sa_vos = list(sa_vos)
         sa_vos.sort()
         acbr = '\n'.join(['GlueSAAccessControlBaseRule: %s' % i \
@@ -691,7 +700,7 @@ class StorageElement(object):
                 info = {'voInfoID': myid,
                         'name': myid,
                         'path': path,
-                        'tag': 'Not A Space Reservation',
+                        'tag': '__GIP_DELETEME',
                         'acbr': acbr,
                         'saLocalID': sa_info.get('saLocalID', 'UNKNOWN'),
                        }

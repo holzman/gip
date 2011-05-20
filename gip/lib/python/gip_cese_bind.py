@@ -28,16 +28,27 @@ def getCEList(cp, extraCEs=[]):
     hostnames = [cp.get(ce, 'name')] 
     hostnames += extraCEs
 
-    ce_names = ['%s:2119/jobmanager-%s-%%s' % (hostname, jobman) for hostname in hostnames]
+    prefix = 'jobmanager'
+    port = 2119
+    if cp_getBoolean(cp, 'cream', 'enabled', False):
+        prefix = 'cream'
+        port = 8443
+    ce_names = ['%s:%d/%s-%s-%%s' % (hostname, port, prefix, jobman) for hostname in hostnames]
 
     ce_list = []
     if jobman == 'pbs':
         queue_entries = getPBSQueueList(cp)
     elif jobman == 'lsf':
+        from gip.providers.lsf import bootstrapLSF
+        bootstrapLSF(cp)
         queue_entries = getLSFQueueList(cp)
     elif jobman == 'condor':
         queue_entries = getCondorQueueList(cp)
     elif jobman == 'sge':
+        from gip.providers.sge import bootstrapSGE
+        from gip_common import addToPath
+        bootstrapSGE(cp)
+        addToPath(cp_get(cp, "sge", "sge_path", "."))
         queue_entries = getSGEQueueList(cp)
     else:
         raise ValueError("Unknown job manager %s." % jobman)

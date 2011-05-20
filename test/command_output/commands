@@ -38,7 +38,9 @@ bhosts: bhosts
 bqueues_l: bqueues -l
 lsid: lsid
 bmgroup_r: bmgroup -r
+bmgroup_r: bmgroup -r -w
 bugroup_r: bugroup -r
+bugroup_r: bugroup -r -w
 srm_ping: srm-ping srm://osgserv04.slac.stanford.edu:8443/srm/v2/server -proxyfile /tmp/http_proxy
 srm_ping1: srm-ping 1 -proxyfile /tmp/http_proxy
 srm_ping2: srm-ping 2 -proxyfile /tmp/http_proxy

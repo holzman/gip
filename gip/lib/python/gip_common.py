@@ -368,7 +368,14 @@ def addToPath(new_element):
     """
     path = os.environ.get("PATH")
     path = "%s:%s" % (str(new_element), path)
-    os.environ["PATH"] = path
+
+
+    # remove duplicates -- http://code.activestate.com/recipes/52560/
+    pathlist = path.split(':')
+    set = {}
+    uniquepathlist = [set.setdefault(e,e) for e in pathlist if e not in set]
+    uniquepath = ':'.join(uniquepathlist)
+    os.environ["PATH"] = uniquepath
 
 def HMSToMin(hms): #pylint: disable-msg=C0103
     """
@@ -388,7 +395,24 @@ def getTemplate(template, name):
     @return: Template string
     @raise e: ValueError if it is unable to find the template in the file.
     """
-    fp = open(os.path.expandvars("$GIP_LOCATION/templates/%s" % template))
+
+    cp = config()
+    template_dirs = cp_getList(cp, 'gip', 'local_template_dirs', [])
+    template_dirs.append(os.path.expandvars('$GIP_LOCATION/templates'))
+    tried = []
+    fp = ''
+    
+    for template_dir in template_dirs:
+        try:
+            template_dir = os.path.expandvars(template_dir)
+            fp = open("%s/%s" % (template_dir, template))
+            break
+        except IOError:
+            tried.append("%s/%s" % (template_dir, template))
+
+    if not fp:
+        raise ValueError("Couldn't find template.  Searched %s" % tried)
+
     start_str = "dn: %s" % name
     mybuffer = ''
     recording = False
@@ -399,6 +423,8 @@ def getTemplate(template, name):
             mybuffer += line
             if line == '\n':
                 break
+
+    fp.close()
     if not recording:
         raise ValueError("Unable to find %s in template %s" % (name, template))
     return mybuffer[:-1]
@@ -518,9 +544,16 @@ def cp_get(cp, section, option, default):
     @returns: Value stored in CP for section/option, or default if it is not
         present.
     """
+    if not isinstance(cp, ConfigParser.ConfigParser):
+        log.error('BUG: NOTIFY GIP DEVELOPERS: cp_get called without a proper cp as first arg')
+        raise RuntimeError('cp_get called without a proper cp as first arg')
+
+    if not section or not option:  # no use looking any deeper
+        return default
+    
     try:
         return cp.get(section, option)
-    except:
+    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
         return default
 
 def cp_getBoolean(cp, section, option, default=True):

@@ -9,7 +9,7 @@ import socket
 import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, lsf, se, subcluster, \
-    cluster, cesebind
+    cluster, cesebind, cream
 from gip_common import getLogger, py23
 
 log = getLogger("GIP")
@@ -23,6 +23,7 @@ storage_sec = 'Storage'
 gip_sec = 'GIP'
 dcache_sec = 'dcache'
 lsf_sec = 'LSF'
+cream_sec = 'CREAM'
 
 def cp_getInt(cp, section, option, default):
     """
@@ -83,9 +84,13 @@ def cp_get(cp, section, option, default):
     @returns: Value stored in CP for section/option, or default if it is not
         present.
     """
+    if not isinstance(cp, ConfigParser.ConfigParser):
+        log.error('BUG: NOTIFY GIP DEVELOPERS: cp_get called without a proper cp as first arg')
+        raise RuntimeError('cp_get called without a proper cp as first arg')
+
     try:
         return cp.get(section, option)
-    except:
+    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError):
         return default
 
 def checkOsgConfigured(cp):
@@ -270,6 +275,10 @@ def configOsg(cp):
     __write_config_value(site, "name", site_name)
     __write_config_value(site, "unique_name", site_name)
 
+    # [CREAM]
+    if cp2.has_section(cream_sec) and cp2.has_option(cream_sec, 'enabled'):
+        __write_config(cream_sec, 'enabled', cream, 'enabled')
+
     # [Misc Services]
     glexec_enabled = False
     if cp2.has_section(misc_sec) and cp2.has_option(misc_sec, 'glexec_location'):
@@ -277,6 +286,11 @@ def configOsg(cp):
         if gLexecLocation.upper() != 'UNAVAILABLE':
             glexec_enabled = True
     cp.set(site, 'glexec_enabled', str(glexec_enabled))
+
+    # WLCG-specific items
+    __write_config(site_sec, "wlcg_tier", site, "wlcg_tier")
+    __write_config(site_sec, "wlcg_parent", site, "wlcg_parent")
+    __write_config(site_sec, "wlcg_name", site, "wlcg_name")
 
     # [PBS]
     __write_config(pbs_sec, "pbs_location", pbs, "pbs_path")
@@ -333,9 +347,15 @@ def configOsg(cp):
         cp2.set(gip_sec, "simple_cesebind", "False")
         __write_config(gip_sec, "simple_cesebind", cesebind, "simple")
 
+    try:
+        se_only = cp2.get(gip_sec, "se_only")
+    except:
+        if gip_sec not in cp2.sections():
+            cp2.add_section(gip_sec)
+        cp2.set(gip_sec, "se_only", "True")
+    
     # Try to auto-detect the batch manager.  If all are disabled or missing, 
-    # then this is an SE only installation
-    cp2.set(gip_sec, "se_only", "True")
+    # then this is probably an SE only installation
     mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge'}
     for section, gip_name in mappings.items():
         if cp_getBoolean(cp2, section, 'enabled', False):
@@ -613,7 +633,12 @@ def configSEs(cp, cp2):
                     allowed_vos = cp_get(cp, section, option, "")
                     if len(allowed_vos) > 0:
                         cp2.set(dcache_sec, option, allowed_vos)
-
+                # Add in the allowed_vos option and value so that the 
+                # space_calculator module can see them if set
+                allowed_vos = cp_get(cp, section, "allowed_vos", "")
+                if len(allowed_vos) > 0:
+                     cp2.set(dcache_sec, "allowed_vos", allowed_vos)
+                
             # Handle allowed VO's for bestman
             # Yet to be implemented
 

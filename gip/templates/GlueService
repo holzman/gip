@@ -13,9 +13,9 @@ GlueServiceAccessPointURL: %(url)s
 GlueServiceStatus: %(status)s
 GlueServiceStatusInfo: %(statusInfo)s
 GlueServiceWSDL: %(wsdl)s
-GlueServiceSemantics: UNDEFINED
+GlueServiceSemantics: %(semantics)s
 GlueServiceStartTime: %(startTime)s
-GlueServiceOwner: OSG
+GlueServiceOwner: OSG%(owner)s
 %(acbr)s
 GlueForeignKey: GlueSiteUniqueID=%(siteID)s
 GlueSchemaVersionMajor: 1

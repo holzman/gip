@@ -9,4 +9,4 @@ pbs = 'pbs'
 condor = 'condor'
 sge = 'sge'
 lsf = 'lsf'
-
+cream = 'cream'

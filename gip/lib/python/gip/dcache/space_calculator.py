@@ -484,10 +484,12 @@ def getAllowedVOs(cp, space, return_default=True):
     """
     allowed_vos = cp_get(cp, "dcache", "space_%s_vos" % space, None)
     if not allowed_vos:
-        if return_default:
-            allowed_vos = cp_get(cp, "dcache", "default_policy", "*")
-        else:
-            raise Exception("No manaul access controls for %s." % space)
+        allowed_vos = cp_get(cp, "dcache", "allowed_vos", None)
+        if not allowed_vos:
+            if return_default:
+                allowed_vos = cp_get(cp, "dcache", "default_policy", "*")
+            else:
+                raise Exception("No manual access controls for %s." % space)
     allowed_vos = [i.strip() for i in allowed_vos.split(',') if i.strip()]
     if '*' in allowed_vos:
         for vo in voListStorage(cp):

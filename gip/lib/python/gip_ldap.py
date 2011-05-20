@@ -157,7 +157,12 @@ class LdapData:
             output += ' - %s: %s\n' % (key, val)
         return output
 
-    def __eq__(ldif1, ldif2):
+    def __ne__(self, other):
+        return not self.__eq__(other)
+    
+    def __eq__(self, other):
+        ldif1 = self
+        ldif2 = other
         if not compareDN(ldif1, ldif2):
             return False
         if not compareObjectClass(ldif1, ldif2):

@@ -13,6 +13,8 @@ from pbs_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
 from gip_sections import ce
 from gip_storage import getDefaultSE
+from gip_batch import buildCEUniqueID, getGramVersion, getCEImpl, getPort, \
+     buildContactString, getHTPCInfo
 
 log = getLogger("GIP.PBS")
 
@@ -20,6 +22,7 @@ def print_CE(cp):
     pbsVersion = getLrmsInfo(cp)
     queueInfo = getQueueInfo(cp)
     totalCpu, freeCpu, queueCpus = parseNodes(cp, pbsVersion)
+    log.debug("totalCpu, freeCpu, queueCPus: %s %s %s" % (totalCpu, freeCpu, queueCpus))
     ce_name = cp_get(cp, ce, "name", "UNKNOWN_CE")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
     try:
@@ -33,16 +36,18 @@ def print_CE(cp):
             continue
         info["lrmsVersion"] = pbsVersion
         info["job_manager"] = "pbs"
-        if info["wait"] > 0:
-            info["free_slots"] = 0
-        else:
-            if queue in queueCpus:
-                info["free_slots"] = queueCpus[queue]
-            else:
-                info["free_slots"] = freeCpu
+
+        # if no jobs are waiting in the queue, set the number of free slots
+        # to (job_slots - running), or the total number of free slots on the cluster,
+        # whichever is less.
+
         info["queue"] = queue
         info["ceName"] = ce_name
-        unique_id = '%s:2119/jobmanager-pbs-%s' % (ce_name, queue)
+
+        unique_id = buildCEUniqueID(cp, ce_name, 'pbs', queue)
+        ceImpl, ceImplVersion = getCEImpl(cp)
+	port = getPort(cp)
+
         info['ceUniqueID'] = unique_id
         if "job_slots" not in info:
             info["job_slots"] = totalCpu
@@ -53,6 +58,16 @@ def print_CE(cp):
         if "max_wall" not in info:
             info["max_wall"] = 1440
 
+        
+        info["free_slots"] = 0
+        if info["wait"] == 0:
+            freeSlots = info["job_slots"] - info["running"]
+            if freeSlots > 0:
+                info["free_slots"] =  min(freeSlots, freeCpu)
+
+        log.debug("queue info: %s %s" % (queue, info))
+
+
         ert, wrt = responseTimes(cp, info.get("running", 0),
             info.get("wait", 0), max_job_time=info["max_wall"])
 
@@ -61,12 +76,10 @@ def print_CE(cp):
         info['wrt'] = wrt
         info['hostingCluster'] = cp_get(cp, ce, 'hosting_cluster', ce_name)
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
-        info['ceImpl'] = 'Globus'
-        info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')
+        info['ceImpl'] = ceImpl
+        info['ceImplVersion'] = ceImplVersion
 
-        contact_string = cp_get(cp, "pbs", 'job_contact', unique_id)
-        if contact_string.endswith("jobmanager-pbs"):
-            contact_string += "-%s" % queue
+	contact_string = buildContactString(cp, 'pbs', queue, unique_id, log)
 
         info['contact_string'] = contact_string
         info['app_dir'] = cp_get(cp, 'osg_dirs', 'app', "/UNKNOWN_APP")
@@ -80,7 +93,6 @@ def print_CE(cp):
         else:
             info['max_total'] = info['max_waiting'] + info['max_running']
             info['free_slots'] = min(info['free_slots'], info['max_total'])
-        info['max_slots'] = 1
 
         # Enforce invariants:
         # max_total <= max_running
@@ -105,17 +117,27 @@ def print_CE(cp):
             continue
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
-        info['gramVersion'] = '2.0'
-        info['port'] = 2119
+        gramVersion = getGramVersion(cp)
+
+        info['gramVersion'] = gramVersion
+        info['port'] = port
         info['waiting'] = info['wait']
         info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)
         info['clusterUniqueID'] = getClusterID(cp)
 
         extraCapabilities = ''
-        if cp_getBoolean('site', 'glexec_enabled', False):
+        if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
             extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
+
+        htpcRSL, maxSlots = getHTPCInfo(cp, 'pbs', queue, log)
+        info['max_slots'] = maxSlots
+        
+        if maxSlots > 1:
+            extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: htpc'
+
         info['extraCapabilities'] = extraCapabilities
-                                       
+        info['htpc'] = htpcRSL
+
         print CE % info
     return queueInfo, totalCpu, freeCpu, queueCpus
 
@@ -128,8 +150,10 @@ def print_VOViewLocal(queue_info, cp):
     for vo, queue in vo_queues:
         vo_info = queue_jobs.get(queue, {})
         info2 = vo_info.get(vo, {})
-        ce_unique_id = '%s:2119/jobmanager-pbs-%s' % (ce_name, queue)
 
+	port = getPort(cp)
+        ce_unique_id = buildCEUniqueID(cp, ce_name, 'pbs', queue)
+        
         my_queue_info = queue_info.setdefault(queue, {})
         ert, wrt = responseTimes(cp, info2.get("running", 0),
             info2.get("wait", 0),

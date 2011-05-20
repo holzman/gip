@@ -9,6 +9,7 @@ import os
 
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
+from gip_testing import runCommand
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     printTemplate, cp_get, cp_getInt, responseTimes, cp_getBoolean
 from gip_cluster import getClusterID
@@ -16,6 +17,8 @@ from lsf_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
 from gip_sections import ce
 from gip_storage import getDefaultSE
+from gip_batch import buildCEUniqueID, getGramVersion, getCEImpl, getPort, \
+     buildContactString, getHTPCInfo
 
 log = getLogger("GIP.LSF")
 
@@ -27,12 +30,15 @@ def print_CE(cp):
         lsfVersion = getLrmsInfo(cp)
     except:
         lsfVersion = 'Unknown'
+
+    log.debug('Using LSF version %s' % lsfVersion)    
     queueInfo = getQueueInfo(cp)
     try:
         totalCpu, freeCpu, queueCpus = parseNodes(queueInfo, cp)
     except:
         #raise
         totalCpu, freeCpu, queueCpus = 0, 0, {}
+    log.debug('Total, Free CPU: (%s, %s)' % (totalCpu, freeCpu))
     ce_name = cp.get(ce, "name")
     CE = getTemplate("GlueCE", "GlueCEUniqueID")
     try:
@@ -44,6 +50,7 @@ def print_CE(cp):
     for queue, info in queueInfo.items():
         if queue in excludeQueues:
             continue
+        log.debug('Processing queue %s' % queue)
         if 'running' not in info:
             info['running'] = 0
         if 'status' not in info:
@@ -53,19 +60,21 @@ def print_CE(cp):
             info['total'] = 0
         info["lrmsVersion"] = lsfVersion
         info["job_manager"] = "lsf"
-        if info.get("wait", 0) > 0:
+        if int(info.get("wait", 0)) > 0:
             info["free_slots"] = 0
         else:
-            if queue in queueCpus:
-                info["free_slots"] = queueCpus[queue]
+            if queue in queueCpus and 'max' in queueCpus[queue] and 'njobs' in queueCpus[queue]:
+                info["free_slots"] = queueCpus[queue]['max'] - queueCpus[queue]['njobs']
             else:
                 info["free_slots"] = freeCpu
         info["queue"] = queue
         info["ceName"] = ce_name
-        unique_id = '%s:2119/jobmanager-lsf-%s' % (ce_name, queue)
+
+        unique_id = buildCEUniqueID(cp, ce_name, 'lsf', queue)        
         info['ceUniqueID'] = unique_id
         if "job_slots" not in info:
             if queue in queueCpus and 'max' in queueCpus[queue]:
+                log.debug('queue %s, info is %s' % (queue, queueCpus[queue]))
                 info['job_slots'] = queueCpus[queue]['max']
             else:
                 info["job_slots"] = totalCpu
@@ -77,27 +86,27 @@ def print_CE(cp):
             info['max_running'] = 999999
         if "max_wall" not in info:
             info["max_wall"] = 1440
+        info["max_wall"] = int(info["max_wall"]) # glue proscribes ints 
         info["job_slots"] = min(totalCpu, info["job_slots"])
 
         ert, wrt = responseTimes(cp, info["running"], info["wait"],
             max_job_time=info["max_wall"])
 
-        contact_string = cp_get(cp, "lsf", 'job_contact', unique_id)
-        if contact_string.endswith("jobmanager-lsf"):
-            contact_string += "-%s" % queue
+	contact_string = buildContactString(cp, 'lsf', queue, unique_id, log)
+
+        ceImpl, ceImplVersion = getCEImpl(cp)
 
         info['ert'] = ert
         info['wrt'] = wrt
         info['hostingCluster'] = cp_get(cp, ce, 'hosting_cluster', ce_name)
         info['hostName'] = cp_get(cp, ce, 'host_name', ce_name)
-        info['ceImpl'] = 'Globus'
-        info['ceImplVersion'] = cp_get(cp, ce, 'globus_version', '4.0.6')
+        info['ceImpl'] = ceImpl
+        info['ceImplVersion'] = ceImplVersion
         info['contact_string'] = contact_string
         info['app_dir'] = cp.get('osg_dirs', 'app')
         info['data_dir'] = cp.get('osg_dirs', 'data')
         info['default_se'] = getDefaultSE(cp)
         info['max_waiting'] = 999999
-        info['max_slots'] = 1
         #info['max_total'] = info['max_running']
         info['max_total'] = info['max_waiting'] + info['max_running']
         info['assigned'] = info['job_slots']
@@ -112,17 +121,27 @@ def print_CE(cp):
         #print info
         info['acbr'] = acbr[:-1]
         info['bdii'] = cp.get('bdii', 'endpoint')
-        info['gramVersion'] = '2.0'
-        info['port'] = 2119
+        gramVersion = getGramVersion(cp)
+        port = getPort(cp)
+        info['gramVersion'] = gramVersion
+        info['port'] = port
         info['waiting'] = info.get('wait', 0)
         info['referenceSI00'] = gip_cluster.getReferenceSI00(cp)
         info['clusterUniqueID'] = getClusterID(cp)
 
         extraCapabilities = ''
-        if cp_getBoolean('site', 'glexec_enabled', False):
+        if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
             extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
-        info['extraCapabilities'] = extraCapabilities
+
+	htpcRSL, maxSlots = getHTPCInfo(cp, 'lsf', queue, log)
+        info['max_slots'] = maxSlots
+        info['htpc'] = htpcRSL
         
+        if maxSlots > 1:
+	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: htpc'
+            
+        info['extraCapabilities'] = extraCapabilities
+
         printTemplate(CE, info)
     return queueInfo, totalCpu, freeCpu, queueCpus
 
@@ -142,7 +161,8 @@ def print_VOViewLocal(queue_info, cp):
         vo = vo.lower()
         vo_info = queue_jobs.get(queue, {})
         info2 = vo_info.get(vo, {})
-        ce_unique_id = '%s:2119/jobmanager-lsf-%s' % (ce_name, queue)
+
+        ce_unique_id = buildCEUniqueID(cp, ce_name, 'lsf', queue)
 
         my_queue_info = queue_info.setdefault(queue, {})
         if "max_wall" not in my_queue_info:
@@ -179,15 +199,37 @@ def print_VOViewLocal(queue_info, cp):
         info['total'] = info['waiting'] + info['running']
         printTemplate(VOView, info)
 
+def bootstrapLSF(cp):
+    """
+    If it exists, source the profile.lsf file
+    """
+    lsf_profile = cp_get(cp, "lsf", "lsf_profile", "/lsf/conf/profile.lsf")
+    if not os.path.exists(lsf_profile):
+        log.warning("Could not find the LSF profile file; looked in %s" %
+                    lsf_profile)
+        return
+
+    log.debug('Executing lsf profile from %s' % lsf_profile)
+    cmd = "/bin/sh -c 'source %s; /usr/bin/env'" % lsf_profile
+    output = runCommand(cmd)
+    for line in output.readlines():
+        line = line.strip()
+        info = line.split('=', 2)
+        if len(info) != 2:
+            continue
+        os.environ[info[0]] = info[1]
+    
 def main():
     """
     Wrapper for printing out the LSF-related GLUE objects.
     """
+    log.debug("Beginning LSF provider")
     try:
         cp = config()
-        lsf_path = cp_get(cp, "lsf", "lsf_path", None)
+        lsf_path = cp_get(cp, "lsf", "lsf_location", None)
         if lsf_path:
             addToPath(lsf_path)
+        bootstrapLSF(cp)
         #vo_map = VoMapper(cp)
         queueInfo, _, _, _ = print_CE(cp)
         print_VOViewLocal(queueInfo, cp)

@@ -456,6 +456,12 @@ def list_modules(dirname):
              continue
          if file.startswith('.'):
              continue
+
+         # ignore temporary files         
+         if file.endswith('~') or \
+                (file.startswith('#') and file.endswith('#')):
+             continue
+
          mod_info = {}
          mod_info['name'] = file
          try:

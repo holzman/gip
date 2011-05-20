@@ -202,7 +202,7 @@ def print_single_VOInfo(voinfo, se, cp): #pylint: disable-msg=W0613
     voinfoTemplate = getTemplate('GlueSE', 'GlueVOInfoLocalID')
     voinfo.setdefault('acbr', 'GlueVOInfoAccessControlBaseRule: UNKNOWN')
     voinfo.setdefault('path', '/UNKNOWN')
-    voinfo.setdefault('tag', 'Not A Space Reservation')
+    voinfo.setdefault('tag', '__GIP_DELETEME')
     voinfo.setdefault('seUniqueID', se.getUniqueID())
     printTemplate(voinfoTemplate, voinfo)
 
@@ -326,6 +326,10 @@ def print_SE(se, cp):
 
     # Try to guess the appropriate architecture
     arch = se.getSEArch()
+    
+    # port number was hard coded to 8443, get from cp now
+    # NOTE: this field is deprecated by the schema so it should not be used 
+    port = se.getPort()
 
     # Fill in the information for the template
     info = { 'seName'         : se.getName(),
@@ -333,7 +337,7 @@ def print_SE(se, cp):
              'implementation' : implementation,
              "version"        : version,
              "status"         : status,
-             "port"           : 8443,
+             "port"           : port,
              "onlineTotal"    : total,
              "nearlineTotal"  : nt,
              "onlineUsed"     : used,
@@ -400,6 +404,8 @@ def print_single_SRM(info, se, cp):
     info['protocolType'] = 'SRM'
     info['serviceType'] = 'SRM'
     info['capability'] = 'control'
+    info['semantics'] = 'UNDEFINED'
+    info['owner'] = ''
     if version.find('2') >= 0:
         info['version'] = "2.2.0"
         info['endpoint'] = endpoint

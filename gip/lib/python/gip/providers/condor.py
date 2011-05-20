@@ -20,7 +20,10 @@ from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes
 from gip_cluster import getClusterID
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
+from condor_common import defaultGroupIsExcluded
 from gip_storage import getDefaultSE
+from gip_batch import buildCEUniqueID, getGramVersion, getCEImpl, getPort, \
+     buildContactString, getHTPCInfo
 
 from gip_sections import ce, se
 
@@ -126,12 +129,13 @@ def print_CE(cp):
     #acbr = '\n'.join(['GlueCEAccessControlBaseRule: VO:%s' % i for i in \
     #    defaultVoList])
     #groupInfo['default']['acbr'] = acbr
-    if not groupInfo['default']['vos']:
-        del groupInfo['default']
-
+    if not groupInfo['default']['vos'] or defaultGroupIsExcluded(cp):
+        if groupInfo.has_key('default'):
+            del groupInfo['default']
+        
     for group, ginfo in groupInfo.items():
         jinfo = jobs_info.get(group, {})
-        ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)
+	ce_unique_id = buildCEUniqueID(cp, ce_name, 'condor', group)	
         vos = ginfo['vos']
         if not isinstance(vos, sets.Set):
             vos = sets.Set(vos)
@@ -188,25 +192,32 @@ def print_CE(cp):
             max_job_time=max_wall*60)
 
         referenceSI00 = gip_cluster.getReferenceSI00(cp)
-        contact_string = cp_get(cp, "condor", 'job_contact', ce_unique_id)
-        if contact_string.endswith("jobmanager-condor"):
-            contact_string += "-%s" % group
 
+	contact_string = buildContactString(cp, 'condor', group, ce_unique_id, log)
+	htpcRSL, maxSlots = getHTPCInfo(cp, 'condor', group, log)
+		
         extraCapabilities = ''
-	if cp_getBoolean('site', 'glexec_enabled', False):
+	if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
 	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
-	
+
+	if maxSlots > 1:
+	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: htpc'
+		
+	gramVersion = getGramVersion(cp)
+	ceImpl, ceImplVersion = getCEImpl(cp)
+	port = getPort(cp)
+
         # Build all the GLUE CE entity information.
         info = { \
             "ceUniqueID"     : ce_unique_id,
             'contact_string' : contact_string,
-            "ceImpl"         : "Globus",
-            "ceImplVersion"  : cp_get(cp, ce, 'globus_version', '4.0.6'),
+            "ceImpl"         : ceImpl,
+            "ceImplVersion"  : ceImplVersion,
             "hostingCluster" : cp_get(cp, ce, 'hosting_cluster', ce_name),
             "hostName"       : cp_get(cp, ce, "host_name", ce_name),
-            "gramVersion"    : '2.0',
+            "gramVersion"    : gramVersion,
             "lrmsType"       : "condor",
-            "port"           : 2119,
+            "port"           : port,
             "running"        : myrunning,
             "idle"           : myidle,
             "held"           : myheld,
@@ -225,7 +236,7 @@ def print_CE(cp):
             "total"          : myrunning + myidle + myheld,
             "priority"       : ginfo.get('prio', 0),
             "assigned"       : assigned,
-            "max_slots"      : 1,
+            "max_slots"      : maxSlots,
             "preemption"     : str(int(cp_getBoolean(cp, "condor", \
                 "preemption", False))),
             "max_running"    : max_running,
@@ -240,7 +251,8 @@ def print_CE(cp):
             "referenceSI00"  : referenceSI00,
             "clusterUniqueID": getClusterID(cp),
             "bdii"           : cp_get(cp, "bdii", "endpoint", "Unknown"),
-	    'extraCapabilities' : extraCapabilities
+	    'extraCapabilities' : extraCapabilities,
+	    "htpc"           : htpcRSL
         }
         printTemplate(ce_template, info)
     return total_nodes, claimed, unclaimed
@@ -293,6 +305,10 @@ def print_VOViewLocal(cp):
         log.warning("More assigned nodes (%i) than actual nodes (%i)!" % \
             (total_assigned, total_nodes))
 
+    if defaultGroupIsExcluded(cp):
+        if groupInfo.has_key('default'):
+            del groupInfo['default']
+        
     for group in groupInfo:
         jinfo = jobs_info.get(group, {})
         vos = sets.Set(groupInfo[group].get('vos', [group]))
@@ -310,7 +326,8 @@ def print_VOViewLocal(cp):
             assigned = total_nodes
 
         log.debug("All VOs for %s: %s" % (group, ", ".join(vos)))
-        ce_unique_id = '%s:2119/jobmanager-condor-%s' % (ce_name, group)    
+	ce_unique_id = buildCEUniqueID(cp, ce_name, 'condor', group)
+
         max_wall = cp_getInt(cp, "condor", "max_wall", 1440)
 
         myrunning = sum([i.get('running', 0) for i in jinfo.values()], 0)

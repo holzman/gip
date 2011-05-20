@@ -18,8 +18,9 @@ queue_info_cmd = "bqueues -l"
 jobs_cmd = "bjobs -u all -r"
 lsfnodes_cmd = "bhosts"
 lsid_cmd = 'lsid'
-bmgroup_r_cmd = 'bmgroup -r'
-bugroup_r_cmd = 'bugroup -r'
+bmgroup_r_cmd = 'bmgroup -r -w'
+bugroup_r_cmd = 'bugroup -r -w'
+lshosts_cmd = 'lshosts -w %s'
 
 def lsfCommand(command, cp):
     """
@@ -34,6 +35,7 @@ def lsfCommand(command, cp):
     if lsfHost.lower() == "none" or lsfHost.lower() == "localhost":
         lsfHost = ""
     cmd = command % {'lsfHost': lsfHost}
+    log.debug('Executing LSF command %s' % cmd)
     fp = runCommand(cmd)
     return fp
 
@@ -265,6 +267,7 @@ def parseNodes(queueInfo, cp):
     freeCpu = 0
     queueCpu = {}
     hostInfo = {}
+    hostListNoMax = []
     for line in lsfCommand(lsfnodes_cmd, cp):
         info = [i.strip() for i in line.split()]
         # Skip any malformed lines
@@ -283,9 +286,32 @@ def parseNodes(queueInfo, cp):
             njobs = int(njobs)
         except:
             njobs = 0
+
+        if max == 0:
+            hostListNoMax.append(host)    
+
         hostInfo[host] = {'max': max, 'njobs': njobs}
+        
+    if hostListNoMax:
+
+        cmd = lshosts_cmd % ' '.join(hostListNoMax)
+        for line in lsfCommand(cmd, cp):
+            info = [i.strip() for i in line.split()]
+            host = info[0]
+            try:
+                max = int(info[4])
+            except:
+                max = 0
+                
+            if host == 'HOST_NAME': continue
+            hostInfo[host]['max'] = max
+
+    for host in hostInfo.keys():
+        max = hostInfo[host]['max']
+        njobs = hostInfo[host]['njobs']
         totalCpu += max
         freeCpu += max-njobs
+
     groupInfo = {}
     for line in lsfCommand(bmgroup_r_cmd, cp):
         info = line.strip().split()
@@ -293,11 +319,15 @@ def parseNodes(queueInfo, cp):
     for queue, qInfo in queueInfo.items():
         max, njobs = 0, 0
         for group in qInfo['HOSTS'].split():
-            for host in groupInfo.get(group[:-1], []):
+            group = group.split('+')[0] # sometimes +INT gets appended to hosts
+            group = group.strip('/') # and some have a slash at the end
+            for host in groupInfo.get(group, []):
                 hInfo = hostInfo.get(host, {})
                 max += hInfo.get('max', 0)
                 njobs += hInfo.get('njobs', 0)
         queueCpu[queue] = {'max': max, 'njobs': njobs}
+    log.debug('totalCpu, freeCpu, queueCpu: (%s, %s, %s)' % (totalCpu, freeCpu, queueCpu))
+              
     return totalCpu, freeCpu, queueCpu
 
 def getQueueList(cp):
@@ -323,10 +353,11 @@ def getQueueList(cp):
         log.info("The RVF lists the following queues: %s." % ', '.join( \
             rvf_queue_list))
     for queue in getQueueInfo(cp):
-        if queue not in queue_exclude:
-            queues.append(queue)
         if rvf_queue_list and queue not in rvf_queue_list:
             continue
+        if queue not in queue_exclude:
+            queues.append(queue)
+
     return queues
 
 def getVoQueues(queueInfo, cp):

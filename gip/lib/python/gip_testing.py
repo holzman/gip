@@ -15,6 +15,11 @@ import time
 import urlparse
 import GipUnittest
 import ConfigParser
+import popen2
+import select
+import cStringIO
+
+from gip_common import getLogger
 
 from gip_common import cp_get, cp_getBoolean, pathFormatter, parseOpts, config
 from gip_common import strContains
@@ -58,7 +63,47 @@ def runCommand(cmd, force_command=False):
         return open(os.path.expandvars("$VDT_LOCATION/test/command_output/%s" \
             % filename))
     else:
-        return os.popen(cmd)
+        # Modified from
+        # http://code.activestate.com/recipes/52296-capturing-the-output-and-error-streams-from-a-unix/
+        # (maybe someday we can use the subprocess module)
+        
+        child = popen2.Popen3(cmd, capturestderr=True)
+
+        stdout = child.fromchild
+        stderr = child.childerr
+
+        outfd = stdout.fileno()
+        errfd = stderr.fileno()
+
+        outeof = erreof = 0
+        outdata = cStringIO.StringIO()
+        errdata = cStringIO.StringIO()
+
+        fdlist = [outfd, errfd]
+        while fdlist:
+            ready = select.select(fdlist, [], [])
+            if outfd in ready[0]:
+                outchunk = stdout.read()
+                if outchunk == '':
+                    fdlist.remove(outfd)
+                else:
+                    outdata.write(outchunk)
+            if errfd in ready[0]:
+                errchunk = stderr.read()
+                if errchunk == '':
+                    fdlist.remove(errfd)
+                else:
+                    errdata.write(errchunk)
+
+        exitStatus = child.wait()
+        outdata.seek(0)
+        errdata.seek(0)
+        
+        if exitStatus:
+            log = getLogger("GIP.common")
+            log.info('Command %s exited with %d, stderr: %s' % (cmd, os.WEXITSTATUS(exitStatus), errdata.readlines()))
+
+        return outdata
 
 def generateTests(cp, cls, args=[]):
     """

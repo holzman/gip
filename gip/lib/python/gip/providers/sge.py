@@ -10,7 +10,8 @@ from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, prin
 from gip_cluster import getClusterID
 from gip_sections import ce
 from gip_storage import getDefaultSE
-
+from gip_batch import buildCEUniqueID, getGramVersion, getCEImpl, getPort, \
+     buildContactString, getHTPCInfo
 from sge_common import getQueueInfo, getJobsInfo, getLrmsInfo, getVoQueues, \
     getQueueList
 
@@ -32,7 +33,7 @@ def print_CE(cp):
         if queue['name'] == 'waiting':
             continue
 
-        unique_id = '%s:2119/jobmanager-sge-%s' % (ce_name, queue['name'])
+        unique_id = buildCEUniqueID(cp, ce_name, 'sge', queue['name'])
 
         acbr = ''
         for vo, queue2 in vo_queues:
@@ -40,20 +41,25 @@ def print_CE(cp):
                 acbr += 'GlueCEAccessControlBaseRule: VO:%s\n' % vo
 
         referenceSI00 = gip_cluster.getReferenceSI00(cp)
-
-        contact_string = cp_get(cp, "sge", 'job_contact', unique_id)
-        if contact_string.endswith("jobmanager-sge"):
-            contact_string += "-%s" % queue['name']
+        contact_string = buildContactString(cp, 'sge', queue['name'], unique_id, log)
 
         extraCapabilities = ''
-	if cp_getBoolean('site', 'glexec_enabled', False):
+	if cp_getBoolean(cp, 'site', 'glexec_enabled', False):
 	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: glexec'
+
+	htpcRSL, maxSlots = getHTPCInfo(cp, 'sge', queue, log)
+        if maxSlots > 1:
+	    extraCapabilities = extraCapabilities + '\n' + 'GlueCECapability: htpc'
+            
+        gramVersion = getGramVersion(cp)
+        port = getPort(cp)
+        ceImpl, ceImplVersion = getCEImpl(cp)
 
         info = { \
             "ceUniqueID" : unique_id,
             "ceName" : ce_name,
-            "ceImpl" : 'Globus',
-            "ceImplVersion" : cp_get(cp, ce, 'globus_version', '4.0.6'),
+            "ceImpl" : ceImpl,
+            "ceImplVersion" : ceImplVersion,
             "clusterUniqueID" : getClusterID(cp),
             "queue" : queue['name'],
             "priority" : queue['priority'],
@@ -76,17 +82,18 @@ def print_CE(cp):
             "max_running" : queue["slots_total"],
             "max_wall" : queue["max_wall"],
             "max_waiting" : default_max_waiting,
-            "max_slots" : 1,
+            "max_slots" : maxSlots,
             "max_total" : default_max_waiting + queue["slots_total"],
             "assigned" : queue["slots_used"],
             "preemption" : cp_get(cp, 'sge', 'preemption', '0'),
             "acbr" : acbr[:-1],
             "bdii": cp.get('bdii', 'endpoint'),
-            "gramVersion" : '2.0',
-            "port" : 2119,
+            "gramVersion" : gramVersion,
+            "port" : port,
             "waiting" : queue['waiting'],
             "referenceSI00": referenceSI00,
-            'extraCapabilities' : extraCapabilities
+            'extraCapabilities' : extraCapabilities,
+            "htpc" : htpcRSL
         }
         printTemplate(ce_template, info)
     return queueInfo
@@ -98,7 +105,7 @@ def print_VOViewLocal(cp):
     vo_queues = getVoQueues(cp)
     VOView = getTemplate("GlueCE", "GlueVOViewLocalID")
     for vo, queue in vo_queues:
-        ce_unique_id = '%s:2119/jobmanager-sge-%s' % (ce_name, queue)
+        ce_unique_id = buildCEUniqueID(cp, ce_name, 'sge', queue)
         info = {
             'ceUniqueID'  : ce_unique_id,
             'voLocalID'   : vo,

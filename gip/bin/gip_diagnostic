@@ -1,0 +1,767 @@
+#!/usr/bin/python
+
+import os
+import grp
+import pwd
+import sys
+import stat
+import time
+import fcntl
+import popen2
+import select
+import tarfile
+import urllib2
+import cStringIO
+import traceback
+
+from xml.dom.minidom import parse
+
+if sys.version_info[0] <= 2 and sys.version_info[1] <= 2:
+    print "GIP diagnostic tool not compatible with Python 2.2 or lower."
+    sys.exit(1)
+
+MYOSG_URL = 'https://myosg.grid.iu.edu/rgsummary/xml?' \
+            'datasource=summary&' \
+            'summary_attrs_showfqdn=on&' \
+            'all_resources=on'
+RUNNING_USERNAME = pwd.getpwuid(os.getuid())[0]
+
+import optparse
+
+class OutputManager:
+
+    def __init__(self):
+        self.strings = {}
+        self.files = []
+
+    def add_output(self, name, output):
+        self.strings[name] = output
+
+    def add_file(self, filename, dirname=None):
+        if os.path.exists(filename):
+            self.files.append((filename, dirname))
+        else:
+            print "ERROR: File %s does not exist." % filename
+
+    def write_output(self, fd):
+        tf = tarfile.open(fileobj=fd, mode="w:gz", name="gip.tar.gz")
+        try:
+            for file in self.files:
+                try:
+                    file, dirname = file
+                    if dirname:
+                        tf.add(file, arcname=os.path.join(dirname, os.path.split(file)[-1]))
+                    else:
+                        tf.add(file)
+                except Exception, e:
+                    print >> sys.stderr, e
+            for filename, string in self.strings.items():
+                try:
+                    fd_str = cStringIO.StringIO(string)
+                    fd_str.seek(0)
+                    ti = tarfile.TarInfo()
+                    ti.size = len(string)
+                    ti.name = filename
+                    ti.type = tarfile.REGTYPE
+                    ti.mtime = time.time()
+                    tf.addfile(ti, fd_str)
+                except Exception, e:
+                    print >> sys.stderr, e
+        except Exception, e:
+            print >> sys.stderr, e
+
+        tf.close()
+
+class WritableObject:
+    def __init__(self):
+        self.content = []
+        
+    def write(self, string):
+        self.content.append(str(string))
+        
+    def readlines(self):
+        return self.content
+    
+    def read(self):
+        return ''.join(self.content)
+
+def parse_myosg(opts):
+    fd = urllib2.urlopen(MYOSG_URL)
+    dom = parse(fd)
+    matching_resources = {}
+    match_str = opts.site.lower()
+    for resource_dom in dom.getElementsByTagName("Resource"):
+        try:
+            name = resource_dom.getElementsByTagName("Name")[0].firstChild
+            name = str(name.data)
+        except:
+            continue
+        if name.lower().find(match_str) < 0:
+            continue
+        try:
+            fqdn = resource_dom.getElementsByTagName("FQDN")[0].firstChild
+            fqdn = str(fqdn.data)
+        except:
+            continue
+        matching_resources[name] = fqdn
+    if not matching_resources:
+        print "No resources match name '%s'" % match_str
+        sys.exit(2)
+    if len(matching_resources) > 1:
+        print "Multiple resources match '%s'; please refine your search." % \
+            match_str
+        print "Matching resources:"
+        for site, fqdn in matching_resources.items():
+            print "\t- %s: %s" % (site, fqdn)
+    return matching_resources.values()[0]
+
+def parse_args():
+    parser = optparse.OptionParser()
+    parser.add_option("-f", "--file", dest="filename",
+        default="gip_diagnostic.tar.gz")
+    parser.add_option("-q", "--quiet", dest="talk", action='store_false',
+        default=True)
+    parser.add_option("-r", "--remote", dest="endpoint")
+    parser.add_option("-s", "--site", dest="site", default=None)
+    parser.add_option("-i", "--stream-input", dest="input", default=False)
+    parser.add_option("-l", "--svn-location", dest="svn", default=None)
+
+    opts, _ = parser.parse_args()
+
+    if opts.site:
+        opts.endpoint = parse_myosg(opts)
+    
+    return opts
+
+def cp_get(cp, section, option, default):
+    """
+    Helper function for ConfigParser objects which allows setting the default.
+
+    ConfigParser objects throw an exception if one tries to access an option
+    which does not exist; this catches the exception and returns the default
+    value instead.
+
+    @param cp: ConfigParser object
+    @param section: Section of config parser to read
+    @param option: Option in section to retrieve
+    @param default: Default value if the section/option is not present.
+    @returns: Value stored in CP for section/option, or default if it is not
+        present.
+    """
+    try:
+        return cp.get(section, option)
+    except:
+        return default
+
+def makeNonBlocking(fd):
+    """
+    _makeNonBlocking_
+
+    Make the file descriptor provided non-blocking
+
+    Implementation provided by CMS's ProdAgent
+    """
+    fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+    try:
+        fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NDELAY)
+    except AttributeError:
+        fcntl.fcntl(fd, fcntl.F_SETFL, fl | fcntl.FNDELAY)
+    
+
+def pull_remote(command, fdout=sys.stdout, fderr=sys.stderr):
+    """
+    _pull_remote_
+
+    Run the command; write the output to file descriptor fd and echo the stderr
+
+    Returns the exitCode
+    
+    """
+    child = popen2.Popen3(command, 1) # capture stdout and stderr from command
+    child.tochild.close()             # don't need to talk to child
+    outfile = child.fromchild 
+    outfd = outfile.fileno()
+    errfile = child.childerr
+    errfd = errfile.fileno()
+    makeNonBlocking(outfd)            # don't deadlock!
+    makeNonBlocking(errfd)
+    #outdata = errdata = ''
+    outeof = erreof = 0
+    while 1:
+        ready = select.select([outfd,errfd],[],[]) # wait for input
+        if outfd in ready[0]:
+            try:
+                outchunk = outfile.read()
+            except Exception, ex:
+                msg = "Unable to read stdout chunk... skipping"
+                print msg
+                outchunk = ''
+            if outchunk == '': outeof = 1
+            fdout.write(outchunk)
+        if errfd in ready[0]:
+            try:
+                errchunk = errfile.read()
+            except Exception, ex:
+                msg = "Unable to read stderr chunk... skipping"
+                print msg, str(ex)
+                errchunk = ""
+            if errchunk == '': erreof = 1
+            fderr.write(errchunk)
+        if outeof and erreof: break
+        select.select([],[],[],.1) # give a little time for buffers to fill
+        
+    err = child.wait()
+    if os.WIFEXITED(err):
+        return os.WEXITSTATUS(err)
+    elif os.WIFSIGNALED(err):
+        return os.WTERMSIG(err)
+    elif os.WIFSTOPPED(err):
+        return os.WSTOPSIG(err)
+    return err
+
+def local_script_path():
+    script_name = sys.argv[0]
+    #if script_name.startswith("./"):
+    #    script_name = "." + script_name
+    #abs_path = os.path.join(sys.path[0], script_name)
+    #return abs_path
+    return script_name
+
+def configContents(cp, stream=sys.stderr):
+    for section in cp.sections():
+        print >> stream, "[%s]" % section
+        for option in cp.options(section):
+            msg = "   %-25s : %s" % (option, cp.get(section, option))
+            print >> stream, msg
+        print >> stream, " "
+
+def gip_check_env(use_custom_gip=False):
+    """
+    Check environment for $GIP_LOCATION or $VDT_LOCATION
+    """
+    if 'OSG_LOCATION' in os.environ and 'VDT_LOCATION' not in os.environ:
+        os.environ['VDT_LOCATION'] = os.environ['OSG_LOCATION']
+    
+    output = "Checking for $GIP_LOCATION... "
+    if 'GIP_LOCATION' in os.environ:
+        output += "OK\n"
+        output = "$VDT_LOCATION... %s\n" % os.environ['VDT_LOCATION']
+
+        return output
+    else:
+        if 'VDT_LOCATION' in os.environ:
+            output = "$VDT_LOCATION... %s\n" % os.environ['VDT_LOCATION']
+            if use_custom_gip:
+                # extract the tarball
+                os.environ['GIP_LOCATION']  = os.path.join(os.getcwd(), 'osg_gip/gip')
+                output += "$GIP_LOCATION is set to %s OK\n" % os.environ['GIP_LOCATION']
+                gip_write_conf()
+                output += "$GIP_LOCATION/etc/gip.conf has been written OK\n"
+            else:
+                output += "Assuming to be $VDT_LOCATION/gip; OK\n"
+                os.environ['GIP_LOCATION']  = os.path.join(os.environ['VDT_LOCATION'], 'gip')
+            output += "OK\n"
+            return output
+        else:
+            output += "FAIL\n"
+            output += "GIP_LOCATION and VDT_LOCATION not set.\n"
+            return output
+        
+def gip_write_conf():
+    config_ini = os.path.join(os.environ['VDT_LOCATION'], 'osg/etc') + "/config.ini"
+    conf_contents = """[gip]
+osg_config=%s
+""" % config_ini
+
+    gip_conf = os.path.join(os.environ['GIP_LOCATION'], 'etc') + "/gip.conf"
+    fd = open(gip_conf, "w")
+    fd.write(conf_contents)
+    fd.close() 
+    
+def gip_check_config():
+    """
+    Check that GIP can read in config.
+    """
+    output = 'Checking configuration can be loaded... '
+    if 'GIP_LOCATION' not in os.environ:
+        output += "FAIL: $GIP_LOCATION missing."
+        return output, None
+    gip_loc = os.environ['GIP_LOCATION']
+    inc = os.path.join(gip_loc, 'lib', 'python')
+    if inc not in sys.path:
+        sys.path.append(inc)
+    try:
+        gip_common = __import__('gip_common')
+    except Exception, e:
+        print >> sys.stderr, str(e)
+        output += "FAIL: Unable to import gip_common"
+        return output, None
+    old_sys_argv = sys.argv
+    sys.argv = [sys.argv[0]]
+    try:
+        try:
+            cp = gip_common.config()
+        except Exception, e:
+            print >> sys.stderr, str(e)
+            output += "FAIL: Unable to generate config file."
+            return output, None
+    finally:
+        sys.argv = old_sys_argv
+    contents = cStringIO.StringIO()
+    output += "OK\n"
+    configContents(cp, stream=contents)
+    output += contents.getvalue()
+    return output, cp
+
+def can_read(file, user='daemon'):
+    pw = pwd.getpwnam(user)
+    st = os.stat(file)
+    uid = pw.pw_uid
+    if (st.st_mode & stat.S_IRUSR == stat.S_IRUSR) and (uid == st.st_uid):
+        return True
+    elif st.st_mode & stat.S_IROTH == stat.S_IROTH:
+        return True
+    elif st.st_mode & stat.S_IRGRP == stat.S_IRGRP:
+        groups = grp.getgrall()
+        for group in groups:
+            if user in group.gr_mem:
+                return True
+    return False
+
+def can_write(file, user='daemon'):
+    pw = pwd.getpwnam(user)
+    st = os.stat(file)
+    uid = pw.pw_uid
+    if (st.st_mode & stat.S_IWUSR == stat.S_IWUSR) and (uid == st.st_uid):
+        return True
+    elif st.st_mode & stat.S_IWOTH == stat.S_IWOTH:
+        return True
+    elif st.st_mode & stat.S_IWGRP == stat.S_IWGRP:
+        groups = grp.getgrall()
+        for group in groups:
+            if user in group.gr_mem:
+                return True
+    return False
+
+def gip_check_perms(cp):
+    """
+    Check permissions on the log files (should be writeable by daemon).
+    Check permissions on the tmp directory.
+    """
+    output = "File system checks:\n"
+    temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
+        "$GIP_LOCATION/var/tmp"))
+    if os.path.exists(temp_dir):
+        if can_read(temp_dir, RUNNING_USERNAME):
+            output += "Temporary directory %s exists and can be read.\n" % temp_dir
+        else:
+            output += "FAILURE: Temporary directory %s cannot be read.\n" % temp_dir
+        if can_write(temp_dir, RUNNING_USERNAME):
+            output += "Temporary directory %s exists and can be written into by daemon.\n" % temp_dir
+        else:
+            output += "FAILURE: Temporary directory %s cannot be written into by daemon .\n" % temp_dir
+    else:
+        output += "Temporary directory does not exist.\n"
+        return output
+
+    log_dir = os.path.expandvars("$GIP_LOCATION/var/logs")
+    gip_log = os.path.join(log_dir, "gip.log")
+    modules_log = os.path.join(log_dir, "module.log")
+    if os.path.exists(log_dir):
+        if can_write(log_dir, RUNNING_USERNAME):
+            output += "OK: User daemon can write into log directory %s.\n" % log_dir
+    else:
+        output += "FAILURE: GIP logging directory %s does not exist." % log_dir
+        return output
+    if os.path.exists(gip_log):
+        output += "OK: GIP log file %s exists.\n" % gip_log
+        if can_write(gip_log, RUNNING_USERNAME):
+            output += "OK: Daemon can write into GIP log file.\n"
+        else:
+            output += "FAILURE: daemon cannot write into GIP log file.\n"
+    else:
+        output += "WARNING: GIP log file %s does not exist.\n % gip_log"
+    if os.path.exists(modules_log):
+        output += "OK: Modules log file %s exists.\n" % modules_log
+        if can_write(modules_log, RUNNING_USERNAME):
+            output += "OK: daemon can write into modules log.\n"
+        else:
+            output += "FAILURE: daemon cannot write into modules log.\n"
+    else:
+        output += "WARNING: Modules log file %s does not exist.\n" % modules_log
+
+    # Check all our config files (if they exist)
+    add_attributes = os.path.expandvars(cp_get(cp, "gip", "add_attributes", "$GIP_LOCATION/etc/add-attributes.conf"))
+    alter_attributes = os.path.expandvars(cp_get(cp, "gip", "alter_attributes", "$GIP_LOCATION/etc/alter-attributes.conf"))
+    remove_attributes = os.path.expandvars(cp_get(cp, "gip", "remove_attributes", "$GIP_LOCATION/etc/remove-attributes.conf"))
+    if os.path.exists(add_attributes):
+        output += "OK: Add attributes file %s exists.\n" % add_attributes
+        if not can_read(add_attributes, RUNNING_USERNAME):
+            output += "FAILURE: daemon cannot read add attrs file.\n"
+    if os.path.exists(alter_attributes):
+        output += "OK: Alter attrs file %s exists.\n" % alter_attributes
+        if not can_read(alter_attributes, RUNNING_USERNAME):
+            output += "FAILURE: daemon cannot read alterattrs file.\n"
+    if os.path.exists(remove_attributes):
+        output += "OK: Remove attrs file %s exists.\n" % remove_attributes
+        if not can_read(remove_attributes, RUNNING_USERNAME):
+            output += "FAILURE: daemon cannot read remove attrs file.\n"
+
+    return output
+
+def gip_check_temp(cp, outh):
+    """
+    List the contents of the GIP temp directory.
+    Add each file present to the output handler.
+    """
+    temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
+        "$GIP_LOCATION/var/tmp"))
+    if not os.path.exists(temp_dir):
+        return "FAILURE: Temp directory does not exist!"
+    fd = os.popen("ls -lh %s" % temp_dir)
+    output = "Contents of temp directory:\n%s" % fd.read()
+    if fd.close():
+        output += "`ls` operation returned non-zero exit code"
+    try:
+        for file in os.listdir(temp_dir):
+            if file.startswith("."):
+                continue
+            outh.add_file(os.path.join(temp_dir, file), dirname="temp_dir")
+    except Exception, e:
+        print >> sys.stderr, e
+        return output
+    return output
+
+def gip_check_log(cp, outh):
+    """
+    List the contents of the GIP temp directory.
+    Add each file present to the output handler.
+    """
+    log_dir = os.path.expandvars("$GIP_LOCATION/var/logs")
+    if not os.path.exists(log_dir):
+        return "FAILURE: Temp directory does not exist!"
+    fd = os.popen("ls -lh %s" % log_dir)
+    output = "Contents of log directory:\n%s" % fd.read()
+    if fd.close():
+        output += "`ls` operation returned non-zero exit code"
+    try:
+        for file in os.listdir(log_dir):
+            if file.startswith("."):
+                continue
+            outh.add_file(os.path.join(log_dir, file), dirname="log_dir")
+    except Exception, e:
+        print >> sys.stderr, e
+        return output
+    return output
+
+def gip_check_misc(cp, outh):
+    """
+    Add various miscellaneous files to the output handler
+    """
+    add_attributes = os.path.expandvars(cp_get(cp, "gip", \
+        "add_attributes", "$GIP_LOCATION/etc/add-attributes.conf"))
+    alter_attributes = os.path.expandvars(cp_get(cp, "gip", \
+        "alter_attributes", "$GIP_LOCATION/etc/alter-attributes.conf"))
+    remove_attributes = os.path.expandvars(cp_get(cp, "gip", \
+        "remove_attributes", "$GIP_LOCATION/etc/remove-attributes.conf"))
+    config_ini = cp_get(cp, "gip", "osg_config",
+        "$VDT_LOCATION/monitoring/config.ini")
+    config_ini= os.path.expandvars(config_ini)
+    osg_user_vo_map = cp_get(cp, "vo", "user_vo_map",
+        "$VDT_LOCATION/monitoring/osg-user-vo-map.txt")
+    osg_user_vo_map = os.path.expandvars(osg_user_vo_map)
+
+    output = 'Checking misc files:\n'
+
+    for file in [add_attributes, alter_attributes, remove_attributes,
+            config_ini, osg_user_vo_map]:
+        if os.path.exists(file):
+            output += "Recording file %s.\n" % file
+            outh.add_file(file, dirname="misc")
+        else:
+            output += "Not recording %s because it doesn't exist.\n" % file
+
+    return output
+
+def gip_check_old(cp, outh):
+    """
+    Go through the old static files directory and pull files if they exist.
+    """
+    gip_static = os.path.expandvars("$GIP_LOCATION/etc/osg-info-gip-config")
+    if not os.path.exists(gip_static):
+        return "No old static files found.\n"
+    output = "Old static file directory found.\n"
+    fd = os.popen("ls -lh %s" % gip_static)
+    output += "Contents of static directory:\n%s" % fd.read()
+    if fd.close():
+        output += "`ls` operation returned non-zero exit code"
+    for file in os.listdir(gip_static):
+        try:
+            if file.startswith("."):
+                continue
+            outh.add_file(os.path.join(gip_static, file), dirname="old_static")
+        except Exception, e:
+            print >> sys.stderr, e
+    return output
+
+def gip_check_ldap(cp, outh):
+    """
+    Go through the old ldap files directory and pull files if they exist.
+    """
+    gip_static = os.path.expandvars("$GIP_LOCATION/var/ldif")
+    if not os.path.exists(gip_static):
+        return "No old ldif files found.\n"
+    output = "Old ldif file directory found.\n"
+    fd = os.popen("ls -lh %s" % gip_static)
+    output += "Contents of ldif directory:\n%s" % fd.read()
+    if fd.close():
+        output += "`ls` operation returned non-zero exit code"
+    for file in os.listdir(gip_static):
+        try:
+            if file.startswith("."):
+                continue
+            outh.add_file(os.path.join(gip_static, file), dirname="old_ldif")
+        except Exception, e:
+            print >> sys.stderr, e
+    return output
+
+def gip_check_rvf(cp, outh):
+    """
+    Go through the Globus RVF files and pick up any interesting ones.
+    """
+    globus_rvf_loc = os.path.expandvars("$GLOBUS_LOCATION/share/" \
+        "globus_gram_job_manager")
+    if not os.path.exists(globus_rvf_loc):
+        return "No RVF files appear to exist."
+    fd = os.popen("ls -lh %s" % globus_rvf_loc)
+    output = "Contents of RVF directory:\n%s" % fd.read()
+    if fd.close():
+        output += "`ls` operation returned non-zero exit code"
+    for file in os.listdir(globus_rvf_loc):
+        try:
+            if file.startswith("."):
+                continue
+            outh.add_file(os.path.join(globus_rvf_loc, file),
+                dirname="globus_rvf")
+        except Exception, e:
+            print >> sys.stderr, e
+    return output
+
+def gip_check_dcache_infoprovider(cp, outh):
+    """
+    Download any info provider information for dCache 1.9 sites.
+    """
+    sects = cp.sections()
+    output = ''
+    for sect in sects:
+        if not sect.lower().startswith("se_"):
+            continue
+        try:
+            provider_impl = cp.get(sect, "provider_implementation")
+            if provider_impl != 'dcache19':
+                continue
+            output += 'Dcache 1.9 provider in section %s.\n' % sect
+            endpoint = cp.get(sect, "infoprovider_endpoint")
+            output += 'Info provider endpoint: %s.\n' % endpoint
+            fd = urllib2.urlopen(endpoint)
+            sanitized_sect = sect.replace("/", "_").replace(" ", "_").\
+                replace(":", "_")
+            outh.add_output("dcache19_%s" % sanitized_sect, fd.read())
+        except Exception, e:
+            output += 'Exception while looking for dCache 1.9 provider:%s\n' % str(e)
+    return output
+
+def run_gip(outh):
+    sys_argv = sys.argv
+    sys.argv = []
+    output = 'Running GIP located at %s\n' % os.path.expandvars("$GIP_LOCATION")
+    try:
+        sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+        from gip_common import config, cp_get
+
+        #Add the path with the osg_info_wrapper script:
+        sys.path.append(os.path.expandvars("$GIP_LOCATION/libexec"))
+        import osg_info_wrapper
+
+        cp = config()
+        if 'gip' not in cp.sections():
+            cp.add_section('gip')
+        cp.set("gip", "flush_cache", "True")
+        
+        # try to redirect stdout to a StringIO file-like object
+        # this is so that the globus-job-run doesn't stream the ldap concatenated
+        # to the tarball back to the calling script
+        dummy_stdout = WritableObject() 
+        sys.stdout = dummy_stdout
+
+        try:
+            osg_info_wrapper.main(cp)
+        finally:
+            temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", "$GIP_LOCATION/var/tmp"))
+            osg_info_wrapper.flush_cache(temp_dir)
+            sys.stdout = sys.__stdout__
+        
+        outh.add_output("generated_ldap", dummy_stdout.read())
+ 
+    except:
+        tb = traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
+        output += "\nERROR running osg_info_wrapper.main: %s\n" % tb
+
+    sys.argv = sys_argv
+    return output
+
+def runLocalCommand(cmd):
+    try:
+        child = popen2.Popen3(cmd, 1) # capture stdout and stderr from command
+        child.tochild.close()             # don't need to talk to child
+        outfile = child.fromchild 
+        outfd = outfile.fileno()
+        errfile = child.childerr
+        errfd = errfile.fileno()
+        makeNonBlocking(outfd)            # don't deadlock!
+        makeNonBlocking(errfd)
+        
+        fdout = cStringIO.StringIO()
+        fderr = cStringIO.StringIO()
+        
+        while 1:
+            ready = select.select([outfd,errfd],[],[]) # wait for input
+            if outfd in ready[0]:
+                try:
+                    outchunk = outfile.read()
+                except Exception, ex:
+                    outchunk = ''
+                if len(outchunk) > 0:
+                    fdout.write(outchunk)
+                
+            if errfd in ready[0]:
+                try:
+                    errchunk = errfile.read()
+                except Exception, ex:
+                    errchunk = ""
+                if len(errchunk) > 0:
+                    fderr.write(errchunk)
+            
+            exit_code = child.poll()
+            if not (exit_code is None) and (exit_code >= 0):
+                break
+            
+            select.select([],[],[],.1) # give a little time for buffers to fill
+    except Exception, ex:
+        fderr.write("Error launching the pilot startup script: %s\n" % str(ex))
+        
+    return fderr.getvalue()
+    
+def write_stdin_data():
+    custom_gip = False
+    try:
+        tar = tarfile.open(mode="r|gz", fileobj=sys.stdin)
+        for tarinfo in tar:
+            tar.extract(tarinfo)
+        tar.close()
+        custom_gip = True
+    except:
+        custom_gip = False
+
+    return custom_gip
+
+def main():
+    opts = parse_args()
+        
+    if opts.endpoint:
+        script_path = local_script_path()
+        if not os.path.exists(script_path):
+            if opts.talk:
+                print "Could not detect script's path for remote execution."
+                print "Attempted location: %s" % script_path
+            sys.exit(1)
+        endpoint = opts.endpoint
+        if endpoint.find(':/jobmanager') < 0:
+            endpoint += ':/jobmanager-fork'
+            
+        if not opts.filename:
+            opts.filename = 'gip_diagnostic.tar.gz'
+            
+        if os.path.exists(opts.filename):
+            print >> sys.stderr, "Cowardly refusing to overwrite existing " \
+                "output file %s." % opts.filename
+            sys.exit(1)
+
+        stdin_args = ""
+        if opts.input and len(opts.svn) <= 0:
+            print >> sys.stderr, "SVN location required if input is enabled"
+            sys.exit(1)
+        elif opts.input:
+            # do SVN export
+            svn_url = "svn://t2.unl.edu/brian/gip/%s" % opts.svn
+            svn_cmd = "rm -rf /tmp/osg_gip; svn export %s /tmp/osg_gip" % svn_url
+            try:
+                runLocalCommand(svn_cmd)
+            except RuntimeError, e:
+                print >> sys.stderr, "SVN export failed with the following error:\n%s" % str(e)
+                sys.exit(1)
+
+            # Create tarball
+            tf = tarfile.open(name="osg_gip.tar.gz", mode="w:gz")
+            try:
+                tf.add("/tmp/osg_gip", arcname="osg_gip")
+            except Exception, e:
+                print >> sys.stderr, str(e)
+                sys.exit(1)
+            tf.close()
+
+            os.system("rm -rf /tmp/osg_gip")
+            # create input streaming option
+            stdin_args += "-stdin -s osg_gip.tar.gz"
+
+        cmd = 'globus-job-run %s -stdout -s %s %s -s %s -q -f /dev/stdout' % \
+            (stdin_args, opts.filename, endpoint, script_path)
+        print "Attempting command: %s" % cmd
+        exit_code = pull_remote(cmd)
+
+        if opts.input:
+            os.remove("osg_gip.tar.gz")
+            
+        sys.exit(exit_code)
+
+    use_custom_gip = write_stdin_data()
+
+    out_handler = OutputManager()
+
+    output = gip_check_env(use_custom_gip)
+    output += '\n'
+    if use_custom_gip:
+        output += run_gip(out_handler)
+        output += '\n'
+    out, cp = gip_check_config()
+    output += out
+    output += '\n'
+    output += gip_check_perms(cp)
+    output += '\n'
+    output += gip_check_temp(cp, out_handler)
+    output += '\n'
+    output += gip_check_log(cp, out_handler)
+    output += "\n"
+    output += gip_check_misc(cp, out_handler)
+    output += "\n"
+    output += gip_check_old(cp, out_handler)
+    output += "\n"
+    output += gip_check_ldap(cp, out_handler)
+    output += "\n"
+    output += gip_check_rvf(cp, out_handler)
+    output += "\n"
+    output += "\n"
+    output += gip_check_dcache_infoprovider(cp, out_handler)
+
+    if opts.talk:
+        print output
+    out_handler.add_output("test_results.txt", output)
+
+    out_handler.write_output(open(opts.filename, "w"))
+    
+    #if use_custom_gip:
+    #    os.system('rm -rf osg_gip')
+
+if __name__ == '__main__':
+    main()
+

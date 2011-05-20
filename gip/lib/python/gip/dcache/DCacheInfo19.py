@@ -35,6 +35,10 @@ class DCacheInfo19(StorageElement):
         self.parseSAs_fromPG()
         self.parseVOInfos_fromReservations()
 
+    def getPort(self):
+        port = cp_get(self._cp, self._section, "srm_port", "8443")
+        return port
+
     def getSESpace(self, gb=False, total=False):
         total = self.handler.summary.get('total', 0) / 1000
         free = self.handler.summary.get('free', 0) / 1000
@@ -112,7 +116,7 @@ class DCacheInfo19(StorageElement):
                             'name': myid,
                             'path': path,
                             'tag': tag,
-                            'acbr': '\n'.join(['GlueSAAccessControlBaseRule: '\
+                            'acbr': '\n'.join(['GlueVOInfoAccessControlBaseRule: '\
                                 '%s' % i for i in allowed_acbrs]),
                             'saLocalID': sa['saLocalID'],
                             }
@@ -131,7 +135,7 @@ class DCacheInfo19(StorageElement):
                         'name': id,
                         'path': path,
                         'tag': '%s with no reserved space' % vo,
-                        'acbr': 'GlueSAAccessControlBaseRule: VO:%s' % vo,
+                        'acbr': 'GlueVOInfoAccessControlBaseRule: VO:%s' % vo,
                         'saLocalID': sa['saLocalID'],
                        }
                 self.vos.append(info)
@@ -283,8 +287,7 @@ class DCacheInfo19(StorageElement):
                     'seUniqueID': seUniqueID,
                     'name': id,
                     'path': path,
-                    'tag': 'VOInfo associated with poolgroup %s; no space' \
-                        ' reservation' % poolgroup['name'],
+                    'tag': '__GIP_DELETEME',
                     'acbr': acbr,
                     'saLocalID': info['saName']
                 }
@@ -377,7 +380,8 @@ class DCacheInfo19(StorageElement):
             acbr_tmpl = '\nGlueServiceAccessControlRule: VO:%s' \
                 '\nGlueServiceAccessControlRule: %s'
             acbr = ''
-            vos = voListStorage(self._cp)
+            
+            vos = voListStorage(self._cp, section=self._section)
             for vo in vos:
                 acbr += acbr_tmpl % (vo, vo)
             acbr = acbr[1:]

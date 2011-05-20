@@ -40,12 +40,39 @@ def filter_sponsor(cp, text):
         results.append("%s:%i" % (vo.lower(), int(number)))
     return " ".join(results)
 
+def getWLCGInfo(cp):
+    """
+    Generate GRID, WLCG_TIER, WLCG_PARENT, and WLCG_NAME if appropriate.
+    """
+
+    grid = cp_get(cp, "site", "wlcg_grid", "OSG").strip()
+    tier = cp_get(cp, "site", "wlcg_tier", "").strip()
+    parent = cp_get(cp, "site", "wlcg_parent", "").strip()
+    name = cp_get(cp, "site", "wlcg_name", "").strip()
+
+    log.debug('WLCG attributes: wlcg_grid, wlcg_tier, wlcg_parent, wlcg_name: ("%s", "%s", "%s", "%s")' %
+              (grid, tier, parent, name))
+
+    otherInfoTemplate = 'GlueSiteOtherInfo: %s\n'
+    if grid and tier and parent and name:
+        otherInfo  = otherInfoTemplate % ('GRID=WLCG')
+        otherInfo += otherInfoTemplate % ('GRID=%s' % grid)
+        otherInfo += otherInfoTemplate % ('WLCG_TIER=%s' % tier)
+        otherInfo += otherInfoTemplate % ('WLCG_PARENT=%s' % parent)
+        otherInfo += otherInfoTemplate % ('WLCG_NAME=%s' % name)
+    else:
+        log.debug('At least one null WLCG attribute - not publishing WLCG-style GlueSiteOtherInfo')
+        otherInfo = ''
+        
+    return otherInfo
+
 def generateGlueSite(cp):
     """
     Function which generates the necessary information for a GLUE site entry.
     """
 
     info = {}
+    info['otherInfo'] = getWLCGInfo(cp)
     info['siteName'] = cp_get(cp, sec, "name", "UNKNOWN")
     info['uniqueID'] = cp_get(cp, sec, "unique_name", info['siteName'])
     info['emailContact'] = cp_get(cp, sec, "email", "UNKNOWN@example.com")

@@ -1,4 +1,70 @@
 Changelog
+== 1.2.0alpha0 ==
+* Suppress publishing GlueVOInfoTag unless there is a space reservation
+* Implement CREAM support 
+* Implement HTPC support
+* PBS: Better calculate free slots for queues
+* Condor: Bug fix for exclude_schedds
+* Condor: Support query_only_local_condor option
+* LSF: Bug fix (we were publishing LSF queues _only_ if they were _not_ in
+  the RVF, which is the exact opposite to what we should do).
+* Remove spaces in storage AccessControlBaseRule
+* Remove duplicate software locations
+* Tighter exception handling for parsing config files, imlpying we should:
+* Explicitly return the default for blank config section or option
+* Avoid executing temporary/backup files
+* Updated unit tests	
+	
+== 1.1.14 ==
+* Bugfix: fix glexec support publishing
+	
+== 1.1.13 ==
+* Bugfix: fix the ACBRs to VOLocalViews
+* Bugfix: enable allowed_vos to also work properly on the storage element
+* LSF: better parsing of waiting jobs, free slots, host groups
+* LSF: bugfix: don't include queues that are not in the RVF
+* PBS: better chance to include PBS binaries in the path
+* SGE: fix missing includes
+* Enable publication of WLCG site attributes (admins must set wlcg_tier,
+  wlcg_parent, wlcg_name in the [site] section of config.ini)
+* Better reporting of commands with non-zero exit status
+* Remove duplicates from PATH 
+* Updated unit tests	
+	
+== 1.1.12 ==
+* gip-validate syntax fixes
+* Implement __ne__ for ldap	
+	
+== 1.1.11 ==
+* Support publication of arbitrary SE port numbers via srm_port configuration
+  parameter (even though they are deprecated in the schema)
+* Children with non-zero exit status are now logged properly
+* Added support for local template dirs (contributed by Sam Morrison @ ARCS),
+  needs local_template_dirs parameter to be defined
+* Added new tools: gip_diagnostic, gip-validator.py
+* Bugfix: continue if we can't open gsi-authz.conf
+* Condor: Allow exclusion of 'default' queue via excluded_groups parameter
+* Condor: Remove unpublished CEs from foreign keys.  The CEs were removed
+  from publication because they did not match to any VOs.
+* LSF: Bootstrap LSF by sourcing the lsf_profile parameter (if not provided,
+  we try /lsf/conf/profile.lsf)
+* LSF: Ensure max wall time is an integer
+* LSF: Use -w option in LSF commands to avoid truncation
+	
+== 1.1.10alpha0 ==
+* Publication of glexec (if glexec_location is published in the Misc Services
+  section of the config.ini)
+* Allow and document standalone SE publication (if se_only = True in the GIP 
+  section of the config.ini) 
+* Revised option names (excluded_groups -> exclude_groups, 
+  exclude_schedd -> exclude_schedds)	
+* Condor: if the sum of the group quotas are larger than the size of the 
+  cluster, set the TotalCPUs to the size of the cluster (previous behavior was
+  using 999999)	
+* Condor: Fix VOView case-sensitivity bug 
+* Condor: count flocked jobs as running by default
+* Condor: Set default group name to 'default' if negotiator isn't aware of it.
+
 == 1.1.9rc1 ==
 * PBS: Properly drop PBS queues that are not in the RVF.
 * Condor: Add capability to ignore condor accounting groups

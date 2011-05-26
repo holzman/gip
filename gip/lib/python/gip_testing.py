@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import types
+import fcntl
 import unittest
 import time
 import urlparse
@@ -24,7 +25,6 @@ from gip_common import getLogger
 from gip_common import cp_get, cp_getBoolean, pathFormatter, parseOpts, config
 from gip_common import strContains
 from gip_ldap import getSiteList, prettyDN
-from gip_diagnostic import makeNonBlocking
 
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
 if py23: import optparse
@@ -32,6 +32,7 @@ if py23: import optparse
 replace_command = False
 
 commands = {}
+
 
 def lookupCommand(cmd):
     cmd = cmd.strip()
@@ -81,8 +82,9 @@ def runCommand(cmd, force_command=False):
         errdata = cStringIO.StringIO()
 
         fdlist = [outfd, errfd]
-        for fd in fdlist:
-            makeNonBlocking(fd)
+        for fd in fdlist: # make stdout/stderr nonblocking
+            fl = fcntl.fcntl(fd, fcntl.F_GETFL)
+            fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
             
         while fdlist:
             time.sleep(.001) # prevent 100% CPU spin 

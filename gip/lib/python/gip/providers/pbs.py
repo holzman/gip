@@ -4,7 +4,9 @@ import re
 import sys
 import os
 
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+
 import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     printTemplate, cp_get, responseTimes, cp_getBoolean

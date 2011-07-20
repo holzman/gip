@@ -8,7 +8,12 @@ if [ x${GIP_LOCATION} != x ]; then
 	exit 1
     fi
 else
-    exit 2
+    RELEASE_FILE=/etc/gip/gip-release.txt
+    if [ -e ${RELEASE_FILE} ]; then
+	cat $RELEASE_FILE
+    else
+	exit 1
+    fi
 fi
 
 	

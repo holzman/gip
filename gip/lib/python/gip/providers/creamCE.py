@@ -4,7 +4,9 @@ import re
 import sys  
 import os
         
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+    
 from gip_common import cp_get, cp_getBoolean, config, getLogger, getTemplate, printTemplate, voList
 from gip_testing import runCommand
 import gip_sets as sets

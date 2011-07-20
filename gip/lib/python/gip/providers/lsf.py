@@ -7,7 +7,9 @@ Print out GLUE describing the local LSF batch system.
 import sys
 import os
 
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+    
 import gip_cluster
 from gip_testing import runCommand
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \

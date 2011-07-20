@@ -11,7 +11,8 @@ import os
 import re
 import sys
 
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getLogger, getTemplate
 
 log = getLogger("GIP.Software")

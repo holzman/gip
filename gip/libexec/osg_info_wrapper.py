@@ -58,8 +58,9 @@ except ImportError:
    # pylint: disable-msg=F0401
    import md5
 
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt
+if 'GIP_LOCATION' in os.environ:
+    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt, gipDir
 from gip_ldap import read_ldap, compareDN, LdapData
 import gip_sets as sets
 
@@ -91,25 +92,29 @@ def main(cp = None, return_entries=False):
     log.debug("Starting up the osg-info-wrapper.")
     if cp == None:
         cp = config()
+
     temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
-        "$GIP_LOCATION/var/tmp"))
+        gipDir("$GIP_LOCATION/var/tmp", '/var/gip/tmp'))) 
     plugin_dir = os.path.expandvars(cp_get(cp, "gip", "plugin_dir", \
-        "$GIP_LOCATION/plugins"))
+        gipDir("$GIP_LOCATION/plugins", '/usr/libexec/plugins')))
     provider_dir = os.path.expandvars(cp_get(cp, "gip", "provider_dir", \
-        "$GIP_LOCATION/providers"))
+        gipDir("$GIP_LOCATION/providers", '/usr/libexec/providers')))
     static_dir = os.path.expandvars(cp_get(cp, "gip", "static_dir", \
-        "$GIP_LOCATION/var/ldif"))
+        gipDir("$GIP_LOCATION/var/ldif", '/var/gip/ldif')))
 
     # Make sure that our directories exist.
     create_if_not_exist(temp_dir, plugin_dir, provider_dir, static_dir)
 
     # Load up our add, alter, and delete attributes
     add_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "add_attributes", "$GIP_LOCATION/etc/add-attributes.conf"))
+        "add_attributes", gipDir("$GIP_LOCATION/etc/add-attributes.conf",
+                                 '/etc/gip/add-attributes.conf')))
     alter_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "alter_attributes", "$GIP_LOCATION/etc/alter-attributes.conf"))
+        "alter_attributes", gipDir("$GIP_LOCATION/etc/alter-attributes.conf",
+                                   '/etc/gip/alter-attributes.conf')))
     remove_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "remove_attributes", "$GIP_LOCATION/etc/remove-attributes.conf"))
+        "remove_attributes", gipDir("$GIP_LOCATION/etc/remove-attributes.conf",
+                                    '/etc/gip/remove-attributes.conf')))
 
     # Flush the cache if appropriate
     do_flush_cache = cp_getBoolean(cp, "gip", "flush_cache", False)
@@ -511,7 +516,8 @@ def _run_child(executable, orig_filename, timeout):
             os._exit(os.EX_SOFTWARE)
     log.debug("Set a %.2f second timeout." % timeout)
     t1 = -time.time()
-    module_log_loc = os.path.expandvars("$GIP_LOCATION/var/logs/module.log")
+    module_log_loc = os.path.expandvars(gipDir("$GIP_LOCATION/var/logs/module.log",
+                                               '/var/gip/logs/module.log'))
     try:
         sys.stderr = open(module_log_loc, 'a')
     except:

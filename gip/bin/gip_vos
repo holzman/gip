@@ -5,7 +5,8 @@ import sys
 import time
 
 # Make sure the gip_common libraries are in our path
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 try:
     from gip_common import config, voList
     from gip_storage import voListStorage

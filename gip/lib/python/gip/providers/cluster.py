@@ -3,7 +3,8 @@ import os
 import re
 import sys
 
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 import gip_cluster
 
 from gip_common import config, cp_get, cp_getBoolean, getLogger, getTemplate, \

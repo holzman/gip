@@ -42,6 +42,13 @@ if py23:
 # Default log level for our FakeLogger object.
 loglevel = "info"
 
+def gipDir(tarDir, RPMDir):
+    # if GIP_LOCATION is defined, return tarDir; otherwise return RPMDir
+    if 'GIP_LOCATION' in os.environ:
+        return tarDir
+
+    return RPMDir
+
 def check_gip_location():
     """
     This function checks to make sure that GIP_LOCATION is set and exists.
@@ -56,6 +63,10 @@ def check_gip_location():
     This function is automatically run by the *config* function, so it is
     generally not necessary for provider authors to use this directly.
     """
+    if 'GIP_LOCATION' not in os.environ and 'VDT_LOCATION' not in os.environ:
+        # RPM-based install
+        return
+        
     if "GIP_LOCATION" not in os.environ:
         vdt_loc = os.path.expandvars("$VDT_LOCATION/gip")
         if "VDT_LOCATION" in os.environ:
@@ -158,7 +169,9 @@ def config(*args):
     (options, args) = p.parse_args()
     files += [i.strip() for i in options.config.split(',')]
     files = [os.path.expandvars(i) for i in files]
-    files += [os.path.expandvars("$GIP_LOCATION/etc/gip.conf")]
+    files += [gipDir(os.path.expandvars("$GIP_LOCATION/etc/gip.conf"),
+                     '/etc/gip/gip.conf')]
+        
     if 'GIP_CONFIG' in os.environ:
         files += [os.path.expandvars("$GIP_CONFIG")]
 
@@ -318,7 +331,7 @@ class FakeLogger:
         @see: debug
         """
         print >> sys.stderr, str(msg) % args
-
+        
 def add_giplog_handler():
     """
     Add a log file to the default root logger.
@@ -326,13 +339,15 @@ def add_giplog_handler():
     Uses a rotating logfile of 10MB, with 5 backups.
     """
     mylog = logging.getLogger()
+    logdir = gipDir(os.path.expandvars('$GIP_LOCATION/var/logs'), '/var/gip/log')
+
     try:
-        os.makedirs(os.path.expandvars('$GIP_LOCATION/var/logs'))
+        os.makedirs(logdir)
     except OSError, oe:
         #errno 17 = File Exists
         if oe.errno != 17:
             return
-    logfile = os.path.expandvars('$GIP_LOCATION/var/logs/gip.log')
+    logfile = os.path.expandvars('%s/gip.log' % logdir)
     formatter = logging.Formatter('%(asctime)s %(name)s:%(levelname)s ' \
         '%(pathname)s:%(lineno)d:  %(message)s')
     handler = logging.handlers.RotatingFileHandler(logfile,
@@ -343,8 +358,8 @@ def add_giplog_handler():
 
 if py23:
     try:
-        logging.config.fileConfig(os.path.expandvars("$GIP_LOCATION/etc/" \
-            "logging.conf"))
+        
+        logging.config.fileConfig(os.path.expandvars('%s/logging.conf' % gipDir('$GIP_LOCATION/etc', '/etc/gip')))
         add_giplog_handler()
     except:
         traceback.print_exc(file=sys.stderr)
@@ -398,7 +413,7 @@ def getTemplate(template, name):
 
     cp = config()
     template_dirs = cp_getList(cp, 'gip', 'local_template_dirs', [])
-    template_dirs.append(os.path.expandvars('$GIP_LOCATION/templates'))
+    template_dirs.append(gipDir(os.path.expandvars('$GIP_LOCATION/templates'), '/usr/share/gip/templates'))
     tried = []
     fp = ''
     

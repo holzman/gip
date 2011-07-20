@@ -5,9 +5,10 @@ import sys
 import re
 from xml.dom.minidom import Document
 
-sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_ldap import read_ldap
-from gip_common import config, cp_get, getTempFilename, getUrlFd
+from gip_common import config, cp_get, getTempFilename, getUrlFd, gipDir
 from gip_common import fileOverWrite as write_file
 
 def runCommand(cmd):
@@ -52,9 +53,14 @@ class SiteInfoToXml:
         cp = config()
         self.xml_file = getTempFilename()
         self.xsl_file = os.path.expandvars(cp_get(cp, "gip", "pretty_gip_xsl",
-            "$GIP_LOCATION/templates/pretty_gip_info.xsl"))
-        self.html_file = os.path.expandvars(cp_get(cp, "gip", "pretty_gip_html",
-            "$VDT_LOCATION/apache/htdocs/pretty_gip_info.html"))
+                                                  '%s/pretty_gip_info.xsl' %
+                                                  gipDir("$GIP_LOCATION/templates",
+                                                         '/usr/share/gip/templates')))
+
+        self.html_file = '/tmp/pretty_gip_info.html'
+        if 'VDT_LOCATION' in os.environ: 
+            self.html_file = os.path.expandvars(cp_get(cp, "gip", "pretty_gip_html",
+                                                       "$VDT_LOCATION/apache/htdocs/pretty_gip_info.html"))
         self.doc = Document()
         self.url = url
         self.entries = None
@@ -76,7 +82,7 @@ class SiteInfoToXml:
         if m:
             fd = getUrlFd(self.url)
         else:
-            path = os.path.expandvars("$GIP_LOCATION/bin/gip_info")
+            path = os.path.expandvars(gipDir("$GIP_LOCATION/bin/gip_info", '/usr/bin/gip_info'))
             fd = os.popen(path)
         self.entries = read_ldap(fd, multi=True)
 

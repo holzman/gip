@@ -8,7 +8,7 @@ from socket import gethostname
 # Make sure the gip_common libraries are in our path
 sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getTemplate, getLogger, printTemplate, \
-     cp_getBoolean, cp_get
+     cp_getBoolean, cp_get, vdtDir
 
 log = getLogger("GIP.authorization_service")
 # Retrieve our logger in case of failure
@@ -40,8 +40,9 @@ def publish_gridmap_file(cp, template):
 def publish_gums(cp, template):
     hostname = cp_get(cp, "ce", 'name', gethostname())
     siteID = cp_get(cp, "site", "unique_name", gethostname())
-    gumsConfig = os.getenv('VDT_LOCATION') + \
-                 '/gums/config/gums-client.properties'
+    gumsConfig = vdtDir(os.path.expandvars('$VDT_LOCATION/gums/config/gums-client.properties'),
+                        '/etc/gums/gums-client.properties')
+    
     gumsConfigFile = open(gumsConfig, 'r')
     gums_re = re.compile('gums.authz\s*=\s*(https://(.*):.*?/(.*))')
 
@@ -55,8 +56,9 @@ def publish_gums(cp, template):
 
     mapping_subject_dn = '/GIP-GUMS-Probe-Identity'
     mapping_subject_name = '`grid-cert-info -subject` '
-    gums_command = os.getenv('VDT_LOCATION') + '/gums/scripts/gums-service' + \
-                   ' mapUser -s ' + mapping_subject_name + mapping_subject_dn
+    gums_command = vdtDir(os.path.expandvars('$VDT_LOCATION/gums/scripts/gums-service'),
+                          '/usr/bin/gums-service')
+    gums_command += ' mapUser -s ' + mapping_subject_name + mapping_subject_dn
 
     (gums_output, pin) = popen2.popen4(gums_command)
 
@@ -64,8 +66,7 @@ def publish_gums(cp, template):
 
     status = "Warning"
     statusInfo = "Test mapping failed: if GUMS was not down, check logs" +\
-                 " at " + gums_host + ':' + os.getenv('VDT_LOCATION') + \
-                 "/tomcat/v55/logs"
+                 " at " + gums_host + ':' + '$VDT_LOCATION/tomcat/v55/logs'
 
     lines = gums_output.readlines()
     for line in lines:

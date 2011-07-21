@@ -53,11 +53,11 @@ def pickDir(dir, fallbackDir, envVar):
 
 def gipDir(tarDir, RPMDir):
     # if GIP_LOCATION is defined, return tarDir; otherwise return RPMDir
-    return pickDir(tardir, RPMDir, 'GIP_LOCATION')
+    return pickDir(tarDir, RPMDir, 'GIP_LOCATION')
 
 def vdtDir(tarDir, RPMDir):
     # if VDT_LOCATION is defined, return tarDir; otherwise return RPMDir
-    return pickDir(tardir, RPMDir, 'VDT_LOCATION')
+    return pickDir(tarDir, RPMDir, 'VDT_LOCATION')
     
 def check_gip_location():
     """
@@ -241,17 +241,16 @@ class VoMapper:
 
     def __init__(self, cp):
         self.cp = cp
-        try:
-            self.map_location = cp.get("vo", "user_vo_map")
-        except:
-            self.map_location = "$VDT_LOCATION/monitoring/osg-user-vo-map.txt"
+        self.map_location = cp_get(cp, "vo", "user_vo_map",
+                                   vdtDir('$VDT_LOCATION/monitoring/osg-user-vo-map.txt',
+                                          '/etc/osg/osg-user-vo-map.txt'))
+
         log.info("Using user-to-VO map location %s." % self.map_location)
         self.voi = []
         self.voc = []
         self.userMap = {}
         #self.voMap = {}
         self.parse()
-
 
     def parse(self):
         """

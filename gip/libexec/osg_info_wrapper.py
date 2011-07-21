@@ -96,9 +96,9 @@ def main(cp = None, return_entries=False):
     temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
         gipDir("$GIP_LOCATION/var/tmp", '/var/gip/tmp'))) 
     plugin_dir = os.path.expandvars(cp_get(cp, "gip", "plugin_dir", \
-        gipDir("$GIP_LOCATION/plugins", '/usr/libexec/plugins')))
+        gipDir("$GIP_LOCATION/plugins", '/usr/libexec/gip/plugins')))
     provider_dir = os.path.expandvars(cp_get(cp, "gip", "provider_dir", \
-        gipDir("$GIP_LOCATION/providers", '/usr/libexec/providers')))
+        gipDir("$GIP_LOCATION/providers", '/usr/libexec/gip/providers')))
     static_dir = os.path.expandvars(cp_get(cp, "gip", "static_dir", \
         gipDir("$GIP_LOCATION/var/ldif", '/var/gip/ldif')))
 
@@ -517,7 +517,7 @@ def _run_child(executable, orig_filename, timeout):
     log.debug("Set a %.2f second timeout." % timeout)
     t1 = -time.time()
     module_log_loc = os.path.expandvars(gipDir("$GIP_LOCATION/var/logs/module.log",
-                                               '/var/gip/logs/module.log'))
+                                               '/var/gip/log/module.log'))
     try:
         sys.stderr = open(module_log_loc, 'a')
     except:

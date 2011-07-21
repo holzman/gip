@@ -8,6 +8,7 @@ if 'GIP_LOCATION' in os.environ:
     sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
     
 from gip_common import cp_get, cp_getBoolean, config, getLogger, getTemplate, printTemplate, voList
+from gip_common import vdtDir
 from gip_testing import runCommand
 import gip_sets as sets
 import time
@@ -17,7 +18,8 @@ log = getLogger("GIP.CREAM")
 
 def getUniqueHash(cp):
     # EGI uses unix 'cksum' command; we'll use zlib's crc instead.
-    loc = cp_get(cp, 'gip', 'osg_config', '$VDT_LOCATION/monitoring/config.ini')
+    loc = cp_get(cp, 'gip', 'osg_config', vdtDir(os.path.expandvars('$VDT_LOCATION/monitoring/config.ini'),
+                                                 '/etc/osg/config.ini'))
     loc = os.path.expandvars(loc)
     try:
         hash = zlib.crc32(loc)
@@ -32,8 +34,12 @@ def getCreamVersion(cp):
     """
     Returns the CREAM version
     """
-    vdt_version_cmd = os.path.expandvars("$VDT_LOCATION/vdt/bin/") + 'vdt-version --no-wget'
-    vdt_version_out = runCommand(vdt_version_cmd).readlines()
+    if 'VDT_LOCATION' in os.environ:
+        vdt_version_cmd = os.path.expandvars("$VDT_LOCATION/vdt/bin/") + 'vdt-version --no-wget'
+        vdt_version_out = runCommand(vdt_version_cmd).readlines()
+    else:
+        return 'UNKNOWN'
+    
     cream_re = re.compile('gLite CE CREAM\s+(.*?)\s*-.*')
     creamVersion = 'UNKNOWN'
     for line in vdt_version_out:

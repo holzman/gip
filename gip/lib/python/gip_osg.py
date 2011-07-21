@@ -158,8 +158,8 @@ def configOsg(cp):
     # Load config.ini values
     cp2 = ConfigParser.ConfigParser()
 
-    loc = cp_get(cp, "gip", "osg_config", vdtDir(os.path.expandvars("$VDT_LOCATION/monitoring/config.ini",
-                                                                    '/etc/osg/config.ini')))
+    loc = cp_get(cp, "gip", "osg_config", vdtDir(os.path.expandvars("$VDT_LOCATION/monitoring/config.ini"),
+                                                                    '/etc/osg/config.ini'))
 
     log.info("Using OSG config.ini %s." % loc)
 

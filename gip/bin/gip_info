@@ -33,8 +33,8 @@ if 'GIP_LOCATION' in os.environ:
 from gip_common import config, cp_get
 
 #Add the path with the osg_info_wrapper script:
-sys.path.append(os.path.expandvars(gipDir("$GIP_LOCATION/libexec"),
-                                   '/usr/libexec/gip'))
+sys.path.append(os.path.expandvars(gipDir("$GIP_LOCATION/libexec",
+                                   '/usr/libexec/gip')))
 import osg_info_wrapper
 
 def main():

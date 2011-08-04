@@ -243,7 +243,7 @@ class VoMapper:
         self.cp = cp
         self.map_location = cp_get(cp, "vo", "user_vo_map",
                                    vdtDir('$VDT_LOCATION/monitoring/osg-user-vo-map.txt',
-                                          '/etc/osg/osg-user-vo-map.txt'))
+                                          '/var/lib/osg/user-vo-map'))
 
         log.info("Using user-to-VO map location %s." % self.map_location)
         self.voi = []

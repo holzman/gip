@@ -94,13 +94,13 @@ def main(cp = None, return_entries=False):
         cp = config()
 
     temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
-        gipDir("$GIP_LOCATION/var/tmp", '/var/gip/tmp'))) 
+        gipDir("$GIP_LOCATION/var/tmp", '/var/cache/gip'))) 
     plugin_dir = os.path.expandvars(cp_get(cp, "gip", "plugin_dir", \
         gipDir("$GIP_LOCATION/plugins", '/usr/libexec/gip/plugins')))
     provider_dir = os.path.expandvars(cp_get(cp, "gip", "provider_dir", \
         gipDir("$GIP_LOCATION/providers", '/usr/libexec/gip/providers')))
     static_dir = os.path.expandvars(cp_get(cp, "gip", "static_dir", \
-        gipDir("$GIP_LOCATION/var/ldif", '/var/gip/ldif')))
+        gipDir("$GIP_LOCATION/var/ldif", '/etc/gip/ldif.d')))
 
     # Make sure that our directories exist.
     create_if_not_exist(temp_dir, plugin_dir, provider_dir, static_dir)
@@ -517,7 +517,7 @@ def _run_child(executable, orig_filename, timeout):
     log.debug("Set a %.2f second timeout." % timeout)
     t1 = -time.time()
     module_log_loc = os.path.expandvars(gipDir("$GIP_LOCATION/var/logs/module.log",
-                                               '/var/gip/log/module.log'))
+                                               '/var/log/gip/module.log'))
     try:
         sys.stderr = open(module_log_loc, 'a')
     except:

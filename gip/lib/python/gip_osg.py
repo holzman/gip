@@ -113,10 +113,7 @@ def checkOsgConfigured(cp):
         raise ValueError("osg-attributes.conf does not exists; we may be "
                          "running in an unconfigured OSG install!")
     # Check to see if the osg-user-vo-map.txt exists and that its size is > 0
-    if 'VDT_LOCATION' in os.environ:
-        defaultLoc = os.path.join(etcDir, "osg-user-vo-map.txt")
-    else:
-        defaultLoc = "/var/lib/osg/user-vo-map"
+    defaultLoc = vdtDir(os.path.join(etcDir, "osg-user-vo-map.txt"), "/var/lib/osg/user-vo-map")
     osg_user_vo_map = cp_get(cp, "vo", "user_vo_map", defaultLoc)
 
     if not os.path.exists(osg_user_vo_map):

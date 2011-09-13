@@ -42,13 +42,23 @@ if py23:
 # Default log level for our FakeLogger object.
 loglevel = "info"
 
+def pickDir(dir, fallbackDir, envVar):
+    # return a directory if envVar is set, otherwise
+    # return the fallback directory
+    
+    if envVar in os.environ:
+        return dir
+    else:
+        return fallbackDir
+
 def gipDir(tarDir, RPMDir):
     # if GIP_LOCATION is defined, return tarDir; otherwise return RPMDir
-    if 'GIP_LOCATION' in os.environ:
-        return tarDir
+    return pickDir(tardir, RPMDir, 'GIP_LOCATION')
 
-    return RPMDir
-
+def vdtDir(tarDir, RPMDir):
+    # if VDT_LOCATION is defined, return tarDir; otherwise return RPMDir
+    return pickDir(tardir, RPMDir, 'VDT_LOCATION')
+    
 def check_gip_location():
     """
     This function checks to make sure that GIP_LOCATION is set and exists.

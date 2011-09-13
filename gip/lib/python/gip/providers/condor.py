@@ -6,12 +6,14 @@ outline of how this is computed is given here:
 
 https://twiki.grid.iu.edu/twiki/bin/view/InformationServices/GipCeInfo
 """
-
+	
 import gip_sets as sets
 import sys
+import os
+
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
 if not py23:
-        import operator
+	import operator
         def sum(data, start=0): return reduce(operator.add, data, start)
 
 # Standard GIP imports
@@ -375,8 +377,20 @@ def main():
     try:
         cp = config()
         condor_path = cp_get(cp, "condor", "condor_path", None)
+	condor_location = cp_get(cp, "condor", "condor_location", None)
+	condor_config = cp_get(cp, "condor", "condor_config", None)
+
         if condor_path != None:
-            addToPath(condor_path)
+		addToPath(condor_path)
+
+	if condor_location != None:
+		addToPath('%s/bin' % condor_location)
+		if not condor_config:
+			condor_config = '%s/etc/condor_config' % condor_location
+
+	if condor_config:
+		os.environ['CONDOR_CONFIG'] = condor_config
+
         #vo_map = VoMapper(cp)
         getLrmsInfo(cp) 
         print_CE(cp)

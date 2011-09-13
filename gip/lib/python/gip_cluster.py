@@ -83,18 +83,22 @@ def getOSGVersion(cp):
     osg_ver_backup = cp_get(cp, "ce", "osg_version", "OSG 1.2.0")
     osg_version_script = cp_get(cp, "gip", "osg_version_script",
         "")
+    osg_ver = ''
+
     if len(osg_version_script) == 0:
         osg_version_script = '$VDT_LOCATION/osg-version'
         osg_version_script = os.path.expandvars(osg_version_script)
+
         if not os.path.exists(osg_version_script):
             osg_version_script = os.path.expandvars("$VDT_LOCATION/osg/bin/" \
                 "osg-version")
-    osg_version_script = os.path.expandvars(osg_version_script)
-    try:
-        osg_ver = runCommand(osg_version_script).read().strip()
-    except Exception, e:
-        log.exception(e)
-        osg_ver = ''
+
+        if os.path.exists(osg_version_script):
+            try:
+                osg_ver = runCommand(osg_version_script).read().strip()
+            except Exception, e:
+                log.exception(e)
+
     if len(osg_ver) == 0:
         osg_ver = osg_ver_backup
     return osg_ver

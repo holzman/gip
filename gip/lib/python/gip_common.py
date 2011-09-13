@@ -42,13 +42,23 @@ if py23:
 # Default log level for our FakeLogger object.
 loglevel = "info"
 
+def pickDir(dir, fallbackDir, envVar):
+    # return a directory if envVar is set, otherwise
+    # return the fallback directory
+    
+    if envVar in os.environ:
+        return dir
+    else:
+        return fallbackDir
+
 def gipDir(tarDir, RPMDir):
     # if GIP_LOCATION is defined, return tarDir; otherwise return RPMDir
-    if 'GIP_LOCATION' in os.environ:
-        return tarDir
+    return pickDir(tarDir, RPMDir, 'GIP_LOCATION')
 
-    return RPMDir
-
+def vdtDir(tarDir, RPMDir):
+    # if VDT_LOCATION is defined, return tarDir; otherwise return RPMDir
+    return pickDir(tarDir, RPMDir, 'VDT_LOCATION')
+    
 def check_gip_location():
     """
     This function checks to make sure that GIP_LOCATION is set and exists.
@@ -231,17 +241,16 @@ class VoMapper:
 
     def __init__(self, cp):
         self.cp = cp
-        try:
-            self.map_location = cp.get("vo", "user_vo_map")
-        except:
-            self.map_location = "$VDT_LOCATION/monitoring/osg-user-vo-map.txt"
+        self.map_location = cp_get(cp, "vo", "user_vo_map",
+                                   vdtDir('$VDT_LOCATION/monitoring/osg-user-vo-map.txt',
+                                          '/etc/osg/osg-user-vo-map.txt'))
+
         log.info("Using user-to-VO map location %s." % self.map_location)
         self.voi = []
         self.voc = []
         self.userMap = {}
         #self.voMap = {}
         self.parse()
-
 
     def parse(self):
         """

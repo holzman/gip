@@ -10,7 +10,7 @@ import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, lsf, se, subcluster, \
     cluster, cesebind, cream
-from gip_common import getLogger, py23
+from gip_common import getLogger, py23, vdtDir
 
 log = getLogger("GIP")
 
@@ -105,18 +105,17 @@ def checkOsgConfigured(cp):
     @return: True
     @raise ValueError: If the specified file does not exist.
     """
-    osg_attributes = cp_get(cp, "gip", "osg_attributes",
-        "$VDT_LOCATION/monitoring/osg-attributes.conf")
-    osg_attributes = os.path.expandvars(osg_attributes)
+
+    etcDir = vdtDir(os.path.expandvars("$VDT_LOCATION/monitoring/"), '/etc/osg/')
+    osg_attributes = cp_get(cp, "gip", "osg_attributes", '%s/osg-attributes.conf' % etcDir)
+
     if not os.path.exists(osg_attributes):
         raise ValueError("osg-attributes.conf does not exists; we may be "
                          "running in an unconfigured OSG install!")
     # Check to see if the osg-user-vo-map.txt exists and that its size is > 0
-    try:
-            osg_user_vo_map = cp.get("vo", "user_vo_map")
-    except:
-            osg_user_vo_map = "$VDT_LOCATION/monitoring/osg-user-vo-map.txt"
-    osg_user_vo_map = os.path.expandvars(osg_user_vo_map)
+
+    osg_user_vo_map = cp_get(cp, "vo", "user_vo_map", '%s/osg-user-vo-map.txt' % etcDir)
+
     if not os.path.exists(osg_user_vo_map):
         raise ValueError("osg-user-vo-map.txt does not exists; we may be "
                          "running in an unconfigured OSG install!")
@@ -124,7 +123,8 @@ def checkOsgConfigured(cp):
         raise ValueError("osg-user-vo-map.txt is a 0 length file; we may be "
                          "running in an unconfigured OSG install!")
 
-    loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
+    loc = cp_get(cp, "gip", "osg_config", '%s/config.ini' % etcDir)
+                 
     loc = os.path.expandvars(loc)
     try:
         file = open(loc)
@@ -158,8 +158,8 @@ def configOsg(cp):
     # Load config.ini values
     cp2 = ConfigParser.ConfigParser()
 
-    loc = cp_get(cp, "gip", "osg_config", "$VDT_LOCATION/monitoring/config.ini")
-    loc = os.path.expandvars(loc)
+    loc = cp_get(cp, "gip", "osg_config", vdtDir(os.path.expandvars("$VDT_LOCATION/monitoring/config.ini"),
+                                                                    '/etc/osg/config.ini'))
 
     log.info("Using OSG config.ini %s." % loc)
 
@@ -190,6 +190,7 @@ def configOsg(cp):
     try:
         state_info_file = '$VDT_LOCATION/MIS-CI/etc/grid-site-state-info'
         state_info_file = os.path.expandvars(state_info_file)
+        state_info_file = vdtDir(state_info_file, '/etc/osg/grid-site-state-info')
         if os.path.exists(state_info_file):
             results = int(os.popen("/bin/sh -c 'source %s; echo " \
                 "$grid_site_state_bit'" % state_info_file)

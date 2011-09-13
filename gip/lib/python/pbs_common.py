@@ -214,7 +214,7 @@ def getQueueInfo(cp):
                 except:
                     queue_data["status"] = "Closed"
                     msg = "The 'Started' and/or 'enabled' attributes do not " \
-                          "exist for the %s queue." % queue_name 
+                          "exist for the %s queue." % line[7:]
                     log.warning(msg)
                     
                 if "started" in queue_data.keys(): del queue_data["started"]

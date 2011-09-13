@@ -3,7 +3,8 @@
 import sys, time, os
 
 # Make sure the gip_common libraries are in our path
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getTemplate, getLogger, printTemplate, cp_getBoolean
 from gip_testing import runCommand
 from gip_cluster import getSubClusterIDs, getClusterID
@@ -16,7 +17,7 @@ def main():
         # Load up the site configuration
         cp = config()
         se_only = cp_getBoolean(cp, "gip", "se_only", False)
-        if not se_only:
+        if not se_only and 'VDT_LOCATION' in os.environ: 
     
             # get the VDT version
             vdt_version_cmd = os.path.expandvars("$VDT_LOCATION/vdt/bin/") + 'vdt-version --brief'

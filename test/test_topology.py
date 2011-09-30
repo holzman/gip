@@ -3,7 +3,7 @@ import os
 import sys
 import unittest
 
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, cp_getBoolean, voList
 from gip_testing import runTest, streamHandler
 from gip_ldap import read_ldap

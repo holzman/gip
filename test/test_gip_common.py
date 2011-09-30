@@ -3,10 +3,10 @@
 import os
 import sys
 import unittest
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 import tempfile23 as tempfile
 import ConfigParser
 
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_sets import Set
 import gip_sets as sets
 from gip_common import config, cp_getBoolean, voList
@@ -70,25 +70,16 @@ class TestGipCommon(unittest.TestCase):
         cp = config()
         try:
             import tempfile
-            file = tempfile.NamedTemporaryFile()
-            filename = file.name
-        except:
-            filename = '/tmp/osg_check'
-            file = open(filename, 'w')
-        try:
-            import tempfile
             file2 = tempfile.NamedTemporaryFile()
-            filename2 = file.name
+            filename2 = file2.name
         except:
             filename2 = '/tmp/config.ini'
-            file = open(filename2, 'w')
+            file2 = open(filename2, 'w')
         if not cp.has_section("gip"):
             cp.add_section("gip")
-        cp.set("gip", "osg_attributes", filename)
         cp.set("gip", "osg_config", filename2)
         cp.set("vo", "user_vo_map", "test_configs/red-osg-user-vo-map.txt")
         try:
-            file.write('hello world!\n')
             didFail = False
             try:
                 gip_osg.checkOsgConfigured(cp)
@@ -96,8 +87,8 @@ class TestGipCommon(unittest.TestCase):
                 raise
                 didFail = True
                 print >> sys.stderr, e
-            self.failIf(didFail, "Failed on a 'valid' osg-attributes.conf")
-            os.unlink(filename)
+            self.failIf(didFail, "Failed on a 'valid' user-vo-map")
+            cp.set("vo", "user_vo_map", "/foo/bar")
             didFail = False
             try:
                 gip_osg.checkOsgConfigured(cp)
@@ -128,6 +119,7 @@ class TestGipCommon(unittest.TestCase):
         my_version = 'OSG-magic-version'
         cp = config("test_configs/red.conf")
         version = getOSGVersion(cp)
+        print version
         self.failUnless(version == my_version, msg="Computed OSG version does"\
             " not match the test case's OSG version.")
         found_osg = False

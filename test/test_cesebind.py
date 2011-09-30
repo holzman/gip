@@ -4,7 +4,8 @@ import os
 import sys
 import unittest
 
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config
 from gip_cese_bind import getCEList, getSEList
 from gip_testing import runTest, streamHandler

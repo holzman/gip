@@ -107,11 +107,7 @@ def checkOsgConfigured(cp):
     """
 
     etcDir = vdtDir(os.path.expandvars("$VDT_LOCATION/monitoring/"), '/etc/osg/')
-    osg_attributes = cp_get(cp, "gip", "osg_attributes", '%s/osg-attributes.conf' % etcDir)
 
-    if not os.path.exists(osg_attributes):
-        raise ValueError("osg-attributes.conf does not exists; we may be "
-                         "running in an unconfigured OSG install!")
     # Check to see if the osg-user-vo-map.txt exists and that its size is > 0
     defaultLoc = vdtDir(os.path.join(etcDir, "osg-user-vo-map.txt"), "/var/lib/osg/user-vo-map")
     osg_user_vo_map = cp_get(cp, "vo", "user_vo_map", defaultLoc)
@@ -119,8 +115,14 @@ def checkOsgConfigured(cp):
     if not os.path.exists(osg_user_vo_map):
         raise ValueError("osg-user-vo-map.txt does not exists; we may be "
                          "running in an unconfigured OSG install!")
-    if os.path.getsize(osg_user_vo_map) == 0:
-        raise ValueError("osg-user-vo-map.txt is a 0 length file; we may be "
+    fd = open(osg_user_vo_map, "r")
+    has_uncommented_lines = False;
+    for line in fd.readlines():
+        if len(line) > 3 and line[0] != "#":
+            has_uncommented_lines = True
+            break
+    if not has_uncommented_lines:
+        raise ValueError("osg-user-vo-map.txt has no uncommented lines; we may be "
                          "running in an unconfigured OSG install!")
 
     loc = cp_get(cp, "gip", "osg_config", '%s/config.ini' % etcDir)

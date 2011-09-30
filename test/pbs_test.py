@@ -5,7 +5,7 @@ import sys
 import unittest
 
 os.environ['GIP_TESTING'] = '1'
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_sets import Set
 from gip_common import config, cp_get
 from pbs_common import getVoQueues

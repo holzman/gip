@@ -93,11 +93,11 @@ def getOSGVersion(cp):
             osg_version_script = os.path.expandvars("$VDT_LOCATION/osg/bin/" \
                 "osg-version")
 
-        if os.path.exists(osg_version_script):
-            try:
-                osg_ver = runCommand(osg_version_script).read().strip()
-            except Exception, e:
-                log.exception(e)
+    if os.path.exists(osg_version_script):
+        try:
+            osg_ver = runCommand(osg_version_script).read().strip()
+        except Exception, e:
+            log.exception(e)
 
     if len(osg_ver) == 0:
         osg_ver = osg_ver_backup

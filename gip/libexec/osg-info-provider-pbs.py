@@ -12,7 +12,7 @@ import sys
 import unittest
 # Standard GIP imports
 if 'GIP_LOCATION' in os.environ :
-    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+    sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip.providers.pbs import main
 
 if __name__ == '__main__':

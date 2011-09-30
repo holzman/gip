@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#$!/usr/bin/env python
 
 from pbs_test import main as pbs_main
 from lsf_test import main as lsf_main

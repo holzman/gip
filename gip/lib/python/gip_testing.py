@@ -42,7 +42,7 @@ def lookupCommand(cmd):
     if m:
         suffix = m.groups()[0]
     if cmd not in commands:
-        fd = open(os.path.expandvars("$VDT_LOCATION/test/command_output/" \
+        fd = open(os.path.expandvars("$GIP_LOCATION/../test/command_output/" \
             "commands"))
         for line in fd:
             if line.startswith("#") or len(line.strip()) == 0:
@@ -62,7 +62,7 @@ def runCommand(cmd, force_command=False):
         except Exception, e:
             print >> sys.stderr, e
             return runCommand(cmd, force_command=True)
-        return open(os.path.expandvars("$VDT_LOCATION/test/command_output/%s" \
+        return open(os.path.expandvars("$GIP_LOCATION/../test/command_output/%s" \
             % filename))
     else:
         # Modified from
@@ -265,7 +265,7 @@ def interpolateConfig(cp):
         cp.set("gip_tests", "enable_glite", "False")
 
     if cp_get(cp, "gip_tests", "results_dir", "") == "":
-        results_dir = os.path.expandvars("$VDT_LOCATION/apache/htdocs/")
+        results_dir = os.path.expandvars("$GIP_LOCATION/../apache/htdocs/")
         cp.set("gip_tests", "results_dir", results_dir)
 
 def getTestConfig(*args):

@@ -5,7 +5,8 @@ import re
 import sys
 import unittest
 
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, cp_get, voList
 from gip_testing import runTest, streamHandler
 from gip_ldap import read_ldap

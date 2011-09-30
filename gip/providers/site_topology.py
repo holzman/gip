@@ -3,7 +3,8 @@
 import os
 import sys
 
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+if 'GIP_LOCATION' in os.environ:
+    sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, cp_getBoolean
 from gip.providers.site import main as site_main
 from gip.providers.cluster import main as cluster_main

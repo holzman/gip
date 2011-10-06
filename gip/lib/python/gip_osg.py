@@ -10,7 +10,7 @@ import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, lsf, se, subcluster, \
     cluster, cesebind, cream
-from gip_common import getLogger, py23, vdtDir
+from gip_common import getLogger, py23, vdtDir, get_file_list
 
 log = getLogger("GIP")
 
@@ -160,12 +160,20 @@ def configOsg(cp):
     # Load config.ini values
     cp2 = ConfigParser.ConfigParser()
 
-    loc = cp_get(cp, "gip", "osg_config", vdtDir(os.path.expandvars("$VDT_LOCATION/monitoring/config.ini"),
-                                                                    '/etc/osg/config.ini'))
-
+    ini_dir = vdtDir(os.path.expandvars("$VDT_LOCATION/monitoring/config.ini"), '/etc/osg/config.d')
+    loc = cp_get(cp, "gip", "osg_config", ini_dir)
     log.info("Using OSG config.ini %s." % loc)
 
-    cp2.read(loc)
+    # if a directory is specified, then either we are an RPM install or a directory was
+    # specified in gip.conf
+    if os.path.isdir(loc):
+        # get a list of the ini files in the directory
+        file_list = get_file_list(loc)
+    else:
+        # must be a file
+        file_list = [loc,]
+
+    cp2.read(file_list)
 
     try:
         configSEs(cp2, cp)
@@ -640,7 +648,7 @@ def configSEs(cp, cp2):
                 # space_calculator module can see them if set
                 allowed_vos = cp_get(cp, section, "allowed_vos", "")
                 if len(allowed_vos) > 0:
-                     cp2.set(dcache_sec, "allowed_vos", allowed_vos)
+                    cp2.set(dcache_sec, "allowed_vos", allowed_vos)
                 
             # Handle allowed VO's for bestman
             # Yet to be implemented
@@ -662,7 +670,7 @@ def config_info(ocp, gcp):
     if cp_get(ocp, "Site Information", "group", "OSG").lower().find("itb") >= 0:
         is_osg = False
     try:
-        override = cp.getboolean("gip", "override")
+        override = gcp.getboolean("gip", "override")
     except:
         override = False
 

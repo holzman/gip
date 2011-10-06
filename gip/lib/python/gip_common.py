@@ -20,8 +20,7 @@ import traceback
 import ConfigParser
 import urllib
 import tempfile
-
-from UserDict import UserDict
+import glob
 
 from gip_ldap import read_bdii
 
@@ -58,7 +57,21 @@ def gipDir(tarDir, RPMDir):
 def vdtDir(tarDir, RPMDir):
     # if VDT_LOCATION is defined, return tarDir; otherwise return RPMDir
     return pickDir(tarDir, RPMDir, 'VDT_LOCATION')
+
+def get_file_list(config_dir):
+    """
+    Get the list of files in the sequence that the config parser object will read them
     
+    Keyword arguments:
+    config_directory -- indicates which directory holds the config files
+    """
+    if os.path.isdir(config_dir):
+        file_list = glob.glob(os.path.join(config_dir, '[!.]*.ini'))
+        file_list.sort()
+    else:
+        file_list = []
+    return file_list
+
 def check_gip_location():
     """
     This function checks to make sure that GIP_LOCATION is set and exists.

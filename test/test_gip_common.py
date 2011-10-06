@@ -3,13 +3,16 @@
 import os
 import sys
 import unittest
+import shutil
+import traceback
+
 sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 import tempfile23 as tempfile
 import ConfigParser
 
 from gip_sets import Set
 import gip_sets as sets
-from gip_common import config, cp_getBoolean, voList
+from gip_common import config, cp_get, cp_getBoolean, voList, configContents
 from gip_cluster import getOSGVersion, getApplications
 from gip_testing import runTest, streamHandler
 import gip_testing
@@ -30,6 +33,54 @@ class TestGipCommon(unittest.TestCase):
         Make sure that the ConfigParser object can load without errors
         """
         cp = config()
+
+    def test_config_dir(self):
+        # create temp dir
+        old_gip_location = os.environ['GIP_LOCATION']
+        tmpdir = tempfile.mkdtemp()
+        try:
+            os.environ['GIP_LOCATION'] = tmpdir
+            etc_dir = os.path.join(tmpdir, 'etc')
+            config_dir = os.path.join(tmpdir, 'config.d')
+
+            # create gip.conf
+            os.mkdir(etc_dir)
+            cp_gip = ConfigParser.ConfigParser()
+            cp_gip.add_section("gip")
+            cp_gip.set("gip", "osg_config", config_dir)
+            gip_conf = os.path.join(etc_dir, 'gip.conf')
+
+            fp = open(gip_conf, 'w')
+            cp_gip.write(fp)
+            fp.close()
+
+            os.mkdir(config_dir)
+            # create configs
+            for i in range(0, 4):
+                cp_config = ConfigParser.ConfigParser()
+                cp_config.add_section("Condor")
+                cp_config.set("Condor", "value_%i" % i, i)
+                config_fp = os.path.join(config_dir, "config_%i.ini" % i)
+
+                fp = open(config_fp, 'w')
+                cp_config.write(fp)
+                fp.close()
+
+            # now test the configs
+            try:
+                cp = config()
+
+                for i in range(0, 4):
+                    value = cp_get(cp, "condor", "value_%i" % i, -1)
+                    self.failUnless(int(value) == i, msg="Config failure, value returned: %s" % value)
+
+            except Exception, e:
+                tb = traceback.format_exception(sys.exc_info()[0], sys.exc_info()[1], sys.exc_info()[2])
+                self.fail("Configs failed:  %s" % tb)
+
+        finally:
+            shutil.rmtree(tmpdir)
+            os.environ['GIP_LOCATION'] = old_gip_location
 
     def test_gip_conf(self):
         """

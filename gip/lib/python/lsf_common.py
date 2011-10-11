@@ -357,7 +357,8 @@ def getQueueList(cp):
             continue
         if queue not in queue_exclude:
             queues.append(queue)
-
+    log.info("Starting with queues %s" % getQueueInfo(cp))
+    log.info("BNH -- queues are %s" % queues)
     return queues
 
 def getVoQueues(queueInfo, cp):

@@ -125,18 +125,6 @@ def checkOsgConfigured(cp):
         raise ValueError("osg-user-vo-map.txt has no uncommented lines; we may be "
                          "running in an unconfigured OSG install!")
 
-    loc = cp_get(cp, "gip", "osg_config", '%s/config.ini' % etcDir)
-                 
-    loc = os.path.expandvars(loc)
-    try:
-        file = open(loc)
-    except IOError, e:
-        log.error("FATAL ERROR: cannot read config.ini; expecting to find it" \
-            " at %s!" % loc)
-        log.exception(e)
-        raise ValueError("Unable to read config.ini; expecting to find it" \
-            " at %s!" % loc)
-
     return True
 
 def configOsg(cp):

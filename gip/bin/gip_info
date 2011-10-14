@@ -46,7 +46,7 @@ def main():
         osg_info_wrapper.main(cp)
     finally:
         temp_dir = os.path.expandvars(cp_get(cp, "gip", "temp_dir", \
-            gipDir("$GIP_LOCATION/var/tmp", '/var/gip/tmp')))
+            gipDir("$GIP_LOCATION/var/tmp", '/var/cache/gip')))
         osg_info_wrapper.flush_cache(temp_dir)
 
 if __name__ == '__main__':

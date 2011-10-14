@@ -1,5 +1,7 @@
 Changelog
-
+== next ==
+* Fix gip_info bug (OSG SOFTWARE-290)
+	
 == 1.3.1 ==
 * Bug fix -- we no longer exit with an error if we don't find config.ini
 	

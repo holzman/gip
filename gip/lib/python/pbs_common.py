@@ -171,7 +171,7 @@ def getJobsInfo(vo_map, cp):
         info = queue_data.get(vo, {"running":0, "wait":0, "total":0})
         if status == "R":
             info["running"] += 1
-        else:
+        if status == "Q":
             info["wait"] += 1
         info["total"] += 1
         queue_data[vo] = info

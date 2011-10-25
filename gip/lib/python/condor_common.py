@@ -220,7 +220,6 @@ def getLrmsInfo(cp): #pylint: disable-msg=C0103
     @returns: The condor version
     @rtype: string
     """
-    log.info("BURT: %s" % os.environ.get('PATH'))
 
     for line in condorCommand(condor_version, cp):
         if line.startswith("$CondorVersion:"):

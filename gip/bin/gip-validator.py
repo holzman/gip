@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 ################################################################################
 # GIP Validator
 # Author:       Brian Bockelman, Anthony Tiradani
@@ -17,6 +17,8 @@ import urllib
 import time
 import warnings
 
+from sets import Set
+
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 ################################################################################
@@ -25,23 +27,23 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 MSG_INFO = "INFO"
 MSG_CRITICAL = "CRIT"
 MSG_UNKNOWN = "UNKNOWN"
-osg_endpoint = "ldap://is.grid.iu.edu:2170"
-itb_endpoint = "ldap://is-itb.grid.iu.edu:2170"
-egee_endpoint = "ldap://lcg-bdii.cern.ch:2170"
-pps_endpoint = "ldap://pps-bdii.cern.ch:2170"
+DEFAULT_OSG_ENDPOINT = "ldap://is.grid.iu.edu:2170"
+DEFAULT_WLCG_ENDPOINT = "ldap://lcg-bdii.cern.ch:2170"
+OSG_ENDPOINT = DEFAULT_OSG_ENDPOINT
+WLCG_ENDPOINT = DEFAULT_WLCG_ENDPOINT
+
+DEFAULT_MYOSG_SUMMARY_URL = "http://myosg.grid.iu.edu/wizardsummary/xml?"\
+    "datasource=summary&summary_attrs_showservice=on&"\
+    "summary_attrs_showfqdn=on&summary_attrs_showwlcg=on&"\
+    "gip_status_attrs_showfqdn=on&account_type=cumulative_hours&"\
+    "ce_account_type=gip_vo&se_account_type=vo_transfer_volume&"\
+    "start_type=7daysago&start_date=04%2F23%2F2009&end_type=now&"\
+    "end_date=04%2F30%2F2009&all_resources=on&gridtype_1=on&service=on"\
+    "&service_1=on&active=on&active_value=1&disable_value=1"
 
 ################################################################################
 # GIP LDAP Module
 ################################################################################
-# True if the current version of Python is 2.3 or higher
-py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
-if not py23:
-    from sets24 import Set
-    from sets24 import _TemporarilyImmutableSet
-else:
-    from sets import Set
-    from sets import _TemporarilyImmutableSet
-
 class _hdict(dict): 
     def __hash__(self):
         items = self.items()
@@ -209,7 +211,7 @@ def read_ldap(fp, multi=False):
         entries.append(LdapData(mybuffer[1:], multi=multi))
     return entries
 
-def query_bdii(endpoint, query="(objectClass=GlueCE)", base="o=grid", filter=""):
+def query_bdii(endpoint, query="(objectClass=GlueCE)", base="o=grid", ldap_filter=""):
     r = re.compile('ldap://(.*):([0-9]*)')
     m = r.match(endpoint)
     if not m:
@@ -218,7 +220,7 @@ def query_bdii(endpoint, query="(objectClass=GlueCE)", base="o=grid", filter="")
     info['hostname'], info['port'] = m.groups()
     info['query'] = query
     info['base'] = base
-    info['filter'] = filter
+    info['filter'] = ldap_filter
 
     if query == '':
         cmd = 'ldapsearch -h %(hostname)s -p %(port)s -xLLL -b %(base)s' \
@@ -227,7 +229,7 @@ def query_bdii(endpoint, query="(objectClass=GlueCE)", base="o=grid", filter="")
         cmd = 'ldapsearch -h %(hostname)s -p %(port)s -xLLL -b %(base)s' \
             " '%(query)s' %(filter)s" % info
 
-    std_in, std_out, std_err = os.popen3(cmd)
+    _, std_out, _ = os.popen3(cmd)
     return std_out
 
 def compareLists(l1, l2):
@@ -310,20 +312,15 @@ def message(msg_type, msg_str):
     return {"type": msg_type, "msg": msg_str}
 
 class ValidateGip:
-    def __init__(self, ITB=False, localFile=False):
-        self.itb_grid = ITB
+    def __init__(self, localFile=False):
         self.entries = ""
         self.site_id = ""
         self.messages = []
         self.site = ""
         self.localFile = localFile
 
-        if self.itb_grid:
-            self.endpoint = itb_endpoint
-            self.wlcg_endpoint = pps_endpoint
-        else:
-            self.endpoint = osg_endpoint
-            self.wlcg_endpoint = egee_endpoint
+        self.endpoint = OSG_ENDPOINT
+        self.wlcg_endpoint = WLCG_ENDPOINT
 
     def appendMessage(self, msg_type, msg_str):
         self.messages.append(message(msg_type, msg_str))
@@ -396,8 +393,8 @@ class ValidateGip:
             if msg["type"] == MSG_CRITICAL: return False
         return True 
 
-    def getTimestamp(self, format="%a %b %d %T UTC %Y"):
-        return time.strftime(format, time.gmtime())
+    def getTimestamp(self, timestamp_format="%a %b %d %T UTC %Y"):
+        return time.strftime(timestamp_format, time.gmtime())
 
     def getSiteUniqueID(self, site):
         """
@@ -504,7 +501,8 @@ class ValidateGip:
                 self.appendMessage(MSG_CRITICAL, msg)
 
     def test_sponsors(self):
-        r = re.compile("(\w+):([0-9]+)")
+        # Not using the re?
+        #r = re.compile("(\w+):([0-9]+)")
         bdii_base = "mds-vo-name=%s,mds-vo-name=local,o=grid" % self.site
         fd = query_bdii(self.endpoint, query="", base=bdii_base)
         local_entries = read_ldap(fd, multi=True)
@@ -734,26 +732,29 @@ def smart_bool(s):
 
 class ValidatorMain:
     def __init__(self):
-        self.ITB = False
         self.format = ""
         self.site_list = []
         self.local_file = ""
+        self.print_results = True
+        self.myosg_summary_url = DEFAULT_MYOSG_SUMMARY_URL
 
-    def parseArgs(self, args):
+    def parseArgs(self):
         p = optparse.OptionParser()
         help_msg = 'Site list, if OIM, then pull list from OIM.'
         p.add_option('-s', '--sites', dest='sites', help=help_msg, default='OIM')
-        help_msg = 'Specifies which grid to pull info from, ITB or Prod.'
-        p.add_option('-g', '--grid', dest='grid', help=help_msg, default='Prod')
         help_msg = 'Print results.'
         p.add_option('-p', '--print', dest='print_results', help=help_msg, default="False")
         help_msg = 'Read from local file.  Overrides -s, --sites, -g, --grid.'
         p.add_option('-l', '--local-file', dest='local_file', help=help_msg, default="False")
         help_msg = 'Comma separated file list.  The file should contain ldif.'
         p.add_option('-f', '--file-list', dest='file_list', help=help_msg, default="False")
-        (options, args) = p.parse_args()
-
-        if not (options.grid.lower() == "prod"): self.ITB = True
+        help_msg = 'MyOSG Summary XML URL.'
+        p.add_option('-u', '--myosg-url', dest='myosg_url', help=help_msg, default=DEFAULT_MYOSG_SUMMARY_URL)
+        help_msg = 'Override for the OSG BDII Endpoint.'
+        p.add_option('-o', '--osg-bdii', dest='osg_enpoint', help=help_msg, default=DEFAULT_OSG_ENDPOINT)
+        help_msg = 'Override for the WLCG BDII Endpoint.'
+        p.add_option('-w', '--wlcg-bdii', dest='wlcg_endpoint', help=help_msg, default=DEFAULT_WLCG_ENDPOINT)
+        options, _ = p.parse_args()
 
         self.local_file = smart_bool(options.local_file)
         # get site list
@@ -763,51 +764,27 @@ class ValidatorMain:
             self.site_list = options.file_list.split(",")
         else:
             if options.sites == "OIM":
-                sitelist, itb_sitelist = self.getOIMSites()
-                if options.grid.lower() == "itb":
-                    self.ITB = True
-                    self.site_list = itb_sitelist
-                else:
-                    self.site_list = sitelist
+                self.site_list = self.getOIMSites()
             else:
                 self.site_list = options.sites.split(',')
+
+        self.myosg_summary_url = options.myosg_url
+        OSG_ENDPOINT = options.osg_enpoint
+        WLCG_ENDPOINT = options.wlcg_endpoint
 
         self.print_results = smart_bool(options.print_results)
 
     def getOIMSites(self):
         # get sites from OIM
-        prod_tmp = ""
-        itb_tmp = ""
-        prod_grid_type = "osg production resource"
-        itb_grid_type = "osg integration test bed resource"
-        
-        myosg_summary_url = "http://myosg.grid.iu.edu/wizardsummary/xml?"\
-            "datasource=summary&summary_attrs_showservice=on&"\
-            "summary_attrs_showfqdn=on&summary_attrs_showwlcg=on&"\
-            "gip_status_attrs_showfqdn=on&account_type=cumulative_hours&"\
-            "ce_account_type=gip_vo&se_account_type=vo_transfer_volume&"\
-            "start_type=7daysago&start_date=04%2F23%2F2009&end_type=now&"\
-            "end_date=04%2F30%2F2009&all_resources=on&gridtype_1=on&service=on"\
-            "&service_1=on&active=on&active_value=1&disable_value=1"
-
-        myosg_summary_xml = urllib.urlopen(myosg_summary_url).read()
+        site_list = []
+        myosg_summary_xml = urllib.urlopen(self.myosg_summary_url).read()
         xml_summary = libxml2.parseDoc(myosg_summary_xml)
         
         for rg in xml_summary.xpathEval('//ResourceGroup'):
-            for grid_type in rg.xpathEval ('GridType'):
-                
-                if (grid_type.content.lower() == prod_grid_type):
-                    for rg_name in rg.xpathEval('GroupName'):
-                        prod_tmp += rg_name.content + "\n"
+            for rg_name in rg.xpathEval('GroupName'):
+                site_list.append(rg_name.content)
 
-                if (grid_type.content.lower() == itb_grid_type):
-                    for rg_name in rg.xpathEval ('GroupName'):
-                        itb_tmp += rg_name.content + "\n"
-
-        sitelist = prod_tmp.split()
-        itbsitelist = itb_tmp.split()
-
-        return sitelist, itbsitelist
+        return site_list
 
     def determineReturnCode(self, results):
         # if there are multiple sites and no other errors, then simply return 0
@@ -845,14 +822,14 @@ class ValidatorMain:
         xml += '</GIPValidator>\n'
         print xml
         
-    def main(self, args):
-        self.parseArgs(args)
+    def main(self):
+        self.parseArgs()
 
-        test = ValidateGip(ITB=self.ITB, localFile=self.local_file)
+        test = ValidateGip(localFile=self.local_file)
         results = test.run(self.site_list)
         if self.print_results: self.printResults(results)
         return self.determineReturnCode(results)
 
 if __name__ == '__main__':
     v = ValidatorMain()
-    sys.exit(v.main(sys.argv))
+    sys.exit(v.main())

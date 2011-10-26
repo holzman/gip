@@ -1,0 +1,10 @@
+changelog export-ignore
+make-release.sh export-ignore
+.gitattributes export-ignore
+.gitignore export-ignore
+.svn export-ignore
+*~ export-ignore
+#*# export-ignore
+*.tar.gz export-ignore
+*.tgz export-ignore
+*/var/logs/*.log export-ignore

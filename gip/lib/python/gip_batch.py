@@ -18,7 +18,7 @@ def buildCEUniqueID(cp, ce_name, batch, queue):
     return ce_unique_id
 
 def getGramVersion(cp):
-    gramVersion = '\n' + 'GlueCEInfoGRAMVersion: 2.0'
+    gramVersion = '\n' + 'GlueCEInfoGRAMVersion: 5.0'
     if cp_getBoolean(cp, 'cream', 'enabled', False):    
         gramVersion = ''
 

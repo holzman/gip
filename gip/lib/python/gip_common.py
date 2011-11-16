@@ -361,7 +361,7 @@ def add_giplog_handler():
     Uses a rotating logfile of 10MB, with 5 backups.
     """
     mylog = logging.getLogger()
-    logdir = gipDir(os.path.expandvars('$GIP_LOCATION/var/logs'), '/var/gip/log')
+    logdir = gipDir(os.path.expandvars('$GIP_LOCATION/var/logs'), '/var/log/gip')
 
     try:
         os.makedirs(logdir)

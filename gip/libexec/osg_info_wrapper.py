@@ -12,7 +12,6 @@ import sys
 import pwd
 import glob
 import time
-import shutil
 import signal
 import cStringIO
 
@@ -22,7 +21,7 @@ start_uid = os.getuid()
 if start_uid == 0:
     # NOTE:  Must set gid first or you will get an "Operation not permitted"
     # error
-    pwd_tuple = pwd.getpwnam("daemon")
+    pwd_tuple = pwd.getpwnam("tomcat")
     pw_uid = pwd_tuple[2]
     pw_gid = pwd_tuple[3]
 
@@ -34,29 +33,29 @@ else:
 
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
 if not py23:
-      os.EX_CANTCREAT = 73
-      os.EX_CONFIG = 78
-      os.EX_DATAERR = 65
-      os.EX_IOERR = 74
-      os.EX_NOHOST = 68
-      os.EX_NOINPUT = 66
-      os.EX_NOPERM = 77
-      os.EX_NOUSER = 67
-      os.EX_OK = 0
-      os.EX_OSERR = 71
-      os.EX_OSFILE = 72
-      os.EX_PROTOCOL = 76
-      os.EX_SOFTWARE = 70
-      os.EX_TEMPFAIL = 75
-      os.EX_UNAVAILABLE = 69
-      os.EX_USAGE = 64
-                                                   
+    os.EX_CANTCREAT = 73
+    os.EX_CONFIG = 78
+    os.EX_DATAERR = 65
+    os.EX_IOERR = 74
+    os.EX_NOHOST = 68
+    os.EX_NOINPUT = 66
+    os.EX_NOPERM = 77
+    os.EX_NOUSER = 67
+    os.EX_OK = 0
+    os.EX_OSERR = 71
+    os.EX_OSFILE = 72
+    os.EX_PROTOCOL = 76
+    os.EX_SOFTWARE = 70
+    os.EX_TEMPFAIL = 75
+    os.EX_UNAVAILABLE = 69
+    os.EX_USAGE = 64
+
 try:
-   #python 2.5 and above  
-   import hashlib as md5
+    #python 2.5 and above  
+    import hashlib as md5
 except ImportError:
-   # pylint: disable-msg=F0401
-   import md5
+    # pylint: disable-msg=F0401
+    import md5
 
 if 'GIP_LOCATION' in os.environ:
     sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
@@ -185,14 +184,14 @@ def flush_cache(temp_dir):
     @param temp_dir: The temporary directory to delete.
     """
     files = os.listdir(temp_dir)
-    for file in files:
-        if file.startswith('.'):
+    for filename in files:
+        if filename.startswith('.'):
             continue
-        file = os.path.join(temp_dir, file)
+        filename = os.path.join(temp_dir, filename)
         try:
-            os.remove(file)
+            os.remove(filename)
         except:
-            log.warn("Unable to flush cache file %s" % file)
+            log.warn("Unable to flush cache file %s" % filename)
 
 def handle_providers(entries, providers):
     """
@@ -206,7 +205,7 @@ def handle_providers(entries, providers):
     @returns: The altered entries list.
     """
     provider_entries = []
-    for provider, p_info in providers.items():
+    for _, p_info in providers.items():
         if 'output' in p_info:
             fp = cStringIO.StringIO(p_info['output'])
             provider_entries += read_ldap(fp, multi=True)
@@ -221,9 +220,9 @@ def handle_providers(entries, providers):
     for entry in sets.Set(remove_entries):
         log.debug("Removing entry %s" % entry)  
         try:
-              entries.remove(entry)
+            entries.remove(entry)
         except ValueError:
-              pass
+            pass
     # Now add all the new entries from the providers
     for p_entry in provider_entries:
         entries.append(p_entry)
@@ -328,7 +327,7 @@ def handle_remove_attributes(entries, remove_attributes):
 def handle_plugins(entries, plugins):
     # Make a list of all the plugin GLUE entries
     plugin_entries = []
-    for plugin, plugin_info in plugins.items():
+    for _, plugin_info in plugins.items():
         if 'output' in plugin_info:
             fp = cStringIO.StringIO(plugin_info['output'])
             plugin_entries += read_ldap(fp, multi=True)
@@ -417,7 +416,7 @@ def check_cache(modules, temp_dir, freshness):
     @param freshness: If a file is older than $freshness seconds, its contents
        are ignored.
     """
-    for mod, mod_info in modules.items():
+    for _, mod_info in modules.items():
         if 'output' in mod_info:
             continue
         filename = os.path.join(temp_dir, "%(name)s.ldif.%(cksum)s" % \
@@ -456,25 +455,25 @@ def list_modules(dirname):
     @returns: A dictionary of module data; one key per file in the directory.
     """
     info = {}
-    for file in os.listdir(dirname):
-         if os.path.isdir(file):
-             continue
-         if file.startswith('.'):
-             continue
-
-         # ignore temporary files         
-         if file.endswith('~') or \
-                (file.startswith('#') and file.endswith('#')):
-             continue
-
-         mod_info = {}
-         mod_info['name'] = file
-         try:
-             mod_info['cksum'] = calculate_hash(os.path.join(dirname, file))
-         except Exception, e:
-             log.exception(e)
-         info[file] = mod_info
-         log.debug("Found module %s in directory %s" % (file, dirname))
+    for filename in os.listdir(dirname):
+        if os.path.isdir(filename):
+            continue
+        if filename.startswith('.'):
+            continue
+        
+        # ignore temporary files         
+        if filename.endswith('~') or \
+               (filename.startswith('#') and filename.endswith('#')):
+            continue
+        
+        mod_info = {}
+        mod_info['name'] = filename
+        try:
+            mod_info['cksum'] = calculate_hash(os.path.join(dirname, filename))
+        except Exception, e:
+            log.exception(e)
+        info[filename] = mod_info
+        log.debug("Found module %s in directory %s" % (filename, dirname))
     return info
 
 def run_child(executable, orig_filename, timeout):

@@ -17,7 +17,7 @@ start_uid = os.getuid()
 if start_uid == 0:
     # NOTE:  Must set gid first or you will get an "Operation not permitted"
     # error
-    pwd_tuple = pwd.getpwnam("daemon")
+    pwd_tuple = pwd.getpwnam("tomcat")
     pw_uid = pwd_tuple[2]
     pw_gid = pwd_tuple[3]
 

@@ -1,9 +1,14 @@
 Changelog
+== 1.3.3 ==
+* Fix wrong location for gip log (OSG SOFTWARE-374)
+* Drop privs to user tomcat instead of user daemon
+* Publish GRAM version as 5.0 instead of 2.0
+* PBS: only add queued jobs as waiting (were counting all non-running jobs
+  as queued before)
+	
 == 1.3.2 ==
 * Fix gip_info bug (OSG SOFTWARE-290)
 * Clean up gip-validator (MYOSG-25)
-* PBS: only add queued jobs as waiting (were counting all non-running jobs
-  as queued before)
 * Forward port non-blocking read code (it didn't make it from 1.2.x to 1.3)
 	
 == 1.3.1 ==

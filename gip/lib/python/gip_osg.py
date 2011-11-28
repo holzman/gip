@@ -113,8 +113,8 @@ def checkOsgConfigured(cp):
     osg_user_vo_map = cp_get(cp, "vo", "user_vo_map", defaultLoc)
 
     if not os.path.exists(osg_user_vo_map):
-        raise ValueError("osg-user-vo-map.txt does not exists; we may be "
-                         "running in an unconfigured OSG install!")
+        raise ValueError("%s does not exist; we may be "
+                         "running in an unconfigured OSG install!" % osg_user_vo_map)
     fd = open(osg_user_vo_map, "r")
     has_uncommented_lines = False;
     for line in fd.readlines():
@@ -122,8 +122,8 @@ def checkOsgConfigured(cp):
             has_uncommented_lines = True
             break
     if not has_uncommented_lines:
-        raise ValueError("osg-user-vo-map.txt has no uncommented lines; we may be "
-                         "running in an unconfigured OSG install!")
+        raise ValueError("%s has no uncommented lines; we may be "
+                         "running in an unconfigured OSG install!" % osg_user_vo_map)
 
     return True
 

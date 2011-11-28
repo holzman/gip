@@ -265,6 +265,10 @@ class VoMapper:
         #self.voMap = {}
         self.parse()
 
+        if not self.userMap:
+            raise ValueError("No users mapped -- is %s empty?" %
+                             os.path.expandvars(self.map_location))
+
     def parse(self):
         """
         Parse the user-to-vo map specified at `self.map_location`

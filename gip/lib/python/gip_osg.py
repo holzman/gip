@@ -9,7 +9,7 @@ import socket
 import ConfigParser
 
 from gip_sections import ce, site, pbs, condor, sge, lsf, se, subcluster, \
-    cluster, cesebind, cream
+    cluster, cesebind, cream, slurm
 from gip_common import getLogger, py23, vdtDir, get_file_list
 
 log = getLogger("GIP")

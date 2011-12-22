@@ -1,5 +1,8 @@
 #Format:
 #<filename>: <corresponding commandline invocation>
+sinfo: sinfo -h -o "%P %a %C %l"
+sinfo_version: sinfo -V
+squeue: squeue -h -o "%i %u %T %P"
 qstat_Q_f: qstat -Q -f
 qstat_B_f: qstat -B -f
 qstat: qstat

@@ -3,6 +3,7 @@
 from pbs_test import main as pbs_main
 from lsf_test import main as lsf_main
 from condor_test import main as condor_main
+from slurm_test import main as slurm_main
 from test_gip_common import main as gip_main
 from test_topology import main as topology_main
 from osg_info_wrapper_test import main as wrapper_main
@@ -20,6 +21,7 @@ def test_run(fcn):
             raise
 
 def main():
+    test_run(slurm_main)
     test_run(pbs_main)
     test_run(lsf_main)
     test_run(condor_main)

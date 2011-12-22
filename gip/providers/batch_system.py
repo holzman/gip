@@ -10,6 +10,7 @@ from gip.providers.pbs import main as pbs_main
 from gip.providers.condor import main as condor_main
 from gip.providers.sge import main as sge_main
 from gip.providers.lsf import main as lsf_main
+from gip.providers.slurm import main as slurm_main
 
 log = getLogger("GIP.BatchSystem")
 
@@ -31,6 +32,8 @@ def main():
             sge_main()
         elif job_manager == 'lsf':
             lsf_main()
+        elif job_manager == 'slurm':
+            slurm_main()
         else:
             log.error("Unknown job manager: %s." % job_manager)
             sys.exit(1)

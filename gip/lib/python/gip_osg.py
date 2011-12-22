@@ -24,6 +24,7 @@ gip_sec = 'GIP'
 dcache_sec = 'dcache'
 lsf_sec = 'LSF'
 cream_sec = 'CREAM'
+slurm_sec = 'SLURM'
 
 def cp_getInt(cp, section, option, default):
     """
@@ -315,6 +316,9 @@ def configOsg(cp):
     # [LSF]
     __write_all_options_config(lsf_sec, lsf)
 
+    # [Slurm]
+    __write_all_options_config(slurm_sec, slurm)
+
     # [Storage]
     __write_config(storage_sec, "app_dir", "osg_dirs", "app")
     __write_config(storage_sec, "data_dir", "osg_dirs", "data")
@@ -355,7 +359,7 @@ def configOsg(cp):
     
     # Try to auto-detect the batch manager.  If all are disabled or missing, 
     # then this is probably an SE only installation
-    mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge'}
+    mappings = {'Condor': 'condor', 'PBS': 'pbs', 'LSF': 'lsf', 'SGE': 'sge', 'SLURM': 'slurm'}
     for section, gip_name in mappings.items():
         if cp_getBoolean(cp2, section, 'enabled', False):
             if ce not in cp.sections():

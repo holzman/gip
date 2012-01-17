@@ -11,22 +11,6 @@ def gipDir(tarDir, RPMDir):
 
     return RPMDir
 
-# check if we are root.  If we are, drop privileges to daemon to avoid
-# permissions problems when CEMon tries to run the GIP
-start_uid = os.getuid()
-if start_uid == 0:
-    # NOTE:  Must set gid first or you will get an "Operation not permitted"
-    # error
-    pwd_tuple = pwd.getpwnam("tomcat")
-    pw_uid = pwd_tuple[2]
-    pw_gid = pwd_tuple[3]
-
-    os.setregid(pw_gid, pw_gid)
-    os.setreuid(pw_uid, pw_uid)
-else:
-    # Not root so we can't change privileges so pass
-    pass
-
 #Standard testing imports:
 if 'GIP_LOCATION' in os.environ:
     sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
@@ -35,6 +19,8 @@ from gip_common import config, cp_get
 #Add the path with the osg_info_wrapper script:
 sys.path.append(os.path.expandvars(gipDir("$GIP_LOCATION/libexec",
                                    '/usr/libexec/gip')))
+# NOTE:  We do not have to drop privileges here... the following import will
+#        take care of that for us
 import osg_info_wrapper
 
 def main():

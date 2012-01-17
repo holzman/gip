@@ -15,22 +15,6 @@ import time
 import signal
 import cStringIO
 
-# check if we are root.  If we are, drop privileges to daemon to avoid
-# permissions problems when CEMon tries to run the GIP
-start_uid = os.getuid()
-if start_uid == 0:
-    # NOTE:  Must set gid first or you will get an "Operation not permitted"
-    # error
-    pwd_tuple = pwd.getpwnam("tomcat")
-    pw_uid = pwd_tuple[2]
-    pw_gid = pwd_tuple[3]
-
-    os.setregid(pw_gid, pw_gid)
-    os.setreuid(pw_uid, pw_uid)
-else:
-    # Not root so we can't change privileges so pass
-    pass
-
 py23 = sys.version_info[0] == 2 and sys.version_info[1] >= 3
 if not py23:
     os.EX_CANTCREAT = 73
@@ -62,6 +46,30 @@ if 'GIP_LOCATION' in os.environ:
 from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt, gipDir
 from gip_ldap import read_ldap, compareDN, LdapData
 import gip_sets as sets
+
+# check if we are root.  If we are, drop privileges to daemon to avoid
+# permissions problems when CEMon tries to run the GIP
+cp = config()
+gip_user = cp_get(cp, "gip", "gip_user", "tomcat")
+start_uid = os.getuid()
+if start_uid == 0:
+    # NOTE:  Must set gid first or you will get an "Operation not permitted"
+    # error
+    try:
+        pwd_tuple = pwd.getpwnam(gip_user)
+        pw_uid = pwd_tuple[2]
+        pw_gid = pwd_tuple[3]
+    
+        os.setregid(pw_gid, pw_gid)
+        os.setreuid(pw_uid, pw_uid)
+    except:
+        # the username was invalid so pass (logging has not been set up yet)
+        # Note: we can't log because if we log as root then the ownership of the
+        #       log files can potentially get messed up
+        print >> sys.stderr, "Invalid username configured: %s" % gip_user
+else:
+    # Not root so we can't change privileges so pass
+    pass
 
 log = getLogger("GIP.Wrapper")
 

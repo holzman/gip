@@ -1,4 +1,8 @@
 Changelog
+== 1.3.4 ==
+* Better error messages for invalid vo maps
+* GIP will now look in the config files for the proper user for dropping privileges
+
 == 1.3.3 ==
 * Fix wrong location for gip log (OSG SOFTWARE-374)
 * Drop privs to user tomcat instead of user daemon

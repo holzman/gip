@@ -198,7 +198,8 @@ def config(*args):
     if 'GIP_CONFIG' in os.environ:
         files += [os.path.expandvars("$GIP_CONFIG")]
 
-    log.info("Using GIP SVN revision $Revision$")
+    # TODO: Figure some other way to imprint the logs - RPM version?.
+    # log.info("Using GIP SVN revision $Revision$")
 
     # Try to read all the files; toss a warning if a config file can't be
     # read:
@@ -374,8 +375,8 @@ def add_giplog_handler():
         if oe.errno != 17:
             return
     logfile = os.path.expandvars('%s/gip.log' % logdir)
-    formatter = logging.Formatter('%(asctime)s %(name)s:%(levelname)s ' \
-        '%(pathname)s:%(lineno)d:  %(message)s')
+    formatter = logging.Formatter('[%(process)d] %(asctime)s %(name)s:%(levelname)s ' \
+        ' %(pathname)s:%(lineno)d:  %(message)s')
     handler = logging.handlers.RotatingFileHandler(logfile,
         maxBytes=1024*1024*10, backupCount=5)
     handler.setFormatter(formatter)

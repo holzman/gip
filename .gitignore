@@ -1,0 +1,4 @@
+*.pyc
+gip/etc/config.ini
+gip/etc/gip.conf
+gip/var

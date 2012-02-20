@@ -5,12 +5,27 @@ import cStringIO
 from gip_ldap import read_ldap
 from gip_common import cp_get, cp_getBoolean, cp_getInt, getLogger, config, \
     gipDir
-from gip.utils.info_gen import create_if_not_exist, flush_cache, \
+from gip.utils.info_gen import flush_cache, merge_cache, handle_plugins, \
     handle_add_attributes, handle_alter_attributes, handle_remove_attributes, \
-    flush_cache, check_cache, read_static, handle_providers, handle_plugins, \
-    merge_cache
+    flush_cache, check_cache, read_static, handle_providers
 from gip.utils.process_handling import launch_modules, list_modules, wait_children, \
     handle_privs
+
+def create_if_not_exist(*paths):
+    """
+    Create a directories if they do not exist
+    """
+    for path in paths:
+        # Bail out if it already exists
+        if os.path.exists(path):
+            continue
+        log.info("Creating directory %s because it doesn't exist." % path)
+        try:
+            os.makedirs(path)
+        except Exception, e:
+            log.error("Unable to make necessary directory, %s" % path)
+            log.exception(e)
+            raise
 
 def main(cp = None, return_entries=False):
     """
@@ -58,9 +73,10 @@ def main(cp = None, return_entries=False):
         flush_cache(temp_dir)
 
     # Load up our parameters
-    freshness = cp_getInt(cp, "gip", "freshness", 300)
-    cache_ttl = cp_getInt(cp, "gip", "cache_ttl", 600)
-    response  = cp_getInt(cp, "gip", "response",  240)
+    freshness  = cp_getInt(cp, "gip", "freshness", 300)
+    static_ttl = cp_getInt(cp, "gip", "static_ttl", 60*60*12)
+    cache_ttl  = cp_getInt(cp, "gip", "cache_ttl", 600)
+    response   = cp_getInt(cp, "gip", "response",  240)
 
     try:
         os.setpgrp()
@@ -70,7 +86,7 @@ def main(cp = None, return_entries=False):
             raise
 
     # First, load the static info
-    static_info = read_static(static_dir)
+    static_info = read_static(static_dir, static_ttl)
 
     # Discover the providers and plugins
     providers = list_modules(provider_dir)
@@ -102,9 +118,9 @@ def main(cp = None, return_entries=False):
     entries = handle_plugins(entries, plugins)
 
     # Finally, apply our special cases
-    entries = handle_add_attributes(entries, add_attributes)
-    entries = handle_alter_attributes(entries, alter_attributes)
-    entries = handle_remove_attributes(entries, remove_attributes)
+    entries = handle_add_attributes(entries, add_attributes, static_ttl)
+    entries = handle_alter_attributes(entries, alter_attributes, static_ttl)
+    entries = handle_remove_attributes(entries, remove_attributes, static_ttl)
 
     # Return the LDAP or print it out.
     if return_entries:

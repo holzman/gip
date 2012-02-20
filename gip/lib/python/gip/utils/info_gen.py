@@ -13,12 +13,12 @@ except ImportError:
     import md5
 
 from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt, gipDir
-from gip_ldap import read_ldap, compareDN, LdapData
+from gip_ldap import read_ldap, compareDN, LdapData, ldap_diff
 import gip_sets as sets
 
 log = getLogger("GIP.InfoGen")
 
-def read_static(static_dir):
+def read_static(static_dir, static_ttl):
     """
     Read all the files in static_dir, collating the response into a single
     stream.
@@ -30,10 +30,7 @@ def read_static(static_dir):
     streams = ''
     for filename in glob.glob("%s/*.ldif" % static_dir):
         log.debug("Reading static file %s" % filename)
-        try:
-            info = open(filename, 'r').read()
-        except:
-            log.error("Unable to read %s." % filename)
+        info = _handle_static_file(filename, static_ttl)
         if len(info) == 0:
             continue
         if info[-1] != "\n":
@@ -98,6 +95,29 @@ def check_cache(modules, temp_dir, freshness):
             log.debug("  Loading file contents.")
             mod_info['output'] = fp.read()
 
+def write_entries(entries, temp_dir, prefix, final_filename):
+    try:
+        fd, tmp_filename = tempfile.mkstemp(dir=temp_dir, prefix=prefix)
+    except OSError, oe:
+        log.warning("Got error when opening file %s: %s" % (tmp_filename, oe.strerror))
+        return
+    try:
+        for entry in entries:
+            os.write(fd, entry.to_ldif())
+            os.write(fd, "\n")
+    except OSError, oe:
+        log.warning("Got error when writing to temp file %s: %s" % (tmp_filename, oe.strerror))
+        os.unlink(tmp_filename)
+        os.close(fd)
+        return
+    try:
+        os.fdatasync(fd)
+        os.rename(tmp_filename, final_filename)
+        os.close(fd)
+    except OSError, oe:
+        log.warning("Error renaming temp file to final location %s: %s" % (final_filename, oe.strerror))
+        os.unlink(tmp_filename)
+
 def merge_cache(modules, pid_results, temp_dir, cache_ttl):
     """
     Merge the results of the providers into the temp directory.
@@ -139,31 +159,11 @@ def merge_cache(modules, pid_results, temp_dir, cache_ttl):
              entry.nonglue['GIPExpiration'] = (expiry,)
 
         # Now, write out into the final location.
-        try:
-            fd, tmp_filename = tempfile.mkstemp(dir=temp_dir, prefix="%(name)s.ldif" % mod_info)
-        except OSError, oe:
-            log.warning("Got error when opening merged tmp file %s: %s" % (tmp_filename, oe.strerror))
-            continue
-        try:
-            for entry in entries:
-                os.write(fd, entry.to_ldif())
-                os.write(fd, "\n")
-        except OSError, oe:
-            log.warning("Got error when writing merged tmp file %s: %s" % (tmp_filename, oe.strerror))
-            os.unlink(tmp_filename)
-            os.close(fd)
-            continue
         final_filename = os.path.join(temp_dir, "%(name)s.ldif" % mod_info)
-        try:
-            os.fdatasync(fd)
-            os.rename(tmp_filename, final_filename)
-            os.close(fd)
-        except OSError, oe:
-            log.warning("Error renaming merged file to final location %s: %s" % (final_filename, oe.strerror))
-            os.unlink(tmp_filename)
-            continue
+        write_entries(entries, temp_dir, "%(name)s.ldif.tmp" % mod_info, final_filename)
+        mod_info['output'] = "\n".join([i.to_ldif() for i in entries])
 
-def handle_alter_attributes(entries, alter_attributes):
+def handle_alter_attributes(entries, alter_attributes, static_ttl):
     """
     Handle the alter_attributes file, a special case of a plugin.
 
@@ -177,17 +177,11 @@ def handle_alter_attributes(entries, alter_attributes):
     if not os.path.exists(alter_attributes):
         log.warning("The alter-attributes.conf file does not exist.")
         return entries
-    try:
-        output = open(alter_attributes).read()
-    except Exception, e:
-        log.error("An exception occurred when trying to read the " \
-            "alter-attributes file %s" % alter_attributes)
-        log.exception(e)
-        return entries
+    output = _handle_static_file(alter_attributes, static_ttl)
     info = {'alter_attributes': {'output': output}}
     return handle_plugins(entries, info)
 
-def handle_remove_attributes(entries, remove_attributes):
+def handle_remove_attributes(entries, remove_attributes, static_ttl):
     """
     Handle the remove_attributes file, which can remove entities from the
     GIP entries
@@ -212,6 +206,19 @@ def handle_remove_attributes(entries, remove_attributes):
         log.exception(e)
         return entries
     log.debug("Successfully opened the remove_attributes file.")
+
+    # Copy/paste job from _handle_static_file
+    now = time.time()
+    st = os.stat(remove_attributes)
+    last_update = st.st_mtime
+    if last_update - now > static_ttl:
+        # Touch the file to fake now as a cache time.
+        last_update = now
+        try:
+            os.utimens(remove_attributes, None)
+        except OSError, oe:
+            log.error("An exception occurred when trying to touch the " \
+                "static file %s" % remove_attributes)
 
     # Collect all the DNs to be removed
     remove_dns = []
@@ -243,8 +250,8 @@ def handle_plugins(entries, plugins):
             fp = cStringIO.StringIO(plugin_info['output'])
             plugin_entries += read_ldap(fp, multi=True)
     # Merge all the plugin entries into the main stream.
-    for p_entry in plugin_entries:
-        log.debug("Plugin contents:\n%s" % p_entry)
+    #for p_entry in plugin_entries:
+    #    log.debug("Plugin contents:\n%s" % p_entry)
     for entry in entries:
         for p_entry in plugin_entries:
             if compareDN(entry, p_entry):
@@ -254,7 +261,45 @@ def handle_plugins(entries, plugins):
                     entry.nonglue[key] = value
     return entries
 
-def handle_add_attributes(entries, add_attributes):
+def _handle_static_file(filename, static_ttl):
+    """
+    Handle a static files.
+    Read out the entries, add an expiration time based on the file's mtime.
+    If the file is older than static_ttl seconds, update the mtime.
+
+    Return a string containing the LDIF.
+    """
+    try:
+        fp = open(filename, "r")
+    except IOError,ie:
+        log.error("An exception occurred when trying to open the " \
+            "static file %s" % filename)
+        log.exception(e)
+        return ''
+    try:
+        entries = read_ldap(fp, multi=True)
+    except Exception, e:
+        log.error("An exception occurred when trying to read the " \
+            "static file %s" % filename)
+        log.exception(e)
+        return ''
+    now = time.time()
+    st = os.stat(filename)
+    last_update = st.st_mtime
+    if last_update - now > static_ttl:
+        # Touch the file to fake now as a cache time.
+        last_update = now
+        try:
+            os.utimens(filename, None)
+        except OSError, oe:
+            log.error("An exception occurred when trying to touch the " \
+                "static file %s" % filename)
+    expiry = last_update + static_ttl
+    for entry in entries:
+        entry.nonglue['GIPExpiration'] = (expiry,)
+    return '\n'.join([i.to_ldif() for i in entries])
+
+def handle_add_attributes(entries, add_attributes, static_ttl):
     """
     Handle the add_attributes file, a special case of a provider.
 
@@ -268,13 +313,7 @@ def handle_add_attributes(entries, add_attributes):
     if not os.path.exists(add_attributes):
         log.warning("The add-attributes.conf file does not exist.")
         return entries
-    try:
-        output = open(add_attributes).read()
-    except Exception, e:
-        log.error("An exception occurred when trying to read the " \
-            "add-attributes file %s" % add_attributes)
-        log.exception(e)
-        return entries
+    output = _handle_static_file(add_attributes, static_ttl)
     info = {'add_attributes': {'output': output}}
     return handle_providers(entries, info)
 
@@ -329,19 +368,54 @@ def flush_cache(temp_dir):
         except:
             log.warn("Unable to flush cache file %s" % filename)
 
-def create_if_not_exist(*paths):
+def _read_output_entries(filename):
+    if not os.path.exists(filename):
+        return []
+    try:
+        fp = open(filename, 'r')
+    except OSError, oe:
+        return []
+    try:
+        return read_ldap(fp, multi=True)
+    except OSError, oe:
+        return []
+
+def calculate_updates(entries, temp_dir):
     """
-    Create a directories if they do not exist
+    Given a set of entries, split the full updates from the partial updates.
+
+    Check temp_dir/gip_output.ldif for the last full output; each LDIF stanza
+    will have a GIPExpiration time; if the expiration time has passed, it is a
+    full update.  If the expiration time has not passed, do a delta and only
+    return those attributes that have changed.
     """
-    for path in paths:
-        # Bail out if it already exists
-        if os.path.exists(path):
+    full_updates = {}
+    partial_updates = {}
+    filename = os.path.join(temp_dir, "gip_output.ldif")
+    old_entries = _read_output_entries(filename)
+    entries_dict = {}
+    old_entries_dict = {}
+    for entry in entries:
+        entries_dict[entry.dn] = entry
+    for entry in old_entries:
+        old_entries_dict[entry.dn] = entry
+    now = time.time()
+    for dn, entry in old_entries_dict.items():
+        is_expired = int(entry.nonglue['GIPExpiration'][0]) < now
+        if (dn not in entries_dict) and (not is_expired):
+            full_updates[dn] = entry
+        elif dn in entries_dict:
+            if is_expired:
+                full_updates[dn] = entries_dict[dn]
+            else:
+                partial_updates[dn] = ldap_diff(entry, entries_dict[dn])
+
+    for dn, entry in entries_dict.items():
+        if dn in old_entries_dict:
             continue
-        log.info("Creating directory %s because it doesn't exist." % path)
-        try:
-            os.makedirs(path)
-        except Exception, e:
-            log.error("Unable to make necessary directory, %s" % path)
-            log.exception(e)
-            raise
+        full_updates[dn] = entry
+
+    write_entries(full_updates.values(), temp_dir, "gip_output.ldif", filename)
+
+    return full_updates.values(), partial_updates.values()
 

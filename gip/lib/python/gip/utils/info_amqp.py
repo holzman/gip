@@ -1,15 +1,17 @@
 
 import os
+import socket
 import cStringIO
 
 from gip_ldap import read_ldap
 from gip_common import cp_get, cp_getBoolean, cp_getInt, getLogger, config, \
     gipDir
-from gip.utils.info_gen import create_if_not_exist, flush_cache, \
+from gip.utils.info_gen import merge_cache, handle_plugins, flush_cache, \
     handle_add_attributes, handle_alter_attributes, handle_remove_attributes, \
-    flush_cache, check_cache, read_static, handle_providers, handle_plugins, \
-    merge_cache
+    check_cache, read_static, handle_providers, calculate_updates
 from gip.utils.process_handling import launch_modules, list_modules, wait_children
+from gip.utils.info_main import create_if_not_exist
+from gip.utils.amqp import connect, send_entries
 
 def main(cp = None, return_entries=False):
     """
@@ -55,9 +57,10 @@ def main(cp = None, return_entries=False):
         flush_cache(temp_dir)
 
     # Load up our parameters
-    freshness = cp_getInt(cp, "gip", "freshness", 60*30)
-    cache_ttl = cp_getInt(cp, "gip", "cache_ttl", 86400*7)
-    response  = cp_getInt(cp, "gip", "response",  240)
+    freshness  = cp_getInt(cp, "gip", "freshness", 60*30)
+    static_ttl = cp_getInt(cp, "gip", "static_ttl", 60*60*12)
+    cache_ttl  = cp_getInt(cp, "gip", "cache_ttl", 86400*7)
+    response   = cp_getInt(cp, "gip", "response",  240)
 
     try:
         os.setpgrp()
@@ -67,7 +70,7 @@ def main(cp = None, return_entries=False):
             raise
 
     # First, load the static info
-    static_info = read_static(static_dir)
+    static_info = read_static(static_dir, static_ttl)
 
     # Discover the providers and plugins
     providers = list_modules(provider_dir)
@@ -78,8 +81,8 @@ def main(cp = None, return_entries=False):
     check_cache(plugins, temp_dir, freshness)
 
     # Launch the providers and plugins
-    pids = launch_modules(providers, provider_dir, temp_dir, timeout)
-    pids += launch_modules(plugins, plugin_dir, temp_dir, timeout)
+    pids = launch_modules(providers, provider_dir, temp_dir)
+    pids += launch_modules(plugins, plugin_dir, temp_dir)
 
     # Wait for the results
     results = wait_children(pids, response)
@@ -98,16 +101,26 @@ def main(cp = None, return_entries=False):
     # Apply output from the plugins
     entries = handle_plugins(entries, plugins)
 
-    # Finally, apply our special cases
-    entries = handle_add_attributes(entries, add_attributes)
-    entries = handle_alter_attributes(entries, alter_attributes)
-    entries = handle_remove_attributes(entries, remove_attributes)
+    # Apply our special cases
+    entries = handle_add_attributes(entries, add_attributes, static_ttl)
+    entries = handle_alter_attributes(entries, alter_attributes, static_ttl)
+    entries = handle_remove_attributes(entries, remove_attributes, static_ttl)
 
-    # Return the LDAP or print it out.
-    if return_entries:
-        return entries
-    for entry in entries:
-        if 'GIPExpiration' in entry.nonglue:
-            del entry.nonglue['GIPExpiration']
-        print entry.to_ldif()
+    full_entries, updates = calculate_updates(entries, temp_dir)
+
+    print len(full_entries)
+    print len(updates)
+    #for update in updates:
+    #    print update.to_ldif()
+
+    conn = connect(cp)
+    channel = conn.channel()
+
+    # TODO: Better determination of the resource name.
+    resource_name = socket.getfqdn()
+
+    send_entries(channel, 'entries.%s' % resource_name, full_entries)
+    send_entries(channel, 'updates.%s' % resource_name, updates)
+
+    conn.close()
 

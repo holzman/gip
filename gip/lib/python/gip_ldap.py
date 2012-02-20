@@ -364,3 +364,25 @@ def prettyDN(dn_list):
         dn += entry + ','
     return dn[:-1]
 
+def ldap_diff(old, new):
+    """
+    Compare two LDIF stanzas.  Return only the things changed in the new stanza.
+
+    Returns nothing if the DN or the objectClass is different.
+    """
+    if old.dn != new.dn:
+        return
+    if old.objectClass != new.objectClass:
+        return
+
+    diff = LdapData(old.to_ldif(), multi=True)
+    diff.nonglue = {}
+    diff.glue = {}
+    for key, val in new.glue.items():
+        if (key not in old.glue) or (val != old.glue[key]):
+            diff.glue[key] = val
+    for key, val in new.nonglue.items():
+        if (key not in old.nonglue) or (val != old.nonglue[key]):
+            diff.nonglue[key] = val
+    return LdapData(diff.to_ldif(), multi=True)
+

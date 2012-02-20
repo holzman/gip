@@ -1,4 +1,5 @@
 *.pyc
 gip/etc/config.ini
 gip/etc/gip.conf
+gip/etc/*-attributes.conf
 gip/var

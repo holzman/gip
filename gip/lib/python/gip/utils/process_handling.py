@@ -1,6 +1,6 @@
 
 """
-Run GIP and send updates via AMQP.
+Process handling routines for the GIP
 """
 
 import os

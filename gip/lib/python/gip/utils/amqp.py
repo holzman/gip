@@ -21,14 +21,16 @@ def connect(cp,):
 
 def send_entries(channel, queue_name, updates):
 
-    channel.queue_declare(queue=queue_name, durable=True)
+    channel.queue_declare(queue="entry", durable=True)
 
     properties = pika.BasicProperties(
-          #correlation_id="ce.grid.iu.edu"
+          correlation_id=queue_name,
           #delivery_mode = 2
         )
 
     for entry in updates:
-        channel.basic_publish(exchange='', routing_key=queue_name, properties=properties, body=entry.to_ldif())
+        if 'GIPExpiration' in entry.nonglue:
+            del entry.nonglue
+        channel.basic_publish(exchange='', routing_key="entry", properties=properties, body=entry.to_ldif())
 
 

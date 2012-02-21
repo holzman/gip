@@ -315,6 +315,39 @@ def compareDN(ldif1, ldif2):
         return True
     return False
 
+def cmpDN(ldif1, ldif2):
+    """
+    Provide a partial ordering for DNs.
+
+    Equal if the ldif1 DN is equal to ldif2 DN.
+    ldif1 is less than ldif2 if ldif1 is a parent of ldif2.
+    """
+    dn1 = ldif1.dn[0]
+    for offset in range(len(ldif2.dn)):
+        if ldif2.dn[offset] == dn1:
+            break
+    idx = 0
+    match = True
+    while True:
+        if offset + idx == len(ldif2.dn):
+            break
+        if idx == len(ldif1.dn):
+            break
+        dn1 = ldif1.dn[idx]
+        dn2 = ldif2.dn[offset + idx]
+        idx += 1
+        if dn1.lower().find("mds-vo-name") >= 0 or \
+                dn1.lower().find("o=grid") >=0:
+            continue
+        if dn1 != dn2:
+            match = False
+            break
+    if match and offset:
+        return -1
+    elif match:
+        return 0
+    return 1
+
 def compareObjectClass(ldif1, ldif2):
     """
     Compare the object classes of two LdapData objects.

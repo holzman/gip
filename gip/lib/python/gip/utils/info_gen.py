@@ -13,7 +13,7 @@ except ImportError:
     import md5
 
 from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt, gipDir
-from gip_ldap import read_ldap, compareDN, LdapData, ldap_diff
+from gip_ldap import read_ldap, compareDN, LdapData, ldap_diff, cmpDN
 import gip_sets as sets
 
 log = getLogger("GIP.InfoGen")
@@ -419,3 +419,28 @@ def calculate_updates(entries, temp_dir):
 
     return full_updates.values(), partial_updates.values()
 
+ldif_top_str = \
+"""
+dn: o=grid
+objectClass: top
+objectClass: GlueTop
+objectClass: organization
+o: grid
+
+dn: mds-vo-name=local,o=grid
+objectClass: GlueTop
+objectClass: MDS
+objectClass: top
+Mds-Vo-name: local
+"""
+
+def sort_and_fill(entries):
+
+    # TODO: Figure out a way to remove
+    ldif_fp = cStringIO.StringIO(ldif_top_str)
+    top_entries = read_ldap(ldif_fp, multi=True)
+    entries += top_entries
+
+    entries.sort(cmp=cmpDN)
+
+    return entries

@@ -8,7 +8,7 @@ from gip_common import cp_get, cp_getBoolean, cp_getInt, getLogger, config, \
     gipDir
 from gip.utils.info_gen import merge_cache, handle_plugins, flush_cache, \
     handle_add_attributes, handle_alter_attributes, handle_remove_attributes, \
-    check_cache, read_static, handle_providers, calculate_updates
+    check_cache, read_static, handle_providers, calculate_updates, sort_and_fill
 from gip.utils.process_handling import launch_modules, list_modules, wait_children
 from gip.utils.info_main import create_if_not_exist
 from gip.utils.amqp import connect, send_entries
@@ -106,12 +106,12 @@ def main(cp = None, return_entries=False):
     entries = handle_alter_attributes(entries, alter_attributes, static_ttl)
     entries = handle_remove_attributes(entries, remove_attributes, static_ttl)
 
-    full_entries, updates = calculate_updates(entries, temp_dir)
+    entries = sort_and_fill(entries)
 
-    print len(full_entries)
-    print len(updates)
-    #for update in updates:
-    #    print update.to_ldif()
+    for entry in entries:
+         print entry.to_ldif()
+
+    full_entries, updates = calculate_updates(entries, temp_dir)
 
     conn = connect(cp)
     channel = conn.channel()

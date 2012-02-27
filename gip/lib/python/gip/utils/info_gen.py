@@ -178,6 +178,7 @@ def handle_alter_attributes(entries, alter_attributes, static_ttl):
         log.warning("The alter-attributes.conf file does not exist.")
         return entries
     output = _handle_static_file(alter_attributes, static_ttl)
+    log.info("Successfully parsed the alter-attributes file %s." % alter_attributes)
     info = {'alter_attributes': {'output': output}}
     return handle_plugins(entries, info)
 
@@ -215,7 +216,7 @@ def handle_remove_attributes(entries, remove_attributes, static_ttl):
         # Touch the file to fake now as a cache time.
         last_update = now
         try:
-            os.utimens(remove_attributes, None)
+            os.utime(remove_attributes, None)
         except OSError, oe:
             log.error("An exception occurred when trying to touch the " \
                 "static file %s" % remove_attributes)
@@ -283,20 +284,20 @@ def _handle_static_file(filename, static_ttl):
             "static file %s" % filename)
         log.exception(e)
         return ''
-    now = time.time()
+    now = int(time.time())
     st = os.stat(filename)
     last_update = st.st_mtime
-    if last_update - now > static_ttl:
+    if now - last_update > static_ttl:
         # Touch the file to fake now as a cache time.
         last_update = now
         try:
-            os.utimens(filename, None)
+            os.utime(filename, None)
         except OSError, oe:
             log.error("An exception occurred when trying to touch the " \
                 "static file %s" % filename)
     expiry = last_update + static_ttl
     for entry in entries:
-        entry.nonglue['GIPExpiration'] = (expiry,)
+        entry.nonglue['GIPExpiration'] = (int(expiry),)
     return '\n'.join([i.to_ldif() for i in entries])
 
 def handle_add_attributes(entries, add_attributes, static_ttl):
@@ -314,6 +315,7 @@ def handle_add_attributes(entries, add_attributes, static_ttl):
         log.warning("The add-attributes.conf file does not exist.")
         return entries
     output = _handle_static_file(add_attributes, static_ttl)
+    log.info("Successfully parsed the add-attributes file %s." % add_attributes)
     info = {'add_attributes': {'output': output}}
     return handle_providers(entries, info)
 
@@ -395,52 +397,47 @@ def calculate_updates(entries, temp_dir):
     old_entries = _read_output_entries(filename)
     entries_dict = {}
     old_entries_dict = {}
+    all_entries = []
     for entry in entries:
         entries_dict[entry.dn] = entry
     for entry in old_entries:
         old_entries_dict[entry.dn] = entry
     now = time.time()
     for dn, entry in old_entries_dict.items():
+        if 'GIPExpiration' not in entry.nonglue:
+            raise Exception("Expiration time missing from entry: %s" % str(entry.dn))
         is_expired = int(entry.nonglue['GIPExpiration'][0]) < now
         if (dn not in entries_dict) and (not is_expired):
             full_updates[dn] = entry
+            all_entries.append(entry)
         elif dn in entries_dict:
             if is_expired:
                 full_updates[dn] = entries_dict[dn]
+                all_entries.append(entries_dict[dn])
             else:
-                partial_updates[dn] = ldap_diff(entry, entries_dict[dn])
+                diff_result = ldap_diff(entry, entries_dict[dn])
+                # Only take the diff if it is non-trivial; note, by construction,
+                # all diffs at least contain GIPExpiration
+                if diff_result and ((len(diff_result.glue) > 0) or 
+                        (len(diff_result.nonglue) > 2)):
+                    partial_updates[dn] = diff_result
+                recorded_entry = LdapData(entries_dict[dn].to_ldif(), multi=True)
+                recorded_entry.nonglue["GIPExpiration"] = entry.nonglue["GIPExpiration"]
+                all_entries.append(recorded_entry)
+        # The remaining case is when the old entry is expired; ignore it.
 
+    # Parse all newly-created objects not found in the previous run, and place
+    # them in the output.
     for dn, entry in entries_dict.items():
         if dn in old_entries_dict:
             continue
         full_updates[dn] = entry
+        all_entries.append(entry)
 
-    write_entries(full_updates.values(), temp_dir, "gip_output.ldif", filename)
+    write_entries(all_entries, temp_dir, "gip_output.ldif", filename)
 
     return full_updates.values(), partial_updates.values()
 
-ldif_top_str = \
-"""
-dn: o=grid
-objectClass: top
-objectClass: GlueTop
-objectClass: organization
-o: grid
-
-dn: mds-vo-name=local,o=grid
-objectClass: GlueTop
-objectClass: MDS
-objectClass: top
-Mds-Vo-name: local
-"""
-
 def sort_and_fill(entries):
-
-    # TODO: Figure out a way to remove
-    ldif_fp = cStringIO.StringIO(ldif_top_str)
-    top_entries = read_ldap(ldif_fp, multi=True)
-    entries += top_entries
-
     entries.sort(cmp=cmpDN)
-
     return entries

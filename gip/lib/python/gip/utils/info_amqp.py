@@ -11,7 +11,7 @@ from gip.utils.info_gen import merge_cache, handle_plugins, flush_cache, \
     check_cache, read_static, handle_providers, calculate_updates, sort_and_fill
 from gip.utils.process_handling import launch_modules, list_modules, wait_children
 from gip.utils.info_main import create_if_not_exist
-from gip.utils.amqp import connect, send_entries
+from gip.utils.amqp import send_updates
 
 def main(cp = None, return_entries=False):
     """
@@ -108,19 +108,25 @@ def main(cp = None, return_entries=False):
 
     entries = sort_and_fill(entries)
 
-    for entry in entries:
-         print entry.to_ldif()
+    #for entry in entries:
+    #     print entry.to_ldif()
 
     full_entries, updates = calculate_updates(entries, temp_dir)
 
-    conn = connect(cp)
-    channel = conn.channel()
+    log.info("There are %d objects to send." % len(full_entries))
+    log.info("There are %d updates to send." % len(updates))
+
+    #for entry in updates:
+    #    print entry.to_ldif()
+    #    print entry.glue
+    #    print entry.nonglue
+
+    #conn = connect(cp)
+    #channel = conn.channel()
 
     # TODO: Better determination of the resource name.
     resource_name = socket.getfqdn()
 
-    send_entries(channel, 'entries.%s' % resource_name, full_entries)
-    send_entries(channel, 'updates.%s' % resource_name, updates)
-
-    conn.close()
+    send_updates(cp, 'entries.%s' % resource_name, full_entries, updates)
+    #send_modifies(channel, 'updates.%s' % resource_name, updates)
 

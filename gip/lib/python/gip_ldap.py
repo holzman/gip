@@ -76,6 +76,9 @@ class LdapData:
                 print >> sys.stderr, line.strip()
                 raise
             val = val.strip()
+            # Silently ignore malformed outputs.
+            if ':' in attr:
+                continue
             if attr.startswith('Glue'):
                 if attr == 'GlueSiteLocation':
                     val = tuple([i.strip() for i in val.split(',')])
@@ -89,7 +92,7 @@ class LdapData:
                 objectClass.append(val)
             elif attr.lower() == 'mds-vo-name':
                 continue
-            else:
+            elif val: # Do not accept empty attributes
                 if multi and attr in nonglue:
                     nonglue[attr].append(val)
                 elif multi:
@@ -401,6 +404,7 @@ def ldap_diff(old, new):
     """
     Compare two LDIF stanzas.  Return only the things changed in the new stanza.
 
+    Returns nothing if there are no attribute changes.
     Returns nothing if the DN or the objectClass is different.
     """
     if old.dn != new.dn:
@@ -417,5 +421,7 @@ def ldap_diff(old, new):
     for key, val in new.nonglue.items():
         if (key not in old.nonglue) or (val != old.nonglue[key]):
             diff.nonglue[key] = val
+    if not diff.glue and not diff.nonglue:
+        return
     return LdapData(diff.to_ldif(), multi=True)
 

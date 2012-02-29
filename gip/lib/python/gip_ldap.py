@@ -79,14 +79,18 @@ class LdapData:
                 raise
             val = val.strip()
             # remove duplicate key+values per dn
-            if unique.has_key(attr):
-                vals = unique[attr]
+            #  (what "duplicate" means depends on the LDAP attribute, but since we
+            #   deal mostly in IA5String, we'll assume case-insensitive matches are ok)
+            attr_lc = attr.lower()
+            val_lc = val.lower()
+            if unique.has_key(attr_lc):
+                vals = unique[attr_lc]
                 if val in vals:
                     continue
                 else:
-                    vals.append(val)
+                    vals.append(val_lc)
             else:
-                unique[attr] = [val]
+                unique[attr_lc] = [val_lc]
 
             if attr.startswith('Glue'):
                 if attr == 'GlueSiteLocation':

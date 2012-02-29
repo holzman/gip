@@ -57,9 +57,11 @@ class LdapData:
         self.ldif = data
         glue = {}
         nonglue = {}
+        unique = {}
         objectClass = []
         for line in self.ldif.split('\n'):
             if line.startswith('dn: '):
+                unique = {}
                 dn = line[4:].split(',')
                 dn = [i.strip() for i in dn]
                 continue
@@ -76,6 +78,20 @@ class LdapData:
                 print >> sys.stderr, line.strip()
                 raise
             val = val.strip()
+            # remove duplicate key+values per dn
+            #  (what "duplicate" means depends on the LDAP attribute, but since we
+            #   deal mostly in IA5String, we'll assume case-insensitive matches are ok)
+            attr_lc = attr.lower()
+            val_lc = val.lower()
+            if unique.has_key(attr_lc):
+                vals = unique[attr_lc]
+                if val in vals:
+                    continue
+                else:
+                    vals.append(val_lc)
+            else:
+                unique[attr_lc] = [val_lc]
+
             if attr.startswith('Glue'):
                 if attr == 'GlueSiteLocation':
                     val = tuple([i.strip() for i in val.split(',')])

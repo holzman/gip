@@ -1,4 +1,10 @@
 Changelog
+== 1.3.5rc1 ==
+* Check for duplicate key/values (ignoring case) -- RFC4512 forbids it
+* Ignore comment lines in read_ldap
+* Remove GlueLocation stanzas for software publication
+* Remove configure_gip placeholder
+
 == 1.3.4 ==
 * Better error messages for invalid vo maps
 * GIP will now look in the config files for the proper user for dropping privileges

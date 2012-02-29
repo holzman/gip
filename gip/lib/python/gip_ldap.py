@@ -198,6 +198,8 @@ def read_ldap(fp, multi=False):
     # Put in newlines before dn: stanzas if they don't exist already
     for line in lines[1:]:
         counter += 1
+        if line.startswith("#"): # ignore comment lines
+            continue
         if line.startswith('dn:'):
             if lines[counter-1].strip():
                 lines.insert(counter-1, '\n')

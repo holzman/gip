@@ -57,9 +57,11 @@ class LdapData:
         self.ldif = data
         glue = {}
         nonglue = {}
+        unique = {}
         objectClass = []
         for line in self.ldif.split('\n'):
             if line.startswith('dn: '):
+                unique = {}
                 dn = line[4:].split(',')
                 dn = [i.strip() for i in dn]
                 continue
@@ -76,6 +78,16 @@ class LdapData:
                 print >> sys.stderr, line.strip()
                 raise
             val = val.strip()
+            # remove duplicate key+values per dn
+            if unique.has_key(attr):
+                vals = unique[attr]
+                if val in vals:
+                    continue
+                else:
+                    vals.append(val)
+            else:
+                unique[attr] = [val]
+
             if attr.startswith('Glue'):
                 if attr == 'GlueSiteLocation':
                     val = tuple([i.strip() for i in val.split(',')])

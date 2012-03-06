@@ -19,7 +19,8 @@ if not py23:
 # Standard GIP imports
 import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes
+    voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes, \
+    notDefined
 from gip_cluster import getClusterID
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
 from condor_common import defaultGroupIsExcluded
@@ -370,6 +371,12 @@ def print_VOViewLocal(cp):
                 }
             printTemplate(VOView, info)
 
+def isDefined(val):
+	# check for DEFAULT, UNAVAILABLE, etc.
+	if val and val != 'DEFAULT' and not notDefined(val):
+		return True
+	return False
+
 def main():
     """
     Main wrapper for the Condor batch system GIP information.
@@ -380,15 +387,15 @@ def main():
 	condor_location = cp_get(cp, "condor", "condor_location", None)
 	condor_config = cp_get(cp, "condor", "condor_config", None)
 
-        if condor_path != None:
+	if isDefined(condor_path):
 		addToPath(condor_path)
 
-	if condor_location != None:
+	if isDefined(condor_location):
 		addToPath('%s/bin' % condor_location)
-		if not condor_config:
+		if not isDefined(condor_config):
 			condor_config = '%s/etc/condor_config' % condor_location
 
-	if condor_config:
+	if isDefined(condor_config):
 		os.environ['CONDOR_CONFIG'] = condor_config
 
         #vo_map = VoMapper(cp)

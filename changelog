@@ -1,4 +1,7 @@
 Changelog
+== 1.3.5rc2 ==
+* Ignore condor_config in .ini when set to DEFAULT, UNAVAILABLE, etc.
+
 == 1.3.5rc1 ==
 * Check for duplicate key/values (ignoring case) -- RFC4512 forbids it
 * Ignore comment lines in read_ldap

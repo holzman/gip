@@ -14,7 +14,7 @@ import re
 import os
 
 from gip_common import cp_get, cp_getInt, ldap_boolean, cp_getBoolean, \
-    notDefined, getLogger, voList
+    notDefined, getLogger, voList, vdtDir
 from gip_testing import runCommand
 from gip_sections import cluster, subcluster, ce
 
@@ -86,7 +86,9 @@ def getOSGVersion(cp):
     osg_ver = ''
 
     if len(osg_version_script) == 0:
-        osg_version_script = '$VDT_LOCATION/osg-version'
+        osg_version_script = vdtDir('$VDT_LOCATION/osg-version',
+                                    '/usr/bin/osg-version')
+
         osg_version_script = os.path.expandvars(osg_version_script)
 
         if not os.path.exists(osg_version_script):

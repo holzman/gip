@@ -376,20 +376,7 @@ def main():
     """
     try:
         cp = config()
-        condor_path = cp_get(cp, "condor", "condor_path", None)
-	condor_location = cp_get(cp, "condor", "condor_location", None)
-	condor_config = cp_get(cp, "condor", "condor_config", None)
-
-        if condor_path != None:
-		addToPath(condor_path)
-
-	if condor_location != None:
-		addToPath('%s/bin' % condor_location)
-		if not condor_config:
-			condor_config = '%s/etc/condor_config' % condor_location
-
-	if condor_config:
-		os.environ['CONDOR_CONFIG'] = condor_config
+	doPath(cp)
 
         #vo_map = VoMapper(cp)
         getLrmsInfo(cp) 

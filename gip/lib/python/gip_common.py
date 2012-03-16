@@ -198,7 +198,7 @@ def config(*args):
     if 'GIP_CONFIG' in os.environ:
         files += [os.path.expandvars("$GIP_CONFIG")]
 
-    log.info("Using GIP SVN revision $Revision$")
+#    log.info("Using GIP GIT revision")
 
     # Try to read all the files; toss a warning if a config file can't be
     # read:

@@ -21,7 +21,7 @@ from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges
 
 from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
-    VoMapper, cp_getInt, cp_getList
+    VoMapper, cp_getInt, cp_getList, isDefined
 from gip_testing import runCommand
 
 condor_version = "condor_version"
@@ -302,6 +302,27 @@ def getGroupInfo(vo_map, cp): #pylint: disable-msg=C0103,W0613
     log.debug("The condor groups are %s." % ', '.join(retval.keys()))
     return retval
 
+def doPath(cp):
+    # add condor binaries to system path
+    
+    condor_path = cp_get(cp, "condor", "condor_path", None)
+    condor_location = cp_get(cp, "condor", "condor_location", None)
+    condor_config = cp_get(cp, "condor", "condor_config", None)
+
+    if isDefined(condor_path):
+        addToPath(condor_path)
+
+    if isDefined(condor_location):
+        log.info("Adding %s/bin to path" % condor_location)
+        addToPath('%s/bin' % condor_location)
+        if not isDefined(condor_config):
+            condor_config = '%s/etc/condor_config' % condor_location
+
+    if isDefined(condor_config):
+        os.environ['CONDOR_CONFIG'] = condor_config
+
+    log.info("path: %s", os.environ['PATH'])
+
 def getQueueList(cp): #pylint: disable-msg=C0103
     """
     Returns a list of all the queue names that are supported.
@@ -309,6 +330,7 @@ def getQueueList(cp): #pylint: disable-msg=C0103
     @param cp: Site configuration
     @returns: List of strings containing the queue names.
     """
+    doPath(cp)
     vo_map = VoMapper(cp)
     # Determine the group information, if there are any Condor groups
     try:

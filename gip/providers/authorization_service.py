@@ -6,7 +6,7 @@ import popen2
 from socket import gethostname
 
 # Make sure the gip_common libraries are in our path
-sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getTemplate, getLogger, printTemplate, \
      cp_getBoolean, cp_get, vdtDir
 

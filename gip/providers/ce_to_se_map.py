@@ -4,7 +4,7 @@ import os
 import sys
 
 if 'GIP_LOCATION' in os.environ:
-    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+    sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, cp_getBoolean
 from gip.providers.cese_bind import main
 

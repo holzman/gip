@@ -667,7 +667,7 @@ def write_stdin_data():
 
 def main():
     opts = parse_args()
-        
+
     if opts.endpoint:
         script_path = local_script_path()
         if not os.path.exists(script_path):
@@ -694,21 +694,12 @@ def main():
         elif opts.input:
             # do SVN export
             svn_url = "svn://t2.unl.edu/brian/gip/%s" % opts.svn
-            svn_cmd = "rm -rf /tmp/osg_gip; svn export %s /tmp/osg_gip" % svn_url
+            svn_cmd = "rm -rf /tmp/osg_gip; CWD=`pwd`; pushd /home/burt/gitgip/gip/; git archive --prefix osg_gip/ %s | gzip > ${CWD}/osg_gip.tar.gz"  % opts.svn
             try:
                 runLocalCommand(svn_cmd)
             except RuntimeError, e:
                 print >> sys.stderr, "SVN export failed with the following error:\n%s" % str(e)
                 sys.exit(1)
-
-            # Create tarball
-            tf = tarfile.open(name="osg_gip.tar.gz", mode="w:gz")
-            try:
-                tf.add("/tmp/osg_gip", arcname="osg_gip")
-            except Exception, e:
-                print >> sys.stderr, str(e)
-                sys.exit(1)
-            tf.close()
 
             os.system("rm -rf /tmp/osg_gip")
             # create input streaming option
@@ -724,6 +715,7 @@ def main():
             
         sys.exit(exit_code)
 
+    os.chdir('/tmp')    
     use_custom_gip = write_stdin_data()
 
     out_handler = OutputManager()
@@ -759,8 +751,8 @@ def main():
 
     out_handler.write_output(open(opts.filename, "w"))
     
-    #if use_custom_gip:
-    #    os.system('rm -rf osg_gip')
+    if use_custom_gip:
+        os.system('rm -rf osg_gip')
 
 if __name__ == '__main__':
     main()

@@ -21,7 +21,7 @@ from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges
 
 from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
-    VoMapper, cp_getInt, cp_getList
+    VoMapper, cp_getInt, cp_getList, isDefined
 from gip_testing import runCommand
 
 condor_version = "condor_version"
@@ -309,16 +309,16 @@ def doPath(cp):
     condor_location = cp_get(cp, "condor", "condor_location", None)
     condor_config = cp_get(cp, "condor", "condor_config", None)
 
-    if condor_path != None:
+    if isDefined(condor_path):
         addToPath(condor_path)
 
-    if condor_location != None:
+    if isDefined(condor_location):
         log.info("Adding %s/bin to path" % condor_location)
         addToPath('%s/bin' % condor_location)
-        if not condor_config:
+        if not isDefined(condor_config):
             condor_config = '%s/etc/condor_config' % condor_location
 
-    if condor_config:
+    if isDefined(condor_config):
         os.environ['CONDOR_CONFIG'] = condor_config
 
     log.info("path: %s", os.environ['PATH'])

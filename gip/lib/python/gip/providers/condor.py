@@ -22,7 +22,7 @@ from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
     voList, printTemplate, cp_get, cp_getBoolean, cp_getInt, responseTimes
 from gip_cluster import getClusterID
 from condor_common import parseNodes, getJobsInfo, getLrmsInfo, getGroupInfo
-from condor_common import defaultGroupIsExcluded
+from condor_common import defaultGroupIsExcluded, doPath
 from gip_storage import getDefaultSE
 from gip_batch import buildCEUniqueID, getGramVersion, getCEImpl, getPort, \
      buildContactString, getHTPCInfo

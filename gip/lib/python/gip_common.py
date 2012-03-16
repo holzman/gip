@@ -685,6 +685,12 @@ def ldap_boolean(val):
         return "TRUE"
     return "FALSE"
 
+def isDefined(val):
+    # check for DEFAULT, UNAVAILABLE, etc.
+    if val and val != 'DEFAULT' and not notDefined(val):
+        return True
+    return False
+
 def notDefined(val):
     """
     Returns TRUE if the input value is possibly not defined (i.e., matches

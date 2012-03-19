@@ -42,7 +42,7 @@ except ImportError:
     import md5
 
 if 'GIP_LOCATION' in os.environ:
-    sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
+    sys.path.insert(0, os.path.expandvars("$GIP_LOCATION/lib/python"))
 from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt, gipDir, vdtDir
 from gip_ldap import read_ldap, compareDN, LdapData
 import gip_sets as sets

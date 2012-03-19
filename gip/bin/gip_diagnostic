@@ -248,25 +248,24 @@ def gip_check_env(use_custom_gip=False):
         output += "OK\n"
         output = "$VDT_LOCATION... %s\n" % os.environ['VDT_LOCATION']
 
-        return output
     else:
         if 'VDT_LOCATION' in os.environ:
             output = "$VDT_LOCATION... %s\n" % os.environ['VDT_LOCATION']
-            if use_custom_gip:
-                # extract the tarball
-                os.environ['GIP_LOCATION']  = os.path.join(os.getcwd(), 'osg_gip/gip')
-                output += "$GIP_LOCATION is set to %s OK\n" % os.environ['GIP_LOCATION']
+
+        if use_custom_gip:
+            # extract the tarball
+            os.environ['GIP_LOCATION']  = os.path.join(os.getcwd(), 'osg_gip/gip')
+            output += "$GIP_LOCATION is set to %s OK\n" % os.environ['GIP_LOCATION']
+            if 'VDT_LOCATION' in os.environ:
                 gip_write_conf()
                 output += "$GIP_LOCATION/etc/gip.conf has been written OK\n"
-            else:
-                output += "Assuming to be $VDT_LOCATION/gip; OK\n"
-                os.environ['GIP_LOCATION']  = os.path.join(os.environ['VDT_LOCATION'], 'gip')
-            output += "OK\n"
-            return output
         else:
-            output += "FAIL\n"
-            output += "GIP_LOCATION and VDT_LOCATION not set.\n"
-            return output
+            output += "Assuming to be $VDT_LOCATION/gip; OK\n"
+            os.environ['GIP_LOCATION']  = os.path.join(os.environ['VDT_LOCATION'], 'gip')
+
+        output += "OK\n"
+
+        return output
         
 def gip_write_conf():
     config_ini = os.path.join(os.environ['VDT_LOCATION'], 'osg/etc') + "/config.ini"
@@ -689,14 +688,17 @@ def main():
             sys.exit(1)
 
         stdin_args = ""
-        if opts.input and (len(opts.gitbase) <= 0 or len(opts.gitlocation) <=0):
+        if opts.input and (not opts.gitbase or not opts.gitlocation):
             print >> sys.stderr, "git base and location required if input is enabled"
             sys.exit(1)
         elif opts.input:
             # do git export
-            git_cmd = "rm -rf /tmp/osg_gip; CWD=`pwd`; pushd %s; git archive --prefix osg_gip/ %s | gzip > ${CWD}/osg_gip.tar.gz"  % (opts.gitbase, opts.gitlocation)
+            git_cmd =  "rm -rf /tmp/osg_gip; CWD=`pwd`; pushd %s; " % opts.gitbase
+            git_cmd += "git archive --prefix osg_gip/ %s  " % opts.gitlocation
+            git_cmd += "| gzip > ${CWD}/osg_gip.tar.gz"
             try:
-                runLocalCommand(git_cmd)
+                a = runLocalCommand(git_cmd)
+                if a: raise RuntimeError("Archive not created -- check git base and location.")
             except RuntimeError, e:
                 print >> sys.stderr, "git export failed with the following error:\n%s" % str(e)
                 sys.exit(1)
@@ -720,7 +722,9 @@ def main():
 
     out_handler = OutputManager()
 
+#    output = ''
     output = gip_check_env(use_custom_gip)
+    os.environ['GIP_LOCATION'] = os.path.join(os.getcwd(), 'osg_gip/gip')
     output += '\n'
     if use_custom_gip:
         output += run_gip(out_handler)

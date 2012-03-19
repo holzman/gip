@@ -43,7 +43,7 @@ except ImportError:
 
 if 'GIP_LOCATION' in os.environ:
     sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
-from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt, gipDir
+from gip_common import config, getLogger, cp_get, cp_getBoolean, cp_getInt, gipDir, vdtDir
 from gip_ldap import read_ldap, compareDN, LdapData
 import gip_sets as sets
 
@@ -114,13 +114,13 @@ def main(cp = None, return_entries=False):
 
     # Load up our add, alter, and delete attributes
     add_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "add_attributes", gipDir("$GIP_LOCATION/etc/add-attributes.conf",
+        "add_attributes", vdtDir("$VDT_LOCATION/etc/add-attributes.conf",
                                  '/etc/gip/add-attributes.conf')))
     alter_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "alter_attributes", gipDir("$GIP_LOCATION/etc/alter-attributes.conf",
+        "alter_attributes", vdtDir("$VDT_LOCATION/etc/alter-attributes.conf",
                                    '/etc/gip/alter-attributes.conf')))
     remove_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "remove_attributes", gipDir("$GIP_LOCATION/etc/remove-attributes.conf",
+        "remove_attributes", vdtDir("$VDT_LOCATION/etc/remove-attributes.conf",
                                     '/etc/gip/remove-attributes.conf')))
 
     # Flush the cache if appropriate

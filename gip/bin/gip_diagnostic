@@ -124,7 +124,8 @@ def parse_args():
     parser.add_option("-r", "--remote", dest="endpoint")
     parser.add_option("-s", "--site", dest="site", default=None)
     parser.add_option("-i", "--stream-input", dest="input", default=False)
-    parser.add_option("-l", "--svn-location", dest="svn", default=None)
+    parser.add_option("-b", "--git-base", dest="gitbase", default=None)
+    parser.add_option("-l", "--git-location", dest="gitlocation", default=None)
 
     opts, _ = parser.parse_args()
 
@@ -688,17 +689,16 @@ def main():
             sys.exit(1)
 
         stdin_args = ""
-        if opts.input and len(opts.svn) <= 0:
-            print >> sys.stderr, "SVN location required if input is enabled"
+        if opts.input and (len(opts.gitbase) <= 0 or len(opts.gitlocation) <=0):
+            print >> sys.stderr, "git base and location required if input is enabled"
             sys.exit(1)
         elif opts.input:
-            # do SVN export
-            svn_url = "svn://t2.unl.edu/brian/gip/%s" % opts.svn
-            svn_cmd = "rm -rf /tmp/osg_gip; CWD=`pwd`; pushd /home/burt/gitgip/gip/; git archive --prefix osg_gip/ %s | gzip > ${CWD}/osg_gip.tar.gz"  % opts.svn
+            # do git export
+            git_cmd = "rm -rf /tmp/osg_gip; CWD=`pwd`; pushd %s; git archive --prefix osg_gip/ %s | gzip > ${CWD}/osg_gip.tar.gz"  % (opts.gitbase, opts.gitlocation)
             try:
-                runLocalCommand(svn_cmd)
+                runLocalCommand(git_cmd)
             except RuntimeError, e:
-                print >> sys.stderr, "SVN export failed with the following error:\n%s" % str(e)
+                print >> sys.stderr, "git export failed with the following error:\n%s" % str(e)
                 sys.exit(1)
 
             os.system("rm -rf /tmp/osg_gip")

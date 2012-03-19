@@ -21,7 +21,7 @@ from xml.sax import make_parser, SAXParseException
 from xml.sax.handler import ContentHandler, feature_external_ges
 
 from gip_common import voList, cp_getBoolean, getLogger, cp_get, voList, \
-    VoMapper, cp_getInt, cp_getList, isDefined
+    VoMapper, cp_getInt, cp_getList, isDefined, addToPath
 from gip_testing import runCommand
 
 condor_version = "condor_version"

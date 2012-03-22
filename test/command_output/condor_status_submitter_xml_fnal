@@ -184,6 +184,51 @@
 <c>
     <a n="MyType"><s>Submitter</s></a>
     <a n="QuillEnabled"><b v="t"/></a>
+    <a n="QuillName"><s>quill@fnpcosg1.fnal.gov</s></a>
+    <a n="QuillDatabaseName"><s>quill</s></a>
+    <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>
+    <a n="QuillDatabaseQueryPassword"><s>q53llr21</s></a>
+    <a n="QuillIsRemotelyQueryable"><b v="t"/></a>
+    <a n="ScheddIpAddr"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MyAddress"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MaxJobsRunning"><i>2000</i></a>
+    <a n="StartLocalUniverse"><e>TotalLocalJobsRunning &lt; 20 || GridMonitorJob == TRUE</e></a>
+    <a n="StartSchedulerUniverse"><b v="t"/></a>
+    <a n="VirtualMemory"><i>8388528</i></a>
+    <a n="CondorVersion"><s>$CondorVersion: 7.2.3 May 11 2009 BuildID: 151729 $</s></a>
+    <a n="CondorPlatform"><s>$CondorPlatform: X86_64-LINUX_RHEL5 $</s></a>
+    <a n="MyCurrentTime"><i>1245895765</i></a>
+    <a n="Machine"><s>fnpc3x1.fnal.gov</s></a>
+    <a n="PublicNetworkIpAddr"><s>&lt;131.225.166.2:60327&gt;</s></a>
+    <a n="MonitorSelfTime"><i>1245895588</i></a>
+    <a n="MonitorSelfCPUUsage"><r>4.153999965637922E-03</r></a>
+    <a n="MonitorSelfImageSize"><r>1.201840000000000E+05</r></a>
+    <a n="MonitorSelfResidentSetSize"><i>92876</i></a>
+    <a n="MonitorSelfAge"><i>0</i></a>
+    <a n="MonitorSelfRegisteredSocketCount"><i>5</i></a>
+    <a n="JobQueueBirthdate"><i>1213035256</i></a>
+    <a n="WantResAd"><b v="t"/></a>
+    <a n="ScheddName"><s>fnpc3x1.fnal.gov</s></a>
+    <a n="RunningJobs"><i>33</i></a>
+    <a n="IdleJobs"><i>20</i></a>
+    <a n="HeldJobs"><i>0</i></a>
+    <a n="FlockedJobs"><i>0</i></a>
+    <a n="Name"><s>group_nysgrid.sub1.nysgrid@fnal.gov</s></a>
+    <a n="DaemonStartTime"><i>1245864703</i></a>
+    <a n="UpdateSequenceNumber"><i>242</i></a>
+    <a n="ServerTime"><i>1245895765</i></a>
+    <a n="LastHeardFrom"><i>1245895765</i></a>
+    <a n="UpdatesTotal"><i>6903</i></a>
+    <a n="UpdatesSequenced"><i>6902</i></a>
+    <a n="UpdatesLost"><i>2301</i></a>
+    <a n="UpdatesHistory"><s>0x49249249249124924924924924924924</s></a>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="TargetType"><s></s></a>
+</c>
+
+<c>
+    <a n="MyType"><s>Submitter</s></a>
+    <a n="QuillEnabled"><b v="t"/></a>
     <a n="QuillName"><s>quill@fnpcfg1.fnal.gov</s></a>
     <a n="QuillDatabaseName"><s>quill</s></a>
     <a n="QuillDatabaseIpAddr"><s>&lt;131.225.166.5:5432&gt;</s></a>

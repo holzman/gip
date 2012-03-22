@@ -83,6 +83,20 @@ class TestCondorProvider(unittest.TestCase):
             return entry
         self.failIf(True, msg="Expected a CE named %s in the output." % cename)
 
+    def test_condor_hierarchical_group(self):
+        """
+        Make sure that condor can read and publish hierarchical groups too.
+        """
+        ce = 'fnpcfg1.fnal.gov:2119/jobmanager-condor-group_nysgrid.sub1'
+        os.environ['GIP_TESTING'] = 'suffix=fnal'
+        path = os.path.expandvars("$GIP_LOCATION/libexec/osg_info_provider_" \
+            "condor.py --config=test_configs/fnal_condor.conf")
+        fd = os.popen(path)
+        entries = read_ldap(fd, multi=True)
+        entry = self.check_for_ce(ce, entries)
+        self.failUnless('33' in entry.glue['CEStateRunningJobs'], msg="Did not"\
+            " get hierarchical groups.")
+
     def test_multi_schedd_output(self):
         """
         Make sure that condor submitter accounting groups spread over multiple

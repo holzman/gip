@@ -560,7 +560,7 @@ def getJobsInfo(vo_map, cp):
         if isinstance(user, types.TupleType):
             user = user[0]
         name = user.split("@")[0]
-        name_info = name.split('.', 1)
+        name_info = name.rsplit('.', 1)
         if len(name_info) == 2:
             group, name = name_info
         else:

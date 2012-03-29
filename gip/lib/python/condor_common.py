@@ -321,8 +321,6 @@ def doPath(cp):
     if isDefined(condor_config):
         os.environ['CONDOR_CONFIG'] = condor_config
 
-    log.info("path: %s", os.environ['PATH'])
-
 def getQueueList(cp): #pylint: disable-msg=C0103
     """
     Returns a list of all the queue names that are supported.

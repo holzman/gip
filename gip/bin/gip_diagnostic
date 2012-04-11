@@ -126,9 +126,9 @@ def parse_args():
     parser.add_option("-i", "--stream-input", dest="input", default=False)
     parser.add_option("-b", "--git-base", dest="gitbase", default=None)
     parser.add_option("-l", "--git-location", dest="gitlocation", default=None)
+    parser.add_option("-u", "--unset-globus-location", dest="unsetglobus", action='store_true', default=False)
 
     opts, _ = parser.parse_args()
-
     if opts.site:
         opts.endpoint = parse_myosg(opts)
     
@@ -707,7 +707,7 @@ def main():
             # create input streaming option
             stdin_args += "-stdin -s osg_gip.tar.gz"
 
-        cmd = 'globus-job-run %s -stdout -s %s %s -s %s -q -f /dev/stdout' % \
+        cmd = 'globus-job-run %s -stdout -s %s %s -s %s -q -u  -f /dev/stdout' % \
             (stdin_args, opts.filename, endpoint, script_path)
         print "Attempting command: %s" % cmd
         exit_code = pull_remote(cmd)
@@ -726,8 +726,14 @@ def main():
     output = gip_check_env(use_custom_gip)
     os.environ['GIP_LOCATION'] = os.path.join(os.getcwd(), 'osg_gip/gip')
     output += '\n'
+    old_globus_location = ''
     if use_custom_gip:
+        if opts.unsetglobus and os.environ['GLOBUS_LOCATION']:
+            old_globus_location = os.environ['GLOBUS_LOCATION']
+            del os.environ['GLOBUS_LOCATION']
         output += run_gip(out_handler)
+        if old_globus_location:
+            os.environ['GLOBUS_LOCATION'] = old_globus_location
         output += '\n'
     out, cp = gip_check_config()
     output += out

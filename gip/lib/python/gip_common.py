@@ -768,11 +768,14 @@ def parseRvf(name):
       error.
     """
     if 'GLOBUS_LOCATION' in os.environ:
-        basepath = os.environ['GLOBUS_LOCATION']
+        basepath = '%s/share/globus_gram_job_manager' % os.environ['GLOBUS_LOCATION']
     else:
-        basepath = os.environ.get('VDT_LOCATION', '/UNKNOWN')
-        basepath = os.path.join(basepath, 'globus')
-    fullname = os.path.join(basepath, 'share/globus_gram_job_manager', name)
+        basepath = vdtDir('$VDT_LOCATION/globus/share/globus_gram_job_manager',
+                          '/usr/share/globus/globus_gram_job_manager')
+
+    fullname = os.path.expandvars(os.path.join(basepath, name))
+    log.debug('Looking for RVF %s' % fullname)
+
     if not os.path.exists(fullname):
         return {}
     try:

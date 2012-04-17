@@ -114,13 +114,13 @@ def main(cp = None, return_entries=False):
 
     # Load up our add, alter, and delete attributes
     add_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "add_attributes", vdtDir("$VDT_LOCATION/etc/add-attributes.conf",
+        "add_attributes", vdtDir("$VDT_LOCATION/gip/etc/add-attributes.conf",
                                  '/etc/gip/add-attributes.conf')))
     alter_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "alter_attributes", vdtDir("$VDT_LOCATION/etc/alter-attributes.conf",
+        "alter_attributes", vdtDir("$VDT_LOCATION/gip/etc/alter-attributes.conf",
                                    '/etc/gip/alter-attributes.conf')))
     remove_attributes = os.path.expandvars(cp_get(cp, "gip", \
-        "remove_attributes", vdtDir("$VDT_LOCATION/etc/remove-attributes.conf",
+        "remove_attributes", vdtDir("$VDT_LOCATION/gip/etc/remove-attributes.conf",
                                     '/etc/gip/remove-attributes.conf')))
 
     # Flush the cache if appropriate

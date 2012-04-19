@@ -1,4 +1,8 @@
 Changelog
+== 1.3.7 ==
+* Correct search path for RVF files
+* Remote gip_diagnostic can parse *-attributes.conf
+	
 == 1.3.6 ==
 * Prepend rather than append GIP_LOCATION python paths to sys.path
   (if defined)

@@ -90,13 +90,13 @@ def runCommand(cmd, force_command=False):
             time.sleep(.001) # prevent 100% CPU spin 
             ready = select.select(fdlist, [], [])
             if outfd in ready[0]:
-                outchunk = stdout.read()
+                outchunk = os.read(outfd, 4096)
                 if outchunk == '':
                     fdlist.remove(outfd)
                 else:
                     outdata.write(outchunk)
             if errfd in ready[0]:
-                errchunk = stderr.read()
+                errchunk = os.read(errfd, 4096)
                 if errchunk == '':
                     fdlist.remove(errfd)
                 else:

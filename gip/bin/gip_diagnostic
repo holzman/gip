@@ -707,8 +707,9 @@ def main():
             # create input streaming option
             stdin_args += "-stdin -s osg_gip.tar.gz"
 
+#            (stdin_args, opts.filename, endpoint, script_path)
         cmd = 'globus-job-run %s -stdout -s %s %s -s %s -q -u  -f /dev/stdout' % \
-            (stdin_args, opts.filename, endpoint, script_path)
+            (endpoint,  opts.filename, stdin_args, script_path)
         print "Attempting command: %s" % cmd
         exit_code = pull_remote(cmd)
 

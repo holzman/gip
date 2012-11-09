@@ -345,7 +345,7 @@ def print_VOViewLocal(cp):
             free = int(free)
 
             waiting = int(info["idle"]) + int(info["held"])
-            if waiting > 0:
+	    if waiting > cp_getInt(cp, 'condor', 'idle_slack', '10'):
                 free = 0
 
             info = {"vo"      : vo,

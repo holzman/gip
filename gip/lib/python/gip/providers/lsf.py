@@ -175,7 +175,7 @@ def print_VOViewLocal(queue_info, cp):
 
         free_slots = my_queue_info.get('free_slots', 0)
         waiting = info2.get('waiting', 0)
-        if waiting > 0:
+        if waiting > cp_getInt(cp, 'lsf', 'idle_slack', '10'):
             free_slots = 0
 
         info = {

@@ -9,7 +9,7 @@ if 'GIP_LOCATION' in os.environ:
 
 import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    printTemplate, cp_get, responseTimes, cp_getBoolean
+    printTemplate, cp_get, cp_getInt, responseTimes, cp_getBoolean
 from gip_cluster import getClusterID
 from pbs_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues

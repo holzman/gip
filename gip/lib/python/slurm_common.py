@@ -137,6 +137,11 @@ def getQueueInfo(cp):
         if timelimit != "infinite":
             queue_data['max_wall'] = slurmTimeToMinutes(timelimit)
 
+        # start from zero:
+        queue_data['running'] = 0
+        queue_data['wait'] = 0
+        queue_data['total'] = 0
+
         queueInfo[queue_name] = queue_data
 
     for orig_line in slurmCommand(jobs_cmd, cp):

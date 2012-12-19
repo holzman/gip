@@ -177,8 +177,8 @@ def print_VOViewLocal(queue_info, cp):
             'data'        : cp_get(cp, "osg_dirs", "data", "UNKNOWN_DATA"),
             'app'         : cp_get(cp, "osg_dirs", "app", "UNKNOWN_APP"),
             'default_se'  : getDefaultSE(cp),
-            'ert'         : 3600,
-            'wrt'         : 3600,
+            'ert'         : ert,
+            'wrt'         : wrt,
             'acbr'        : 'VO:%s' % vo
         }
         info['total'] = info['waiting'] + info['running']

@@ -201,52 +201,27 @@ def parseNodes(cp, version):
     queue = None
     avail_cpus = None
     used_cpus = None
-    if version.find("SLURMPro") >= 0:
-        for line in slurmCommand(slurmnodes_cmd, cp):
-            if len(line.strip()) == 0:
-                continue
-            if not line.startswith('    ') and avail_cpus != None:
-                if queue != None:
-                    info = queueCpu.get(queue, [0, 0])
-                    info[0] += avail_cpus
-                    info[1] += avail_cpus - used_cpus
-                    queueCpu[queue] = info
-                else:
-                    totalCpu += avail_cpus
-                    freeCpu += avail_cpus - used_cpus
-                queue = None
-                continue
-            line = line.strip()
+    for line in slurmCommand(slurmnodes_cmd, cp):
+        try:
+            attr, val = line.split(" = ")
+        except:
+            continue
+        val = val.strip()
+        attr = attr.strip()
+        if attr == "state":
+            state = val
+        if attr == "np":
             try:
-                attr, val = line.split(" = ")
+                np = int(val)
             except:
-                continue
-            if attr == "resources_available.ncpus":
-                avail_cpus = int(val)
-            elif attr == "resources_assigned.ncpus":
-                used_cpus = int(val)
-    else:
-        for line in slurmCommand(slurmnodes_cmd, cp):
-            try:
-                attr, val = line.split(" = ")
-            except:
-                continue
-            val = val.strip()
-            attr = attr.strip()
-            if attr == "state":
-                state = val
-            if attr == "np":
-                try:
-                    np = int(val)
-                except:
-                    np = 1
-                if not (state.find("down") >= 0 or \
-                        state.find("offline") >= 0):
-                    totalCpu += np
-                if state.find("free") >= 0:
-                    freeCpu += np
-            if attr == "jobs" and state == "free":
-                freeCpu -= val.count(',')
+                np = 1
+            if not (state.find("down") >= 0 or \
+                    state.find("offline") >= 0):
+                totalCpu += np
+            if state.find("free") >= 0:
+                freeCpu += np
+        if attr == "jobs" and state == "free":
+            freeCpu -= val.count(',')
 
     return totalCpu, freeCpu, queueCpu
 

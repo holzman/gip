@@ -11,6 +11,7 @@ from pbs_common import getQueueList as getPBSQueueList
 from lsf_common import getQueueList as getLSFQueueList
 from condor_common import getQueueList as getCondorQueueList
 from sge_common import getQueueList as getSGEQueueList
+from slurm_common import getQueueList as getSlurmQueueList
 from gip_sections import ce, cesebind, se
 from gip_sets import Set
 
@@ -44,6 +45,8 @@ def getCEList(cp, extraCEs=[]):
         queue_entries = getLSFQueueList(cp)
     elif jobman == 'condor':
         queue_entries = getCondorQueueList(cp)
+    elif jobman == 'slurm':
+        queue_entries = getSlurmQueueList(cp)
     elif jobman == 'sge':
         from gip.providers.sge import bootstrapSGE
         from gip_common import addToPath

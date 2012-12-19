@@ -1,4 +1,13 @@
 Changelog
+== 1.3.9 ==
+* Official support for the slurm batch system
+* New parameter for PBS/LSF/Condor/Slurm: idle_slack
+	For VOViews, setting idle_slack in the relevant	batch system
+	section of the config.ini will affect how free slots are
+	reported in the VOView according to:
+
+	if idleJobs > idle_slack: freeSlots = 0
+
 == 1.3.8 ==
 * Make child reads non-blocking (contributed by John Brunelle @ Harvard)
 

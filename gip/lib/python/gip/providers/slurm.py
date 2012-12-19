@@ -9,7 +9,7 @@ if 'GIP_LOCATION' in os.environ:
 
 import gip_cluster
 from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, \
-    printTemplate, cp_get, responseTimes, cp_getBoolean
+    printTemplate, cp_get, cp_getInt, responseTimes, cp_getBoolean
 from gip_cluster import getClusterID
 from slurm_common import parseNodes, getQueueInfo, getJobsInfo, getLrmsInfo, \
     getVoQueues
@@ -158,7 +158,7 @@ def print_VOViewLocal(queue_info, cp):
 
         free_slots = my_queue_info.get('free_slots', 0)
         waiting = info2.get('wait', 0)
-        if waiting > 0:
+        if waiting > cp_getInt(cp, 'slurm', 'idle_slack', '10'):
             free_slots = 0
 
         info = {

@@ -140,7 +140,7 @@ def print_CE(cp):
         info['extraCapabilities'] = extraCapabilities
         info['htpc'] = htpcRSL
 
-        print CE % info
+        printTemplate(CE, info)
     return queueInfo, totalCpu, freeCpu, queueCpus
 
 def print_VOViewLocal(queue_info, cp):

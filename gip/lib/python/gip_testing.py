@@ -85,9 +85,9 @@ def runCommand(cmd, force_command=False):
         for fd in fdlist: # make stdout/stderr nonblocking
             fl = fcntl.fcntl(fd, fcntl.F_GETFL)
             fcntl.fcntl(fd, fcntl.F_SETFL, fl | os.O_NONBLOCK)
-            
+
         while fdlist:
-            time.sleep(.001) # prevent 100% CPU spin 
+            time.sleep(.001) # prevent 100% CPU spin
             ready = select.select(fdlist, [], [])
             if outfd in ready[0]:
                 outchunk = os.read(outfd, 4096)

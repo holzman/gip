@@ -8,7 +8,7 @@ if 'GIP_LOCATION' in os.environ:
     sys.path.append(os.path.expandvars("$GIP_LOCATION/lib/python"))
     
 import gip_cluster
-from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, printTemplate, cp_get, cp_getBoolean
+from gip_common import config, VoMapper, getLogger, addToPath, getTemplate, printTemplate, cp_get, cp_getBoolean, cp_getInt
 from gip_cluster import getClusterID
 from gip_sections import ce
 from gip_storage import getDefaultSE

@@ -172,8 +172,13 @@ def print_VOViewLocal(queue_info, cp):
         ce_unique_id = buildCEUniqueID(cp, ce_name, 'lsf', queue)
 
         my_queue_info = queue_info.setdefault(queue, {})
-        if "max_wall" not in my_queue_info:
-            my_queue_info["max_wall"] = 1440
+
+        if cp.has_option("lsf", "max_wall"):
+            my_queue_info["max_wall"] = cp_getInt(cp, "lsf", "max_wall", 1440)
+        else:
+            if "max_wall" not in my_queue_info:
+                my_queue_info["max_wall"] = 1440
+
         ert, wrt = responseTimes(cp, info2.get("running", 0),
             info2.get("waiting", 0),
             max_job_time=my_queue_info.get("max_wall", 0))

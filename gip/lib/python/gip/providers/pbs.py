@@ -160,9 +160,15 @@ def print_VOViewLocal(queue_info, cp):
         ce_unique_id = buildCEUniqueID(cp, ce_name, 'pbs', queue)
         
         my_queue_info = queue_info.setdefault(queue, {})
+
+        max_job_time = my_queue_info.get("max_wall", 0)
+        if cp.has_option("pbs", "max_wall"):
+            max_job_time = cp_getInt(cp, "pbs", "max_wall", 1440)
+
         ert, wrt = responseTimes(cp, info2.get("running", 0),
             info2.get("wait", 0),
-            max_job_time=my_queue_info.get("max_wall", 0))
+            max_job_time)
+
 
         free_slots = my_queue_info.get('free_slots', 0)
         waiting = info2.get('wait', 0)

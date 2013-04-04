@@ -57,10 +57,13 @@ def print_CE(cp):
             info["priority"] = 0
         if "max_running" not in info:
             info["max_running"] = info["job_slots"]
-        if "max_wall" not in info:
-            info["max_wall"] = 1440
 
-        
+        if cp.has_option("pbs", "max_wall"):
+            info["max_wall"] = cp_getInt(cp, "pbs", "max_wall", 1440)
+        else:
+            if "max_wall" not in info:
+                info["max_wall"] = 1440
+
         info["free_slots"] = 0
         if info["wait"] == 0:
             freeSlots = info["job_slots"] - info["running"]

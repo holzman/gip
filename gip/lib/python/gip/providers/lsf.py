@@ -86,8 +86,13 @@ def print_CE(cp):
             info["max_running"] = info["job_slots"]
         elif not info['max_running'] or info['max_running'] == '-':
             info['max_running'] = 999999
-        if "max_wall" not in info:
-            info["max_wall"] = 1440
+
+        if cp.has_option("lsf", "max_wall"):
+            info["max_wall"] = cp_getInt(cp, "lsf", "max_wall", 1440)
+        else:
+            if "max_wall" not in info:
+                info["max_wall"] = 1440
+
         info["max_wall"] = int(info["max_wall"]) # glue proscribes ints 
         info["job_slots"] = min(totalCpu, info["job_slots"])
 

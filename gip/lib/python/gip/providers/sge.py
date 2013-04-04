@@ -57,6 +57,10 @@ def print_CE(cp):
         port = getPort(cp)
         ceImpl, ceImplVersion = getCEImpl(cp)
 
+        max_wall = queue["max_wall"]
+        if cp.has_option("sge", "max_wall"):
+            max_wall = cp_getInt(cp, "sge", "max_wall", 1440)
+
         info = { \
             "ceUniqueID" : unique_id,
             "ceName" : ce_name,
@@ -82,7 +86,7 @@ def print_CE(cp):
             "data_dir" : cp_get(cp, 'osg_dirs', 'data', "/OSG_DATA_UNKNOWN"),
             "default_se" : getDefaultSE(cp),
             "max_running" : queue["slots_total"],
-            "max_wall" : queue["max_wall"],
+            "max_wall" : max_wall,
             "max_waiting" : default_max_waiting,
             "max_slots" : maxSlots,
             "max_total" : default_max_waiting + queue["slots_total"],

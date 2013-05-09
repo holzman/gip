@@ -268,16 +268,22 @@ def getQueueInfo(cp):
         elif attr == "acl_users" and 'users' in queue_data:
             queue_data["users"].update(val.split(','))
     if queue_data != None:
-        if queue_data["started"] and queue_data["enabled"]:
-            queue_data["status"] = "Production"
-        elif queue_data["enabled"]:
-            queue_data["status"] = "Queueing"
-        elif queue_data["started"]:
-            queue_data["status"] = "Draining"
-        else:
+        try:
+            if queue_data["started"] and queue_data["enabled"]:
+                queue_data["status"] = "Production"
+            elif queue_data["enabled"]:
+                queue_data["status"] = "Queueing"
+            elif queue_data["started"]:
+                queue_data["status"] = "Draining"
+            else:
+                queue_data["status"] = "Closed"
+            del queue_data["started"]
+            del queue_data['enabled']
+        except:
             queue_data["status"] = "Closed"
-        del queue_data["started"]
-        del queue_data['enabled']
+            msg = "The 'Started' and/or 'enabled' attributes do not " \
+                "exist for the %s queue." % line[7:]
+            log.warning(msg)
 
     return queueInfo
 

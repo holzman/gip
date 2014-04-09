@@ -130,7 +130,7 @@ def getQueueInfo(cp):
 
         # SLURM priorities depend on the scheduler, I think -- for backfill and FIFO, setting
         #  node weights and/or partition priorities didn't make any scheduling difference.
-        queue_data['priority'] = 0.0
+        queue_data['priority'] = 0
 
         # 1 year is close enough to infinity in the grid world..
         queue_data['max_wall'] = 1440*365

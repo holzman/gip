@@ -2,6 +2,8 @@
 
 import sys, time, os
 import re
+import warnings
+warnings.filterwarnings('ignore', category=DeprecationWarning)
 import popen2
 from socket import gethostname
 

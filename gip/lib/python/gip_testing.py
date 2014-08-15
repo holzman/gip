@@ -16,6 +16,8 @@ import time
 import urlparse
 import GipUnittest
 import ConfigParser
+import warnings
+warnings.filterwarnings('ignore', category=DeprecationWarning)
 import popen2
 import select
 import cStringIO

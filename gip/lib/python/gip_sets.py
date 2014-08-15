@@ -10,9 +10,9 @@ if not py23:
     from sets24 import *
     from sets24 import _TemporarilyImmutableSet
 else:
+    import warnings
+    warnings.filterwarnings('ignore', category=DeprecationWarning)
     from sets import *
     from sets import _TemporarilyImmutableSet
 
 
-
-    

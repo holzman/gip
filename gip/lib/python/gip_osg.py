@@ -26,6 +26,16 @@ lsf_sec = 'LSF'
 cream_sec = 'CREAM'
 slurm_sec = 'SLURM'
 
+default_osg_ress_servers = \
+    "https://osg-ress-1.fnal.gov:8443/ig/services/CEInfoCollector[OLD_CLASSAD]"
+default_osg_bdii_servers = \
+    "http://is1.grid.iu.edu:14001[RAW], http://is2.grid.iu.edu:14001[RAW]"
+default_itb_ress_servers = \
+    "https://osg-ress-4.fnal.gov:8443/ig/services/CEInfoCollector[OLD_CLASSAD]"
+# We have a way to distinguish ITB from OSG sites so they don't need to go
+# to a separate server (SOFTWARE-1406):
+default_itb_bdii_servers = default_osg_bdii_servers
+
 def cp_getInt(cp, section, option, default):
     """
     Helper function for ConfigParser objects which allows setting the default.
@@ -693,14 +703,14 @@ def config_info(ocp, gcp):
         return parse_endpoints(name_str)
 
     # These are the default endpoints
-    osg_ress_servers = get_endpoints(ocp, "osg-ress-servers", "https://osg" \
-        "-ress-1.fnal.gov:8443/ig/services/CEInfoCollector[OLD_CLASSAD]")
-    osg_bdii_servers = get_endpoints(ocp, "osg-bdii-servers", "http://is1." \
-        "grid.iu.edu:14001[RAW], http://is2.grid.iu.edu:14001[RAW]")
-    itb_ress_servers = get_endpoints(ocp, "itb-ress-servers", "https://osg" \
-        "-ress-4.fnal.gov:8443/ig/services/CEInfoCollector[OLD_CLASSAD]")
-    itb_bdii_servers = get_endpoints(ocp, "itb-bdii-servers", "http://is-" \
-        "itb1.grid.iu.edu:14001[RAW], http://is-itb2.grid.iu.edu:14001[RAW]")
+    osg_ress_servers = get_endpoints(ocp, "osg-ress-servers",
+                                     default_osg_ress_servers)
+    osg_bdii_servers = get_endpoints(ocp, "osg-bdii-servers",
+                                     default_osg_bdii_servers)
+    itb_ress_servers = get_endpoints(ocp, "itb-ress-servers",
+                                     default_itb_ress_servers)
+    itb_bdii_servers = get_endpoints(ocp, "itb-bdii-servers",
+                                     default_itb_bdii_servers)
 
     # See if the admins set something by hand; if not, go to the correct
     # endpoint depending on the grid.

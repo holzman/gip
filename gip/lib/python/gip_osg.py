@@ -645,13 +645,13 @@ def configSEs(cp, cp2):
             # Handle allowed VO's for bestman
             # Yet to be implemented
 
-cemon_re = re.compile("(https?)://([a-zA-Z0-9\-.]+):([0-9]+)(.*)\[(.*)\]")
+info_re = re.compile("(https?)://([a-zA-Z0-9\-.]+):([0-9]+)(.*)\[(.*)\]")
 def config_info(ocp, gcp):
     """
     Configure the information services.  Right now, this means that we look at
-    and configure the CEMon section from config.ini to determine the BDII and
-    ReSS endpoints.  We then save this to the [GIP] configuration section in
-    the bdii_endpoints and ress_endpoints attributes.
+    and configure the CEMon or Info Services section from config.ini to
+    determine the BDII and ReSS endpoints.  We then save this to the [GIP]
+    configuration section in the bdii_endpoints and ress_endpoints attributes.
 
     If all else fails, we default to the OSG servers
     """
@@ -670,18 +670,24 @@ def config_info(ocp, gcp):
     ress_endpoints = []
     bdii_endpoints = []
 
+    # In OSG 3.1, the osg config section is [Cemon]; in 3.2 it's [Info Services]
+    # since we are replacing CEMon with OSG-Info-Services.
+    info_section = "Cemon"
+    if ocp.has_section("Info Services"):
+        info_section = "Info Services"
+
     # Parse the production and testing endpoints
     def parse_endpoints(name_str):
         names = split_re.split(name_str)
         results = []
         for name in names:
-            m = cemon_re.match(name)
+            m = info_re.match(name)
             if m:
                 result = '%s://%s:%s%s' % m.groups()[:4]
                 results.append(result)
         return results
     def get_endpoints(cp, name, default):
-        name_str = cp_get(cp, "Cemon", name, None)
+        name_str = cp_get(cp, info_section, name, None)
         if not name_str:
             name_str = default
         return parse_endpoints(name_str)
@@ -698,7 +704,7 @@ def config_info(ocp, gcp):
 
     # See if the admins set something by hand; if not, go to the correct
     # endpoint depending on the grid.
-    ress_servers = cp_get(ocp, "Cemon", "ress_servers", "UNAVAILABLE")
+    ress_servers = cp_get(ocp, info_section, "ress_servers", "UNAVAILABLE")
     ress_servers = parse_endpoints(ress_servers)
     if not ress_servers:
         if is_osg:
@@ -706,7 +712,7 @@ def config_info(ocp, gcp):
         else:
             ress_servers = itb_ress_servers
 
-    bdii_servers = cp_get(ocp, "Cemon", "bdii_servers", "UNAVAILABLE")
+    bdii_servers = cp_get(ocp, info_section, "bdii_servers", "UNAVAILABLE")
     bdii_servers = parse_endpoints(bdii_servers)
     if not bdii_servers:
         if is_osg:

@@ -748,51 +748,77 @@ def matchFQAN(fqan1, fqan2):
         vog_matches = True
     return vog_matches and vor_matches
 
-rvf_parse = re.compile('(.+?): (?:(.*?)\n)')
 def parseRvf(name):
     """
     Parse the Globus RVF for a specific file.
-    
-    Retrieves the file from $GLOBUS_LOCATION/share/globus_gram_job_manager/name
-    
-    See an example RVF file for the patterns this matches.  Returns a 
-    dictionary of dictionaries; the keys are attributes, and the values are a 
+
+    RVF files containing default settings are located in
+    $GLOBUS_LOCATION/share/globus_gram_job_manager/name (or
+    /usr/share/globus/globus_gram_job_manager on an RPM install), but may be
+    overridden by files in /etc/globus/gram/name.
+
+    See an example RVF file for the patterns this matches.  Returns a
+    dictionary of dictionaries; the keys are attributes, and the values are a
     dictionary of key: value pairs for all the associated information for an
     attribute.
-    
-    In the case of an exception, this just returns {}
-    
-    @param name:  Name of RVF file to parse.
-    @return: Dictionary of dictionaries containing information about the 
-      attributes in the RVF file; returns an empty dict in case if there is an
+
+    If nothing can be read, returns {}.
+
+    @param name: Basename of RVF file to parse.
+    @return: Dictionary of dictionaries containing information about the
+      attributes in the RVF files; returns an empty dict in case if there is an
       error.
     """
     if 'GLOBUS_LOCATION' in os.environ:
-        basepath = '%s/share/globus_gram_job_manager' % os.environ['GLOBUS_LOCATION']
+        defaults_basepath = '%s/share/globus_gram_job_manager' % os.environ['GLOBUS_LOCATION']
     else:
-        basepath = vdtDir('$VDT_LOCATION/globus/share/globus_gram_job_manager',
-                          '/usr/share/globus/globus_gram_job_manager')
+        defaults_basepath = os.path.expandvars(
+            vdtDir('$VDT_LOCATION/globus/share/globus_gram_job_manager',
+                   '/usr/share/globus/globus_gram_job_manager'))
+    defaults_filepath = os.path.join(defaults_basepath, name)
+    customized_filepath = os.path.join('/etc/globus/gram', name)
 
-    fullname = os.path.expandvars(os.path.join(basepath, name))
-    log.debug('Looking for RVF %s' % fullname)
+    results = {}
+    for filepath in [defaults_filepath, customized_filepath]:
+        results.update(_parseRvfHelper(filepath))
 
-    if not os.path.exists(fullname):
-        return {}
+    return results
+
+def _parseRvfHelper(filepath):
+    """
+    Helper for parseRvf
+
+    Does the reading and parsing of the .rvf file located at filepath.
+    Returns a dictionary of dictionaries on success or an empty dictionary on
+    failure.
+
+    @param filepath: Full path of RVF file to parse.
+    @return: Dictionary of dictionaries containing information about the
+      attributes in the RVF file; returns an empty dict in case if there is an
+      error.
+    """
+    log.debug('Looking for RVF %s' % filepath)
+
     try:
-        rvf = open(fullname, 'r').read()
-    except:
-        return  {}
-    pairs = rvf_parse.findall(rvf)
+        rvf_fh = open(filepath, 'r')
+        try:
+            rvf = rvf_fh.read()
+        finally:
+            rvf_fh.close()
+    except EnvironmentError:
+        return {}
+
+    rvf_pattern = re.compile('(.+?): (?:(.*?)\n)')
+    pairs = rvf_pattern.findall(rvf)
     curAttr = None
     results = {}
     for key, val in pairs:
         if key == 'Attribute':
             curAttr = val
             results[curAttr] = {}
-            continue
-        if curAttr == None:
-            continue
-        results[curAttr][key] = val
+        elif curAttr is not None:
+            results[curAttr][key] = val
+
     return results
 
 def getURLData(some_url, lines=False):

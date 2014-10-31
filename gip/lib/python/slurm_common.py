@@ -18,7 +18,7 @@ log = getLogger("GIP.SLURM")
 # TODO: replace with slurm equivalents
 batch_system_info_cmd = "sinfo -V"
 jobs_cmd = 'squeue -h -o "%i %u %T %P"'
-queue_info_cmd = 'sinfo -h -o "%P %a %C %l"'
+queue_info_cmd = 'sinfo -h -o "%R %a %C %l"'
 #queue_info_cmd = "qstat -Q -f %(slurmHost)s"
 #jobs_cmd = "qstat"
 #slurmnodes_cmd = "slurmnodes -a"
